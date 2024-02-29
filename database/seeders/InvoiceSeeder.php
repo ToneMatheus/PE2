@@ -2,15 +2,14 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Invoice;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceSeeder extends Seeder
 {
     public function run(): void
     {
-        $invoice = [
+        DB::table('invoice')->insert([
             [
                 'ID' => 1,
                 'invoiceDate' => '2024-01-01',
@@ -27,10 +26,6 @@ class InvoiceSeeder extends Seeder
                 'status' => 'Unpaid',
                 'customerContractID' => 2
             ]
-            ];
-
-            foreach ($invoice as $invoiceData){
-                Invoice::create($invoiceData);
-            }
+            ]);
     }
 }

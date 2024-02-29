@@ -2,15 +2,14 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 
 class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        $product = [
+        DB::table('product')->insert([
             [
                 'ID' => 1,
                 'productName' => 'Electricity',
@@ -25,10 +24,6 @@ class ProductSeeder extends Seeder
                 'startDate' => '2024-01-01',
                 'customerContractID' => 2
             ]
-            ];
-
-            foreach ($product as $productData){
-                Product::create($productData);
-            }
+            ]);
     }
 }

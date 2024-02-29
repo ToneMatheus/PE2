@@ -2,22 +2,22 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Tariff;
+use Illuminate\Support\Facades\DB;
 
 class TariffSeeder extends Seeder
 {
     public function run(): void
     {
-        $tariff = [
+        DB::table('tariff')->insert([
             [
                 'ID' => 1,
                 'name' => 'Tier 1',
                 'type' => 'Commercial',
                 'rangeMin' => 0,
                 'rangeMax' => 1000,
-                'rate' => 0.25
+                'rate' => 0.25,
+                'consumptionID' => 1
             ],
             [
                 'ID' => 2,
@@ -25,12 +25,11 @@ class TariffSeeder extends Seeder
                 'type' => 'Residential',
                 'rangeMin' => 0,
                 'rangeMax' => 500,
-                'rate' => 0.25
+                'rate' => 0.25,
+                'consumptionID' => 2
             ]
-            ];
-
-            foreach ($tariff as $tariffData){
-                Tariff::create($tariffData);
-            }
+        ]);
     }
 }
+
+?>
