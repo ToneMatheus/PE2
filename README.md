@@ -1,4 +1,3 @@
-![Image Alt text](/img/img.png)
 ![Image Alt text](/img/img2.png)
 
 
