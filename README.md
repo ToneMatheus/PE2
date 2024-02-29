@@ -1,5 +1,6 @@
+<p align="center">
 ![Image Alt text](/img/img2.png)
-
+</p>
 
 # PE2
 Practice Enterprise ICT 2
