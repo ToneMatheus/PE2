@@ -1,5 +1,5 @@
 <p align="center">
-![Image Alt text](/img/img2.png)
+    <img src="/img/img2.png" />
 </p>
 
 # PE2
