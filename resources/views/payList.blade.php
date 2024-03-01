@@ -11,10 +11,6 @@
 
 </head>
 
-@include('layouts.header')
-
-@yield('header')
-
 <body class="body">
     <div class="container-trui">
         <div class="content">
