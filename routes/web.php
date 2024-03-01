@@ -24,4 +24,7 @@ Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
 Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
 Route::get('/', [myController::class, 'profile'])->name('profile');
+Route::get('/test', function () {
+    return view('welcome');
+});
 
