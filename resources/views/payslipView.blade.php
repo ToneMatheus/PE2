@@ -5,7 +5,7 @@
             <b>Energy Company</b><br/>
             Jan Pieter de Nayerlaan 5<br/>
             2860 Sint-Katelijne-Waver<br/>
-            <b>Employer number:</b> E231L3
+            <b>EmployeeID:</b> E231L3
         </div>
 
         <div style="padding-right: 300px; padding-top: 20px">
@@ -24,10 +24,6 @@
         </div>
 
         <div style="padding-left: 20px; padding-top: 20px">
-            <b><u>Personal details:</u></b><br/>
-            <b>Identification number:</b> 38917 557-12<br/>
-            <b>Civil status:</b> single<br/><br/>
-            
             <b><u>Contract details:</u></b><br/>
             <b>Job:</b> maintainance manager<br/>
             <b>Department:</b> Tech/IT
@@ -50,15 +46,20 @@
         <td>100,5</td>
         <td style="text-align: center"><b>1606,60$</b></td>
     </tr>
+
+    <tr>
+        <td>Holidays taken</td>
+        <td>0</td>
+        <td>/</td>
+        <td style="text-align: center">
+            Number of days taken * 50
+        </td>
+    </tr>
+
     
     <tr>
         <td colspan="3">Medical allowance</td>
         <td style="text-align: center">300$</td>
-    </tr>
-
-    <tr>
-        <td colspan="3">Transport allowance</td>
-        <td style="text-align: center">50$</td>
     </tr>
 
     <tr>
