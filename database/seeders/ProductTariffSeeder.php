@@ -15,12 +15,6 @@ class ProductTariffSeeder extends Seeder
                 'startDate' => '2024-01-01',
                 'productID' => 1,
                 'tariffID' => 1
-            ],
-            [
-                'ID' => 2,
-                'startDate' => '2024-01-01',
-                'productID' => 2,
-                'tariffID' => 2
             ]
             ]);
     }

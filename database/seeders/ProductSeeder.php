@@ -12,18 +12,11 @@ class ProductSeeder extends Seeder
         DB::table('product')->insert([
             [
                 'ID' => 1,
-                'productName' => 'Electricity',
-                'unitPrice' => 0.28,
+                'productName' => 'Residential tier 1',
+                'unitPrice' => 0.25,
                 'startDate' => '2024-01-01',
                 'customerContractID' => 1
             ],
-            [
-                'ID' => 2,
-                'productName' => 'Electricity',
-                'unitPrice' => 0.25,
-                'startDate' => '2024-01-01',
-                'customerContractID' => 2
-            ]
             ]);
     }
 }

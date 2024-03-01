@@ -9,43 +9,40 @@ class InvoiceLineSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('invoiceLine')->insert([
-            [
-                'ID' => 1,
+        $invoiceLines = [];
+
+        for ($i = 1; $i <= 11; $i++) {
+            // Product line
+            $invoiceLines[] = [
                 'type' => 'Product',
-                'quantity' => 2,
-                'unitPrice' => 10.50,
-                'amount' => 21.00,
-                'consumptionID' => null,
-                'invoiceID' => 1,
-            ],
-            [
-                'ID' => 2,
-                'type' => 'Service',
                 'quantity' => 1,
-                'unitPrice' => 25.00,
-                'amount' => 25.00,
+                'unitPrice' => 0.25,
+                'amount' => 180,
                 'consumptionID' => null,
-                'invoiceID' => 1,
-            ],
-            [
-                'ID' => 3,
-                'type' => 'Product',
-                'quantity' => 3,
-                'unitPrice' => 15.75,
-                'amount' => 47.25,
+                'invoiceID' => $i,
+            ];
+
+            // Basic service fee line
+            $invoiceLines[] = [
+                'type' => 'Basic Service Fee',
+                'quantity' => 1,
+                'unitPrice' => 10,
+                'amount' => 10,
                 'consumptionID' => null,
-                'invoiceID' => 2,
-            ],
-            [
-                'ID' => 4,
-                'type' => 'Service',
-                'quantity' => 2,
-                'unitPrice' => 30.00,
-                'amount' => 60.00,
+                'invoiceID' => $i,
+            ];
+
+            // Distribution fee line
+            $invoiceLines[] = [
+                'type' => 'Distribution Fee',
+                'quantity' => 1,
+                'unitPrice' => 10,
+                'amount' => 10,
                 'consumptionID' => null,
-                'invoiceID' => 2,
-            ]
-            ]);
+                'invoiceID' => $i,
+            ];
+        }
+
+        DB::table('invoiceLine')->insert($invoiceLines);
     }
 }

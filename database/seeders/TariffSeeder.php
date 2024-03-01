@@ -17,7 +17,6 @@ class TariffSeeder extends Seeder
                 'rangeMin' => 0,
                 'rangeMax' => 1000,
                 'rate' => 0.25,
-                'consumptionID' => 1
             ],
             [
                 'ID' => 2,
@@ -26,7 +25,6 @@ class TariffSeeder extends Seeder
                 'rangeMin' => 0,
                 'rangeMax' => 500,
                 'rate' => 0.25,
-                'consumptionID' => 2
             ]
         ]);
     }
