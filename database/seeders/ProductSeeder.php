@@ -12,10 +12,10 @@ class ProductSeeder extends Seeder
         DB::table('product')->insert([
             [
                 'ID' => 1,
-                'productName' => 'Residential tier 1',
-                'unitPrice' => 0.25,
+                'productName' => 'Tier 1',
                 'startDate' => '2024-01-01',
-                'customerContractID' => 1
+                'customerContractID' => 1,
+                'type' => 'Residential'
             ],
             ]);
     }

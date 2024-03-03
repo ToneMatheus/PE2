@@ -23,7 +23,8 @@ class InvoiceSeeder extends Seeder
                 'dueDate' => $dueDate,
                 'totalAmount' => $totalAmount,
                 'status' => 'Paid',
-                'customerContractID' => 1
+                'customerContractID' => 1,
+                'type' => 'Electrical'
             ];
         }
 
@@ -33,7 +34,8 @@ class InvoiceSeeder extends Seeder
             'dueDate' => '2024-12-15',
             'totalAmount' => 20,
             'status' => 'Paid',
-            'customerContractID' => 1
+            'customerContractID' => 1,
+            'type' => 'Electrical'
         ];
 
         DB::table('invoice')->insert($invoices);

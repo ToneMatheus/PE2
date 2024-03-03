@@ -15,7 +15,6 @@ class InvoiceLineSeeder extends Seeder
             // Product line
             $invoiceLines[] = [
                 'type' => 'Product',
-                'quantity' => 1,
                 'unitPrice' => 0.25,
                 'amount' => 180,
                 'consumptionID' => null,
@@ -25,7 +24,6 @@ class InvoiceLineSeeder extends Seeder
             // Basic service fee line
             $invoiceLines[] = [
                 'type' => 'Basic Service Fee',
-                'quantity' => 1,
                 'unitPrice' => 10,
                 'amount' => 10,
                 'consumptionID' => null,
@@ -35,7 +33,6 @@ class InvoiceLineSeeder extends Seeder
             // Distribution fee line
             $invoiceLines[] = [
                 'type' => 'Distribution Fee',
-                'quantity' => 1,
                 'unitPrice' => 10,
                 'amount' => 10,
                 'consumptionID' => null,
