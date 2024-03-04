@@ -16,6 +16,24 @@ class ProductSeeder extends Seeder
                 'startDate' => '2024-01-01',
                 'type' => 'Residential'
             ],
+            [
+                'ID' => 2,
+                'productName' => 'Tier 2',
+                'startDate' => '2024-01-01',
+                'type' => 'Residential'
+            ],
+            [
+                'ID' => 3,
+                'productName' => 'Tier 3',
+                'startDate' => '2024-01-01',
+                'type' => 'Residential'
+            ],
+            [
+                'ID' => 4,
+                'productName' => 'Tier 1',
+                'startDate' => '2024-01-01',
+                'type' => 'Commercial'
+            ],
             ]);
     }
 }
