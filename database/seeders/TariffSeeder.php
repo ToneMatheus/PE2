@@ -12,7 +12,6 @@ class TariffSeeder extends Seeder
         DB::table('tariff')->insert([
             [
                 'ID' => 1,
-                'name' => 'Tier 1',
                 'type' => 'Residential',
                 'rangeMin' => 0,
                 'rangeMax' => 500,
@@ -20,7 +19,6 @@ class TariffSeeder extends Seeder
             ],
             [
                 'ID' => 2,
-                'name' => 'Tier 2',
                 'type' => 'Residential',
                 'rangeMin' => 500,
                 'rangeMax' => 1000,
@@ -28,7 +26,6 @@ class TariffSeeder extends Seeder
             ],
             [
                 'ID' => 3,
-                'name' => 'Tier 3',
                 'type' => 'Residential',
                 'rangeMin' => 1001,
                 'rangeMax' => null,
@@ -36,11 +33,17 @@ class TariffSeeder extends Seeder
             ],
             [
                 'ID' => 4,
-                'name' => 'Tier 1',
                 'type' => 'Commercial',
                 'rangeMin' => 0,
                 'rangeMax' => 1000,
                 'rate' => 0.25,
+            ],
+            [
+                'ID' => 5,
+                'type' => 'Discount',
+                'rangeMin' => null,
+                'rangeMax' => null,
+                'rate' => 0.24,
             ],
         ]);
     }
