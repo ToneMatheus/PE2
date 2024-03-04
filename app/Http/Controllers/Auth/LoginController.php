@@ -21,8 +21,10 @@ class LoginController extends Controller
             $roleHelper = new RoleHelper();
 
             if(!$roleHelper->hasRole($user->ID, 'Customer')){
+                //Employee Page
                 return redirect()->intended('/test');
             } else {
+                //Customer Page
                 return redirect()->intended('/welcome');
             }
         }

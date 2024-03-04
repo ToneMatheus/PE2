@@ -65,7 +65,7 @@
     <head>
         <title>Tariffs</title>
         <meta charset="utf-8"/>
-        <link href="tariff.css" rel="stylesheet"/>
+        <link href="/css/tariff.css" rel="stylesheet"/>
         <script>        //Nog safety checks
             function showForm() {
                 document.getElementById('addTariff').style.display = 'block';
@@ -106,6 +106,58 @@
 
                 return true;
             }
+
+            function sortTariffTable(n){
+                var rows, switching, i, x, y, dir, switchCount = 0;
+                var table = document.getElementById('tariffTable');
+                
+                dir = 'asc';
+                switching = true;
+
+                while(switching){
+                    switching = false;
+                    rows = table.rows;
+
+                    for(i = 1; i < (rows.length - 1); i++){
+
+                        x = rows[i].getElementsByTagName("TD")[n];
+                        y = rows[i+1].getElementsByTagName("TD")[n];
+
+                        var numX = parseFloat(x.innerHTML);
+                        var numY = parseFloat(y.innerHTML);
+
+                        if(!isNaN(numX) && !isNaN(numY)){
+                            if(dir == "asc" && numX > numY ||
+                               dir == "desc" && numX < numY){
+                            
+                            swapRows(x, y);
+                            switching = true;
+                            switchCount++;
+                        }
+                        } else {
+                            if(dir == "asc" && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase() ||
+                               dir == "desc" && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()){
+                            
+                            swapRows(x, y);
+                            switching = true;
+                            switchCount++;
+                        }
+                        }
+                    }
+
+                    if(!switching && switchCount == 0 && dir == "asc"){
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+
+            function swapRows(x, y){            
+                var tempRow = x.innerHTML;
+
+                x.innerHTML = y.innerHTML;
+                y.innerHTML = tempRow;
+            }
         </script>
     </head>
     <body>
@@ -136,11 +188,11 @@
 
                     $result = $stmt->get_result();
 
-                    echo '<table><tr>
-                        <th>Name</th>
-                        <th>Range Min</th>
-                        <th>Range Max</th>
-                        <th>Rate</th>
+                    echo '<table id="tariffTable"><tr>
+                        <th onclick="sortTariffTable(0)">Name</th>
+                        <th onclick="sortTariffTable(1)">Range Min</th>
+                        <th onclick="sortTariffTable(2)">Range Max</th>
+                        <th onclick="sortTariffTable(3)">Rate</th>
                         <th>Edit</th>
                         <th>Delete</th></tr>
                     ';
@@ -187,26 +239,25 @@
                                 <td>' . $row['rangeMax'] . '</td>
                                 <td>' . $row['rate'] . '</td>
                                 <td><a href="./tariff.php?action=edit&id=' . $row['ID'] . '">
-                                    <img src="./img/editIcon.png" alt="edit Icon" id="editIcon"/>
+                                    <img src="./images/editIcon.png" alt="edit Icon" id="editIcon"/>
                                 </a></td>
                                 <td><a href="./tariff.php?action=delete&id=' . $row['ID'] . '">
-                                    <img src="./img/trashIcon.png" alt="trash Icon" id="trashIcon"/>
+                                    <img src="./images/trashIcon.png" alt="trash Icon" id="trashIcon"/>
                                 </a></td>
                                 </tr>
                             ';}
                         }  else {
-                            if (empty($row['rangeMax'])) $row['rangeMin'] .= '>';
-                            
+                      
                             echo '
                             <tr><td>' . $row['name'] . '</td>
                             <td>' . $row['rangeMin'] . '</td>
                             <td>' . $row['rangeMax'] . '</td>
                             <td>' . $row['rate'] . '</td>
                             <td><a href="./tariff.php?action=edit&id=' . $row['ID'] . '">
-                                <img src="./img/editIcon.png" alt="edit Icon" id="editIcon"/>
+                                <img src="./images/editIcon.png" alt="edit Icon" id="editIcon"/>
                             </a></td>
                             <td><a href="./tariff.php?action=delete&id=' . $row['ID'] . '">
-                                <img src="./img/trashIcon.png" alt="trash Icon" id="trashIcon"/>
+                                <img src="./images/trashIcon.png" alt="trash Icon" id="trashIcon"/>
                             </a></td>
                             </tr>
                         ';
@@ -261,6 +312,25 @@
             <button id="confirmNo" onclick="confirmNo()">No</button>
         </div>
 
-        <h2></h2>
+        <h2>Customer</h2>
+        
+        <form id="searchBarForm">
+            <input type="text" name="searchBar"/>
+            <input type="submit" name="submitSearch"/>
+        </form>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Tariff Name</th>
+                <th>Range Min</th>
+                <th>Range Max</th>
+                <th>Rate</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+
+        </table>
     </body>
 </html>
