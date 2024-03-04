@@ -2,19 +2,21 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class ProductSeeder extends Seeder
+class ContractProductSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('product')->insert([
+        DB::table('contractProduct')->insert([
             [
                 'ID' => 1,
-                'productName' => 'Tier 1',
                 'startDate' => '2024-01-01',
-                'type' => 'Residential'
+                'customerContractID' => 1,
+                'ProductID' => 1,
+                'TariffID' => 5,
             ],
             ]);
     }
