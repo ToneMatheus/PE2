@@ -45,6 +45,12 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
     //Route::get('/profile', [myController::class, 'profile'])->name('profile');
 });
 
+//Meter
+Route::get('meters', [MeterController::class,'getData']);
+Route::get('/consumption', function () {
+    return view('Meters/consumption');
+});
+
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
