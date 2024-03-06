@@ -5,6 +5,7 @@ use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CustomerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,3 +64,14 @@ Route::get('/test', function () {
     return view('test');
 });
 
+
+// Validation route's to change customer info by customer
+Route::post('/Customer/Manage/Change/User/post/email', [CustomerController::class, 'emailValidation']) ->name('postEmail');
+Route::post('/Customer/Manage/Change/User/post/profile', [CustomerController::class, 'profileValidation']) ->name('postProfile');
+Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::class, 'passwdValidation']) ->name('postPasswd');
+
+//routes for custmer data for customer
+Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
+Route::get('/Customer/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
+Route::post('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');})->name('ChangeUser');
+Route::get('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');});

@@ -1,0 +1,24 @@
+/* style of every box you can change */
+.box{
+    background-color: #9d9d9d;
+    margin: 50px;
+}
+
+.boxHeader{
+    color: #ffffff;
+    background-color: #6b6b6b;
+    text-align: center;
+    padding: 20px 0px;
+}
+
+/* ----------------------------------------------- */
+/* style table */
+table{
+    width: 100%;
+}
+
+/* ----------------------- */
+/* Company inputfield style */
+#CompanyField{
+    visibility: hidden;
+}
