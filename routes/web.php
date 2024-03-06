@@ -27,7 +27,10 @@ Route::middleware(['auth', 'role:Customer'])->group(function (){
 Route::middleware(['auth', 'notrole:Customer'])->group(function (){
     //Only Finance
     Route::middleware(['auth', 'role:Finance analyst'])->group(function () {
-        Route::get('/tariff', [EmployeeController::class, 'tariff'])->name('tariff');
+        Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
+        Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff']);
+        Route::post('/tariff', [EmployeeController::class, 'processTariff']);
+        Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
     });
     
     //Only Manager
