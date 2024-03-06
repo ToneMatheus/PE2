@@ -243,15 +243,23 @@
         <table>
             <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Tariff Name</th>
-                <th>Range Min</th>
-                <th>Range Max</th>
+                <th>Customer</th>
+                <th>Product Name</th>
+                <th>Type</th>
                 <th>Rate</th>
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
 
+            @foreach ($contractProducts as $contractProduct)
+                <tr>
+                    <td>{{$contractProduct->ID}}</td>
+                    <td>{{$contractProduct->name}}</td>
+                    <td>{{$contractProduct->productName}}</td>
+                    <td>{{$contractProduct->type}}</td>
+                    <td>{{$contractProduct->rate}}</td>
+                </tr>
+            @endforeach
         </table>
     </body>
 </html>

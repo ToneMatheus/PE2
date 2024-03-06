@@ -10,13 +10,33 @@ use Carbon\Carbon;
 class EmployeeController extends Controller
 {
     public function showTariff(){
-        $productTariffs = DB::table('tariff')
-        ->join('productTariff', 'tariff.ID', '=', 'productTariff.tariffID')
-        ->join('product', 'product.ID', '=', 'productTariff.productID')
-        ->whereNull('productTariff.endDate')
+        $productTariffs = DB::table('tariff as t')
+        ->join('productTariff as pt', 't.ID', '=', 'pt.tariffID')
+        ->join('product as p', 'p.ID', '=', 'pt.productID')
+        ->whereNull('pt.endDate')
+        ->get();
+
+        $contractProducts = DB::table('contractProduct as cp')
+        ->join('customerContract as cc', 'cc.ID', '=', 'cp.customerContractID')
+        ->join('customer as c', 'c.ID', '=', 'cc.customerID')
+        ->join('product as p', 'p.ID', '=', 'cp.productID')
+        ->leftJoin('tariff as t', 't.ID', '=', 'cp.tariffID')
+        ->select(DB::raw("
+            cc.ID,
+            CONCAT(c.firstName, ' ', c.lastName) as name,
+            p.productName,
+            CASE
+                WHEN cp.tariffID IS NULL THEN p.type
+                ELSE t.type
+            END AS type,
+            CASE
+                WHEN cp.tariffID IS NULL THEN NULL
+                ELSE t.rate
+            END AS rate
+        "))
         ->get();
         
-        return view('tariff', ['productTariffs' => $productTariffs]);
+        return view('tariff', ['productTariffs' => $productTariffs, 'contractProducts' => $contractProducts]);
     }
 
     public function processTariff(Request $request){
