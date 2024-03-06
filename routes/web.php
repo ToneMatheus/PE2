@@ -5,6 +5,8 @@ use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\invoice_query_controller;
+use App\Http\Controllers\unpaid_invoice_query_controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,3 +68,6 @@ Route::get('/test', function () {
     return view('test');
 });
 
+//invoice query routes
+Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
+Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
