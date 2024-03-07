@@ -7,8 +7,10 @@ use App\Models\Meter;
 
 class MeterController extends Controller
 {
-    function getData()
+    public function showMeters()
     {
-        return Meter::all();
+        $data = Meter::all();
+
+        return view('Meters/meters', compact('data'));
     }
 }

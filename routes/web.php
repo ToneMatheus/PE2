@@ -5,6 +5,7 @@ use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\MeterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +47,7 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
 });
 
 //Meter
-Route::get('meters', [MeterController::class,'getData']);
+Route::get('meters', [MeterController::class,'showMeters']);
 Route::get('/consumption', function () {
     return view('Meters/consumption');
 });
