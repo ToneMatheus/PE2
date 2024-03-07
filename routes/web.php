@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\Auth\LoginController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +20,30 @@ use App\Http\Controllers\Auth\LoginController;
 |
 */
 
+Route::get('/', function () {
+    return view('login');
+});
+
+Route::get("/dashboard", [DashboardController::class, 'index']);
+Route::controller(InvoiceController::class)->group(function () {
+    Route::get('/invoices', 'index')->name('invoice.index');
+    Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
+    Route::get('/invoices/{id}/download', 'download')->name('invoice.download');
+    
+});
+
+Route::get("/employees", [EmployeeController::class, 'index']);
+
+Route::controller(LoginController::class)->group(function () {
+    Route::get('/login', 'index');
+    Route::post('/login', 'authenticate');
+    Route::get('/logout', 'logout');
+    
+});
+
+
+
+//          routes Tone
 //Role system
 //Customer
 Route::middleware(['auth', 'role:Customer'])->group(function (){
@@ -62,4 +89,3 @@ Route::get('/profile', [myController::class, 'profile'])->name('profile');
 Route::get('/test', function () {
     return view('test');
 });
-
