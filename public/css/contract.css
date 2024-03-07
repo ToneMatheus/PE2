@@ -1,0 +1,36 @@
+h1{
+    text-align: center;
+    padding-bottom: 40px;
+}
+
+.content{
+    width: 1000px;
+    margin: auto;
+    box-shadow: 3px 3px 3px;
+    padding: 30px;
+    background-color: white;
+    margin-bottom: 20px;
+}
+
+.container{
+    margin-bottom: 100px;
+}
+
+.body{
+    background-color: #C1BDB3;
+}
+
+a button{
+    padding: 7px 25px;
+    background-color: red;
+    color: white;
+    border-radius: 5px;
+}
+
+button:hover{
+    background-color: rgb(175, 30, 30);
+}
+
+a{
+    text-decoration: none;
+}

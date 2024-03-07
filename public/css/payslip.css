@@ -1,0 +1,57 @@
+/*the whole page*/
+.body{
+    background-color: #C1BDB3;
+}
+
+.container{
+    background-color: white;
+    width: 65%;
+    padding-bottom: 80px;
+    margin-bottom: 100px;
+    box-shadow: 3px 3px 1px;
+}
+
+table{
+    border-collapse: collapse;
+    border: 2px solid black;
+    padding: 20px;
+    width: 90%;
+    margin: 50px auto;
+}
+
+tr, td{
+    border: 1px solid black;
+    padding: 3px 7px;
+}
+
+th{
+    padding: 3px 7px;
+}
+
+.general-details{
+    display: flex;
+    margin-left: 100px;
+    padding-top: 60px;
+}
+
+.col-name{
+    color: white;
+    background-color: black;
+}
+
+.total{
+    background-color: black;
+    color: white;
+    text-align: center;
+}
+
+a button{
+    padding: 7px 25px;
+    background-color: red;
+    color: white;
+    border-radius: 5px;
+}
+
+button:hover{
+    background-color: rgb(175, 30, 30);
+}
