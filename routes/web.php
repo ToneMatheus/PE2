@@ -5,6 +5,7 @@ use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CustomerGridViewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,3 +64,9 @@ Route::get('/test', function () {
     return view('test');
 });
 
+
+Route::get('/customerGridView', [CustomerGridViewController::class, 'index']);
+
+Route::get('/', function () {
+    return view('welcome');
+});
