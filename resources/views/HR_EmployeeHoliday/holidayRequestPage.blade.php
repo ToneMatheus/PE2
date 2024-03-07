@@ -17,19 +17,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>calendar</title>
-    <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
+    
     <link href="{{ asset('css/calendar.css') }}" rel="stylesheet">
 </head>
 <body>
     <header>
-        <div class="topnav">
-            <a href="{{ route('home') }}">Home</a>
-            <a href="{{ route('holiday') }}">Holiday</a>
-            <a class="active " href="{{ route('calendar') }}">Calendar</a>
-            <a  href="{{ route('man') }}">ManagerPage</a>
-            <a href="{{ route('contact') }}">Contact</a>
-            <a href="#about">About</a>
-        </div>
+        
     </header>
     <h1>calendar test</h1>
 
