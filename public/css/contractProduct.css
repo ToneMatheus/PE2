@@ -1,0 +1,12 @@
+#addDiscount {
+    display: none;
+    border: black solid 1px;
+}
+
+#editIcon {
+    width: 20px;
+}
+
+#editIcon:hover {
+    cursor: pointer;
+}

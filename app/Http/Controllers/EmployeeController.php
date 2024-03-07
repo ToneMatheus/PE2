@@ -21,8 +21,10 @@ class EmployeeController extends Controller
         ->join('customer as c', 'c.ID', '=', 'cc.customerID')
         ->join('product as p', 'p.ID', '=', 'cp.productID')
         ->leftJoin('tariff as t', 't.ID', '=', 'cp.tariffID')
+        ->whereNull('cp.endDate')
         ->select(DB::raw("
-            cc.ID,
+            cp.ID,
+            cp.customerContractID,
             CONCAT(c.firstName, ' ', c.lastName) as name,
             p.productName,
             CASE
@@ -106,5 +108,59 @@ class EmployeeController extends Controller
             }
             return redirect()->route('tariff');
         }
+    }
+
+    public function showContractProduct($cpID){
+        $contractProduct = DB::table('contractProduct as cp')
+        ->join('customerContract as cc', 'cc.ID', '=', 'cp.customerContractID')
+        ->join('customer as c', 'c.ID', '=', 'cc.customerID')
+        ->join('product as p', 'p.ID', '=', 'cp.productID')
+        ->where('cp.ID', '=', $cpID)
+        ->first();
+
+        if (!$contractProduct) {
+            abort(404);
+        }
+
+        $products = DB::table('product as p')
+        ->select('p.productName', 'p.type')
+        ->whereNotIn('p.type', ['Discount'])
+        ->get();
+
+        $productTariff = DB::table('product as p')
+        ->join('productTariff as pt', 'pt.productID', '=', 'p.ID')
+        ->join('tariff as t', 't.ID', '=', 'pt.ID')
+        ->where('p.ID' ,'=', $contractProduct->productID)
+        ->first();
+
+        if($contractProduct->tariffID){
+            $discount = DB::table('tariff')
+            ->where('ID', '=', $contractProduct->tariffID)
+            ->first();
+
+            return view('contractProduct', ['contractProduct' => $contractProduct, 'productTariff' => $productTariff, 'products' => $products,  'discount' => $discount]);
+        }
+
+        return view('contractProduct', ['contractProduct' => $contractProduct, 'productTariff' => $productTariff, 'products' => $products,]);
+    }
+
+    public function addDiscount(Request $request, $cpID, $ccID, $pID){
+        $date = Carbon::now()->toDateString();
+
+        DB::update('UPDATE contractProduct SET endDate = ? WHERE ID = ?', [$date, $cpID]);
+
+        $tariffID = DB::table('tariff')->insertGetId([
+            'type' => 'Discount',
+            'rate' => $request->input('newRate')
+        ]);
+
+        $newCpID = DB::table('contractProduct')->insertGetId([
+            'productID' => $pID,
+            'tariffID' => $tariffID,
+            'customerContractID' => $ccID,
+            'startDate' => $date
+        ]);
+
+        return redirect()->route('contractProduct', ['cpID' => $newCpID]);
     }
 }

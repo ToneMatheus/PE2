@@ -4,9 +4,10 @@
         <title>Tariffs</title>
         <meta charset="utf-8"/>
         <link href="/css/tariff.css" rel="stylesheet"/>
-        <script>        //Nog safety checks
+        <script>    
             function showForm() {
                 document.getElementById('addTariff').style.display = 'block';
+                document.getElementById('addBttn1').style.display = 'none';
             }
 
             function confirmCancel() {
@@ -45,47 +46,46 @@
                 return true;
             }
 
-            function sortTariffTable(n){
-                var rows, switching, i, x, y, dir, switchCount = 0;
-                var table = document.getElementById('tariffTable');
-                
-                dir = 'asc';
+            function sortTariffTable(n) {
+                var table, rows, switching, i, x, y, shouldSwitch, dir, switchCount = 0;
+                table = document.getElementById("tariffTable");
                 switching = true;
-
-                while(switching){
+                dir = "asc";
+                
+                while (switching) {
                     switching = false;
                     rows = table.rows;
-
-                    for(i = 1; i < (rows.length - 1); i++){
-
+                    
+                    for (i = 1; i < (rows.length - 1); i++) {
+                        shouldSwitch = false;
                         x = rows[i].getElementsByTagName("TD")[n];
-                        y = rows[i+1].getElementsByTagName("TD")[n];
-
-                        var numX = parseFloat(x.innerHTML);
-                        var numY = parseFloat(y.innerHTML);
-
-                        if(!isNaN(numX) && !isNaN(numY)){
-                            if(dir == "asc" && numX > numY ||
-                               dir == "desc" && numX < numY){
-                            
-                            swapRows(x, y);
-                            switching = true;
-                            switchCount++;
-                        }
-                        } else {
-                            if(dir == "asc" && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase() ||
-                               dir == "desc" && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()){
-                            
-                            swapRows(x, y);
-                            switching = true;
-                            switchCount++;
-                        }
+                        y = rows[i + 1].getElementsByTagName("TD")[n];
+                        
+                        var xValue = isNaN(x.innerHTML) ? x.innerHTML.toLowerCase() : x.innerHTML;
+                        var yValue = isNaN(y.innerHTML) ? y.innerHTML.toLowerCase() : y.innerHTML;
+                        
+                        if (dir == "asc") {
+                            if (xValue > yValue) {
+                                shouldSwitch= true;
+                                break;
+                            }
+                        } else if (dir == "desc") {
+                            if (xValue < yValue) {
+                                shouldSwitch= true;
+                                break;
+                            }
                         }
                     }
-
-                    if(!switching && switchCount == 0 && dir == "asc"){
-                        dir = "desc";
+                    
+                    if (shouldSwitch) {
+                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
                         switching = true;
+                        switchCount++;
+                    } else {
+                        if (switchCount == 0 && dir == "asc") {
+                            dir = "desc";
+                            switching = true;
+                        }
                     }
                 }
             }
@@ -192,7 +192,7 @@
             </table>
         @endforeach
 
-        <button id="addBttn" onclick="showForm()">+</button>
+        <button class="addBttn" id="addBttn" onclick="showForm()">+</button>
 
         <form id="addTariff" method="post" action="<?php echo($_SERVER['PHP_SELF']) ?>" onsubmit="return checkAddTariff()">
             @csrf
@@ -248,7 +248,6 @@
                 <th>Type</th>
                 <th>Rate</th>
                 <th>Edit</th>
-                <th>Delete</th>
             </tr>
 
             @foreach ($contractProducts as $contractProduct)
@@ -258,6 +257,11 @@
                     <td>{{$contractProduct->productName}}</td>
                     <td>{{$contractProduct->type}}</td>
                     <td>{{$contractProduct->rate}}</td>
+                    <td>
+                        <a href="{{ route('contractProduct', ['cpID' => $contractProduct->ID]) }}"> 
+                            <img src="{{asset('./images/editIcon.png')}}" alt="edit Icon" id="editIcon"/>
+                        </a>
+                    </td>
                 </tr>
             @endforeach
         </table>
