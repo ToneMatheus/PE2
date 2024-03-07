@@ -11,10 +11,12 @@ return new class extends Migration
     {
         Schema::create('customerTicket', function (Blueprint $table) {
             $table->bigIncrements('ID');
+            $table->string('role', 50)->nullable();
             $table->string('name', 50)->nullable();
             $table->string('email', 50)->nullable();
             $table->string('issue', 50)->nullable();
             $table->string('description', 100)->nullable();
+            $table->timestamps();
         });
     }
 

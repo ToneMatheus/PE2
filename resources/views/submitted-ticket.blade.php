@@ -8,8 +8,8 @@
       quickly as possible.</p>
 
     <ul>
-      <li><strong>{{ $ticket->issue }}</strong></li>
-      <li><strong>{{ $ticket->description }}</strong></li>
+      <li><strong>{{ $customerticket->issue }}</strong></li>
+      <li><strong>{{ $customerticket->description }}</strong></li>
     </ul>
 
   </div>
