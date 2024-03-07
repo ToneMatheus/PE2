@@ -63,3 +63,6 @@ Route::get('/test', function () {
     return view('test');
 });
 
+Route::get('/holidayRequest', function () {
+    return view('holidayRequestPage');
+});
