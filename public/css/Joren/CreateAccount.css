@@ -19,6 +19,6 @@ table{
 
 /* ----------------------- */
 /* Company inputfield style */
-#CompanyField{
+.CompanyField{
     visibility: hidden;
 }
