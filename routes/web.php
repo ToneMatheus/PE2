@@ -36,6 +36,10 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
 
         Route::get('/contractProduct/{cpID}', [EmployeeController::class, 'showContractProduct'])->name('contractProduct');
         Route::post('/contractProduct/{cpID}/{ccID}/{pID}', [EmployeeController::class, 'addDiscount'])->name('cp.discount');
+
+        //invoice query routes
+        Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
+        Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
     });
     
     //Only Manager
@@ -70,7 +74,3 @@ Route::get('/profile', [myController::class, 'profile'])->name('profile');
 Route::get('/test', function () {
     return view('test');
 });
-
-//invoice query routes
-Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
-Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");

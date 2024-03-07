@@ -64,7 +64,6 @@
                 <img src="{{asset('./images/editIcon.png')}}" alt="edit Icon" id="editIcon" onclick="showEdit(1)"/>
             </p>
 
-
             <p>Tariff: </p>
 
             <ul>
