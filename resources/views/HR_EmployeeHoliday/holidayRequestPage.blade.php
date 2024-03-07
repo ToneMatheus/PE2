@@ -26,7 +26,26 @@
     </header>
     <h1>calendar test</h1>
 
-    <div class="typeBar">
+    <div class="table-container">
+        <table id="calendar">
+            <?php
+                for ($row = 0; $row < 5; $row++) 
+                {
+                    echo "<tr>";
+                    for ($col = 1; $col <= 7; $col++) 
+                    {
+                        $number = $row * 7 + $col;
+                        $class = isset($_SESSION['addedCells'][$number]) ? 'added' : '';
+                        
+                        echo "<td class='{$class}'>{$number}</td>";
+                        //$_SESSION['addedCells'][$number];
+                    }
+                    echo "</tr>";
+                }
+                //echo $_SESSION['addedCells'][1];
+            ?>
+        </table>
+
         <table>
             <tr>
                 <td>
@@ -43,27 +62,8 @@
                     <button onclick="addDate3()"><div class="square3"></div>
                 </td>
             </tr>
-        </table>
+        </table>    
     </div>
-
-    <table id="calendar">
-        <?php
-            for ($row = 0; $row < 5; $row++) 
-            {
-                echo "<tr>";
-                for ($col = 1; $col <= 7; $col++) 
-                {
-                    $number = $row * 7 + $col;
-                    $class = isset($_SESSION['addedCells'][$number]) ? 'added' : '';
-                    
-                    echo "<td class='{$class}'>{$number}</td>";
-                    //$_SESSION['addedCells'][$number];
-                }
-                echo "</tr>";
-            }
-            //echo $_SESSION['addedCells'][1];
-        ?>
-    </table>
 
     
 

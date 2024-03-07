@@ -72,3 +72,12 @@ th, td
   width: 50px;
   background-color: pink;
 }
+
+.table-container {
+  white-space: nowrap; /* Prevent line breaks */
+}
+.table-container table {
+  display: inline-block; /* Display tables inline */
+  vertical-align: top; /* Align them at the top */
+  margin-right: 10px; /* Add some space between tables */
+}
