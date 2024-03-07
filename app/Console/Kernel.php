@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Jobs\RegularJob;
+use App\Jobs\SpecialJob;
 
 class Kernel extends ConsoleKernel
 {
@@ -12,7 +14,16 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+
+        // Run a job every month on the 12th day except for the 12th month
+        $schedule->job(new RegularJob())->monthlyOn(12, '00:00')->when(function () {
+            return now()->month !== 12;
+        });
+
+        // Run a special job on the 12th month
+        $schedule->job(new SpecialJob())->monthlyOn(12, '00:00')->when(function () {
+            return now()->month === 12;
+        });
     }
 
     /**

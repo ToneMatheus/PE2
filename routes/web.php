@@ -5,6 +5,7 @@ use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\JobStatusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +59,10 @@ Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
 Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
 Route::get('/profile', [myController::class, 'profile'])->name('profile');
+
+Route::get('/job-status', [JobStatusController::class, 'index']);
+Route::post('/run-regular-job', [JobStatusController::class, 'runRegularJob'])->name('run-regular-job');
+Route::post('/run-special-job', [JobStatusController::class, 'runSpecialJob'])->name('run-special-job');
 
 Route::get('/test', function () {
     return view('test');
