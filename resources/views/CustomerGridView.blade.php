@@ -1,3 +1,4 @@
+<?php $searchQuery = request('search'); ?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -19,18 +20,17 @@
     </div>
     <table>
     <thead>
-        <tr>
-            <th><a href="{{ url('/customerGridView?sort=id') }}">ID</a></th>
-            <th><a href="{{ url('/customerGridView?sort=lastName') }}">lastName</a></th>
-            <th><a href="{{ url('/customerGridView?sort=firstName') }}">firstName</a></th>
-            <th><a href="{{ url('/customerGridView?sort=phoneNumber') }}">phoneNumber</a></th>
-            <th><a href="{{ url('/customerGridView?sort=companyName') }}">companyName</a></th>
-            <th><a href="{{ url('/customerGridView?sort=isCompany') }}">isCompany</a></th>
-            <th><a href="{{ url('/customerGridView?sort=userID') }}">userID</a></th>
-            <th><a href="{{ url('/customerGridView?sort=startdate') }}">StartDate</a></th>
-            <th><a href="{{ url('/customerGridView?sort=enddate') }}">EndDate</a></th>
-            <th><a href="{{ url('/customerGridView?sort=type') }}">Type</a></th>
-            <th><a href="{{ url('/customerGridView?sort=price') }}">Price</a></th>
+            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=id') }}">ID</a></th>
+            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=lastName') }}">lastName</a></th>
+            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=firstName') }}">firstName</a></th>
+            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=phoneNumber') }}">phoneNumber</a></th>
+            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=companyName') }}">companyName</a></th>
+            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=isCompany') }}">isCompany</a></th>
+            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=userID') }}">userID</a></th>
+            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=startdate') }}">StartDate</a></th>
+            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=enddate') }}">EndDate</a></th>
+            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=type') }}">Type</a></th>
+            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=price') }}">Price</a></th>
             <th>Edit</th>
         </tr>
     </thead>
