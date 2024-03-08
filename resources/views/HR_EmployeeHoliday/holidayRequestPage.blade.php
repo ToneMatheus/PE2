@@ -24,7 +24,7 @@
     <header>
         
     </header>
-    <h1>calendar test</h1>
+    <h1>Calendar</h1>
 
     <div class="table-container">
         <?php
