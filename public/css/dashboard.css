@@ -33,17 +33,30 @@ nav {
 .scheduleTable {
     border: solid 1px black;
     border-collapse: collapse;
+    width: 100%;
 }
 
 .scheduleTable td, .scheduleTable th {
-    border: solid 1px black;
+    border-left: solid .5px black;
+    border-bottom: solid .5px black;
+    padding: 5px;
+    text-align: center;
 }
 
-.map {
+.scheduleTable th {
+    background-color: rgb(48, 69, 147);
+    color: white;
+}
+
+.scheduleTable tr:nth-child(odd){
+    background-color: lightgray;
+}
+
+.mapContainer {
     width: 45%;
 }
 
-gmp-map {
+.map {
     height: 500px;
     width: 100%;
 }

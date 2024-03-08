@@ -20,6 +20,7 @@
         </div>
         <div class="schedule">
             <div class="scheduleTableDiv">
+                <h3>Your addresses to visit today:</h3>
                 <table class="scheduleTable">
                     <tr>
                         <th>SN</th>
@@ -28,17 +29,27 @@
                     </tr>
                     <tr>
                         <td>1</td>
+                        <td>Lydia Peeters</td>
+                        <td>Jan Pieter de Nayerlaan 5, Sint-Katelijne-Waver</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Aryan Van der Ven</td>
+                        <td>Koning Albertplein 2, Mechelen</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
                         <td>John Doe</td>
-                        <td>Jan Pieter de Nayerlaan 5</td>
+                        <td>Nekkerspoelstraat 285, Mechelen</td>
                     </tr>
                 </table>
             </div>
-            <div class="map">
+            <div class="mapContainer">
                 <!-- <gmp-map center="48.8583984375,2.2944705486297607" zoom="14" map-id="DEMO_MAP_ID">
                 <gmp-advanced-marker position="48.8583984375,2.2944705486297607" title="My location"></gmp-advanced-marker>
                 </gmp-map> -->
-                <iframe class="map-top" width="598" height="450" src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyByBdD-HWq4mvd5hh2A_4HsIV3kBpp2HiI
-    &amp;origin=De+Bruul+45+Mechelen&amp;destination=Jan+Pieter+de+Nayerlaan+5&amp;avoid=tolls|highways" allowfullscreen=""></iframe>
+                <iframe class="map" src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyByBdD-HWq4mvd5hh2A_4HsIV3kBpp2HiI
+                &amp;origin=Koning+Albertplein+2+Mechelen&amp;destination=Jan+Pieter+de+Nayerlaan+5&amp;waypoints=Nekkerspoelstraat+285+Mechelen&amp;avoid=tolls|highways" allowfullscreen=""></iframe>
             </div>
         </div>
     </div>
