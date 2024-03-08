@@ -5,6 +5,8 @@ use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\EstimationController;
+use App\Http\Controllers\InvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,3 +65,9 @@ Route::get('/test', function () {
     return view('test');
 });
 
+//Invoice
+Route::get('/EstimationGuestForm', [EstimationController::class, 'showGuestForm'])->name('EstimationGuestForm');
+Route::post('/EstimationGuestForm', [EstimationController::class, 'ShowGuestEnergyEstimate'])->name('EstimationGuestResult');
+
+Route::get('/CreateInvoice', [InvoiceController::class, 'showButton'])->name('EstimationPage');
+Route::post('/CreateInvoice', [InvoiceController::class, 'generateOneInvoice'])->name('CalculateEstimation');
