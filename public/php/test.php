@@ -4,6 +4,18 @@ if (!isset($_SESSION['user']))
 {
     $_SESSION['user'] = array();
 }
+else if(!isset($_SESSION['green']))
+{
+    $_SESSION['green'] = array();
+}
+else if(!isset($_SESSION['purple']))
+{
+    $_SESSION['purple'] = array();
+}
+else if(!isset($_SESSION['pink']))
+{
+    $_SESSION['pink'] = array();
+}
 
 
 

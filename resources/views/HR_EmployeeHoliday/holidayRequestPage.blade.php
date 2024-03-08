@@ -29,20 +29,34 @@
     <div class="table-container">
         <table id="calendar">
             <?php
-                for ($row = 0; $row < 5; $row++) 
-                {
+                // Get the current month and year
+                $currentMonth = date('n');
+                $currentYear = date('Y');
+
+                // Get the number of days in the current month
+                $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+
+                // Calculate the day of the week of the first day of the month
+                $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
+
+                // Start the table and iterate through each day of the month
+                echo "<table>";
+                $dayCount = 1;
+                for ($row = 0; $row < 5; $row++) {
                     echo "<tr>";
-                    for ($col = 1; $col <= 7; $col++) 
-                    {
-                        $number = $row * 7 + $col;
-                        $class = isset($_SESSION['addedCells'][$number]) ? 'added' : '';
-                        
-                        echo "<td class='{$class}'>{$number}</td>";
-                        //$_SESSION['addedCells'][$number];
+                    for ($col = 1; $col <= 7; $col++) {
+                        if (($row == 0 && $col < $firstDayOfMonth) || $dayCount > $daysInMonth) {
+                            // Fill empty cells before the first day of the month and after the last day of the month
+                            echo "<td></td>";
+                        } else {
+                            $class = isset($_SESSION['addedCells'][$dayCount]) ? 'added' : '';
+                            echo "<td class='{$class}'>{$dayCount}</td>";
+                            $dayCount++;
+                        }
                     }
                     echo "</tr>";
                 }
-                //echo $_SESSION['addedCells'][1];
+                echo "</table>";
             ?>
         </table>
 
