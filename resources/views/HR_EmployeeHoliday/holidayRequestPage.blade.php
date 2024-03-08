@@ -79,17 +79,20 @@
 
         <table>
             <tr>
-                <td>
+                <td id='selection'>
+                    <p>Vacation</p>
                     <button onclick="addDate()"><div class="square"></div>
                 </td>
             </tr>
             <tr>
-                <td>
+                <td id='selection'>
+                    <p>Parental Leave</p>
                     <button onclick="addDate2()"><div class="square2"></div>
                 </td>
             </tr>
             <tr>
-                <td>
+                <td id='selection'>
+                    <p>Sick Leave</p>
                     <button onclick="addDate3()"><div class="square3"></div>
                 </td>
             </tr>

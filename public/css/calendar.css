@@ -87,7 +87,11 @@ th, td
   color: black;
 }
 
-#monthName
+#selection
 {
-  
+  padding-top: 0px;
+}
+
+p{
+  margin: 0;
 }
