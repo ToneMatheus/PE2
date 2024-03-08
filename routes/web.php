@@ -47,11 +47,19 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
 });
 
 //Meter
+Route::get('/dashboard', function () {
+    return view('Meters/employeeDashboard');
+});
 Route::get('meters', [MeterController::class,'showMeters']);
 Route::get('/consumption', function () {
     return view('Meters/consumption');
 });
-
+Route::get('/consumption1', function () {
+    return view('Meters/consumption1');
+});
+Route::get('/indexvalues', function () {
+    return view('Meters/indexvalues');
+});
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
