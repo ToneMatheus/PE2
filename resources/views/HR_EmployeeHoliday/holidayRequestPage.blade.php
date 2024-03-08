@@ -48,24 +48,30 @@
             $dayCount = 1;
             $prevMonthDayCount = $daysInPrevMonth - $firstDayOfMonth + 2;
             //echo "<tr><td> $currentMonth </td></tr>";
-            for ($row = 0; $row < 5; $row++) {
+            for ($row = 0; $row < 5; $row++) 
+            {
                 echo "<tr>";
-                for ($col = 1; $col <= 7; $col++) {
-                    if ($prevMonthDayCount <= $daysInPrevMonth) {
+                for ($col = 1; $col <= 7; $col++) 
+                {
+                    if ($prevMonthDayCount <= $daysInPrevMonth) 
+                    {
                         // Fill in days from the previous month
                         echo "<td class='prev-month'>$prevMonthDayCount</td>";
                         $prevMonthDayCount++;
-                    } elseif (($row == 0 && $col < $firstDayOfMonth) || $dayCount > $daysInMonth) {
+                    } 
+                    elseif (($row == 0 && $col < $firstDayOfMonth) || $dayCount > $daysInMonth) 
+                    {
                         // Fill empty cells before the first day of the month and after the last day of the month
-                        echo
-            "<td></td>";
-            } else {
-            $class = isset($_SESSION['addedCells'][$dayCount]) ? 'added' : '';
-            echo "<td class='{$class}'>{$dayCount}</td>";
-            $dayCount++;
-            }
-            }
-            echo "</tr>";
+                        echo "<td></td>";
+                    } 
+                    else 
+                    {
+                        $class = isset($_SESSION['addedCells'][$dayCount]) ? 'added' : '';
+                        echo "<td class='{$class}'>{$dayCount}</td>";
+                        $dayCount++;
+                    }
+                }
+                echo "</tr>";
             }
             echo "</table>";
         ?>
@@ -107,7 +113,11 @@
     
             if (selected) 
             {
-                if (selected.classList.contains('added'))
+                if(selected.classList.contains('prev-month'))
+                {
+
+                }
+                else if (selected.classList.contains('added'))
                 {
                     selected.classList.remove("added");
                     // updateSession(selected.textContent, 'remove');
@@ -138,7 +148,11 @@
     
             if (selected) 
             {
-                if (selected.classList.contains('added2'))
+                if(selected.classList.contains('prev-month'))
+                {
+
+                }
+                else if (selected.classList.contains('added2'))
                 {
                     selected.classList.remove("added2");
                     // updateSession(selected.textContent, 'remove');
@@ -166,7 +180,11 @@
     
             if (selected) 
             {
-                if (selected.classList.contains('added3'))
+                if(selected.classList.contains('prev-month'))
+                {
+
+                }
+                else if (selected.classList.contains('added3'))
                 {
                     selected.classList.remove("added3");
                     // updateSession(selected.textContent, 'remove');

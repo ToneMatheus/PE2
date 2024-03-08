@@ -84,6 +84,7 @@ th, td
 .prev-month
 {
   background-color:gray;
+  color: black;
 }
 
 #monthName
