@@ -27,38 +27,44 @@
     <h1>calendar test</h1>
 
     <div class="table-container">
-        <table id="calendar">
-            <?php
-                // Get the current month and year
-                $currentMonth = date('n');
-                $currentYear = date('Y');
+        <?php
+            // Get the current month and year
+            $currentMonth = date('n');
+            $currentYear = date('Y');
 
-                // Get the number of days in the current month
-                $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+            // Get the number of days in the current month and the previous month
+            $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+            $daysInPrevMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth - 1, $currentYear);
 
-                // Calculate the day of the week of the first day of the month
-                $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
+            // Calculate the day of the week of the first day of the month
+            $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
 
-                // Start the table and iterate through each day of the month
-                echo "<table>";
-                $dayCount = 1;
-                for ($row = 0; $row < 5; $row++) {
-                    echo "<tr>";
-                    for ($col = 1; $col <= 7; $col++) {
-                        if (($row == 0 && $col < $firstDayOfMonth) || $dayCount > $daysInMonth) {
-                            // Fill empty cells before the first day of the month and after the last day of the month
-                            echo "<td></td>";
-                        } else {
-                            $class = isset($_SESSION['addedCells'][$dayCount]) ? 'added' : '';
-                            echo "<td class='{$class}'>{$dayCount}</td>";
-                            $dayCount++;
-                        }
-                    }
-                    echo "</tr>";
-                }
-                echo "</table>";
-            ?>
-        </table>
+            // Start the table and iterate through each day of the month
+            echo "<table id='calendar'>";
+            $dayCount = 1;
+            $prevMonthDayCount = $daysInPrevMonth - $firstDayOfMonth + 2;
+            for ($row = 0; $row < 5; $row++) {
+                echo "<tr>";
+                for ($col = 1; $col <= 7; $col++) {
+                    if ($prevMonthDayCount <= $daysInPrevMonth) {
+                        // Fill in days from the previous month
+                        echo "<td class='prev-month'>$prevMonthDayCount</td>";
+                        $prevMonthDayCount++;
+                    } elseif (($row == 0 && $col < $firstDayOfMonth) || $dayCount > $daysInMonth) {
+                        // Fill empty cells before the first day of the month and after the last day of the month
+                        echo
+            "<td></td>";
+            } else {
+            $class = isset($_SESSION['addedCells'][$dayCount]) ? 'added' : '';
+            echo "<td class='{$class}'>{$dayCount}</td>";
+            $dayCount++;
+            }
+            }
+            echo "</tr>";
+            }
+            echo "</table>";
+        ?>
+        
 
         <table>
             <tr>
