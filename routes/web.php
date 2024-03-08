@@ -34,12 +34,7 @@ Route::controller(InvoiceController::class)->group(function () {
 
 Route::get("/employees", [EmployeeController::class, 'index']);
 
-Route::controller(LoginController::class)->group(function () {
-    Route::get('/login', 'index');
-    Route::post('/login', 'authenticate');
-    Route::get('/logout', 'logout');
-    
-});
+
 
 
 
@@ -73,8 +68,15 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
 });
 
 
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
+Route::controller(LoginController::class)->group(function () {
+    //show the login view
+    Route::get('/login', 'index');
+    //authenticate the loginform and attempt authentication
+    Route::post('/login', 'login');
+    //logout via laravel Auth
+    Route::get('/logout', 'logout');
+    
+});
 
 //to download the pdf of the contract and salary pages
 Route::get('/downloadPayslip', [DomPDFController::class, 'getPaySlipPDF'])->name('downloadPayslip');
