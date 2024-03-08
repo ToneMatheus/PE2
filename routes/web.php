@@ -51,6 +51,9 @@ Route::get('meters', [MeterController::class,'showMeters']);
 Route::get('/consumption', function () {
     return view('Meters/consumption');
 });
+Route::get('/dashboard', function () {
+    return view('Meters/employeeDashboard');
+});
 
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
