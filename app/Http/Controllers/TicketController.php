@@ -15,7 +15,7 @@ class TicketController extends Controller
 {
     public function showForm(): View
     {
-        return view('create-ticket');
+        return view('Ticket_Pages/create-ticket');
     }
 
     public function store(Request $request): Redirector|RedirectResponse
@@ -46,6 +46,6 @@ class TicketController extends Controller
     {
         $customerticket = session('customerticket');
 
-        return view('submitted-ticket', ['customerticket' => $customerticket]);
+        return view('Ticket_Pages/submitted-ticket', ['customerticket' => $customerticket]);
     }
 }
