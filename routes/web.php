@@ -45,9 +45,6 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
     //Route::get('/profile', [myController::class, 'profile'])->name('profile');
 });
 
-Route::get('/home', function() {
-    return view('welcome');
-});
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -61,11 +58,11 @@ Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
 Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
 Route::get('/profile', [myController::class, 'profile'])->name('profile');
+Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
+Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
+
 
 Route::get('/test', function () {
     return view('test');
 });
 
-Route::get('/holidayRequest', function () {
-    return view('holidayRequestPage');
-});

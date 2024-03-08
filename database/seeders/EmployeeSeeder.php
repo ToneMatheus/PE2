@@ -51,6 +51,7 @@ class EmployeeSeeder extends Seeder
             'salaryPerMonth' => 1200.55,
             'userID' => $userID,
             'isCustomer' => 0,
+            'notes' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
         ]);
     }
 }
