@@ -81,3 +81,12 @@ th, td
   vertical-align: top; /* Align them at the top */
   margin-right: 10px; /* Add some space between tables */
 }
+.prev-month
+{
+  background-color:gray;
+}
+
+#monthName
+{
+  
+}

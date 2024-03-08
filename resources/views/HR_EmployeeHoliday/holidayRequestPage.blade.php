@@ -39,10 +39,15 @@
             // Calculate the day of the week of the first day of the month
             $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
 
+            $monthsName = array("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC");
+            $numMonth = $currentMonth - 1;
+            echo "<h1 id='monthName'> $monthsName[$numMonth] </h1>";
+
             // Start the table and iterate through each day of the month
             echo "<table id='calendar'>";
             $dayCount = 1;
             $prevMonthDayCount = $daysInPrevMonth - $firstDayOfMonth + 2;
+            //echo "<tr><td> $currentMonth </td></tr>";
             for ($row = 0; $row < 5; $row++) {
                 echo "<tr>";
                 for ($col = 1; $col <= 7; $col++) {
