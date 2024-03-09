@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('water_with_power')->default(0);
             $table->unsignedTinyInteger('cook_with_power')->default(0);
             $table->smallInteger('nbr_air_con')->unsigned();
-            $table->smallInteger('nbr_ridges')->unsigned();
+            $table->smallInteger('nbr_fridges')->unsigned();
             $table->smallInteger('nbr_washers')->unsigned();
             $table->smallInteger('nbr_computers')->unsigned();
             $table->smallInteger('nbr_entertainment')->unsigned();
