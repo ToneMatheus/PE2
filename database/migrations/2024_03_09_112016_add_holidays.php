@@ -10,16 +10,16 @@ return new class extends Migration
     public function up()
     {
         Schema::create('holidays', function (Blueprint $table) {
-            $table->bigIncrements('ID');
-            $table->bigInteger('employeeID')->unsigned();
-            $table->date('startDate')->nullable();
-            $table->date('endDate')->nullable();
-            $table->bigInteger('holidayTypeID')->unsigned();
+            $table->bigIncrements('id');
+            $table->bigInteger('employee_profile_id')->unsigned();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->bigInteger('holiday_type_id')->unsigned();
             $table->string('reason', 100)->nullable();
             $table->string('fileLocation', 50)->nullable();
-            $table->unsignedTinyInteger('managerApproval')->nullable();
-            $table->unsignedTinyInteger('bossApproval')->nullable();
-            $table->unsignedTinyInteger('active')->default(0);
+            $table->unsignedTinyInteger('manager_approval')->nullable();
+            $table->unsignedTinyInteger('boss_approval')->nullable();
+            $table->unsignedTinyInteger('is_active')->default(0);
         });
     }
 

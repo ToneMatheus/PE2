@@ -4,23 +4,22 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-//employeeContract
+//meters
 return new class extends Migration
 {
     public function up()
     {
-        Schema::create('employeeContract', function (Blueprint $table) {
-            $table->bigIncrements('ID');
-            $table->bigInteger('employeeID')->unsigned();
-            $table->date('startDate')->nullable();
-            $table->date('endDate')->nullable();
+        Schema::create('meters', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('EAN', 20)->nullable();
             $table->string('type', 50)->nullable();
+            $table->date('installation_date')->nullable();
             $table->string('status', 50)->nullable();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('employeeContract');
+        Schema::dropIfExists('meters');
     }
 };

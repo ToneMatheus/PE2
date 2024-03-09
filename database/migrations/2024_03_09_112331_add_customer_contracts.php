@@ -4,16 +4,16 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-//customercontract
+//customer_contracts
 return new class extends Migration
 {
     public function up()
     {
-        Schema::create('customerContract', function (Blueprint $table) {
-            $table->bigIncrements('ID');
-            $table->bigInteger('customerID')->unsigned();
-            $table->date('startDate')->nullable();
-            $table->date('endDate')->nullable();
+        Schema::create('customer_contracts', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->bigInteger('user_id')->unsigned();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->string('type', 50)->nullable();
             $table->float('price', 10, 2)->nullable();
             $table->string('status', 50)->nullable();
@@ -22,6 +22,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('customerContract');
+        Schema::dropIfExists('customer_contracts');
     }
 };
