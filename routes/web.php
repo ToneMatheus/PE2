@@ -36,6 +36,9 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
 
         Route::get('/contractProduct/{cpID}', [EmployeeController::class, 'showContractProduct'])->name('contractProduct');
         Route::post('/contractProduct/{cpID}/{ccID}/{pID}', [EmployeeController::class, 'addDiscount'])->name('cp.discount');
+        Route::post('/contractProduct/{cpID}', [EmployeeController::class, 'editContractProduct'])->name('cp.edit');
+
+        Route::get('/products/{type}', [EmployeeController::class, 'getProductsByType']);
 
         //invoice query routes
         Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");

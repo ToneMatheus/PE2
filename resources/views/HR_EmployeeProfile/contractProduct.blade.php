@@ -4,51 +4,80 @@
         <title>Customer Contract</title>
         <meta charset="utf-8"/>
         <link href="/css/contractProduct.css" rel="stylesheet"/>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
+            $(document).ready(function() {
+                function fetchProductsByType(type){
+                    $.ajax({
+                        url: '/products/' + type,
+                        type: 'GET',
+                        success: function(data){
+                            $('#productSelect').empty();
+                            $.each(data, function(index, product){
+                                $('#productSelect').append($('<option>', {
+                                    value: product.ID,
+                                    text: product.productName
+                                }));
+                            });
+                        }
+                    });
+                }
+
+                $('#typeSelect').change(function() {
+                    var selectedType = $(this).val();
+                    fetchProductsByType(selectedType);
+                });
+
+                fetchProductsByType($('#typeSelect').val());
+            });
+
             function addDiscount(toggle){
-                switch(toggle){
-                    case 0:
-                        document.getElementById('addDiscount').style.display = 'none';
-                        document.getElementById('bttns').style.display = 'block';
-                        break;
-                    case 1:
-                        document.getElementById('addDiscount').style.display = 'block';
-                        document.getElementById('bttns').style.display = 'none';
-                        break;
+                    switch(toggle){
+                        case 0:
+                            document.getElementById('addDiscount').style.display = 'none';
+                            document.getElementById('bttns').style.display = 'block';
+                            break;
+                        case 1:
+                            document.getElementById('addDiscount').style.display = 'block';
+                            document.getElementById('bttns').style.display = 'none';
+                            break;
+                    }
                 }
-            }
 
-            function calculateDiscount(currentRate){
-                var val;
-                var input = document.getElementById('percentage').value;
-                var calculatedRate = document.getElementById('calculatedRate');
-                var output = document.getElementById('newRate');
+                function calculateDiscount(currentRate){
+                    var val;
+                    var input = document.getElementById('percentage').value;
+                    var calculatedRate = document.getElementById('calculatedRate');
+                    var output = document.getElementById('newRate');
 
-                input /= 100;
-                val = currentRate * input;
-                val = currentRate - val;
+                    input /= 100;
+                    val = currentRate * input;
+                    val = currentRate - val;
 
-                calculatedRate.innerHTML = '€' + val.toFixed(2) + ' Kw/h';
-                output.value = val;
-                
-            }
-
-            function showEdit(toggle){
-                switch(toggle){
-                    case 0:
-                        break;
-                    case 1:
-                        document.getElementById('product').style.display = 'none';
-                        break;
+                    calculatedRate.innerHTML = '€' + val.toFixed(2) + ' Kw/h';
+                    output.value = val;
+                    
                 }
-            }
+
+                function showEdit(toggle){
+                    switch(toggle){
+                        case 0:
+                            document.getElementById('product').style.display = 'block';
+                            document.getElementById('editProduct').style.display = 'none';
+                            break;
+                        case 1:
+                            document.getElementById('product').style.display = 'none';
+                            document.getElementById('editProduct').style.display = 'block';
+                            break;
+                    }
+                }
         </script>
     </head>
     <body>
         <h1>Contract Details</h1>
         <div>
             <h2>{{ $contractProduct->firstName }} {{ $contractProduct->lastName }}</h2>
-            <p>Customer ID: {{$contractProduct->customerID}}</p>
+            <p>Customer ID: {{$contractProduct->cID}}</p>
             <p>Phone number: {{$contractProduct->phoneNumber}}</p>
 
             @if (isset($contractProduct->companyName))
@@ -58,11 +87,26 @@
 
         <div>
             <h2>Contract:</h2>
-            <p>Start Date: {{$contractProduct->startDate}}</p>
+            <p>Start Date: {{$contractProduct->cpStartDate}}</p>
 
             <p id="product">Product: {{$contractProduct->productName}} {{$productTariff->type}}
                 <img src="{{asset('./images/editIcon.png')}}" alt="edit Icon" id="editIcon" onclick="showEdit(1)"/>
             </p>
+
+            <form id="editProduct" method="post" action="{{ route('cp.edit', ['cpID' => $contractProduct->cpID]) }}">
+                @csrf
+                <label for="product">Product:</label>
+                <select name="product" id="productSelect">
+
+                </select>
+                <select name="type" id="typeSelect">
+                    @foreach ($types as $type)
+                        <option value="{{$type->type}}">{{$type->type}}</option>
+                    @endforeach
+                </select>
+                <input type="submit" name="submitProduct"/>
+                <button type="button" onclick="showEdit(0)">Cancel</button>
+            </form>
 
             <p>Tariff: </p>
 
@@ -95,7 +139,7 @@
             @endif
         </div>
 
-        <form id="addDiscount" method="post" action="{{ route('cp.discount', ['cpID' => $contractProduct->ID, 'ccID' => $contractProduct->customerContractID, 'pID' => $contractProduct->productID]) }}">
+        <form id="addDiscount" method="post" action="{{ route('cp.discount', ['cpID' => $contractProduct->cpID, 'ccID' => $contractProduct->ccID, 'pID' => $contractProduct->pID]) }}">
             @csrf
             <label for="percentage">Percentage: </label>
             <input id="percentage" name="percentage" type="number"  onkeyup="calculateDiscount(<?php echo $productTariff->rate; ?>)" required/>

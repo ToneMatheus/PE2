@@ -10,3 +10,7 @@
 #editIcon:hover {
     cursor: pointer;
 }
+
+#editProduct {
+    display: none;
+}
