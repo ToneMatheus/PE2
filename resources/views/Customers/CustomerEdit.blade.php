@@ -41,7 +41,7 @@
 <body>
     <h1>Edit Customer</h1>
 
-    <form class="edit-form" action="{{ url("/customer/{$customer->userID}") }}" method="POST">
+    <form class="edit-form" action="{{ url("/customer/{$customer->userID}") }}" method="POST" onsubmit="return confirm('Are you sure you want to update this customer?');">
         @csrf
         @method('PUT')
 
@@ -56,6 +56,16 @@
 
         <label for="companyName">Company Name:</label>
         <input type="text" id="companyName" name="companyName" value="{{ $customer->companyName }}" required>
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <button type="submit">Update</button>
         <button type="button" onclick="window.location='{{ url("/customerGridView") }}'">Back</button>

@@ -40,6 +40,13 @@ class CustomerGridViewController extends Controller
 
     public function update(Request $request, $userID)
     {
+        $validatedData = $request->validate([
+            'lastName' => 'required|max:255',
+            'firstName' => 'required|max:255',
+            'phoneNumber' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
+            'companyName' => 'required|max:255',
+        ]);
+
         DB::table('customer')
         ->where('userID', $userID)
         ->update($request->only('lastName', 'firstName', 'phoneNumber', 'companyName'));
