@@ -75,8 +75,8 @@ return new class extends Migration
         });
 
         Schema::table('consumptions', function (Blueprint $table) {
-            $table->foreign('prev_index_id')->references('id')->on('consumptions');
-            $table->foreign('current_index_id')->references('id')->on('consumptions');
+            $table->foreign('prev_index_id')->references('id')->on('index_values');
+            $table->foreign('current_index_id')->references('id')->on('index_values');
         });
 
         Schema::table('invoice_lines', function (Blueprint $table) {
