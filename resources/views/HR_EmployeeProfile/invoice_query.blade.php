@@ -10,11 +10,11 @@
         <h1>Invoice query</h1>
 
         <div class="floatingtable">
-            <h2>all records from customerContract</h2>
+            <h2>all records from customer_contracts</h2>
         <table>
             <tr>
                <th>ID</th>
-               <th>customerID</th>
+               <th>userID</th>
                <th>startDate</th>
                <th>endDate</th>
                <th>type</th>
@@ -23,10 +23,10 @@
             </tr>
             @foreach ($resultsAll as $result)
             <tr>
-               <td><b>{{ $result->ID }}</b></td>
-               <td>{{ $result->customerID }}</td>
-               <td>{{ $result->startDate }}</td>
-               <td>{{ $result->endDate }}</td>
+               <td><b>{{ $result->id }}</b></td>
+               <td>{{ $result->user_id }}</td>
+               <td>{{ $result->start_date }}</td>
+               <td>{{ $result->end_date }}</td>
                <td>{{ $result->type }}</td>
                <td>{{ $result->price }}</td>
                <td>{{ $result->status }}</td>
@@ -40,7 +40,7 @@
             <table>
                 <tr>
                     <th>contractID</th>
-                    <th>customerID</th>
+                    <th>userID</th>
                     <th>startDate</th>
                     <th>endDate</th>
                     <th>type</th>
@@ -52,9 +52,9 @@
                 @foreach ($results1 as $result)
                 <tr>
                    <td><b>{{ $result->cont_ID }}</b></td>
-                   <td>{{ $result->customerID }}</td>
-                   <td>{{ $result->startDate }}</td>
-                   <td>{{ $result->endDate }}</td>
+                   <td>{{ $result->user_id }}</td>
+                   <td>{{ $result->start_date }}</td>
+                   <td>{{ $result->end_date }}</td>
                    <td>{{ $result->type }}</td>
                    <td>{{ $result->price }}</td>
                    <td>{{ $result->cont_status }}</td>

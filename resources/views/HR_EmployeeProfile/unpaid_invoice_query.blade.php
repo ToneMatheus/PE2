@@ -10,7 +10,7 @@
         <h1>Unpaid invoice query</h1>
 
         <div class="floatingtable">
-            <h2>all records from invoice</h2>
+            <h2>all records from invoices</h2>
         <table>
             <tr>
                <th>invoice ID</th>
@@ -21,10 +21,10 @@
             </tr>
             @foreach ($resultsAll as $result)
             <tr>
-               <td><b>{{ $result->ID }}</b></td>
-               <td>{{ $result->invoiceDate }}</td>
-               <td>{{ $result->dueDate }}</td>
-               <td>{{ $result->totalAmount }}</td>
+               <td><b>{{ $result->id }}</b></td>
+               <td>{{ $result->invoice_date }}</td>
+               <td>{{ $result->due_date }}</td>
+               <td>{{ $result->total_amount }}</td>
                <td>{{ $result->status }}</td>
             </tr>
             @endforeach
@@ -43,10 +43,10 @@
                 </tr>
                 @foreach ($results1 as $result)
                 <tr>
-                   <td><b>{{ $result->ID }}</b></td>
-                   <td>{{ $result->invoiceDate }}</td>
-                   <td>{{ $result->dueDate }}</td>
-                   <td>{{ $result->totalAmount }}</td>
+                   <td><b>{{ $result->id }}</b></td>
+                   <td>{{ $result->invoice_date }}</td>
+                   <td>{{ $result->due_date }}</td>
+                   <td>{{ $result->total_amount }}</td>
                    <td>{{ $result->status }}</td>
                 </tr>
                 @endforeach
