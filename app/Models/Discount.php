@@ -11,7 +11,9 @@ class Discount extends Model
         'contract_product_id',
         'range_min',
         'range_max',
-        'rate'
+        'rate',
+        'start_date',
+        'end_date'
     ];
 
     use HasFactory;
