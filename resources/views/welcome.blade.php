@@ -37,10 +37,10 @@
     </ul>
 
     <div id="slideshow">
-        <div><img src="{{ asset('img/texture2.jpg') }}" alt="" class="slideImage"></div>
-        <div><img src="{{ asset('img/texture4.jpg') }}" alt="" class="slideImage"></div>
-        <div><img src="{{ asset('img/texture3.jpg') }}" alt="" class="slideImage"></div>
-        <div><img src="{{ asset('img/texture1.jpg') }}" alt="" class="slideImage"></div>
+        <div><img src="{{ asset('images/texture2.jpg') }}" alt="" class="slideImage"></div>
+        <div><img src="{{ asset('images/texture4.jpg') }}" alt="" class="slideImage"></div>
+        <div><img src="{{ asset('images/texture3.jpg') }}" alt="" class="slideImage"></div>
+        <div><img src="{{ asset('images/texture1.jpg') }}" alt="" class="slideImage"></div>
     </div>
 
     <?php
