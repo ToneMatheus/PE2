@@ -2,45 +2,48 @@
 @php
   $userID = 1;//this is to be changed by the real id!
 
-  $users = DB::select("select * from employee where ID = $userID");//selecting employee information
+  $users = DB::select("select * from users where id = $userID");//selecting employee information
 
   if (!empty($users)) {
       foreach ($users as $user) {
-          $lastName = htmlspecialchars($user->lastName);
-          $firstName = htmlspecialchars($user->firstName);
-          $job = htmlspecialchars($user->job);
-          $addressID = htmlspecialchars($user->addressID);
+          $lastName = htmlspecialchars($user->last_name);
+          $firstName = htmlspecialchars($user->first_name);
+          $email = htmlspecialchars($user->email);
+          $phone = htmlspecialchars($user->phone_nbr);
+          $addressID = htmlspecialchars($user->address_id);
+          $employeeProfileID = htmlspecialchars($user->employee_profile_id);
         
           //fetching user address from the db
-          $address = DB::select("select * from address where ID = $addressID");
+          $address = DB::select("select * from addresses where id = $addressID");
           foreach ($address as $add){
             $street = htmlspecialchars($add->street);
             $num = htmlspecialchars($add->number);
-            $pC = htmlspecialchars($add->postalCode);
-            $bus = htmlspecialchars($add->bus);
+            $pC = htmlspecialchars($add->postal_code);
+            $box = htmlspecialchars($add->box);
             $city = htmlspecialchars($add->city);
-            $region = htmlspecialchars($add->region);
+            $province = htmlspecialchars($add->province);
 
-            $userAddress = "" . $street . " " . $num . ", " . $pC . " " . $city . ". " . $region . ".";//joining the address into one long address
+            $userAddress = "" . $street . " " . $num . " " . $box . ", " . $pC . " " . $city . ". " . $province . ".";//joining the address into one long address
           }
 
-          $nationality = htmlspecialchars($user->nationality);
-          $sex = htmlspecialchars($user->sex);
-          $email = htmlspecialchars($user->email);
-          $phone = htmlspecialchars($user->phoneNumber);
-          $notes = htmlspecialchars($user->notes);
+          $empDetails = DB::select("select * from employee_profiles where id = $employeeProfileID");
+          foreach ($empDetails as $detail){
+            $nationality = htmlspecialchars($detail->nationality);
+            $sex = htmlspecialchars($detail->sex);
+            $notes = htmlspecialchars($detail->notes);
+            $job = htmlspecialchars($detail->job);
+            $dept = htmlspecialchars($detail->department);
+          }
       }
   } 
 
-  $payslipInfo = DB::select("select * from payslips where employeeID = $userID");//fetching payslip plus contract information
+  $contract = DB::select("select * from employee_contracts where employee_profile_id = $employeeProfileID");//fetching payslip plus contract information
 
-  if(!empty($payslipInfo)){
-    foreach($payslipInfo as $info){
-      $start = htmlspecialchars($info->startDate);
-      $end = htmlspecialchars($info->endDate);
-      $issued = htmlspecialchars($info->creationDate);
-    }
+  foreach($contract as $info){
+    $start = htmlspecialchars($info->start_date);
+    $end = htmlspecialchars($info->end_date);
   }
+
 
 @endphp
 
@@ -61,7 +64,7 @@
         <div class="profile-card">
           <img src="/images/profile.jpg" alt="profile" class="profile-image"/>
           <p class="name">@php echo ("" . $firstName . " " . $lastName); @endphp</p>
-          <p>@php echo $job; @endphp</p>
+          <p>@php echo ($job . "\n" . $dept); @endphp</p>
         </div>
 
         <div class="details">
@@ -92,12 +95,12 @@
             </div>
           </a>
   
+          <!--Not first checking if the the contract table is empty because there shouldn't be an employee in the company that doesn't have a contract-->
           <a href="{{route('contract')}}">
             <div class="contract">
               <h5 style="margin-bottom: 20px"><u>My contract</u></h5>
               <p><b>From:</b> Energy company</p>
               <p><b>To: </b>@php echo ("" . $firstName . " " . $lastName); @endphp</p>
-              <p><b>On the: </b><i>@php echo ("". $issued . ""); @endphp</i></p>
               <p><b>Start date: </b><i>@php echo ("". $start . ""); @endphp</i></p>
               <p><b>End date: </b><i>@php echo ("". $end . ""); @endphp</i></p>
             </div>
