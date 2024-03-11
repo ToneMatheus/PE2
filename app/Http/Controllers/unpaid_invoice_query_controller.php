@@ -9,11 +9,11 @@ class unpaid_invoice_query_controller extends Controller
 {
     public function unpaidInvoices()
     {
-        $resultsAll = DB::table('invoice')->get();
+        $resultsAll = DB::table('invoices')->get();
 
-        $results1 = DB::select('SELECT * FROM invoice i
+        $results1 = DB::select('SELECT * FROM invoices i
                 WHERE (i.status NOT LIKE \'paid\' AND i.status NOT LIKE \'draft\')
-                AND i.dueDate < CURRENT_DATE();');
+                AND i.due_date < CURRENT_DATE();');
 
         return view("unpaid_invoice_query",['resultsAll'=>$resultsAll, 'results1'=>$results1]);
     }
