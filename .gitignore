@@ -18,6 +18,5 @@ yarn-error.log
 /.idea
 /.vscode
 composer.lock
+composer.json
 .DS_Store
-.env.example
-.env.example
