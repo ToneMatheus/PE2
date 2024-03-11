@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
+use function PHPSTORM_META\map;
+
 class EmployeeController extends Controller
 {
     public function showTariff(){
@@ -111,6 +113,8 @@ class EmployeeController extends Controller
     }
 
     public function showContractProduct($cpID){
+        $date = Carbon::now()->toDateString();
+        
         $contractProduct = DB::table('contract_products as cp')
         ->select('cp.id as cpID', 'cp.start_date as cpStartDate', 'p.product_name as productName',
         'p.id as pID', 't.id as tID', 'cc.id as ccID','u.*', 'u.id as uID')
@@ -138,35 +142,27 @@ class EmployeeController extends Controller
         ->where('p.id', '=', $contractProduct->pID)
         ->first();
 
-        if(!is_null($contractProduct->tID)){
-            $discount = DB::table('tariffs')
-            ->where('id', '=', $contractProduct->tID)
-            ->first();
+        $discount = DB::table('discounts')
+        ->where('contract_product_id', '=', $contractProduct->cpID)
+        ->whereDate('end_date', '>', $date)
+        ->first();
 
-            return view('contractProduct', ['contractProduct' => $contractProduct, 'productTariff' => $productTariff, 'types' => $types,  'discount' => $discount]);
-        }
+        return view('contractProduct', ['contractProduct' => $contractProduct, 'productTariff' => $productTariff, 'types' => $types,  'discount' => $discount]);
 
-        return view('contractProduct', ['contractProduct' => $contractProduct, 'productTariff' => $productTariff, 'types' => $types,]);
+        //return view('contractProduct', ['contractProduct' => $contractProduct, 'productTariff' => $productTariff, 'types' => $types,]);
     }
 
-    public function addDiscount(Request $request, $cpID, $ccID, $pID){
+    public function addDiscount(Request $request, $cpID){
         $date = Carbon::now()->toDateString();
 
-        DB::update('UPDATE contract_products SET end_date = ? WHERE id = ?', [$date, $cpID]);
-
-        $tariffID = DB::table('tariffs')->insertGetId([
-            'type' => 'Discount',
-            'rate' => $request->input('newRate')
+        $tariffID = DB::table('discounts')->insertGetId([
+            'contract_product_id' => $cpID,
+            'rate' => $request->input('newRate'),
+            'start_date' => $request->input('startDate'),
+            'end_date' => $request->input('endDate')
         ]);
 
-        $newCpID = DB::table('contract_products')->insertGetId([
-            'product_id' => $pID,
-            'tariff_id' => $tariffID,
-            'customer_contract_id' => $ccID,
-            'start_date' => $date
-        ]);
-
-        return redirect()->route('contractProduct', ['cpID' => $newCpID]);
+        return redirect()->route('contractProduct', ['cpID' => $cpID]);
     }
 
     public function editContractProduct(Request $request, $oldCpID){
@@ -176,13 +172,22 @@ class EmployeeController extends Controller
         ->where('id', '=', $oldCpID)
         ->first();
 
-        DB::update('UPDATE contract_products SET end_date = ? WHERE id = ?', [$date, $oldCpID]);
+        DB::update('UPDATE contract_products SET end_date = ? WHERE id = ?', [$date, $oldCP->id]);
 
         $newCpID = DB::table('contract_products')->insertGetId([
-            'customer_contract_id' => $oldCP->customerContractID,
+            'customer_contract_id' => $oldCP->customer_contract_id,
             'product_id' => $request->input('product'),
-            'start_date' => $date
+            'tariff_id' => null,
+            'start_date' => $date,
+            'end_date' => null
         ]);
+
+        $discount = DB::table('discounts')
+        ->where('contract_product_id', '=', $oldCP->id)
+        ->whereDate('end_date', '>', $date)
+        ->first();
+
+        DB::update('UPDATE discounts SET end_date = ? WHERE id = ?', [$date, $discount->id]);
 
         return redirect()->route('contractProduct', ['cpID' => $newCpID]);
     }

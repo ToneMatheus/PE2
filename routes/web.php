@@ -53,7 +53,7 @@ Route::post('/tariff', [EmployeeController::class, 'processTariff']);
 Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
 
 Route::get('/contractProduct/{cpID}', [EmployeeController::class, 'showContractProduct'])->name('contractProduct');
-Route::post('/contractProduct/{cpID}/{ccID}/{pID}', [EmployeeController::class, 'addDiscount'])->name('cp.discount');
+Route::post('/contractProduct/discount/{cpID}', [EmployeeController::class, 'addDiscount'])->name('cp.discount');
 Route::post('/contractProduct/{cpID}', [EmployeeController::class, 'editContractProduct'])->name('cp.edit');
 
 Route::get('/products/{type}', [EmployeeController::class, 'getProductsByType']);

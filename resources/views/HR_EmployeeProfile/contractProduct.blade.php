@@ -139,11 +139,25 @@
             @endif
         </div>
 
-        <form id="addDiscount" method="post" action="{{ route('cp.discount', ['cpID' => $contractProduct->cpID, 'ccID' => $contractProduct->ccID, 'pID' => $contractProduct->pID]) }}">
+        <form id="addDiscount" method="post" action="{{ route('cp.discount', ['cpID' => $contractProduct->cpID]) }}">
             @csrf
             <label for="percentage">Percentage: </label>
             <input id="percentage" name="percentage" type="number"  onkeyup="calculateDiscount(<?php echo $productTariff->rate; ?>)" required/>
 
+            @php
+                $currentDateTime = new DateTime('now');
+                $currentDate = $currentDateTime->format('Y-m-d');
+
+                $maxDateTime = $currentDateTime->modify('+3 month');
+                $maxDate = $maxDateTime->format('Y-m-d');
+            @endphp
+
+            <label for="startDate">Start Date: </label>
+            <input id="startDate" name="startDate" type="date" min="{{$currentDate}}" max="{{$maxDate}}" data-date-format="YYYY MMMM DD" value="{{$currentDate}}" required/>
+
+            <label for="endDate">End Date: </label>
+            <input id="endDate" name="endDate" type="date" min="{{$currentDate}}" max="{{$maxDate}}" required/>
+                
             <p id="calculatedRate"></p>
             <input type="hidden" id="newRate" name="newRate"/>
 
