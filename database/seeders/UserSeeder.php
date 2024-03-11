@@ -18,10 +18,12 @@ class UserSeeder extends Seeder
         }
 
         function generateDate(){
-            $minBirthdate = Carbon::now()->subYears(17)->endOfDay();
+            $minBirthdate = Carbon::now()->subYears(18)->endOfDay();
             $maxBirthdate = Carbon::now()->endOfDay();
 
             $birthDate = Carbon::createFromTimestamp(rand($minBirthdate->timestamp, $maxBirthdate->timestamp));
+
+            $birthDate = $birthDate->subYears(18);
 
             return $birthDate->toDateString();
         }
