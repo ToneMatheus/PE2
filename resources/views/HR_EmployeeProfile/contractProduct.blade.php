@@ -15,8 +15,8 @@
                             $('#productSelect').empty();
                             $.each(data, function(index, product){
                                 $('#productSelect').append($('<option>', {
-                                    value: product.ID,
-                                    text: product.productName
+                                    value: product.id,
+                                    text: product.product_name
                                 }));
                             });
                         }
@@ -76,12 +76,12 @@
     <body>
         <h1>Contract Details</h1>
         <div>
-            <h2>{{ $contractProduct->firstName }} {{ $contractProduct->lastName }}</h2>
-            <p>Customer ID: {{$contractProduct->cID}}</p>
-            <p>Phone number: {{$contractProduct->phoneNumber}}</p>
+            <h2>{{ $contractProduct->first_name }} {{ $contractProduct->last_name }}</h2>
+            <p>Customer ID: {{$contractProduct->uID}}</p>
+            <p>Phone number: {{$contractProduct->phone_nbr}}</p>
 
-            @if (isset($contractProduct->companyName))
-                <p>Company: {{$contractProduct->companyName}}</p>
+            @if (isset($contractProduct->company_name))
+                <p>Company: {{$contractProduct->company_name}}</p>
             @endif
         </div>
 
@@ -111,8 +111,8 @@
             <p>Tariff: </p>
 
             <ul>
-                <li>RangeMin: {{$productTariff->rangeMin}} Kw/h</li>
-                <li>RangeMax: {{$productTariff->rangeMax}} Kw/h</li>
+                <li>RangeMin: {{$productTariff->range_min}} Kw/h</li>
+                <li>RangeMax: {{$productTariff->range_max}} Kw/h</li>
                 <li>Rate: €{{$productTariff->rate}} Kw/h</li>
             </ul>
         </div>

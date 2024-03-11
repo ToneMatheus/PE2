@@ -29,20 +29,7 @@ Route::middleware(['auth', 'role:Customer'])->group(function (){
 Route::middleware(['auth', 'notrole:Customer'])->group(function (){
     //Only Finance
     Route::middleware(['auth', 'role:Finance analyst'])->group(function () {
-        Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
-        Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff']);
-        Route::post('/tariff', [EmployeeController::class, 'processTariff']);
-        Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
 
-        Route::get('/contractProduct/{cpID}', [EmployeeController::class, 'showContractProduct'])->name('contractProduct');
-        Route::post('/contractProduct/{cpID}/{ccID}/{pID}', [EmployeeController::class, 'addDiscount'])->name('cp.discount');
-        Route::post('/contractProduct/{cpID}', [EmployeeController::class, 'editContractProduct'])->name('cp.edit');
-
-        Route::get('/products/{type}', [EmployeeController::class, 'getProductsByType']);
-
-        //invoice query routes
-        Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
-        Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
     });
     
     //Only Manager
@@ -60,6 +47,20 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
     //Route::get('/profile', [myController::class, 'profile'])->name('profile');
 });
 
+Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
+Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff']);
+Route::post('/tariff', [EmployeeController::class, 'processTariff']);
+Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
+
+Route::get('/contractProduct/{cpID}', [EmployeeController::class, 'showContractProduct'])->name('contractProduct');
+Route::post('/contractProduct/{cpID}/{ccID}/{pID}', [EmployeeController::class, 'addDiscount'])->name('cp.discount');
+Route::post('/contractProduct/{cpID}', [EmployeeController::class, 'editContractProduct'])->name('cp.edit');
+
+Route::get('/products/{type}', [EmployeeController::class, 'getProductsByType']);
+
+//invoice query routes
+Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
+Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);

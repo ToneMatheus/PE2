@@ -10,29 +10,29 @@ use Carbon\Carbon;
 class EmployeeController extends Controller
 {
     public function showTariff(){
-        $productTariffs = DB::table('tariff as t')
-        ->join('productTariff as pt', 't.ID', '=', 'pt.tariffID')
-        ->join('product as p', 'p.ID', '=', 'pt.productID')
-        ->whereNull('pt.endDate')
+        $productTariffs = DB::table('tariffs as t')
+        ->join('product_tariffs as pt', 't.ID', '=', 'pt.tariff_id')
+        ->join('products as p', 'p.ID', '=', 'pt.product_id')
+        ->whereNull('pt.end_date')
         ->get();
 
-        $contractProducts = DB::table('contractProduct as cp')
-        ->join('customerContract as cc', 'cc.ID', '=', 'cp.customerContractID')
-        ->join('customer as c', 'c.ID', '=', 'cc.customerID')
-        ->join('product as p', 'p.ID', '=', 'cp.productID')
-        ->leftJoin('tariff as t', 't.ID', '=', 'cp.tariffID')
-        ->whereNull('cp.endDate')
+        $contractProducts = DB::table('contract_products as cp')
+        ->join('customer_contracts as cc', 'cc.id', '=', 'cp.customer_contract_id')
+        ->join('users as u', 'u.id', '=', 'cc.user_id')
+        ->join('products as p', 'p.id', '=', 'cp.product_id')
+        ->leftJoin('tariffs as t', 't.id', '=', 'cp.tariff_id')
+        ->whereNull('cp.end_date')
         ->select(DB::raw("
-            cp.ID,
-            cp.customerContractID,
-            CONCAT(c.firstName, ' ', c.lastName) as name,
-            p.productName,
+            cp.id,
+            cp.customer_contract_id,
+            CONCAT(u.first_name, ' ', u.last_name) as name,
+            p.product_name,
             CASE
-                WHEN cp.tariffID IS NULL THEN p.type
+                WHEN cp.tariff_id IS NULL THEN p.type
                 ELSE t.type
             END AS type,
             CASE
-                WHEN cp.tariffID IS NULL THEN NULL
+                WHEN cp.tariff_id IS NULL THEN NULL
                 ELSE t.rate
             END AS rate
         "))
@@ -49,23 +49,23 @@ class EmployeeController extends Controller
                 $rangeMax = null;
             }
 
-            $tariffID = DB::table('tariff')->insertGetId([
+            $tariffID = DB::table('tariffs')->insertGetId([
                 'type' => $request->input('type'),
-                'rangeMin' => $request->input('rangeMin'),
-                'rangeMax' => $rangeMax,
+                'range_min' => $request->input('rangeMin'),
+                'range_max' => $rangeMax,
                 'rate' => $request->input('rate'),
             ]);
 
-            $productID = DB::table('product')->insertGetId([
-                'productName' => $request->input('name'),
-                'startDate' => Carbon::now()->toDateString(),
+            $productID = DB::table('products')->insertGetId([
+                'product_mame' => $request->input('name'),
+                'start_date' => Carbon::now()->toDateString(),
                 'type' => $request->input('type'),
             ]);
 
-            DB::table('productTariff')->insert([
-                'startDate' => Carbon::now()->toDateString(),
-                'productID' => $productID,
-                'tariffID' => $tariffID
+            DB::table('product_tariffs')->insert([
+                'start_date' => Carbon::now()->toDateString(),
+                'product_id' => $productID,
+                'tariff_id' => $tariffID
             ]);
         }
 
@@ -75,8 +75,8 @@ class EmployeeController extends Controller
     public function inactivateTariff($pID, $tID){
         $date = Carbon::now()->toDateString();
 
-        DB::update('UPDATE product SET endDate = ? WHERE ID = ? ', [$date, $pID]);
-        DB::update('UPDATE productTariff SET endDate = ? WHERE productID = ? AND tariffID = ?', [$date, $pID, $tID]);
+        DB::update('UPDATE products SET end_date = ? WHERE id = ? ', [$date, $pID]);
+        DB::update('UPDATE product_tariffs SET end_date = ? WHERE product_id = ? AND tariff_id = ?', [$date, $pID, $tID]);
         return redirect()->route('tariff');
     }
 
@@ -91,19 +91,19 @@ class EmployeeController extends Controller
             $rate = $request->input('rate');
 
             if ($rangeMin !== $tariff->rangeMin || $rangeMax !== $tariff->rangeMax || $rate !== $tariff->rate ){
-                $newtID = DB::table('tariff')->insertGetId([
+                $newtID = DB::table('tariffs')->insertGetId([
                     'type' => $tariff->type,
-                    'rangeMin' => $rangeMin,
-                    'rangeMax' => $rangeMax,
+                    'range_min' => $rangeMin,
+                    'range_max' => $rangeMax,
                     'rate' => $rate
                 ]);
 
                 $date = Carbon::now()->toDateString();
-                DB::update('UPDATE productTariff SET endDate = ? WHERE productID = ? AND tariffID = ?', [$date, $pID, $tID]);
-                DB::table('productTariff')->insert([
-                    'startDate' => $date,
-                    'productID' => $pID,
-                    'tariffID' => $newtID
+                DB::update('UPDATE product_tariffs SET end_date = ? WHERE product_id = ? AND tariff_id = ?', [$date, $pID, $tID]);
+                DB::table('product_tariffs')->insert([
+                    'start_date' => $date,
+                    'product_id' => $pID,
+                    'tariff_id' => $newtID
                 ]);
             }
             return redirect()->route('tariff');
@@ -111,36 +111,36 @@ class EmployeeController extends Controller
     }
 
     public function showContractProduct($cpID){
-        $contractProduct = DB::table('contractProduct as cp')
-        ->select('cp.ID as cpID', 'cp.startDate as cpStartDate', 'p.productName as productName',
-        'p.ID as pID', 't.ID as tID', 'cc.ID as ccID','c.*', 'c.ID as cID')
-        ->join('customerContract as cc', 'cc.ID', '=', 'cp.customerContractID')
-        ->join('customer as c', 'c.ID', '=', 'cc.customerID')
-        ->join('product as p', 'p.ID', '=', 'cp.productID')
-        ->leftjoin('tariff as t', 't.ID', '=', 'cp.tariffID')
-        ->where('cp.ID', '=', $cpID)
-        ->whereNull('cp.endDate')
+        $contractProduct = DB::table('contract_products as cp')
+        ->select('cp.id as cpID', 'cp.start_date as cpStartDate', 'p.product_name as productName',
+        'p.id as pID', 't.id as tID', 'cc.id as ccID','u.*', 'u.id as uID')
+        ->join('customer_contracts as cc', 'cc.ID', '=', 'cp.customer_contract_id')
+        ->join('users as u', 'u.id', '=', 'cc.user_id')
+        ->join('products as p', 'p.id', '=', 'cp.product_id')
+        ->leftjoin('tariffs as t', 't.id', '=', 'cp.tariff_id')
+        ->where('cp.id', '=', $cpID)
+        ->whereNull('cp.end_date')
         ->first();
 
         if (!$contractProduct) {
             abort(404);
         }
 
-        $types = DB::table('product as p')
+        $types = DB::table('products as p')
         ->select('p.type')
         ->distinct()
-        ->whereNull('endDate')
+        ->whereNull('end_date')
         ->get();
 
-        $productTariff = DB::table('product as p')
-        ->join('productTariff as pt', 'pt.productID', '=', 'p.ID')
-        ->join('tariff as t', 't.ID', '=', 'pt.ID')
-        ->where('p.ID', '=', $contractProduct->pID)
+        $productTariff = DB::table('products as p')
+        ->join('product_tariffs as pt', 'pt.product_id', '=', 'p.id')
+        ->join('tariffs as t', 't.id', '=', 'pt.id')
+        ->where('p.id', '=', $contractProduct->pID)
         ->first();
 
         if(!is_null($contractProduct->tID)){
-            $discount = DB::table('tariff')
-            ->where('ID', '=', $contractProduct->tID)
+            $discount = DB::table('tariffs')
+            ->where('id', '=', $contractProduct->tID)
             ->first();
 
             return view('contractProduct', ['contractProduct' => $contractProduct, 'productTariff' => $productTariff, 'types' => $types,  'discount' => $discount]);
@@ -152,18 +152,18 @@ class EmployeeController extends Controller
     public function addDiscount(Request $request, $cpID, $ccID, $pID){
         $date = Carbon::now()->toDateString();
 
-        DB::update('UPDATE contractProduct SET endDate = ? WHERE ID = ?', [$date, $cpID]);
+        DB::update('UPDATE contract_products SET end_date = ? WHERE id = ?', [$date, $cpID]);
 
-        $tariffID = DB::table('tariff')->insertGetId([
+        $tariffID = DB::table('tariffs')->insertGetId([
             'type' => 'Discount',
             'rate' => $request->input('newRate')
         ]);
 
-        $newCpID = DB::table('contractProduct')->insertGetId([
-            'productID' => $pID,
-            'tariffID' => $tariffID,
-            'customerContractID' => $ccID,
-            'startDate' => $date
+        $newCpID = DB::table('contract_products')->insertGetId([
+            'product_id' => $pID,
+            'tariff_id' => $tariffID,
+            'customer_contract_id' => $ccID,
+            'start_date' => $date
         ]);
 
         return redirect()->route('contractProduct', ['cpID' => $newCpID]);
@@ -172,25 +172,25 @@ class EmployeeController extends Controller
     public function editContractProduct(Request $request, $oldCpID){
         $date = Carbon::now()->toDateString();
 
-        $oldCP = DB::table('contractProduct')
-        ->where('ID', '=', $oldCpID)
+        $oldCP = DB::table('contract_products')
+        ->where('id', '=', $oldCpID)
         ->first();
 
-        DB::update('UPDATE contractProduct SET endDate = ? WHERE ID = ?', [$date, $oldCpID]);
+        DB::update('UPDATE contract_products SET end_date = ? WHERE id = ?', [$date, $oldCpID]);
 
-        $newCpID = DB::table('contractProduct')->insertGetId([
-            'customerContractID' => $oldCP->customerContractID,
-            'productID' => $request->input('product'),
-            'startDate' => $date
+        $newCpID = DB::table('contract_products')->insertGetId([
+            'customer_contract_id' => $oldCP->customerContractID,
+            'product_id' => $request->input('product'),
+            'start_date' => $date
         ]);
 
         return redirect()->route('contractProduct', ['cpID' => $newCpID]);
     }
 
     public function getProductsByType($type){
-        $products = DB::table('product')
+        $products = DB::table('products')
         ->where('type', '=', $type)
-        ->whereNull('endDate')
+        ->whereNull('end_date')
         ->get();
 
         return response()->json($products);

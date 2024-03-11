@@ -131,11 +131,11 @@
                 @foreach ($productTariffs as $productTariff)
                     @if ($productTariff->type === $type)
                         @if (request()->get('action') === 'edit')
-                            @if($productTariff->productID == request()->get('pID'))
-                            <form id="changeTariff" method="post" action="{{ route('tariff.edit', ['pID' => $productTariff->productID, 'tID' => $productTariff->tariffID]) }}">
+                            @if($productTariff->product_id == request()->get('pID'))
+                            <form id="changeTariff" method="post" action="{{ route('tariff.edit', ['pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}">
                                 @csrf
                                 <tr>
-                                    <td>{{$productTariff->productName}}</td>
+                                    <td>{{$productTariff->product_name}}</td>
                                     <td>
                                         <input type="number" name="rangeMin" id="rangeMin" min="0" value="{{$productTariff->rangeMin}}"/> 
                                     </td>
@@ -153,17 +153,17 @@
                             </form>
                             @else
                                 <tr>
-                                    <td>{{$productTariff->productName}}</td>
-                                    <td>{{$productTariff->rangeMin}}</td>
-                                    <td>{{$productTariff->rangeMax}}</td>
+                                    <td>{{$productTariff->product_name}}</td>
+                                    <td>{{$productTariff->range_min}}</td>
+                                    <td>{{$productTariff->range_max}}</td>
                                     <td>{{$productTariff->rate}}</td>
                                     <td>
-                                        <a href="{{ URL::route('tariff', ['action' => 'edit', 'pID' => $productTariff->productID, 'tID' => $productTariff->tariffID]) }}'">
+                                        <a href="{{ URL::route('tariff', ['action' => 'edit', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}'">
                                             <img src="{{asset('./images/editIcon.png')}}" alt="edit Icon" id="editIcon"/>
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="{{ route('tariff', ['action' => 'delete', 'pID' => $productTariff->productID, 'tID' => $productTariff->tariffID]) }}">
+                                        <a href="{{ route('tariff', ['action' => 'delete', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}">
                                             <img src="{{asset('./images/trashIcon.png')}}" alt="trash Icon" id="trashIcon"/>
                                         </a>
                                     </td>
@@ -171,17 +171,17 @@
                             @endif
                         @else
                             <tr>
-                                <td>{{$productTariff->productName}}</td>
-                                <td>{{$productTariff->rangeMin}}</td>
-                                <td>{{$productTariff->rangeMax}}</td>
+                                <td>{{$productTariff->product_name}}</td>
+                                <td>{{$productTariff->range_min}}</td>
+                                <td>{{$productTariff->range_max}}</td>
                                 <td>{{$productTariff->rate}}</td>
                                 <td>
-                                    <a href="{{ URL::route('tariff', ['action' => 'edit', 'pID' => $productTariff->productID, 'tID' => $productTariff->tariffID]) }}'">
+                                    <a href="{{ URL::route('tariff', ['action' => 'edit', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}'">
                                         <img src="{{asset('./images/editIcon.png')}}" alt="edit Icon" id="editIcon"/>
                                     </a>
                                 </td>
                                 <td>
-                                    <a href="{{ route('tariff', ['action' => 'delete', 'pID' => $productTariff->productID, 'tID' => $productTariff->tariffID]) }}">
+                                    <a href="{{ route('tariff', ['action' => 'delete', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}">
                                         <img src="{{asset('./images/trashIcon.png')}}" alt="trash Icon" id="trashIcon"/>
                                     </a>
                                 </td>
@@ -252,13 +252,13 @@
 
             @foreach ($contractProducts as $contractProduct)
                 <tr>
-                    <td>{{$contractProduct->ID}}</td>
+                    <td>{{$contractProduct->id}}</td>
                     <td>{{$contractProduct->name}}</td>
-                    <td>{{$contractProduct->productName}}</td>
+                    <td>{{$contractProduct->product_name}}</td>
                     <td>{{$contractProduct->type}}</td>
                     <td>{{$contractProduct->rate}}</td>
                     <td>
-                        <a href="{{ route('contractProduct', ['cpID' => $contractProduct->ID]) }}"> 
+                        <a href="{{ route('contractProduct', ['cpID' => $contractProduct->id]) }}"> 
                             <img src="{{asset('./images/editIcon.png')}}" alt="edit Icon" id="editIcon"/>
                         </a>
                     </td>
