@@ -65,9 +65,10 @@ Route::get('/test', function () {
 });
 
 
-Route::get('/customerGridView', [CustomerGridViewController::class, 'index']);
-Route::get('/customer/{userID}/edit', [CustomerGridViewController::class, 'edit']);
-Route::put('/customer/{userID}', [CustomerGridViewController::class, 'update']);
+Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
+Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
+Route::put('/customer/{id}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+
 
 Route::get('/', function () {
     return view('welcome');

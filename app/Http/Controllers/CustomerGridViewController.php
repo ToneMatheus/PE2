@@ -9,7 +9,8 @@ class CustomerGridViewController extends Controller
 {
     public function index(Request $request)
     {
-        $sort = $request->get('sort');
+    $sort = $request->get('sort');
+    $direction = $request->get('direction', 'asc');
     $search = $request->get('search');
     $query = DB::table('users')
                 ->leftJoin('customer_contracts', 'users.id', '=', 'customer_contracts.user_id')
@@ -23,15 +24,15 @@ class CustomerGridViewController extends Controller
                        ->orWhere('users.email', 'like', "%{$search}%");
             }
 
-        if ($sort) {
-            $query->orderBy($sort);
-        } else {
-            $query->orderBy('users.id');
-        }
+            if (!empty($sort)) {
+                $query->orderBy($sort, $direction);
+            } else {
+                $query->orderBy('users.id', $direction);
+            }
 
         $users = $query->paginate(10);
 
-        return view('Customers/CustomerGridView', ['customers' => $users]);
+        return view('Customers/CustomerGridView', ['customers' => $users, 'sort' => $sort, 'direction' => $direction]);
     }
 
 
