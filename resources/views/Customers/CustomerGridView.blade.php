@@ -29,6 +29,11 @@
                 <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=email') }}">Email</a></th>
                 <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=birth_date') }}">Birth Date</a></th>
                 <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=is_activate') }}">Is Activate</a></th>
+                <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=start_date') }}">Start Date</a></th>
+                <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=end_date') }}">End Date</a></th>
+                <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=type') }}">Type</a></th>
+                <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=price') }}">Price</a></th>
+                <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=status') }}">Status</a></th>
                 <th>Edit</th>
             </thead>
             <tbody>
@@ -43,6 +48,11 @@
                         <td>{{ $customer->email }}</td>
                         <td>{{ $customer->birth_date }}</td>
                         <td>{{ $customer->is_activate }}</td>
+                        <td>{{ $customer->start_date }}</td>
+                        <td>{{ $customer->end_date }}</td>
+                        <td>{{ $customer->type }}</td>
+                        <td>{{ $customer->price }}</td>
+                        <td>{{ $customer->status }}</td>
                         <td><a href="{{ url("/customer/{$customer->id}/edit") }}">Edit</a></td>
                     </tr>
                 @endforeach
