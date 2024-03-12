@@ -5,6 +5,7 @@ use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CustomerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,3 +64,18 @@ Route::get('/test', function () {
     return view('test');
 });
 
+
+//routes for custmer data for customer
+Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
+Route::get('/Customer/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
+
+Route::post('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');})->name('ChangeUser');
+Route::get('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');});
+
+// Validation route's to change customer info by customer
+Route::post('/Customer/Manage/Change/User/post/email', [CustomerController::class, 'emailValidationChangeUserInfo']) ->name('postEmail');
+Route::post('/Customer/Manage/Change/User/post/profile', [CustomerController::class, 'profileValidationChangeUserInfo']) ->name('postProfile');
+Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::class, 'passwdValidationChangeUserInfo']) ->name('postPasswd');
+
+// Validation route's to create a customer account by customer
+Route::post('/Customer/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
