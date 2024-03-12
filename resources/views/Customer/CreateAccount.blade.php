@@ -65,14 +65,15 @@
                             <label>Name</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="First name" name="FirstName" value="{{old('FirstName')}}"/>
+                            <input type="text" placeholder="First name" name="FirstName" value="{{old('FirstName')}}" required/>
+
                         </td>
                         
                         <td>
                             <label>Surname</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="Last name" name="LastName" value="{{old('LastName')}}"/>
+                            <input type="text" placeholder="Last name" name="LastName" value="{{old('LastName')}}" required/>
                         </td>
                     </tr>
 
@@ -81,14 +82,14 @@
                             <label>Email</label>
                         </td>
                         <td>
-                            <input type="email" placeholder="Email" name="Email" value="{{old('Email')}}"/>
+                            <input type="email" placeholder="Email" name="Email" value="{{old('Email')}}" required/>
                         </td>
 
                         <td>
                             <label>Username</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="username" name="Username" value="{{old('Username')}}"/>
+                            <input type="text" placeholder="username" name="Username" value="{{old('Username')}}" required/>
                         </td>
                     </tr>
 
@@ -117,7 +118,7 @@
                             <label>Password</label>
                         </td>
                         <td>  
-                            <input type="password" placeholder="Password" id="paswd1" name="PaswdNew1" value="{{old('PaswdNew1')}}"/>
+                            <input type="password" placeholder="Password" id="paswd1" name="PaswdNew1" value="{{old('PaswdNew1')}}" />
                             <input type="checkbox" onclick="shpsswd('paswd1')">
                             <label>show</label>
                         </td>
@@ -126,7 +127,7 @@
                             <label>Password comfirm</label>
                         </td>
                         <td>
-                            <input type="password" placeholder="Password" id="paswd2" name="PaswdNew2" value="{{old('PaswdNew2')}}"/>
+                            <input type="password" placeholder="Password" id="paswd2" name="PaswdNew2" value="{{old('PaswdNew2')}}" />
                             <input type="checkbox" onclick="shpsswd('paswd2')">
                             <label>show</label>
                         </td>
@@ -153,14 +154,14 @@
                             <label>Street</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="Street name" name="Street" value="{{old('Street')}}"/>
+                            <input type="text" placeholder="Street name" name="Street" value="{{old('Street')}}" required/>
                         </td>
                         
                         <td>
                             <label>Number</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="10" name="Number" value="{{old('Number')}}"/>
+                            <input type="text" placeholder="10" name="Number" value="{{old('Number')}}" required/>
                         </td>
                     </tr>
 
@@ -169,7 +170,7 @@
                             <label>Region</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="Region" name="Region" value="{{old('Region')}}"/>
+                            <input type="text" placeholder="Region" name="Region" value="{{old('Region')}}" required/>
                         </td>
 
                         <td>
@@ -185,14 +186,14 @@
                             <label>PostalCode</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="4000" name="PostalCode" value="{{old('PostalCode')}}"/>
+                            <input type="text" placeholder="4000" name="PostalCode" value="{{old('PostalCode')}}" required/>
                         </td>
 
                         <td>
                             <label>City</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="City" name="City" value="{{old('City')}}"/>
+                            <input type="text" placeholder="City" name="City" value="{{old('City')}}" required/>
                         </td>    
                     </tr>
 

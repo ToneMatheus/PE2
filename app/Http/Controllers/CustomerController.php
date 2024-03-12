@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Event\Code\Test;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Hash;
+
 
 class CustomerController extends Controller
 {
@@ -134,7 +137,7 @@ class CustomerController extends Controller
             'Email' => 'required | email',
             'Username' => 'required | profane',
             'Calling' => 'required',
-            'PhoneNummer' => 'nullable | regex:/^[0-9]{13}$/',
+            'PhoneNummer' => 'nullable',
             'PaswdNew1' => 'required | min:8 | regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
             'PaswdNew2' => 'required | same:PaswdNew1',
             'isCompany' => 'nullable | boolean',
@@ -143,27 +146,27 @@ class CustomerController extends Controller
             'Number' => 'required | regex:/^[0-9]$/',
             'Region' => 'required',
             'Bus' => 'nullable',
-            'PostalCode' => ['required', 'regex:/^(?:\d{4})$/i', 
-                function ($attribute, $value, $fail) use ($validPostcodesFlanders, $postcodeFlanders, $validPostcodesBrussels, $postcodeBrussels, $validPostcodesWallonia) {
-                    if (!in_array($value, $validPostcodesFlanders) && !in_array($value, $validPostcodesBrussels) && !in_array($value, $validPostcodesWallonia))
-                    {
-                        $fail($attribute.' is not a valid postal code.');
-                    }
-                    if ($value !== $validPostcodesFlanders[$postcodeFlanders] && $value !== $validPostcodesBrussels[$postcodeBrussels] 
-                    && $value !== $validPostcodesWallonia)
-                    {
-                        $fail($attribute.' and city do not match.');
-                    }
-                    },
+            'PostalCode' => ['required', 'regex:/^(?:\d{4})$/i' , 
+                // function ($attribute, $value, $fail) use ($validPostcodesFlanders, $postcodeFlanders, $validPostcodesBrussels, $postcodeBrussels, $validPostcodesWallonia) {
+                    // if (!in_array($value, $validPostcodesFlanders) && !in_array($value, $validPostcodesBrussels) && !in_array($value, $validPostcodesWallonia))
+                    // {
+                    //     $fail($attribute.' is not a valid postal code.');
+                    // }
+                    // if ($value !== $validPostcodesFlanders[$postcodeFlanders] && $value !== $validPostcodesBrussels[$postcodeBrussels] 
+                    // && $value !== $validPostcodesWallonia)
+                    // {
+                    //     $fail($attribute.' and city do not match.');
+                    // }
+                    // },
             ],
-            'City' => ['required', 
-            function($attribute, $value, $fail) use ($validPostcodesFlanders, $postcodeFlanders, $validPostcodesBrussels, $postcodeBrussels, $validPostcodesWallonia, ) {
-                if ($value !== $validPostcodesFlanders[$postcodeFlanders] && $value !== $validPostcodesBrussels[$postcodeBrussels] 
-                && $value !== $validPostcodesWallonia)
-                {
-                    $fail($attribute.' and postal code do not match.');
-                }
-            },
+            'City' => ['required' , 
+            // function($attribute, $value, $fail) use ($validPostcodesFlanders, $postcodeFlanders, $validPostcodesBrussels, $postcodeBrussels, $validPostcodesWallonia, ) {
+            //     if ($value !== $validPostcodesFlanders[$postcodeFlanders] && $value !== $validPostcodesBrussels[$postcodeBrussels] 
+            //     && $value !== $validPostcodesWallonia)
+            //     {
+            //         $fail($attribute.' and postal code do not match.');
+            //     }
+            // },
             ],
             ], [
             'FirstName.required' => 'FirstName is required',
@@ -185,15 +188,47 @@ class CustomerController extends Controller
             'City.required' => 'City is required',
             ]);
 
-        // Als validatie mislukt, stuur de gebruiker terug met de fouten
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-
+        
         // Als validatie slaagt, verwerk de gegevens
-        // Hier kun je de logica schrijven om de e-mails op te slaan of iets anders te doen
-
+        $Email = $request->input('Email');
+        $Username = $request->input('Username');
+        $Paswd = $request->input('PaswdNew1');
+        
+        // Insert gebruiker en krijg de ID van de zojuist ingevoegde gebruiker
+        $userID = DB::table('user')->insertGetId(['email' => $Email, 'password' => $Paswd, 'username' => $Username]);
+       
+        
+        $FirstName = $request->input('FirstName');
+        $LastName = $request->input('LastName');
+        
+        if ($request->has('isCompany')){
+            $isCompany = 0;
+        }else{
+            $isCompany = 1;
+        }
+        
+        // Insert klantgegevens met de gebruikers-ID
+        DB::table('customer')->insert(['FirstName' => $FirstName, 'userID' => $userID, 'LastName' => $LastName, 'isCompany' => $isCompany]);
+        
+        $CompanyName = $request->input('CompanyName');
+        $phoneNumber = $request->input('phoneNumber');
+        
+        // Update klantgegevens met bedrijfsnaam en telefoonnummer als deze zijn ingevuld
+        if ($CompanyName !=='' && $isCompany == 1){
+            DB::table('customer')->where('userID', $userID)->update(['companyName' => $CompanyName]);
+        }
+        
+        if ($phoneNumber !==''){
+            DB::table('customer')->where('userID', $userID)->update(['phoneNumber' => $phoneNumber]);
+        }
+        
         return redirect()->back()->with('success', 'Account created');
+        
+
     }
 }
 
