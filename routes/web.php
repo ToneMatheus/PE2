@@ -7,6 +7,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
+use App\Http\Controllers\CustomerGridViewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,4 +78,13 @@ Route::get('/profile', [myController::class, 'profile'])->name('profile');
 
 Route::get('/test', function () {
     return view('test');
+});
+
+
+Route::get('/customerGridView', [CustomerGridViewController::class, 'index']);
+Route::get('/customer/{userID}/edit', [CustomerGridViewController::class, 'edit']);
+Route::put('/customer/{userID}', [CustomerGridViewController::class, 'update']);
+
+Route::get('/', function () {
+    return view('welcome');
 });
