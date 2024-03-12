@@ -61,8 +61,16 @@ Route::get('/profile', [myController::class, 'profile'])->name('profile');
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
 
+Route::get('/welcome', function () {
+    return view('welcome');
+});
+Route::get('/roles', function () {
+    return view('roleOverview');
+});
 
 Route::get('/test', function () {
     return view('test');
 });
+
+
 
