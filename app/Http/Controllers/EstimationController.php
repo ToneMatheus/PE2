@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class EstimationController extends Controller
 {
@@ -15,7 +14,7 @@ class EstimationController extends Controller
      */
     public static function CalculateMonthlyAmount(int $meterID): float
     {
-        $meterValue = DB::table('indexvalues')->orderby('readingvalue','desc')->where('meterID', $meterID)->take(2)->pluck('readingvalue')->toArray();
+        $meterValue = DB::table('index_values')->orderby('reading_value','desc')->where('meter_id', $meterID)->take(2)->pluck('reading_value')->toArray();
         if (count($meterValue) >= 2)
         {
             $difference = abs($meterValue[0] - $meterValue[1]);
@@ -109,20 +108,20 @@ class EstimationController extends Controller
     }
     private static function calculateMeterEnergyEstimate(int $meterID): int
     {
-        $estimationData = DB::table('estimation')->where('meterID', $meterID)->first();
+        $estimationData = DB::table('estimations')->where('meter_id', $meterID)->first();
         if ($estimationData) 
         {
-            $nrOccupants = $estimationData->nrOccupants;
-            $isHomeAllDay = $estimationData->isHomeAllDay;
-            $heatWithPower = $estimationData->heatWithPower;
-            $waterWithPower = $estimationData->waterWithPower;
-            $cookWithPower = $estimationData->cookWithPower;
-            $nrAirCon = $estimationData->nrAirCon;
-            $nrFridges = $estimationData->nrFridges;
-            $nrWashers = $estimationData->nrWashers;
-            $nrComputers = $estimationData->nrComputers;
-            $nrEntertainment = $estimationData->nrEntertainment;
-            $nrDishwashers = $estimationData->nrDishwashers;
+            $nrOccupants = $estimationData->nbr_occupants;
+            $isHomeAllDay = $estimationData->is_home_all_day;
+            $heatWithPower = $estimationData->heat_with_power;
+            $waterWithPower = $estimationData->water_with_power;
+            $cookWithPower = $estimationData->cook_with_power;
+            $nrAirCon = $estimationData->nbr_air_con;
+            $nrFridges = $estimationData->nbr_fridges;
+            $nrWashers = $estimationData->nbr_washers;
+            $nrComputers = $estimationData->nbr_computers;
+            $nrEntertainment = $estimationData->nbr_entertainment;
+            $nrDishwashers = $estimationData->nbr_dishwashers;
         }
         else
         {
@@ -148,7 +147,7 @@ class EstimationController extends Controller
                              $estimateWashers + $estimateComputers + $estimateEntertainment +
                              $estimateDishwashers); // We always round up!
 
-        $estimationTotal = DB::table('estimation')->where('meterID', $meterID)->pluck('estimationTotal');
+        $estimationTotal = DB::table('estimations')->where('meter_id', $meterID)->pluck('estimation_total');
         $estimationTotal = collect($estimationTotal)->flatten()->all();
         if ($estimationTotal == $totalMeterEstimateYear)
         {
@@ -156,7 +155,7 @@ class EstimationController extends Controller
         }
         else
         {
-            DB::table('estimation')->where('meterID', $meterID)->update(array('estimationTotal' => $totalMeterEstimateYear));
+            DB::table('estimations')->where('meter_id', $meterID)->update(array('estimation_total' => $totalMeterEstimateYear));
             return $totalMeterEstimateYear;
         }
     }

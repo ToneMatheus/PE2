@@ -18,7 +18,7 @@ class InvoiceController extends Controller
     }
     public function generateAllInvoices()
     {
-        $customerIDs = DB::table('customer')->pluck('ID')->toArray();
+        return;
     }
     public function generateOneInvoice(Request $request)
     {
@@ -42,15 +42,15 @@ class InvoiceController extends Controller
         foreach($meterIDs as $meterID)
         {
             $moneyAmountMonthly = EstimationController::CalculateMonthlyAmount($meterID);
-            DB::table('invoiceline')->insert(array(
+            DB::table('invoice_lines')->insert(array(
                 'type' => 'Product',
-                'unitPrice' => 0.25,
+                'unit_price' => 0.25,
                 'amount' => $moneyAmountMonthly,
-                'invoiceID' => $invoiceID, ));
+                'invoice_id' => $invoiceID, ));
         }
         $this->addInvoiceDefault($invoiceID);
-        $totalAmount = DB::table('invoiceline')->where('invoiceID', $invoiceID)->sum('amount');
-        DB::table('invoice')->where('ID', $invoiceID)->update(array('totalAmount' => $totalAmount));
+        $totalAmount = DB::table('invoice_lines')->where('invoice_id', $invoiceID)->sum('amount');
+        DB::table('invoices')->where('id', $invoiceID)->update(array('total_amount' => $totalAmount));
         $this->generatePDF($customerID, $invoiceID, $meterIDs);
     }
     private function generatePDF(int $customerID, int $invoiceID, array $meterIDs)
