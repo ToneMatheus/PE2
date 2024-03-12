@@ -18,18 +18,18 @@
                 @php
                     $userID = 1;//To be replaced by the real ID!
 
-                    $payslipInfo = DB::select("select * from payslips where employeeID = $userID");//fetching payslip plus contract information
+                    $payslipInfo = DB::select("select * from payslips where employee_profile_id = $userID");//fetching payslip plus contract information
                     $numRows = count($payslipInfo);
 
                     if(!empty($payslipInfo)){
                         echo("<hr/>");
                             foreach($payslipInfo as $info){
-                                $id = htmlspecialchars($info->ID);
-                                $start = htmlspecialchars($info->startDate);
-                                $end = htmlspecialchars($info->endDate);
-                                $issued = htmlspecialchars($info->creationDate);
-                                $hours = htmlspecialchars($info->totalHours);
-                                $amountPerHour = htmlspecialchars($info->amountPerHour);
+                                $id = htmlspecialchars($info->id);
+                                $start = htmlspecialchars($info->start_date);
+                                $end = htmlspecialchars($info->end_date);
+                                $issued = htmlspecialchars($info->creation_date);
+                                $hours = htmlspecialchars($info->total_hours);
+                                $amountPerHour = htmlspecialchars($info->amount_per_hour);
                                 $totalAmount = $hours * $amountPerHour;
 
                                 echo("                       
@@ -39,7 +39,7 @@
                                         <div style=\"float: left;\">
                                             <div class=\"image\"><img src=\"/images/paycheck.png\" alt=\"paycheck\"/></div>
                                         </div>
-                                        <span>Duration<br/>$start - $end</span>        
+                                        <span>Duration<br/>$start --> $end</span>        
                                         <b>$totalAmount$</b>
                                     </div>
                                 </a>

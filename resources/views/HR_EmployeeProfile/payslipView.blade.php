@@ -1,43 +1,65 @@
 @php
     $userID = 1;//To be replaced by the real ID!
-    $id = $_GET['id'];
+    $id = request()->input('id');
 
-    $payslipInfo = DB::select("select * from payslips where employeeID = $userID and ID = $id");//fetching payslip plus contract information
-    $numRows = count($payslipInfo);
+    $payslipInfo = DB::select("select * from payslips where employee_profile_id = $userID");//fetching payslip plus contract information
 
     foreach($payslipInfo as $info){
-        $id = htmlspecialchars($info->ID);
-        $start = htmlspecialchars($info->startDate);
-        $end = htmlspecialchars($info->endDate);
-        $issued = htmlspecialchars($info->creationDate);
-        $hours = htmlspecialchars($info->totalHours);
-        $amountPerHour = htmlspecialchars($info->amountPerHour);
+        $start = htmlspecialchars($info->start_date);
+        $end = htmlspecialchars($info->end_date);
+        $issued = htmlspecialchars($info->creation_date);
+        $hours = htmlspecialchars($info->total_hours);
+        $amountPerHour = htmlspecialchars($info->amount_per_hour);
+        $daysWorked = htmlspecialchars($info->nbr_days_worked);
+        $IBAN = htmlspecialchars($info->IBAN);
         $totalAmount = $hours * $amountPerHour;
     }
 
-    $users = DB::select("select * from employee where ID = $userID");//selecting employee information
+    //selecting the employee's job
+    $jobb = DB::select("select job, department from employee_profiles where id = $userID");
+    $job = htmlspecialchars($jobb[0]->job);
+    $dept = htmlspecialchars($jobb[0]->department);
 
+    //selecting employee information
+    $users = DB::select("select * from users where employee_profile_id = $userID");
     foreach ($users as $user) {
-        $lastName = htmlspecialchars($user->lastName);
-        $firstName = htmlspecialchars($user->firstName);
-        $job = htmlspecialchars($user->job);
-        $addressID = htmlspecialchars($user->addressID);
+        $lastName = htmlspecialchars($user->last_name);
+        $firstName = htmlspecialchars($user->first_name);
+        $addressID = htmlspecialchars($user->address_id);
       
         //fetching user address from the db
-        $address = DB::select("select * from address where ID = $addressID");
+        $address = DB::select("select * from addresses where id = $addressID");
         foreach ($address as $add){
           $street = htmlspecialchars($add->street);
           $num = htmlspecialchars($add->number);
-          $pC = htmlspecialchars($add->postalCode);
-          $bus = htmlspecialchars($add->bus);
+          $pC = htmlspecialchars($add->postal_code);
+          $box = htmlspecialchars($add->box);
           $city = htmlspecialchars($add->city);
-          $region = htmlspecialchars($add->region);
+          $province = htmlspecialchars($add->province);
 
-          $userAddress = "" . $street . " " . $num . ", " . $pC . " " . $city . ". " . $region . ".";//joining the address into one long address
+          $userAddress = "" . $street . " " . $num . " " . $box . ", " . $pC . " " . $city . ". " . $province . ".";//joining the address into one long address
         }
 
     }
 
+    //to select the number of holidays taken by the employee
+    $holidays = DB::select("select start_date, end_date from holidays where employee_profile_id = $userID");
+    $numRows = count($holidays);
+
+    if(!empty($numRows)){
+        $holidayStart = Carbon::parse(htmlspecialchars($holidays->start_date));
+        $holidayEnd = Carbon::parse(htmlspecialchars($holidays->end_date));
+
+        $differenceInDays = $holidayEnd->diffInDays($holidayStart);
+    }
+    else{
+        $differenceInDays = 0;
+    }
+
+    $newAmount = $differenceInDays * $amountPerHour;
+    $newTotalAmount = $totalAmount - $newAmount;
+    $TVA = $newTotalAmount * 0.21;
+    $total = $newTotalAmount - $TVA;
 
     echo("
         <div class=\"general-details\">
@@ -59,21 +81,21 @@
             <div>
                 <div style=\"border-bottom: 2px solid black; padding-left: 20px; padding-bottom: 20px\">
                     <b>Name:</b> $firstName $lastName<br/>
-                    $street, $num $bus<br/>
-                    $pC $city, $region
+                    $street, $num $box<br/>
+                    $pC $city, $province
                 </div>
 
                 <div style=\"padding-left: 20px; padding-top: 20px\">
                     <b><u>Contract details:</u></b><br/>
-                    <b>Job:</b> maintainance manager<br/>
-                    <b>Department:</b> Tech/IT
+                    <b>Job:</b> $job<br/>
+                    <b>Department:</b> $dept
                 </div>
             </div>
         </div>
 
         <table>
             <tr>
-                <th>Amount per hour: 16.12$</th>
+                <th>Amount per hour: $amountPerHour$</th>
             </tr>
 
             <tr class=\"col-name\">
@@ -82,37 +104,32 @@
 
             <tr>
                 <td>Days worked - brut</td>
-                <td>20</td>
-                <td>100,5</td>
-                <td style=\"text-align: center\"><b>1606,60$</b></td>
+                <td>$daysWorked</td>
+                <td>$hours</td>
+                <td style=\"text-align: center\"><b>$totalAmount$</b></td>
             </tr>
 
             <tr>
                 <td>Holidays taken</td>
-                <td>0</td>
+                <td>$differenceInDays</td>
                 <td>/</td>
                 <td style=\"text-align: center\">
-                    Number of days taken * 50
+                    $differenceInDays * $amountPerHour<br/>
+                    $totalAmount - $newAmount = $newTotalAmount
                 </td>
-            </tr>
-
-            
-            <tr>
-                <td colspan=\"3\">Medical allowance</td>
-                <td style=\"text-align: center\">300$</td>
             </tr>
 
             <tr>
                 <td colspan=\"3\">TVA</td>
                 <td style=\"text-align: center\">
-                    1956,09 * 0.21<br/>
-                    410.78
+                    $newTotalAmount * 0.21 =
+                    $TVA
                 </td>
             </tr>
 
             <tr>
                 <td colspan=\"3\">Salary - net</td>
-                <td style=\"text-align: center\">1956,09 - 410.78<br/><b>1,545.31$</b></td>
+                <td style=\"text-align: center\">$newTotalAmount$ - $TVA$<br/><b>$total$</b></td>
             </tr>
 
             <tr style=\"height: 170px\">
@@ -126,8 +143,8 @@
             </tr>
 
             <tr>
-                <td colspan=\"3\" style=\"text-align: right;\"><b>Sent to the account BE23 2341 1234 2523 Name: John Doe</b></td>
-                <td style=\"text-align: center\"><b>1,545.31$</b></td>
+                <td colspan=\"3\" style=\"text-align: right;\">Sent to the account <b>$IBAN</b> Name: <b>$firstName $lastName</b></td>
+                <td style=\"text-align: center\"><b>$total$</b></td>
             </tr>
         </table>
     ");
