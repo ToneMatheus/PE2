@@ -12,48 +12,43 @@
     <body>
     <div class="container">
         <div class="row">
-    <form action="{{ url('/customerGridView') }}" method="GET">
-        <input type="text" name="search" required/>
-        <button type="submit">Search</button>
-    </form>
-    <a href="{{ url('/customerGridView') }}" class="reset-button">Clear</a>
+            <form action="{{ url('/customerGridView') }}" method="GET">
+                <input type="text" name="search" required/>
+                <button type="submit">Search</button>
+            </form>
+            <a href="{{ url('/customerGridView') }}" class="reset-button">Clear</a>
+        </div>
+        <table>
+            <thead>
+                <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=id') }}">ID</a></th>
+                <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=last_name') }}">Last Name</a></th>
+                <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=first_name') }}">First Name</a></th>
+                <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=phone_nbr') }}">Phone Number</a></th>
+                <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=company_name') }}">Company Name</a></th>
+                <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=is_company') }}">Is Company</a></th>
+                <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=email') }}">Email</a></th>
+                <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=birth_date') }}">Birth Date</a></th>
+                <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=is_activate') }}">Is Activate</a></th>
+                <th>Edit</th>
+            </thead>
+            <tbody>
+                @foreach ($customers as $customer)
+                    <tr>
+                        <td>{{ $customer->id }}</td>
+                        <td>{{ $customer->last_name }}</td>
+                        <td>{{ $customer->first_name }}</td>
+                        <td>{{ $customer->phone_nbr }}</td>
+                        <td>{{ $customer->company_name }}</td>
+                        <td>{{ $customer->is_company }}</td>
+                        <td>{{ $customer->email }}</td>
+                        <td>{{ $customer->birth_date }}</td>
+                        <td>{{ $customer->is_activate }}</td>
+                        <td><a href="{{ url("/customer/{$customer->id}/edit") }}">Edit</a></td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        {{ $customers->links() }}
     </div>
-    <table>
-    <thead>
-            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=id') }}">ID</a></th>
-            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=lastName') }}">lastName</a></th>
-            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=firstName') }}">firstName</a></th>
-            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=phoneNumber') }}">phoneNumber</a></th>
-            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=companyName') }}">companyName</a></th>
-            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=isCompany') }}">isCompany</a></th>
-            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=userID') }}">userID</a></th>
-            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=startdate') }}">StartDate</a></th>
-            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=enddate') }}">EndDate</a></th>
-            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=type') }}">Type</a></th>
-            <th><a href="{{ url('/customerGridView?search=' . $searchQuery . '&sort=price') }}">Price</a></th>
-            <th>Edit</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($customers as $customer)
-            <tr>
-                <td>{{ $customer->id }}</td>
-                <td>{{ $customer->lastName }}</td>
-                <td>{{ $customer->firstName }}</td>
-                <td>{{ $customer->phoneNumber }}</td>
-                <td>{{ $customer->companyName }}</td>
-                <td>{{ $customer->isCompany }}</td>
-                <td>{{ $customer->userID }}</td>
-                <td>{{ $customer->startdate }}</td>
-                <td>{{ $customer->enddate }}</td>
-                <td>{{ $customer->type }}</td>
-                <td>{{ $customer->price }}</td>
-                <td><a href="{{ url("/customer/{$customer->userID}/edit") }}">Edit</a></td>
-            </tr>
-        @endforeach
-    </tbody>
-    </table>
-    {{ $customers->links() }}
-    </div>
-    </body>
+</body>
 </html>

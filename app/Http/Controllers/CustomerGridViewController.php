@@ -10,46 +10,47 @@ class CustomerGridViewController extends Controller
     public function index(Request $request)
     {
         $sort = $request->get('sort');
-        $search = $request->get('search');
-        $query = DB::table('customer')
-                    ->join('customercontract', 'customer.userID', '=', 'customercontract.customerID')
-                    ->select('customer.id', 'customer.lastName', 'customer.firstName', 'customer.phoneNumber', 'customer.companyName', 'customer.isCompany', 'customer.userID', 'CustomerContract.startdate', 'CustomerContract.enddate', 'CustomerContract.type', 'CustomerContract.price');
+    $search = $request->get('search');
+    $query = DB::table('users')
+                ->leftJoin('customer_contracts', 'users.id', '=', 'customer_contracts.user_id')
+                ->select('users.id', 'users.username', 'users.first_name', 'users.last_name', 'users.phone_nbr', 'users.is_company', 'users.company_name', 'users.email', 'users.birth_date', 'users.is_activate');
 
         if ($search) {
-                 $query->where('firstName', 'like', "%{$search}%")
-                       ->orWhere('lastName', 'like', "%{$search}%")
-                       ->orWhere('companyName', 'like', "%{$search}%")
-                       ->orWhere('userID', 'like', "%{$search}%");
+                 $query->where('users.first_name', 'like', "%{$search}%")
+                       ->orWhere('users.last_name', 'like', "%{$search}%")
+                       ->orWhere('users.company_name', 'like', "%{$search}%")
+                       ->orWhere('users.id', 'like', "%{$search}%")
+                       ->orWhere('users.email', 'like', "%{$search}%");
             }
 
         if ($sort) {
             $query->orderBy($sort);
         }
 
-        $customers = $query->paginate(10);
+        $users = $query->paginate(10);
 
-        return view('Customers/CustomerGridView', ['customers' => $customers]);
+        return view('Customers/CustomerGridView', ['customers' => $users]);
     }
 
 
-    public function edit($userID)
+    public function edit($id)
     {
-        $customer = DB::table('customer')->where('userID', $userID)->first();
+        $customer = DB::table('users')->where('id', $id)->first();
         return view('Customers/CustomerEdit', ['customer' => $customer]);
     }
 
-    public function update(Request $request, $userID)
+    public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'lastName' => 'required|max:255',
-            'firstName' => 'required|max:255',
-            'phoneNumber' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
-            'companyName' => 'required|max:255',
+            'last_name' => 'required|max:255',
+            'first_name' => 'required|max:255',
+            'phone_nbr' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
+            'company_name' => 'max:255',
         ]);
 
-        DB::table('customer')
-        ->where('userID', $userID)
-        ->update($request->only('lastName', 'firstName', 'phoneNumber', 'companyName'));
+        DB::table('users')
+        ->where('id', $id)
+        ->update($request->only('last_name', 'first_name', 'phone_nbr', 'company_name'));
 
         return redirect('/customerGridView');
     }
