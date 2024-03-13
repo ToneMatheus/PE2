@@ -30,6 +30,7 @@ class LoginController extends Controller
             $user = Auth::user();
             $roleHelper = new RoleHelper();
 
+            //TODO nakijken want breekt uit de if case
             if(!$roleHelper->hasRole($user->ID, 'Customer')){
                 return redirect()->intended('/test');
             } else {
@@ -37,6 +38,7 @@ class LoginController extends Controller
             }
         }
 
-        return redirect()->back()->withInput($request->only('username'));
+        return redirect()->intended('/dashboard');
+        // return redirect()->back()->withInput($request->only('username'));
     }
 }
