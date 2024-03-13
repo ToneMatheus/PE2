@@ -6,7 +6,7 @@
     <title>Advance reminder: open invoice</title>
 </head>
 <body>
-    <h1>{{ $greeting }}</h1>
+    <h1>Dear {{ $user_info[0]->first_name }} {{ $user_info[0]->last_name }},</h1>
     
     <p>
         We wanted to let you know that you have an unpaid invoice from our company. 
@@ -19,7 +19,7 @@
         These are the details of your invoice:
     </p>
     
-    <table>
+    <table border="1">
         <tr>
             <th>
                 Type

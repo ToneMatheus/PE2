@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
 use App\Http\Controllers\CustomerGridViewController;
+use App\Http\Controllers\advancemailcontroller;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,9 +65,7 @@ Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->na
 Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
 
 //preview advance reminder mail for testing
-Route::get('/mailable', function () {
-    return new App\Mail\weekAdvanceReminder;
-});
+Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);

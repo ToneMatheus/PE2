@@ -8,7 +8,6 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
 
 class weekAdvanceReminder extends Mailable
 {
@@ -20,28 +19,15 @@ class weekAdvanceReminder extends Mailable
      * @return void
      */
 
-    public $invoice_info;
-    public $total_amount;
-
     //temporary: make global variables?
-    public $greeting = "Hello test";
     public $companyname = "energy supply business";
 
-    public function __construct()
-    {
-        //place queries elsewhere and pass customer data to mailable
-        $this->invoice_info = DB::select('SELECT * FROM invoice_lines il
-        LEFT JOIN invoices i
-        ON il.invoice_id = i.id
-        LEFT JOIN customer_contracts cc
-        ON i.customer_contract_id = cc.id
-        WHERE cc.user_id = 1;'); //to change: id 1 for testing
-
-        $this->total_amount = DB::select('SELECT i.total_amount FROM invoices i
-        LEFT JOIN customer_contracts cc
-        ON i.customer_contract_id = cc.id
-        WHERE cc.user_id = 1;'); //to change: id 1 for testing
-    }
+    public function __construct(    
+        public $invoice_info,
+        public $total_amount,
+        public $user_info
+        )
+    {}
 
     /**
      * Get the message envelope.
