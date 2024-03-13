@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Invoice_line extends Model
 {
@@ -14,6 +15,16 @@ class Invoice_line extends Model
         'consumption_id',
         'invoice_id'
     ];
+
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
+    }
+
+    /*public function consumption(): BelongsTo
+    {
+        return $this->belongsTo(Consumption::class);
+    }*/
 
     use HasFactory;
 }
