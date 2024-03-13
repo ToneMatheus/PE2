@@ -9,6 +9,13 @@ class CustomerGridViewController extends Controller
 {
     public function index(Request $request)
     {
+
+    $request->validate([
+        'search' => 'nullable|max:255',
+        'sort' => 'nullable|alpha_dash',
+        'direction' => 'nullable|in:asc,desc',
+    ]);
+
     $sort = $request->get('sort');
     $direction = $request->get('direction', 'asc');
     $search = $request->get('search');
