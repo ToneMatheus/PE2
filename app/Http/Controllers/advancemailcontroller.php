@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Invoice;
 
 class advancemailcontroller extends Controller
 {
     public function index(int $invoiceID = 1)
     {
-        $invoice_info = DB::select('SELECT * FROM invoice_lines il 
-        WHERE il.id = '.$invoiceID.';');
+        $invoice = Invoice::find($invoiceID);
+        $invoice_info = $invoice->invoice_lines;
 
         $total_amount = DB::select('SELECT i.total_amount FROM invoices i 
         WHERE i.id = '.$invoiceID.';');
