@@ -54,12 +54,6 @@ Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivate
 Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add'); 
 Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
 
-Route::get('/contractProduct/{cpID}', [EmployeeController::class, 'showContractProduct'])->name('contractProduct');
-Route::post('/contractProduct/discount/{cpID}', [EmployeeController::class, 'addDiscount'])->name('cp.discount');
-Route::post('/contractProduct/{cpID}', [EmployeeController::class, 'editContractProduct'])->name('cp.edit');
-
-Route::get('/products/{type}', [EmployeeController::class, 'getProductsByType']);
-
 //invoice query routes
 Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
 Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
@@ -87,8 +81,10 @@ Route::get('/test', function () {
 
 Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
 Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
-Route::put('/customer/{id}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+Route::put('/customer/{id}/{cpID}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
 
+Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
 
 Route::get('/', function () {
     return view('welcome');

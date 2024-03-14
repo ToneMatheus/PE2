@@ -22,24 +22,6 @@
                 document.getElementById('confirmCancel').style.display = 'none';
             }
 
-            function checkAddTariff(){
-                var name = document.getElementById('name').value;
-                var type = document.getElementById('type').value;
-                var rangeMin = document.getElementById('rangeMin').value;
-                var rangeMax = document.getElementById('rangeMax').value;
-
-                var error = document.getElementById('error1');
-
-                /*if(rangeMax){
-                    if (rangeMin > rangeMax){
-                        error.innerHTML = 'Range Minimum should be smaller than Range Maximmum';
-                        return false;
-                    }
-                }*/
-
-                return true;
-            }
-
             function sortTariffTable(n) {
                 var table, rows, switching, i, x, y, shouldSwitch, dir, switchCount = 0;
                 table = document.getElementById("tariffTable");
@@ -188,7 +170,7 @@
 
         <button class="addBttn" id="addBttn" onclick="showForm()">+</button>
 
-        <form id="addTariff" method="post" action="{{ route('tariff.add') }}" onsubmit="return checkAddTariff()">
+        <form id="addTariff" method="post" action="{{ route('tariff.add') }}">
             @csrf
 
             <label for="name">Name:</label>
@@ -230,38 +212,5 @@
                 <p>{{ $error }}</p>
             @endforeach
         @endif
-
-        <h2>Customer</h2>
-        
-        <form id="searchBarForm">
-            <input type="text" name="searchBar"/>
-            <input type="submit" name="submitSearch"/>
-        </form>
-
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Customer</th>
-                <th>Product Name</th>
-                <th>Type</th>
-                <th>Rate</th>
-                <th>Edit</th>
-            </tr>
-
-            @foreach ($contractProducts as $contractProduct)
-                <tr>
-                    <td>{{$contractProduct->id}}</td>
-                    <td>{{$contractProduct->name}}</td>
-                    <td>{{$contractProduct->product_name}}</td>
-                    <td>{{$contractProduct->type}}</td>
-                    <td>{{$contractProduct->rate}}</td>
-                    <td>
-                        <a href="{{ route('contractProduct', ['cpID' => $contractProduct->id]) }}"> 
-                            <img src="{{asset('./images/editIcon.png')}}" alt="edit Icon" id="editIcon"/>
-                        </a>
-                    </td>
-                </tr>
-            @endforeach
-        </table>
     </body>
 </html>
