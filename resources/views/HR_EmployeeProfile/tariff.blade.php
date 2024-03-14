@@ -27,14 +27,8 @@
                 var type = document.getElementById('type').value;
                 var rangeMin = document.getElementById('rangeMin').value;
                 var rangeMax = document.getElementById('rangeMax').value;
-                var rate = document.getElementById('rate').value;
 
                 var error = document.getElementById('error1');
-
-                if(!name || !type || !rangeMin || !rate){
-                    error.innerHTML = 'Fill in all fields';
-                    return false;
-                }
 
                 /*if(rangeMax){
                     if (rangeMin > rangeMax){
@@ -137,13 +131,13 @@
                                 <tr>
                                     <td>{{$productTariff->product_name}}</td>
                                     <td>
-                                        <input type="number" name="rangeMin" id="rangeMin" min="0" value="{{$productTariff->rangeMin}}"/> 
+                                        <input type="number" name="rangeMin" id="rangeMin" min="0" value="{{$productTariff->range_min}}" required/> 
                                     </td>
                                     <td>
-                                        <input type="number" name="rangeMax" id="rangeMax" min="0" value="{{$productTariff->rangeMax}}"/> 
+                                        <input type="number" name="rangeMax" id="rangeMax" min="0" value="{{$productTariff->range_max}}"/> 
                                     </td>
                                     <td>
-                                        <input type="number" name="rate" id="rate" min="0" max="1" step="0.01" value="{{$productTariff->rate}}"/> 
+                                        <input type="number" name="rate" id="rate" min="0.01" max="1" step="0.01" value="{{$productTariff->rate}}" required/> 
                                     </td>
                                     <td>
                                         <input type="submit" name="submitChangeTariff" value="Save"/>
@@ -158,12 +152,12 @@
                                     <td>{{$productTariff->range_max}}</td>
                                     <td>{{$productTariff->rate}}</td>
                                     <td>
-                                        <a href="{{ URL::route('tariff', ['action' => 'edit', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}'">
+                                        <a href="{{ route('tariff', ['action' => 'edit', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}'">
                                             <img src="{{asset('./images/editIcon.png')}}" alt="edit Icon" id="editIcon"/>
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="{{ route('tariff', ['action' => 'delete', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}">
+                                    <a href="{{ route('tariff.delete', ['action' => 'delete', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}">
                                             <img src="{{asset('./images/trashIcon.png')}}" alt="trash Icon" id="trashIcon"/>
                                         </a>
                                     </td>
@@ -176,12 +170,12 @@
                                 <td>{{$productTariff->range_max}}</td>
                                 <td>{{$productTariff->rate}}</td>
                                 <td>
-                                    <a href="{{ URL::route('tariff', ['action' => 'edit', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}'">
+                                    <a href="{{ route('tariff', ['action' => 'edit', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}'">
                                         <img src="{{asset('./images/editIcon.png')}}" alt="edit Icon" id="editIcon"/>
                                     </a>
                                 </td>
                                 <td>
-                                    <a href="{{ route('tariff', ['action' => 'delete', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}">
+                                <a href="{{ route('tariff.delete', ['action' => 'delete', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}">
                                         <img src="{{asset('./images/trashIcon.png')}}" alt="trash Icon" id="trashIcon"/>
                                     </a>
                                 </td>
@@ -194,7 +188,7 @@
 
         <button class="addBttn" id="addBttn" onclick="showForm()">+</button>
 
-        <form id="addTariff" method="post" action="<?php echo($_SERVER['PHP_SELF']) ?>" onsubmit="return checkAddTariff()">
+        <form id="addTariff" method="post" action="{{ route('tariff.add') }}" onsubmit="return checkAddTariff()">
             @csrf
 
             <label for="name">Name:</label>
@@ -211,15 +205,13 @@
             </select>
 
             <label for="rangeMin">Range Minimum:</label>
-            <input type="number" name="rangeMin" id="rangeMin" min="0"/>            <!--check of rangeMin < rangeMax-->
+            <input type="number" name="rangeMin" id="rangeMin" min="0" required/>
 
             <label for="rangeMax">Range Maximum:</label>
             <input type="number" name="rangeMax" id="rangeMax" min="0" placeholder="/"/>
 
             <label for="rate">Rate:</label>
-            <input type="number" name="rate" id="rate" min="0" max="1" step="0.01"/>
-
-            <p class="error" id="error1"></p>
+            <input type="number" name="rate" id="rate" min="0.1" max="1" step="0.01" required/>
 
             <div id="addBttns">
                 <input type="submit" name="submitTariff"/>
@@ -232,6 +224,12 @@
             <button id="confirmYes" onclick="confirmYes()">Yes</button>
             <button id="confirmNo" onclick="confirmNo()">No</button>
         </div>
+
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        @endif
 
         <h2>Customer</h2>
         

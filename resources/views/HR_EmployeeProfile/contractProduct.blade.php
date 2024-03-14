@@ -124,12 +124,13 @@
                 $newRate = $discount->rate;
 
                 $percentage = (($oldRate - $newRate) / $oldRate) * 100;
+                $roundedPercentage = round($percentage, 2);
             @endphp
 
             <div>
                 <h2>Discount</h2>
                 <p>New rate: {{$discount->rate}}</p>
-                <p>Percentage: {{$percentage}}%</p>
+                <p>Percentage: {{$roundedPercentage}}%</p>
             </div>
         @endif
 
@@ -142,7 +143,7 @@
         <form id="addDiscount" method="post" action="{{ route('cp.discount', ['cpID' => $contractProduct->cpID]) }}">
             @csrf
             <label for="percentage">Percentage: </label>
-            <input id="percentage" name="percentage" type="number"  onkeyup="calculateDiscount(<?php echo $productTariff->rate; ?>)" required/>
+            <input id="percentage" name="percentage" type="number"  onkeyup="calculateDiscount(<?php echo $productTariff->rate; ?>)" min='2' max='98' required/>
 
             @php
                 $currentDateTime = new DateTime('now');
@@ -153,10 +154,10 @@
             @endphp
 
             <label for="startDate">Start Date: </label>
-            <input id="startDate" name="startDate" type="date" min="{{$currentDate}}" max="{{$maxDate}}" data-date-format="YYYY MMMM DD" value="{{$currentDate}}" required/>
+            <input id="startDate" name="startDate" type="date" min="{{$currentDate}}" max="{{$maxDate}}" data-date-format="YYYY MM DD" value="{{$currentDate}}" required/>
 
             <label for="endDate">End Date: </label>
-            <input id="endDate" name="endDate" type="date" min="{{$currentDate}}" max="{{$maxDate}}" required/>
+            <input id="endDate" name="endDate" type="date" min="{{$currentDate}}" max="{{$maxDate}}" data-date-format="YYYY MM DD" required/>
                 
             <p id="calculatedRate"></p>
             <input type="hidden" id="newRate" name="newRate"/>
@@ -165,5 +166,10 @@
             <button type="button" onclick="addDiscount(0)">Cancel</button>
         </form>
 
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        @endif 
     </body>
 </html>

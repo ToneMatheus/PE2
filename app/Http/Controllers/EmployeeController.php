@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
-
-use function PHPSTORM_META\map;
 
 class EmployeeController extends Controller
 {
@@ -44,6 +43,27 @@ class EmployeeController extends Controller
     }
 
     public function processTariff(Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'type' => 'required',
+            'rangeMin' => 'required|numeric|min:0',
+            'rangeMax' => [
+                'nullable',
+                'numeric',
+                function ($attribute, $value, $fail) use ($request) {
+                    $rangeMin = $request->input('rangeMin');
+                    if (!is_null($value) && $rangeMin >= $value) {
+                        $fail('The maximum value must be greater than the minimum value.');
+                    }
+                }
+            ],
+            'rate' => 'required|numeric|min:0.1'
+        ]);
+
+        if($validator->fails()){
+            return redirect()->route('tariff')->withErrors($validator)->withInput();
+        }
+
         if($request->has('submitTariff')){
             $rangeMax = $request->input('rangeMax');
 
@@ -59,7 +79,7 @@ class EmployeeController extends Controller
             ]);
 
             $productID = DB::table('products')->insertGetId([
-                'product_mame' => $request->input('name'),
+                'product_name' => $request->input('name'),
                 'start_date' => Carbon::now()->toDateString(),
                 'type' => $request->input('type'),
             ]);
@@ -83,33 +103,50 @@ class EmployeeController extends Controller
     }
 
     public function editTariff(Request $request, $pID, $tID){
-        if($request->input('submitChangeTariff')){
-            $tariff = DB::table('tariff')
-            ->where('ID', $tID)
-            ->first();
+        $validator = Validator::make($request->all(), [
+            'rangeMin' => 'required|numeric|min:0',
+            'rangeMax' => [
+                'nullable',
+                'numeric',
+                function ($attribute, $value, $fail) use ($request) {
+                    $rangeMin = $request->input('rangeMin');
+                    if (!is_null($value) && $rangeMin >= $value) {
+                        $fail('The maximum value must be greater than the minimum value.');
+                    }
+                }
+            ],
+            'rate' => 'required|numeric|min:0.1'
+        ]);
 
-            $rangeMin = $request->input('rangeMin');
-            $rangeMax = $request->input('rangeMax');
-            $rate = $request->input('rate');
-
-            if ($rangeMin !== $tariff->rangeMin || $rangeMax !== $tariff->rangeMax || $rate !== $tariff->rate ){
-                $newtID = DB::table('tariffs')->insertGetId([
-                    'type' => $tariff->type,
-                    'range_min' => $rangeMin,
-                    'range_max' => $rangeMax,
-                    'rate' => $rate
-                ]);
-
-                $date = Carbon::now()->toDateString();
-                DB::update('UPDATE product_tariffs SET end_date = ? WHERE product_id = ? AND tariff_id = ?', [$date, $pID, $tID]);
-                DB::table('product_tariffs')->insert([
-                    'start_date' => $date,
-                    'product_id' => $pID,
-                    'tariff_id' => $newtID
-                ]);
-            }
-            return redirect()->route('tariff');
+        if($validator->fails()){
+            return redirect()->route('tariff')->withErrors($validator)->withInput();
         }
+
+        $tariff = DB::table('tariffs')
+        ->where('id', $tID)
+        ->first();
+
+        $rangeMin = $request->input('rangeMin');
+        $rangeMax = $request->input('rangeMax');
+        $rate = $request->input('rate');
+
+        if ($rangeMin !== $tariff->range_min || $rangeMax !== $tariff->range_max || $rate !== $tariff->rate ){
+            $newtID = DB::table('tariffs')->insertGetId([
+                'type' => $tariff->type,
+                'range_min' => $rangeMin,
+                'range_max' => $rangeMax,
+                'rate' => $rate
+            ]);
+
+            $date = Carbon::now()->toDateString();
+            DB::update('UPDATE product_tariffs SET end_date = ? WHERE product_id = ? AND tariff_id = ?', [$date, $pID, $tID]);
+            DB::table('product_tariffs')->insert([
+                'start_date' => $date,
+                'product_id' => $pID,
+                'tariff_id' => $newtID
+            ]);
+        }
+        return redirect()->route('tariff');
     }
 
     public function showContractProduct($cpID){
@@ -153,6 +190,25 @@ class EmployeeController extends Controller
     }
 
     public function addDiscount(Request $request, $cpID){
+        $validator = Validator::make($request->all(), [
+            'percentage' => 'required|numeric|min:1.8',
+            'startDate' => 'required|date',
+            'endDate' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) use ($request) {
+                    $startDate = $request->input('startDate');
+                    if ($startDate >= $value) {
+                        $fail('The end date should be later than the start date');
+                    }
+                }
+            ]
+        ]);
+
+        if($validator->fails()){
+            return redirect()->route('contractProduct', ['cpID' => $cpID])->withErrors($validator)->withInput();
+        }
+
         $date = Carbon::now()->toDateString();
 
         $tariffID = DB::table('discounts')->insertGetId([
@@ -172,24 +228,32 @@ class EmployeeController extends Controller
         ->where('id', '=', $oldCpID)
         ->first();
 
-        DB::update('UPDATE contract_products SET end_date = ? WHERE id = ?', [$date, $oldCP->id]);
+        $product = intval($request->input('product'));
 
-        $newCpID = DB::table('contract_products')->insertGetId([
-            'customer_contract_id' => $oldCP->customer_contract_id,
-            'product_id' => $request->input('product'),
-            'tariff_id' => null,
-            'start_date' => $date,
-            'end_date' => null
-        ]);
+        if($product != $oldCP->product_id){
+            DB::update('UPDATE contract_products SET end_date = ? WHERE id = ?', [$date, $oldCpID]);
 
-        $discount = DB::table('discounts')
-        ->where('contract_product_id', '=', $oldCP->id)
-        ->whereDate('end_date', '>', $date)
-        ->first();
+            $newCpID = DB::table('contract_products')->insertGetId([
+                'customer_contract_id' => $oldCP->customer_contract_id,
+                'product_id' => $request->input('product'),
+                'tariff_id' => null,
+                'start_date' => $date,
+                'end_date' => null
+            ]);
+    
+            $discount = DB::table('discounts')
+            ->where('contract_product_id', '=', $oldCpID)
+            ->whereDate('end_date', '>', $date)
+            ->first();
+    
+            if($discount){
+                DB::update('UPDATE discounts SET end_date = ? WHERE id = ?', [$date, $discount->id]);
+            }
+    
+            return redirect()->route('contractProduct', ['cpID' => $newCpID]);
+        }
 
-        DB::update('UPDATE discounts SET end_date = ? WHERE id = ?', [$date, $discount->id]);
-
-        return redirect()->route('contractProduct', ['cpID' => $newCpID]);
+        return redirect()->route('contractProduct', ['cpID' => $oldCpID]);
     }
 
     public function getProductsByType($type){

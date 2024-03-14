@@ -49,8 +49,8 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
 });
 
 Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
-Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff']);
-Route::post('/tariff', [EmployeeController::class, 'processTariff']);
+Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
+Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add'); 
 Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
 
 Route::get('/contractProduct/{cpID}', [EmployeeController::class, 'showContractProduct'])->name('contractProduct');
