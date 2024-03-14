@@ -25,15 +25,23 @@
         function checkbox(){
             var checkbox = document.getElementById("Company");
             var show = document.getElementsByClassName("CompanyField");
+            var typeHouseSelect = document.getElementsByName("typeHouse")[0];
+            var businessOption = typeHouseSelect.querySelector('option[value="business"]');
 
             if(checkbox.checked == true){
                 for (var i = 0; i < show.length; i++) {
                     show[i].style.visibility = "visible";
                 }
+                typeHouseSelect.value = "business";
+                businessOption.disabled = false;
+                businessOption.style.display = "block";  
             }else{
                 for (var j = 0; j < show.length; j++) {
                     show[j].style.visibility = "hidden";
                 }
+                typeHouseSelect.value = "house";
+                businessOption.disabled = true;
+                businessOption.style.display = "none";               
             }
         }
     </script>
@@ -108,8 +116,17 @@
                             <label>Phone number (optional)</label>
                         </td>
                         <td>
-                            <input type="tel" placeholder="0032 123 45 32 10" pattern="[0]{2}32 [0-9]{3} [0-9]{2} [0-9]{2} [0-9]{2}" name="PhoneNummer"
+                            <input type="tel" placeholder=" 0123 453 210" pattern="0[0-9]{3} [0-9]{3} [0-9]{3}" name="PhoneNummer"
                              value="{{old('PhoneNummer')}}"/>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <label>Birthdate</label>
+                        </td>
+                        <td>
+                            <input type="date" id="birthday" name="birthday" value="{{old('birthday')}}">
                         </td>
                     </tr>
 
@@ -135,7 +152,7 @@
 
                     <tr>
                         <td>
-                            <label>For company (optional)</label>
+                            <label>For company</label>
                         </td>
                         <td>
                             <input type="checkbox" id="Company" name="isCompany" onclick="checkbox()" @if(old('isCompany')) checked @endif/>
@@ -167,14 +184,15 @@
 
                     <tr>
                         <td>
-                            <label>Region</label>
+                            <label>Province</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="Region" name="Region" value="{{old('Region')}}" required/>
+                            <input type="text" placeholder="Province" name="Province" value="{{old('Province')}}" required/>
                         </td>
 
                         <td>
-                            <label>Bus (optional)</label>
+<!-- //? zien of het optioneel moet zijn. -->
+                            <label>Box</label>
                         </td>
                         <td>
                             <input type="text" placeholder="A" name="Bus" value="{{old('Bus')}}"/>
@@ -197,13 +215,26 @@
                         </td>    
                     </tr>
 
+                    <tr>
+                        <td>
+                            <label>type of house</label>
+                        </td>
+                        <td>
+                        <select name="typeHouse">
+                                <option value="house" @if(old('typeHouse') == 'house') selected @endif>House</option>
+                                <option value="appartment"  @if(old('typeHouse') == 'appartment') selected @endif>Appartment</option>
+                                <option value="business"  @if(old('typeHouse') == 'business') selected @endif>Business</option>
+                            </select>
+                        </td>
+                    </tr>
+
                 </table>
                 @csrf
                 <input type="submit" value="Create" id="createAccount">
             </form>
         </div>
 
-        <p>je krijgt een bevesteging email.</p>
+        //LOOK: je krijgt een beveseging email.
             
 
     </div>

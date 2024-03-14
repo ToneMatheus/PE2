@@ -64,7 +64,7 @@ Route::get('/test', function () {
     return view('test');
 });
 
-
+/*Joren*/
 //routes for custmer data for customer
 Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
 Route::get('/Customer/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
