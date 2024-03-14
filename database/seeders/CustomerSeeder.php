@@ -71,3 +71,4 @@ class CustomerSeeder extends Seeder
         ]);
     }
 }
+
