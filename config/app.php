@@ -3,6 +3,21 @@
 use Illuminate\Support\Facades\Facade;
 
 return [
+    
+    /*
+    |--------------------------------------------------------------------------
+    | swear words
+    |--------------------------------------------------------------------------
+    |
+    | This is an own implemented service provider for swear words
+    | validation. By arandilopez from github
+    | https://github.com/arandilopez/laravel-profane
+    |
+    */
+
+    'providers' => [
+        LaravelProfane\ProfaneServiceProvider::class,
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -211,5 +226,4 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
-
 ];

@@ -18,10 +18,12 @@ class UserSeeder extends Seeder
         }
 
         function generateDate(){
-            $minBirthdate = Carbon::now()->subYears(17)->endOfDay();
+            $minBirthdate = Carbon::now()->subYears(18)->endOfDay();
             $maxBirthdate = Carbon::now()->endOfDay();
 
             $birthDate = Carbon::createFromTimestamp(rand($minBirthdate->timestamp, $maxBirthdate->timestamp));
+
+            $birthDate = $birthDate->subYears(18);
 
             return $birthDate->toDateString();
         }
@@ -97,6 +99,63 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
             ],
+            [   
+                'id' => 6,
+                'username' => 'marie',
+                'first_name' => 'Marie',
+                'last_name' => 'Doe',
+                'password' => Hash::make('marie'),
+                'address_id' => null,
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'marie@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+            ],
+            [   
+                'id' => 7,
+                'username' => 'mark',
+                'first_name' => 'Mark',
+                'last_name' => 'Doe',
+                'password' => Hash::make('mark'),
+                'address_id' => null,
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'mark@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+            ],
+            [   
+                'id' => 8,
+                'username' => 'rob',
+                'first_name' => 'Rob',
+                'last_name' => 'Doe',
+                'password' => Hash::make('rob'),
+                'address_id' => null,
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'rob@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+            ],
+            [   
+                'id' => 9,
+                'username' => 'jan',
+                'first_name' => 'Jan',
+                'last_name' => 'Doe',
+                'password' => Hash::make('jan'),
+                'address_id' => null,
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'jan@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+            ],
+            
         ]);
     }
 }
