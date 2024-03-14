@@ -103,7 +103,8 @@
 
     <div class="sidebar">
         <label id="label">This label is currently empty</label>
-        <button id="button">Click Me</button>
+        <button id="cancel" name="cancel" onclick="cnlButton()">Cancel</button>
+        <button id="button" name="button" onclick="btnClicked()">Submit</button>
     </div>
 
     <script>
@@ -279,6 +280,58 @@
                 };
                 xhr.send(params);
             }
+        }
+
+        function btnClicked()
+        {
+            var xhr = new XMLHttpRequest();
+            if (xhr == null) 
+            {
+                alert("Browser does not support HTTP Request");
+            } 
+            else 
+            {
+                var url = "{{ asset('php/test.php') }}";
+                var params = "button"; // Send $idNum value as a POST parameter
+                //params += "color=" + $color;
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) 
+                    {
+                        // Handle the response from the server if needed
+                        console.log(xhr.responseText);
+                    }
+                };
+                xhr.send(params);
+            }
+        }
+
+        function cnlButton()
+        {
+            var xhr = new XMLHttpRequest();
+            if (xhr == null) 
+            {
+                alert("Browser does not support HTTP Request");
+            } 
+            else 
+            {
+                var url = "{{ asset('php/test.php') }}";
+                var params = "cancel"; // Send $idNum value as a POST parameter
+                //params += "color=" + $color;
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) 
+                    {
+                        // Handle the response from the server if needed
+                        console.log(xhr.responseText);
+                    }
+                };
+                xhr.send(params);
+            }
+
+            window.location.href = "{{ route('request') }}";
         }
 
 
