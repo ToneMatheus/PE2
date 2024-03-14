@@ -35,5 +35,9 @@
         public function employeeList(){
             return view('employeeList');
         }
+
+        public function holiday(){
+            return view('holidayRequestPage');
+        }
     }
 ?>

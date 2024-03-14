@@ -6,6 +6,7 @@ use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ManagerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +62,19 @@ Route::get('/contract', [myController::class, 'contract'])->name('contract');
 Route::get('/profile', [myController::class, 'profile'])->name('profile');
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
+
+//routing to decide whether the manager accepted or rejected holiday request and performing actions based on that
+Route::get('/processRequest', [ManagerController::class, 'action'])->name('accept');
+Route::get('/processRequest2', [ManagerController::class, 'action'])->name('decline');
+
+
+//Route::get('/holidayRequest', [myController::class, 'holiday'])->name('request');
+
+//Route::get('/holidayRequest', function() {  return view('holidayRequest');  })->name('request');
+
+Route::get('/holidayRequest', function(){
+    return view('holidayRequestPage');
+});
 
 Route::get('/welcome', function() {
     return view('welcome');

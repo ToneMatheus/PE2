@@ -331,7 +331,7 @@
                 xhr.send(params);
             }
 
-            window.location.href = "{{ route('request') }}";
+            window.location.href = "{{route('request')}}";
         }
 
 
