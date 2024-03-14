@@ -75,7 +75,8 @@ else if(isset($_POST['button']))
     {
         //calandar day
         $day = strval($_SESSION['numCal']);
-        $toDay = "2024/03/$day";
+        $thsDay = "2024/03/$day";
+        $todayRequest = date("Y/m/d");
         //holiday_types
         echo 'yes green I guess';
         $type = "Vacation";
@@ -98,8 +99,9 @@ else if(isset($_POST['button']))
 
 
             $employee_profile_id = mysqli_real_escape_string($link, 1);
-            $start_date = mysqli_real_escape_string($link, $toDay);
-            $end_date = mysqli_real_escape_string($link, $toDay);
+            $request_date = mysqli_real_escape_string($link, $todayRequest);
+            $start_date = mysqli_real_escape_string($link, $thsDay);
+            $end_date = mysqli_real_escape_string($link, $thsDay);
             $holiday_type_id = mysqli_real_escape_string($link, 1);
             $reason = mysqli_real_escape_string($link, "");
             $fileLoc = mysqli_real_escape_string($link, "");
@@ -107,7 +109,7 @@ else if(isset($_POST['button']))
             $boss_approval = mysqli_real_escape_string($link, 0);
             $is_active = mysqli_real_escape_string($link, 1);
 
-            $query2 = "INSERT INTO holidays (employee_profile_id, start_date, end_date, holiday_type_id, reason, fileLocation, manager_approval, boss_approval, is_active) VALUES ('$employee_profile_id', '$start_date', '$end_date', '$holiday_type_id', '$reason', '$fileLoc', '$manager_approval', '$boss_approval', '$is_active')";
+            $query2 = "INSERT INTO holidays (employee_profile_id, request_date, start_date, end_date, holiday_type_id, reason, fileLocation, manager_approval, boss_approval, is_active) VALUES ('$employee_profile_id', '$request_date', '$start_date', '$end_date', '$holiday_type_id', '$reason', '$fileLoc', '$manager_approval', '$boss_approval', '$is_active')";
             $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query.");
         if($result2)
         {
