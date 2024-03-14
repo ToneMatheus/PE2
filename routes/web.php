@@ -61,6 +61,15 @@ Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
 Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
 Route::get('/profile', [myController::class, 'profile'])->name('profile');
+Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
+Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
+
+Route::get('/welcome', function () {
+    return view('welcome');
+});
+Route::get('/roles', function () {
+    return view('roleOverview');
+});
 
 Route::get('/test', function () {
     return view('test');

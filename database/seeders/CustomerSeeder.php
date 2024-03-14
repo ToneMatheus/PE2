@@ -15,7 +15,6 @@ class CustomerSeeder extends Seeder
      */
     public function run()
     {
-        
         // Seed Users
         $userId = DB::table('user')->insertGetId([
             'username' => 'john_doe',
@@ -71,4 +70,3 @@ class CustomerSeeder extends Seeder
         ]);
     }
 }
-
