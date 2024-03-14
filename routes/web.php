@@ -66,6 +66,15 @@ Route::get('/test', function () {
     return view('test');
 });
 
+// Ticket page | Accessible by everyone
+Route::controller(TicketController::class)->group(function () {
+    Route::get('/create-ticket', 'showForm')->name('create-ticket');
+    Route::post('/submitted-ticket', 'store')->name('submitted-ticket');
+    Route::get('/submitted-ticket', 'showSubmittedTicket')->name('show-ticket');
+});
+
+Route::get('/customer/overview', [SimpleUserOverViewController::class, 'overview'])->name('overview');
+
 
 //routes for custmer data for customer
 Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
