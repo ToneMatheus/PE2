@@ -5,7 +5,7 @@ use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\JobStatusController;
+use App\Http\Controllers\CronJobController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,9 +60,11 @@ Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
 Route::get('/profile', [myController::class, 'profile'])->name('profile');
 
-Route::get('/job-status', [JobStatusController::class, 'index']);
-Route::post('/run-regular-job', [JobStatusController::class, 'runRegularJob'])->name('run-regular-job');
-Route::post('/run-special-job', [JobStatusController::class, 'runSpecialJob'])->name('run-special-job');
+//cronjobs
+Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+Route::get('/cron-jobs/edit/{job}', [CronJobController::class, 'edit'])->name('edit-cron-job');
+Route::put('/cron-jobs/update/{job}', [CronJobController::class, 'update'])->name('update-cron-job');
+Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
 
 Route::get('/test', function () {
     return view('test');

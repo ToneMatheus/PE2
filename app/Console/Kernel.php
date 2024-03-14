@@ -4,8 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Jobs\RegularJob;
-use App\Jobs\SpecialJob;
+use App\Models\CronJob;
 
 class Kernel extends ConsoleKernel
 {
@@ -15,15 +14,19 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
 
-        // Run a job every month on the 12th day except for the 12th month
-        $schedule->job(new RegularJob())->monthlyOn(12, '00:00')->when(function () {
-            return now()->month !== 12;
-        });
+        // Fetch job schedules from the database
+        $cronjobs = CronJob::all();
+        foreach ($cronjobs as $cronjob) {
+            $jobClass = 'App\Jobs\\' .  $cronjob->name;
 
-        // Run a special job on the 12th month
-        $schedule->job(new SpecialJob())->monthlyOn(12, '00:00')->when(function () {
-            return now()->month === 12;
-        });
+            // Extract hour and minutes from the scheduled_time string
+            $timeParts = explode(':', $cronjob->scheduled_time);
+            $hour = $timeParts[0];
+            $minute = $timeParts[1];
+
+            $schedule->job(new $jobClass())->monthlyOn($cronjob->scheduled_day, $hour . ':' . $minute);
+        }
+
     }
 
     /**
