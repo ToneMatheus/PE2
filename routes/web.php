@@ -88,3 +88,7 @@ Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::cla
 
 // Validation route's to create a customer account by customer
 Route::post('/Customer/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
+
+Route::get('/holidayRequest', function() {
+    return view('holidayRequestPage');
+}) -> name('request');
