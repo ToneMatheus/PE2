@@ -41,21 +41,21 @@
 <body>
     <h1>Edit Customer</h1>
 
-    <form class="edit-form" action="{{ url("/customer/{$customer->userID}") }}" method="POST" onsubmit="return confirm('Are you sure you want to update this customer?');">
+    <form class="edit-form" action="{{ url("/customer/{$customer->id}") }}" method="POST" onsubmit="return confirm('Are you sure you want to update this customer?');">
         @csrf
         @method('PUT')
 
-        <label for="lastName">Last Name:</label>
-        <input type="text" id="lastName" name="lastName" value="{{ $customer->lastName }}" required>
+        <label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name" value="{{ $customer->last_name }}" required>
 
-        <label for="firstName">First Name:</label>
-        <input type="text" id="firstName" name="firstName" value="{{ $customer->firstName }}" required>
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" value="{{ $customer->first_name }}" required>
 
-        <label for="phoneNumber">Phone Number:</label>
-        <input type="text" id="phoneNumber" name="phoneNumber" value="{{ $customer->phoneNumber }}" required>
+        <label for="phone_nbr">Phone Number:</label>
+        <input type="text" id="phone_nbr" name="phone_nbr" value="{{ $customer->phone_nbr }}" required>
 
-        <label for="companyName">Company Name:</label>
-        <input type="text" id="companyName" name="companyName" value="{{ $customer->companyName }}" required>
+        <label for="company_name">Company Name:</label>
+        <input type="text" id="company_name" name="company_name" value="{{ $customer->company_name }}">
 
         @if ($errors->any())
             <div class="alert alert-danger">

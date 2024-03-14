@@ -21,12 +21,14 @@ class CustomerAddressSeeder extends Seeder
             ];
         }
 
-        $adds[] = [
-            'start_date' => '2024-01-01',
-            'end_date' => null,
-            'user_id' => 5,
-            'address_id' => 6
-        ];
+        for($i=5; $i <= 9; $i++) {
+            $adds[] = [
+                'start_date' => '2024-01-01',
+                'end_date' => null,
+                'user_id' => $i,
+                'address_id' => $i + 1
+            ];
+        }
 
         DB::table('customer_addresses')->insert($adds);
     }
