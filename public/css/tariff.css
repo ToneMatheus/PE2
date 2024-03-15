@@ -1,0 +1,23 @@
+#addTariff{
+    display: none;
+}
+
+#confirmCancel {
+    display: none;
+}
+
+#editIcon {
+    width: 20px;
+}
+
+#trashIcon{
+    width: 30px;
+}
+
+table{
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: solid 1px black;
+}

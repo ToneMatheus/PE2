@@ -7,6 +7,10 @@ use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\invoice_query_controller;
+use App\Http\Controllers\unpaid_invoice_query_controller;
+use App\Http\Controllers\CustomerGridViewController;
+use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNotaController;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\CustomerController;
@@ -35,7 +39,7 @@ Route::middleware(['auth', 'role:Customer'])->group(function (){
 Route::middleware(['auth', 'notrole:Customer'])->group(function (){
     //Only Finance
     Route::middleware(['auth', 'role:Finance analyst'])->group(function () {
-        Route::get('/tariff', [EmployeeController::class, 'tariff'])->name('tariff');
+
     });
     
     //Only Manager
@@ -53,6 +57,17 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
     //Route::get('/profile', [myController::class, 'profile'])->name('profile');
 });
 
+Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
+Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
+Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add'); 
+Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
+
+//invoice query routes
+Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
+Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
+
+//preview advance reminder mail for testing
+Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
 // Meters branch
 
 Route::get('/dashboard', function () {
@@ -95,6 +110,17 @@ Route::get('/test', function () {
     return view('test');
 });
 
+
+Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
+Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
+Route::put('/customer/{id}/{cpID}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
+
+Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
+
+Route::get('/', function () {
+    return view('welcome');
+});
 // Ticket page | Accessible by everyone
 Route::controller(TicketController::class)->group(function () {
     Route::get('/create-ticket', 'showForm')->name('create-ticket');
