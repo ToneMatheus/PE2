@@ -6,6 +6,8 @@ use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\MeterController;
+
 
 /*
 |--------------------------------------------------------------------------
