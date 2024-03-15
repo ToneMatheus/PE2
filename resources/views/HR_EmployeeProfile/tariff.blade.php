@@ -1,74 +1,13 @@
-<?php
-    $host = "localhost";
-    $user = "root";
-    $password = "";
-    $db = "energy_supplier";
-
-    $conn = mysqli_connect($host, $user, $password, $db);
-
-    if (!$conn) {
-        die("Connection to database failed.");
-        }
-    if(isset($_POST['submitTariff']) || isset($_POST['submitChangeTariff'])) {
-            $name = $_POST['name'];
-            $rangeMin = $_POST['rangeMin'];
-            $rate = $_POST['rate'];
-            
-            if(!empty($_POST['rangeMax'])){
-                $rangeMax = $_POST['rangeMax'];
-            } else {
-                $rangeMax = null;
-            }
-
-            if (isset($_POST['type'])){
-                $type = $_POST['type'];
-            }
-
-            if (isset($_GET['id'])){
-                $id = $_GET['id'];
-            }
-
-            if(isset($_POST['submitTariff'])){
-                $stmt = $conn->prepare('INSERT INTO tariff (`name`, `type`, rangeMin, rangeMax, rate)
-                VALUES (?, ?, ?, ?, ?)');
-
-                $stmt->bind_param('ssddd', $name, $type, $rangeMin, $rangeMax, $rate);
-            } else {
-                $stmt = $conn->prepare('UPDATE tariff
-                                        SET `name` = ?, rangeMin = ?, rangeMax = ?, rate = ?
-                                        WHERE ID = ?');
-
-                $stmt->bind_param('sdddi', $name, $rangeMin, $rangeMax, $rate, $id);
-            }
-
-            $stmt->execute();
-            $stmt->close();
-
-            header('Location: ./tariff.php');
-    }
-
-    if (isset($_GET['id']) && $_GET['action'] == 'delete'){
-        $id = $_GET['id'];
-
-        $stmt = $conn->prepare('DELETE FROM tariff WHERE ID LIKE ?');
-        $stmt->bind_param('i', $id);
-
-        $stmt->execute();
-        $stmt->close();
-
-        header('Location: ./tariff.php');
-    }
-?>
-
 <!DOCTYPE html>
 <html>
     <head>
         <title>Tariffs</title>
         <meta charset="utf-8"/>
-        <link href="tariff.css" rel="stylesheet"/>
-        <script>        //Nog safety checks
+        <link href="/css/tariff.css" rel="stylesheet"/>
+        <script>    
             function showForm() {
                 document.getElementById('addTariff').style.display = 'block';
+                document.getElementById('addBttn1').style.display = 'none';
             }
 
             function confirmCancel() {
@@ -76,155 +15,164 @@
             }
 
             function confirmYes(){
-                location.href = "./tariff.php";
+                location.href = "{{route('tariff')}}";
             }
 
             function confirmNo(){
                 document.getElementById('confirmCancel').style.display = 'none';
             }
 
-            function checkAddTariff(){
-                var name = document.getElementById('name').value;
-                var type = document.getElementById('type').value;
-                var rangeMin = document.getElementById('rangeMin').value;
-                var rangeMax = document.getElementById('rangeMax').value;
-                var rate = document.getElementById('rate').value;
-
-                var error = document.getElementById('error1');
-
-                if(!name || !type || !rangeMin || !rate){
-                    error.innerHTML = 'Fill in all fields';
-                    return false;
-                }
-
-                /*if(rangeMax){
-                    if (rangeMin > rangeMax){
-                        error.innerHTML = 'Range Minimum should be smaller than Range Maximmum';
-                        return false;
+            function sortTariffTable(n) {
+                var table, rows, switching, i, x, y, shouldSwitch, dir, switchCount = 0;
+                table = document.getElementById("tariffTable");
+                switching = true;
+                dir = "asc";
+                
+                while (switching) {
+                    switching = false;
+                    rows = table.rows;
+                    
+                    for (i = 1; i < (rows.length - 1); i++) {
+                        shouldSwitch = false;
+                        x = rows[i].getElementsByTagName("TD")[n];
+                        y = rows[i + 1].getElementsByTagName("TD")[n];
+                        
+                        var xValue = isNaN(x.innerHTML) ? x.innerHTML.toLowerCase() : x.innerHTML;
+                        var yValue = isNaN(y.innerHTML) ? y.innerHTML.toLowerCase() : y.innerHTML;
+                        
+                        if (dir == "asc") {
+                            if (xValue > yValue) {
+                                shouldSwitch= true;
+                                break;
+                            }
+                        } else if (dir == "desc") {
+                            if (xValue < yValue) {
+                                shouldSwitch= true;
+                                break;
+                            }
+                        }
                     }
-                }*/
+                    
+                    if (shouldSwitch) {
+                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                        switching = true;
+                        switchCount++;
+                    } else {
+                        if (switchCount == 0 && dir == "asc") {
+                            dir = "desc";
+                            switching = true;
+                        }
+                    }
+                }
+            }
 
-                return true;
+            function swapRows(x, y){            
+                var tempRow = x.innerHTML;
+
+                x.innerHTML = y.innerHTML;
+                y.innerHTML = tempRow;
             }
         </script>
     </head>
     <body>
-        <h1>Tariffs</h1>
+        <h1>Products</h1>
 
         <h2>Electrical</h2>
-        <?php 
-            $stmt = 'SELECT `type` FROM tariff';
-            $result = $conn->query($stmt);
 
-            if($result->num_rows > 0){
-                $types = array();
+        @php
+            $types = [];
+        @endphp
 
-                while($row = $result->fetch_assoc()){
-                    if (!in_array($row['type'], $types)){
-                        array_push($types, $row['type']);
-                    }
-                }
+        @foreach ($productTariffs as $productTariff)
 
-                $result->free();
+            @if (!in_array($productTariff->type, $types))
+                @php
+                    $types[] = $productTariff->type;
+                @endphp
+            @endif
+        @endforeach
 
-                foreach($types as $type){
-                    echo '<h3>' . $type . '</h3>';
-
-                    $stmt = $conn->prepare('SELECT * FROM tariff WHERE `type` LIKE ?');
-                    $stmt->bind_param('s', $type);
-                    $stmt->execute();
-
-                    $result = $stmt->get_result();
-
-                    echo '<table><tr>
-                        <th>Name</th>
-                        <th>Range Min</th>
-                        <th>Range Max</th>
-                        <th>Rate</th>
-                        <th>Edit</th>
-                        <th>Delete</th></tr>
-                    ';
-
-                    while($row = $result->fetch_assoc()){
-
-                        if(isset($_GET['id']) && $_GET['action'] == 'edit'){            //Edit row
-                            if ($row['ID'] == $_GET['id']){                            //Show edit state for row
-                                $options = array('Tier 1', 'Tier 2', 'Tier 3');
-                                echo '<form id="changeTariff" method="post">
-                                <tr><td>
-                                    <select name="name" id="name">';
-
-                                    foreach ($options as $option){
-                                        if ($option == $row['name']){
-                                            echo '<option value="' . $option . '" selected>' . $option . '</option>';
-                                        } else {
-                                            echo '<option value="' . $option . '">' . $option . '</option>';
-                                        }
-                                    }
-
-                                echo '</select></td>
-                                <td>
-                                    <input type="number" name="rangeMin" id="rangeMin" min="0" value="' . $row['rangeMin'] .'"/> 
-                                </td>
-                                <td>
-                                    <input type="number" name="rangeMax" id="rangeMax" min="0" value="' . $row['rangeMax'] .'"/> 
-                                </td>
-                                <td>
-                                    <input type="number" name="rate" id="rate" min="0" max="1" step="0.01" value="' . $row['rate'] .'"/> 
-                                </td>
-                                <td>
-                                    <input type="submit" name="submitChangeTariff" value="Save"/>
-                                    <button type="button" onclick="confirmCancel()">Cancel</button>
-                                </td>
-                                </tr></form>
-                                ';
-                            }   else {                                              //Show normal state for other rows
-                                if (empty($row['rangeMax'])) $row['rangeMin'] .= '>';
-
-                                echo '
-                                <tr><td>' . $row['name'] . '</td>
-                                <td>' . $row['rangeMin'] . '</td>
-                                <td>' . $row['rangeMax'] . '</td>
-                                <td>' . $row['rate'] . '</td>
-                                <td><a href="./tariff.php?action=edit&id=' . $row['ID'] . '">
-                                    <img src="./img/editIcon.png" alt="edit Icon" id="editIcon"/>
-                                </a></td>
-                                <td><a href="./tariff.php?action=delete&id=' . $row['ID'] . '">
-                                    <img src="./img/trashIcon.png" alt="trash Icon" id="trashIcon"/>
-                                </a></td>
+        @foreach ($types as $type)
+            <h3>{{ $type }}</h3>
+            
+            <table id="tariffTable">
+                <tr>
+                    <th onclick="sortTariffTable(0)">Name</th>
+                    <th onclick="sortTariffTable(1)">Range Min</th>
+                    <th onclick="sortTariffTable(2)">Range Max</th>
+                    <th onclick="sortTariffTable(3)">Rate</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+                @foreach ($productTariffs as $productTariff)
+                    @if ($productTariff->type === $type)
+                        @if (request()->get('action') === 'edit')
+                            @if($productTariff->product_id == request()->get('pID'))
+                            <form id="changeTariff" method="post" action="{{ route('tariff.edit', ['pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}">
+                                @csrf
+                                <tr>
+                                    <td>{{$productTariff->product_name}}</td>
+                                    <td>
+                                        <input type="number" name="rangeMin" id="rangeMin" min="0" value="{{$productTariff->range_min}}" required/> 
+                                    </td>
+                                    <td>
+                                        <input type="number" name="rangeMax" id="rangeMax" min="0" value="{{$productTariff->range_max}}"/> 
+                                    </td>
+                                    <td>
+                                        <input type="number" name="rate" id="rate" min="0.01" max="1" step="0.01" value="{{$productTariff->rate}}" required/> 
+                                    </td>
+                                    <td>
+                                        <input type="submit" name="submitChangeTariff" value="Save"/>
+                                        <button type="button" onclick="confirmCancel()">Cancel</button>
+                                    </td>
                                 </tr>
-                            ';}
-                        }  else {
-                            if (empty($row['rangeMax'])) $row['rangeMin'] .= '>';
-                            
-                            echo '
-                            <tr><td>' . $row['name'] . '</td>
-                            <td>' . $row['rangeMin'] . '</td>
-                            <td>' . $row['rangeMax'] . '</td>
-                            <td>' . $row['rate'] . '</td>
-                            <td><a href="./tariff.php?action=edit&id=' . $row['ID'] . '">
-                                <img src="./img/editIcon.png" alt="edit Icon" id="editIcon"/>
-                            </a></td>
-                            <td><a href="./tariff.php?action=delete&id=' . $row['ID'] . '">
-                                <img src="./img/trashIcon.png" alt="trash Icon" id="trashIcon"/>
-                            </a></td>
+                            </form>
+                            @else
+                                <tr>
+                                    <td>{{$productTariff->product_name}}</td>
+                                    <td>{{$productTariff->range_min}}</td>
+                                    <td>{{$productTariff->range_max}}</td>
+                                    <td>{{$productTariff->rate}}</td>
+                                    <td>
+                                        <a href="{{ route('tariff', ['action' => 'edit', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}'">
+                                            <img src="{{asset('./images/editIcon.png')}}" alt="edit Icon" id="editIcon"/>
+                                        </a>
+                                    </td>
+                                    <td>
+                                    <a href="{{ route('tariff.delete', ['action' => 'delete', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}">
+                                            <img src="{{asset('./images/trashIcon.png')}}" alt="trash Icon" id="trashIcon"/>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endif
+                        @else
+                            <tr>
+                                <td>{{$productTariff->product_name}}</td>
+                                <td>{{$productTariff->range_min}}</td>
+                                <td>{{$productTariff->range_max}}</td>
+                                <td>{{$productTariff->rate}}</td>
+                                <td>
+                                    <a href="{{ route('tariff', ['action' => 'edit', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}'">
+                                        <img src="{{asset('./images/editIcon.png')}}" alt="edit Icon" id="editIcon"/>
+                                    </a>
+                                </td>
+                                <td>
+                                <a href="{{ route('tariff.delete', ['action' => 'delete', 'pID' => $productTariff->product_id, 'tID' => $productTariff->tariff_id]) }}">
+                                        <img src="{{asset('./images/trashIcon.png')}}" alt="trash Icon" id="trashIcon"/>
+                                    </a>
+                                </td>
                             </tr>
-                        ';
-                        }
-                    }
-                    echo '</table>';
+                        @endif
+                    @endif
+                @endforeach
+            </table>
+        @endforeach
 
-                    $result->free();
-                    
-                }
-            } else {
-                echo 'Loading in data failed';
-            }
-        ?>
+        <button class="addBttn" id="addBttn" onclick="showForm()">+</button>
 
-        <button id="addBttn" onclick="showForm()">+</button>
+        <form id="addTariff" method="post" action="{{ route('tariff.add') }}">
+            @csrf
 
-        <form id="addTariff" method="post" action="#" onsubmit="return checkAddTariff()">
             <label for="name">Name:</label>
             <select name="name" id="name">
                 <option value="Tier 1">Tier 1</option>
@@ -239,15 +187,13 @@
             </select>
 
             <label for="rangeMin">Range Minimum:</label>
-            <input type="number" name="rangeMin" id="rangeMin" min="0"/>            <!--check of rangeMin < rangeMax-->
+            <input type="number" name="rangeMin" id="rangeMin" min="0" required/>
 
             <label for="rangeMax">Range Maximum:</label>
             <input type="number" name="rangeMax" id="rangeMax" min="0" placeholder="/"/>
 
             <label for="rate">Rate:</label>
-            <input type="number" name="rate" id="rate" min="0" max="1" step="0.01"/>
-
-            <p class="error" id="error1"></p>
+            <input type="number" name="rate" id="rate" min="0.1" max="1" step="0.01" required/>
 
             <div id="addBttns">
                 <input type="submit" name="submitTariff"/>
@@ -261,6 +207,10 @@
             <button id="confirmNo" onclick="confirmNo()">No</button>
         </div>
 
-        <h2></h2>
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        @endif
     </body>
 </html>
