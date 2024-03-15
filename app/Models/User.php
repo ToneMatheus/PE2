@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Model;
 
 class User extends Authenticatable
 {
@@ -28,6 +29,11 @@ class User extends Authenticatable
             'phone_nbr' => self::VALIDATION_RULE_PHONE_NBR,
             'birth_date' => self::VALIDATION_RULE_BIRTHDATE,
     ];
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
 
     protected $table = 'users';
     protected $primaryKey = 'id';
@@ -63,4 +69,5 @@ class User extends Authenticatable
     {
         return $this->hasMany(CreditNote::class);
     }
+
 }
