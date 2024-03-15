@@ -13,4 +13,10 @@ class User extends Authenticatable
 
     protected $table = 'user';
     protected $primaryKey = 'ID';
+
+    
+    public function creditNotes()
+    {
+        return $this->hasMany(CreditNote::class);
+    }
 }

@@ -5,6 +5,8 @@ use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CreditNotaController;
+use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\CustomerController;
 
 /*
@@ -88,3 +90,8 @@ Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::cla
 
 // Validation route's to create a customer account by customer
 Route::post('/Customer/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
+
+//All routes for credit notes
+Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
+Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
+Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
