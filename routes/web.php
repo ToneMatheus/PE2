@@ -15,7 +15,6 @@ use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNotaController;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
 use App\Http\Controllers\CronJobController;
