@@ -117,6 +117,10 @@ Route::get('/roles', function () {
 Route::get('/test', function () {
     return view('test');
 });
+Route::get('/roleOverview', function () {
+    return view('roleOverview');
+});
+
 
 
 Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
