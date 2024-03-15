@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\SimpleUserOverViewController;
+use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
 
 
@@ -89,6 +92,16 @@ Route::get('/roles', function () {
 Route::get('/test', function () {
     return view('test');
 });
+
+// Ticket page | Accessible by everyone
+Route::controller(TicketController::class)->group(function () {
+    Route::get('/create-ticket', 'showForm')->name('create-ticket');
+    Route::post('/submitted-ticket', 'store')->name('submitted-ticket');
+    Route::get('/submitted-ticket', 'showSubmittedTicket')->name('show-ticket');
+});
+Route::get('/faq', [FAQController::class, 'showFAQ'])->name('faq');
+
+Route::get('/customer/overview', [SimpleUserOverViewController::class, 'overview'])->name('overview');
 
 
 //routes for custmer data for customer
