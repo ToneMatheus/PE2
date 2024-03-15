@@ -10,9 +10,9 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CreditNotaController;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -121,7 +121,12 @@ Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::cla
 // Validation route's to create a customer account by customer
 Route::post('/Customer/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
 
+
+Route::controller(InvoiceController::class)->group(function () {
+    Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
+});
 //All routes for credit notes
 Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
 Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
 Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
+
