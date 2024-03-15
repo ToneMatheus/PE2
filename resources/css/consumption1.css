@@ -1,0 +1,12 @@
+.container {
+    text-align: center;
+  }
+  
+  #meterIdInput {
+    margin-bottom: 20px;
+  }
+  
+  #meterType {
+    display: none;
+  }
+  
