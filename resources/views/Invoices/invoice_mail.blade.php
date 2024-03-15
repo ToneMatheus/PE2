@@ -13,7 +13,7 @@
 
     <ul>
         <li>Invoice type: {{ $invoiceType }}</li>
-        <li>Price: ${{ $invoicePrice }}</li>
+        <li>Price: ${{ $invoiceTotalAmount }}</li>
         <li>Status: {{ $invoiceStatus }}</li>
         <li>Due date: {{ $invoiceDueDate }}</li>
     </ul>

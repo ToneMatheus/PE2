@@ -6,6 +6,7 @@ use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\InvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -88,3 +89,7 @@ Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::cla
 
 // Validation route's to create a customer account by customer
 Route::post('/Customer/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
+
+Route::controller(InvoiceController::class)->group(function () {
+    Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
+});

@@ -52,11 +52,11 @@ class InvoiceMail extends Mailable
     public function content()
     {
         return new Content(
-            view: 'emails.invoice_mail',  
+            view: 'Invoices.invoice_mail',  
             with: [
                 'name' => $this->name,
                 'invoiceType' => $this->invoice->type,
-                'invoicePrice' => $this->invoice->price,
+                'invoiceTotalAmount' => $this->invoice->total_amount,
                 'invoiceStatus' => $this->invoice->status,
                 'invoiceDueDate' => $this->invoice->due_date,
             ],
