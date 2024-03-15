@@ -48,7 +48,7 @@ else if(isset($_POST['green']))
     $_SESSION['user']['green'] = $color;
     $color < 1 ?  $_SESSION['user']['green'] += 1 : $color = 1;
     echo "\n";
-    echo $_SESSION['user']['green'], "test";
+    // echo $_SESSION['user']['green'], "test";
 } 
 else if(isset($_POST['purple']))
 {
@@ -78,7 +78,8 @@ else if(isset($_POST['button']))
         $thsDay = "2024/03/$day";
         $todayRequest = date("Y/m/d");
         //holiday_types
-        echo 'yes green I guess';
+        // echo 'yes green I guess';
+
         $type = "Vacation";
         
         // $query = "INSERT INTO holiday_types ('type') VALUES ('$type')";
@@ -103,7 +104,7 @@ else if(isset($_POST['button']))
             $start_date = mysqli_real_escape_string($link, $thsDay);
             $end_date = mysqli_real_escape_string($link, $thsDay);
             $holiday_type_id = mysqli_real_escape_string($link, 1);
-            $reason = mysqli_real_escape_string($link, "");
+            $reason = mysqli_real_escape_string($link, "Vacation");
             $fileLoc = mysqli_real_escape_string($link, "");
             $manager_approval = mysqli_real_escape_string($link, 0);
             $boss_approval = mysqli_real_escape_string($link, 0);
