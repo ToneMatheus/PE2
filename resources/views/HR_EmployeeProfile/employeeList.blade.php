@@ -25,6 +25,7 @@
         </style>
     </head>
     <body>
+        <h2>Employee list</h2>
         @php
             use Carbon\Carbon;
 
@@ -43,6 +44,10 @@
                 $age = $currentDate->diffInYears($birthDate);
 
                 $holiday = DB::select("select * from holidays where employee_profile_id = $id");
+                if (!empty($holiday)) {
+                    $startDate = $holiday[0]->start_date; // Accessing the property on the first element
+                    $endDate = $holiday[0]->end_date;
+                }
 
                 echo("
                 <div class=\"cardd\">
@@ -56,16 +61,16 @@
                     </div>
                     <div class=\"info\">
                         <div class=\"label\">Start Date:</div>
-                        <div id=\"start-date\">2024-01-01</div>
+                        <div id=\"start-date\">".$startDate."</div>
                     </div>
                     <div class=\"info\">
-                        <div class=\"label\">End Date:</div>
-                        <div id=\"end-date\">2024-12-31</div>
+                        <div class=\"label\">End date:</div>
+                        <div id=\"end-date\">".$endDate."</div>
                     </div>
                 </div>
                 ");
             }
         @endphp
-
+    
     </body>
 </html>

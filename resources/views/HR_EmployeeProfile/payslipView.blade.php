@@ -1,4 +1,6 @@
 @php
+    use Carbon\Carbon;
+
     $userID = 1;//To be replaced by the real ID!
     $id = request()->input('id');
 
@@ -47,8 +49,8 @@
     $numRows = count($holidays);
 
     if(!empty($numRows)){
-        $holidayStart = Carbon::parse(htmlspecialchars($holidays->start_date));
-        $holidayEnd = Carbon::parse(htmlspecialchars($holidays->end_date));
+        $holidayStart = Carbon::parse(htmlspecialchars($holidays[0]->start_date));
+        $holidayEnd = Carbon::parse(htmlspecialchars($holidays[0]->end_date));
 
         $differenceInDays = $holidayEnd->diffInDays($holidayStart);
     }

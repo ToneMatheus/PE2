@@ -1,4 +1,6 @@
 @php
+use Carbon\Carbon;
+
 $userID = 1;//To be replaced by the real ID!
 
 $contract = DB::select("select * from employee_contracts where employee_profile_id = $userID");
