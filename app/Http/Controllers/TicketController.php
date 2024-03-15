@@ -15,7 +15,7 @@ class TicketController extends Controller
 {
     public function showForm(): View
     {
-        return view('Ticket_Pages/create-ticket');
+        return view('Support_Pages/create-ticket');
     }
 
     public function store(Request $request): Redirector|RedirectResponse
@@ -37,6 +37,7 @@ class TicketController extends Controller
         $ticket->description = $validatedData['description'];
         $ticket->active = 0;
         $ticket->role = auth()->check() ? auth()->user()->role : null;
+        $ticket->user_id = auth()->check() ? auth()->user()->id : null;
         $ticket->save();
 
         return redirect()->route('show-ticket')->with(['ticket' => $ticket]);
@@ -46,6 +47,6 @@ class TicketController extends Controller
     {
         $ticket = session('ticket');
 
-        return view('Ticket_Pages/submitted-ticket', ['ticket' => $ticket]);
+        return view('Support_Pages/submitted-ticket', ['ticket' => $ticket]);
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\FAQController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,6 +82,7 @@ Route::controller(TicketController::class)->group(function () {
     Route::post('/submitted-ticket', 'store')->name('submitted-ticket');
     Route::get('/submitted-ticket', 'showSubmittedTicket')->name('show-ticket');
 });
+Route::get('/faq', [FAQController::class, 'showFAQ'])->name('faq');
 
 Route::get('/customer/overview', [SimpleUserOverViewController::class, 'overview'])->name('overview');
 
