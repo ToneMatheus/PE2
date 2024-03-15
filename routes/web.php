@@ -51,6 +51,10 @@ Route::get('/dashboard', function () {
     return view('Meters/employeeDashboard');
 });
 Route::get('meters', [MeterController::class,'showMeters']);
+Route::get('/meters/add', function () {
+    return view('Meters/addmeter');
+});
+Route::post('meters/add', [MeterController::class,'addMeters']);
 Route::get('/consumption', function () {
     return view('Meters/consumption');
 });

@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Meter extends Model
 {
     use HasFactory;
+
+    const CREATED_AT = null;
+    const UPDATED_AT = null;
+
+    protected $fillable = ['EAN','type', 'installationDate', 'status'];
+
     public $table = "meter";
 
     public function scopeSearch($query, $value){
