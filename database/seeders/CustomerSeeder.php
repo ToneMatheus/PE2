@@ -15,8 +15,8 @@ class CustomerSeeder extends Seeder
      */
     public function run()
     {
-         // Seed Users
-         $userId = DB::table('user')->insertGetId([
+        // Seed Users
+        $userId = DB::table('user')->insertGetId([
             'username' => 'john_doe',
             'password' => bcrypt('password'),
             'email' => 'john@example.com',
