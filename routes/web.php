@@ -84,6 +84,10 @@ Route::get('/roles', function () {
 Route::get('/test', function () {
     return view('test');
 });
+Route::get('/roleOverview', function () {
+    return view('roleOverview');
+});
+
 
 
 //routes for custmer data for customer
