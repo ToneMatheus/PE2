@@ -14,6 +14,7 @@ return [
     */
 
     'paths' => [
+        resource_path('views/HR_EmployeeHoliday'),
         resource_path('views'),
     ],
 
