@@ -9,6 +9,8 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FAQController;
+use App\Http\Controllers\MeterController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +51,21 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
     //Route::get('/profile', [myController::class, 'profile'])->name('profile');
 });
 
+// Meters branch
+
+Route::get('/dashboard', function () {
+    return view('Meters/employeeDashboard');
+});
+Route::get('meters', [MeterController::class,'showMeters']);
+Route::get('/consumption', function () {
+    return view('Meters/consumption');
+});
+Route::get('/consumption1', function () {
+    return view('Meters/consumption1');
+});
+Route::get('/indexvalues', function () {
+    return view('Meters/indexvalues');
+});
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
