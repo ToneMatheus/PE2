@@ -57,7 +57,7 @@ class CustomerSeeder extends Seeder
             'endDate' => now()->addYears(1),
             'customerID' => $cstID,
             'addressID' => $addrID,
-        ]);
+        ]);        
 
         // Seed Customer Contracts
         DB::table('customercontract')->insert([
