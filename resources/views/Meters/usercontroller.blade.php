@@ -6,7 +6,6 @@
 <body>
     
 
-    <!-- Form to add meter reading -->
     <form method="post" action="{{ url('/user') }}">
         @csrf
         <label for="meter_reading">Meter Reading:</label>

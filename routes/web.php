@@ -7,6 +7,8 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MeterController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\UtilityController;
 
 
 /*
@@ -67,6 +69,13 @@ Route::get('/consumption1', function () {
 Route::get('/indexvalues', function () {
     return view('Meters/indexvalues');
 });
+
+Route::get('/usercontroller', function(){
+    return view('Meters/usercontroller');
+});
+
+Route::get('/user', [UserController::class, 'index']);
+Route::post('/user', [UserController::class, 'getUserData']);
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
