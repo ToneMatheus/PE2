@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Mail\meter_reading_notice;
 use App\Models\Invoice;
 use App\Models\Invoice_line;
