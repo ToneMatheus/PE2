@@ -1,60 +1,72 @@
 @php
+$userID = 1;//To be replaced by the real ID!
+
+$contract = DB::select("select * from employee_contracts where employee_profile_id = $userID");
+$employee_profile = DB::select("select * from employee_profiles where id = $userID");
+$user = DB::select("select * from users where employee_profile_id = $userID");
+$addressID = htmlspecialchars($user[0]->address_id);
+$emp_address = DB::select("select * from addresses where id = $addressID");
+$payslips = DB::select("select IBAN, amount_per_hour from payslips where employee_profile_id = $userID");
+
 //making variables to hold the info that way i don't have to do much when its time to actually fetch the data from the database
-$contract_issue_date = "29/02/2024";
-$contract_start_date = "01/30/2024";
+//$contract_end_date = $contract[0]->;
+$contract_start_date = $contract[0]->start_date;
 $company_name = "Energy company";
 $company_address = "Jan Pieter de Nayerlaan 5, 2860 Sint-Katelijne-Waver";
-$employee_name = "John Doe";
-$employee_address = "Dummy street 25, 1900 Wonderland";
-$job_title = "Maintainance manager";
-$responsibilities = "Meter maintainace, pipes, gas...";
-$salary = 2000.90;
-$account_number = "BE23 2341 1234 2523";
+$employee_name = "" . $user[0]->first_name . " " . $user[0]->last_name . "";
+$employee_address = "" . $emp_address[0]->street . " " . $emp_address[0]->number . " " . $emp_address[0]->box . ", " . $emp_address[0]->postal_code . " " . $emp_address[0]->city . ". " . $emp_address[0]->province . ".";
+$job_title = $employee_profile[0]->job;
+
+$amount_per_hour = $payslips[0]->amount_per_hour;
+$account_number = $payslips[0]->IBAN;
 
 //contract body
-    echo("<h1><u>Employee Contract</u></h1>
+    echo("<u><h1 style=\"text-align: center\">Employee Contract</h1></u>
+        <p>This agreement is made effective as of $contract_start_date, between:</p>
 
-        <p>This Employment Contract is issued on the $contract_issue_date between $company_name, located at $company_address, and $employee_name, residing at $employee_address.</p>
+        <h5>Employer:</h5>
+        <p>$company_name<br>
+        Located at: $company_address</p>
 
-        <h4>1. Position and Responsibilities</h4>
+        <h5>Employee:</h5>
+        <p>Name: $employee_name<br>
+        Address: $employee_address</p>
+        <hr/>
 
-        <p>Employee agrees to accept the position of $job_title with the Company. Employee's responsibilities will include but are not limited to $responsibilities.</p>
+        <h4>1. Position and Duties:</h4>
+        <p>The Employer agrees to employ the Employee as $job_title. The Employee agrees to perform the duties and responsibilities associated with this position to the best of their abilities. The duties may be amended by the Employer from time to time.</p>
 
-        <h4>2. Compensation</h4>
+        <h4>2. Compensation:</h4>
+        <p>The Employee will be compensated at a rate of $$amount_per_hour per hour, subject to deductions for taxes and other withholdings as required by law.</p>
 
-        <p> Employee will receive a monthly salary of $salary$ payable by card on the following account number: $account_number. In addition to the base salary, Employee may be eligible for bonuses or other forms of compensation as determined by the Company's policies.</p>
+        <h4>3. Payment and Benefits:</h4>
+        <p>The Employee's compensation will be paid monthly through direct deposit to the bank account specified by the Employee. The account number for direct deposit is $account_number. The Employee may be eligible for additional benefits as per the company's policies.</p>
 
-        <h4>3. Employment Status</h4>
+        <h4>4. Working Hours:</h4>
+        <p>The standard work hours for the Employee shall be 30 hours per week. Overtime may be required from time to time, and will be compensated in accordance with applicable labor laws.</p>
 
-        <p>Employee's employment with the Company is full-time and will begin on $contract_start_date. During the time of this employement, either party may terminate the employment relationship with or without cause and with or without notice but with a 2 weeks notice.</p>
+        <h4>5. Probation Period:</h4>
+        <p>The Employee's employment is subject to a probationary period of one month, during which either party may terminate the employment relationship with written notice.</p>
 
-        <h4>4. Benefits</h4>
+        <h4>6. Confidentiality:</h4>
+        <p>The Employee agrees not to disclose any confidential information belonging to the Employer, including but not limited to trade secrets, business plans, and customer information, during or after employment.</p>
 
-        <p>Employee will be eligible for the Company's benefits program, including but not limited to health insurance, retirement plans, and paid time off, in accordance with the Company's policies.</p>
+        <h4>7. Termination:</h4>
+        <p>Either party may terminate this agreement with written notice. Upon termination, the Employee agrees to return all company property and materials in their possession.</p>
 
-        <h4>5. Confidentiality</h4>
+        <h4>8. Non-Compete:</h4>
+        <p>During the term of employment and for a period of 5 months after termination, the Employee agrees not to engage in any activity that competes with the Employer's business interests within the various geographical locations of their different offices.</p>
 
-        <p>During the course of employment, Employee may have access to confidential information of the Company. Employee agrees not to disclose any confidential information to any third party and to use such information solely for the benefit of the Company.</p>
+        <h4>9. Governing Law:</h4>
+        <p>This agreement shall be governed by and construed in accordance with the laws of Belgium.</p>
 
-        <h4>6. Non-Compete</h4>
+        <h4>10. Entire Agreement:</h4>
+        <p>This agreement constitutes the entire understanding between the parties and supersedes all prior agreements and understandings, whether written or oral.</p>
 
-        <p>Employee agrees not to engage in any activities that directly compete with the Company during the term of employment and for a period of 5 months after the termination of employment.</p>
+        <p>By signing below, the parties acknowledge and agree to the terms and conditions set forth in this agreement.</p>
 
-        <h4>7. Termination</h4>
+        <p><i>$employee_name</i></p>
 
-        <p>This Contract may be terminated by either party with a two weeks written notice to the other party. The Company reserves the right to terminate Employee's employment at any time for any reason not prohibited by law.</p>
-
-        <h4>8. Governing Law</h4>
-
-        <p>This Contract shall be governed by and construed in accordance with the laws of Belgium.</p>
-
-        <p>In witness whereof, the parties have executed this Contract as of the date first above written.</p>
-
-        <p>$company_name</p>
-
-        <p>By: CEO</p>
-
-        <p>$employee_name</p>
-
-        <p>Date: $contract_issue_date </p> ");
+        <p><i>$company_name</i></p>
+        ");
 @endphp
