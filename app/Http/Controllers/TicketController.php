@@ -30,22 +30,22 @@ class TicketController extends Controller
         $user = Auth::user();
 
         // create ticket
-        $customerticket = new Ticket();
-        $customerticket->name = $validatedData['name'];
-        $customerticket->email = $validatedData['email'];
-        $customerticket->issue = $validatedData['issue'];
-        $customerticket->description = $validatedData['description'];
-        $customerticket->active = 0;
-        $customerticket->role = auth()->check() ? auth()->user()->role : null;
-        $customerticket->save();
+        $ticket = new Ticket();
+        $ticket->name = $validatedData['name'];
+        $ticket->email = $validatedData['email'];
+        $ticket->issue = $validatedData['issue'];
+        $ticket->description = $validatedData['description'];
+        $ticket->active = 0;
+        $ticket->role = auth()->check() ? auth()->user()->role : null;
+        $ticket->save();
 
-        return redirect()->route('show-ticket')->with(['customerticket' => $customerticket]);
+        return redirect()->route('show-ticket')->with(['ticket' => $ticket]);
     }
 
     public function showSubmittedTicket(): View
     {
-        $customerticket = session('customerticket');
+        $ticket = session('ticket');
 
-        return view('Ticket_Pages/submitted-ticket', ['customerticket' => $customerticket]);
+        return view('Ticket_Pages/submitted-ticket', ['ticket' => $ticket]);
     }
 }

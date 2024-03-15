@@ -24,7 +24,7 @@ class Ticket extends Model
 
     protected $primaryKey = 'id';
 
-    protected $table = 'customerticket';
+    protected $table = 'tickets';
 
     protected $fillable = [
         'id',
@@ -34,6 +34,7 @@ class Ticket extends Model
         'issue',
         'description',
         'active',
+        'user_id',
     ];
 
     public static function validate(array $input): bool
