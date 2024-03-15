@@ -64,8 +64,6 @@ Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage'
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
 
 //routing to decide whether the manager accepted or rejected holiday request and performing actions based on that
-Route::get('/processRequest', [ManagerController::class, 'action'])->name('accept');
-Route::get('/processRequest2', [ManagerController::class, 'action'])->name('decline');
 
 
 //Route::get('/holidayRequest', [myController::class, 'holiday'])->name('request');

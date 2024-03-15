@@ -25,23 +25,47 @@
         </style>
     </head>
     <body>
-        <div class="cardd">
-            <div class="info">
-                <div class="label">Full Name:</div>
-                <div id="fullname">John Doe</div>
-            </div>
-            <div class="info">
-                <div class="label">Age:</div>
-                <div id="age">30</div>
-            </div>
-            <div class="info">
-                <div class="label">Start Date:</div>
-                <div id="start-date">2024-01-01</div>
-            </div>
-            <div class="info">
-                <div class="label">End Date:</div>
-                <div id="end-date">2024-12-31</div>
-            </div>
-        </div>
+        @php
+            use Carbon\Carbon;
+
+            $employees = DB::select("select * from employee_profiles");
+            
+            foreach($employees as $employee){
+                $id = $employee->id;
+
+                $user = DB::select("select * from users where employee_profile_id = $id");
+                
+                $fullname = $user[0]->first_name . " " . $user[0]->last_name;
+
+                //getting user age
+                $birthDate = Carbon::parse($user[0]->birth_date);
+                $currentDate = Carbon::now();
+                $age = $currentDate->diffInYears($birthDate);
+
+                $holiday = DB::select("select * from holidays where employee_profile_id = $id");
+
+                echo("
+                <div class=\"cardd\">
+                    <div class=\"info\">
+                        <div class=\"label\">Full Name:</div>
+                        <div id=\"fullname\"> " . $fullname . "</div>
+                    </div>
+                    <div class=\"info\">
+                        <div class=\"label\">Age:</div>
+                        <div id=\"age\"> " . $age . "</div>
+                    </div>
+                    <div class=\"info\">
+                        <div class=\"label\">Start Date:</div>
+                        <div id=\"start-date\">2024-01-01</div>
+                    </div>
+                    <div class=\"info\">
+                        <div class=\"label\">End Date:</div>
+                        <div id=\"end-date\">2024-12-31</div>
+                    </div>
+                </div>
+                ");
+            }
+        @endphp
+
     </body>
 </html>

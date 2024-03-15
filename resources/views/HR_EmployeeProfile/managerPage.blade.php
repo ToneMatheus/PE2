@@ -17,6 +17,16 @@
 
         <div class="requests">
         @php
+            if(request('decline') == 1){
+                $id = request('id');
+                $request_id = request('req_id');
+                DB::update("update holidays set is_active = 0 where id = $request_id and employee_profile_id = $id");
+            }
+            if(request('accept') == 1){
+                $id = request('id');
+                $request_id = request('req_id');
+                DB::update("update holidays set manager_approval = 1, boss_approval = 1, is_active = 0 where id = $request_id and employee_profile_id = $id");
+            }
         //selecting all holiday requests
             $requests = DB::select('select * from holidays where is_active = 1');
 
@@ -24,6 +34,7 @@
                 foreach ($requests as $request) {
                 //getting the name of the employee that made the request
                 $employee_id = $request->employee_profile_id;
+                $request_id = $request->id;
 
                 $fullname = DB::select("select first_name, last_name from users where employee_profile_id = $employee_id");
 
@@ -32,18 +43,10 @@
                     <b>On the:</b> $request->request_date<br/>
                     <b>From:</b> $request->start_date <b>To:</b> $request->end_date<br/>
                     <b>Reason for request:</b> $request->reason<br/>
-                    <a href=\"" . route('accept', ['accept' => 1]) . "\"><button class=\"accept\">Accept</button></a> 
-                    <a href=\"" . route('decline', ['decline' => 1]) . "\"><button class=\"reject\">Decline</button></a> 
+                    <a href=\"" . route('managerPage', ['accept' => 1, 'id' => $employee_id, 'req_id' => $request_id ]) . "\"><button class=\"accept\">Accept</button></a> 
+                    <a href=\"" . route('managerPage', ['decline' => 1, 'id' => $employee_id, 'req_id' => $request_id ]) . "\"><button class=\"reject\">Decline</button></a> 
                     <hr/>
-
                 ");
-
-                    if($request('accept') == 1){
-
-                    }
-                    if($request('decline') == 1){
-                        
-                    }
                 }
             }
             else{
