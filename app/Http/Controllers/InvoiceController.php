@@ -18,6 +18,10 @@ use Illuminate\Support\Facades\Mail;
 class InvoiceController extends Controller
 {
     //
+
+    public function sendMail(Request $request)
+    {
+        $invoice = Invoice::where('id', $request->id)->first();
     public function store(Request $request)
     {
         //Validate required paramters
@@ -109,4 +113,12 @@ class InvoiceController extends Controller
         }
         return redirect()->intended('dashboard');
     }
+
+    public function download(Request $request)
+    {
+        $invoice = Invoice::where('id', $request->id)->first();
+        $pdf = Pdf::loadView('Invoices.invoice_pdf', compact('invoice'));
+        return $pdf->download('invoice.pdf');
+    }
+
 }

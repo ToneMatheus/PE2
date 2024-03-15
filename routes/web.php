@@ -121,6 +121,10 @@ Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::cla
 // Validation route's to create a customer account by customer
 Route::post('/Customer/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
 
+Route::controller(InvoiceController::class)->group(function () {
+    Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
+    Route::get('/invoices/{id}/download', 'download')->name('invoice.download');
+});
 
 Route::controller(InvoiceController::class)->group(function () {
     Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
@@ -129,4 +133,3 @@ Route::controller(InvoiceController::class)->group(function () {
 Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
 Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
 Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
-
