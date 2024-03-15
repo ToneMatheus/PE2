@@ -1,5 +1,6 @@
 {{-- -*-html-*- --}}
 
+<title>Ticket Support</title>
   <div>
 
     <form method="POST" action="{{ route('submitted-ticket') }}">

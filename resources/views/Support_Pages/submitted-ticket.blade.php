@@ -1,5 +1,6 @@
 {{-- -*-html-*- --}}
 
+<title>Submitted Ticket</title>
   <div>
 
     <h1>Ticket submitted successfully</h1>
