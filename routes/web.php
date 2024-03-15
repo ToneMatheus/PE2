@@ -48,7 +48,8 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
     //Route::get('/profile', [myController::class, 'profile'])->name('profile');
 });
 
-//Meter
+// Meters branch
+
 Route::get('/dashboard', function () {
     return view('Meters/employeeDashboard');
 });
