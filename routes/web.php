@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\EditController;
+use App\Http\Controllers\TicketController;
 
 
 use App\Http\Controllers\cont;
@@ -27,6 +29,8 @@ Route::get('/customertickets', [CustomerTicketController::class, 'index'])->name
 
 Route::get('/history', [HistoryController::class, 'index'])->name('customertickets.history');
 
+Route::get('/EditTickets', [EditController::class, 'index'])->name('customertickets.Edit');
+
 Route::get('/tarrifs', function () {
     return view('tarrifs');
 })->name('tarrifs');
@@ -34,3 +38,5 @@ Route::get('/tarrifs', function () {
 Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
+
+// Route::put('/tickets/{id}', [TicketController::class, 'update'])->name('tickets.update');

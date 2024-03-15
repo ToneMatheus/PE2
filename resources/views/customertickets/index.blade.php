@@ -110,7 +110,7 @@ footer {
                 <li><a href="{{ route('test') }}">Home</a></li>
                 <li><a href="{{ route('customertickets.index') }}">Tickets History</a></li>
                 <li><a href="{{ route('customertickets.history') }}">Open Tickets</a></li>
-                <li><a href="#">Update Ticket</a></li>
+                <li><a href="{{ route('customertickets.Edit') }}">Update Ticket</a></li>
                 <li><a href="#">Escalate Ticket</a></li>
             </ul>
         </nav>
