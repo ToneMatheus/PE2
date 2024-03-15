@@ -17,6 +17,8 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
+use App\Http\Controllers\CronJobController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -105,6 +107,12 @@ Route::get('/welcome', function () {
 Route::get('/roles', function () {
     return view('roleOverview');
 });
+
+//cronjobs
+Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+Route::get('/cron-jobs/edit/{job}', [CronJobController::class, 'edit'])->name('edit-cron-job');
+Route::put('/cron-jobs/update/{job}', [CronJobController::class, 'update'])->name('update-cron-job');
+Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
 
 Route::get('/test', function () {
     return view('test');
