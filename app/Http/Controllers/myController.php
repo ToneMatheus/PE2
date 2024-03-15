@@ -8,8 +8,12 @@
             return view('profile');
         }
 
-        public function payslip(){
-            return view('payslip');
+        public function payslip(Request $request){
+            // Retrieve the value of the 'flag' parameter
+            $id = $request->input('id');
+    
+            // You can use $flag as needed
+            return view('payslip', ['id' => $id]);
         }
 
         public function payList(){
@@ -22,6 +26,14 @@
 
         public function tariff(){
             return view('tariff');
+        }
+
+        public function manager(){
+            return view('managerPage');
+        }
+
+        public function employeeList(){
+            return view('employeeList');
         }
     }
 ?>
