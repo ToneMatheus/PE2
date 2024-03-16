@@ -105,6 +105,29 @@
         </div>
     </div>
 
+    <script>
+        function changeFunction() {
+            var button = document.getElementById("button");
+            button.setAttribute("onclick", "newBtnClicked(1)");
+        }
+
+        function changeFunction2() {
+            var button = document.getElementById("button");
+            button.setAttribute("onclick", "newBtnClicked(2)");
+        }
+
+        // Define the new function
+        function newBtnClicked(num) {
+            if(num == 1){
+                alert("Your previous request is still being processed!");
+            }
+            else{
+                alert("You can't make anymore request at this time");
+            }
+        }
+
+    </script>
+
     <div class="requests">
         @php 
             $requests = DB::select("select * from balances where employee_profile_id = 1");
@@ -118,15 +141,14 @@
             if($current_credit == 0){
                 echo("You have used up all your holiday requests for this year");
                 echo ("<script>alert('You have used up all your holiday balance for this year')
-                    var button = document.getElementById(\"button\");
+                        var button = document.getElementById(\"button\");
 
-                    button.disabled = true;
+                        button.disabled = true;
                     </script>");
             }
             else{
                 echo("You are still eligible to make requests<hr/>");
             }
-
 
             $holidays = DB::select("select * from holidays where employee_profile_id = 1");
 
@@ -136,15 +158,14 @@
                 echo("<p><i>No pending requests</i></p>");
             }
             elseif ($holidays[0]->is_active == 1){
+                echo("<script>changeFunction()</script>");
                 echo("<p>Sent vacation request from the " . $holidays[0]->start_date . " to the " . $holidays[0]->end_date . "</p>");
                 echo("<p><b>Reason for request:</b> " . $holidays[0]->reason . "<hr/>");
                 echo("<h3><i>Awaiting manager response</i></h3>");
                 echo("<img src=/images/loading-windows98.gif alt=\"loading\" class=\"loading\"");
-                echo("<script>var button = document.getElementById(\"button\");
-
-                    button.disabled = true;</script>");
             }
             elseif ($holidays[0]->manager_approval == 1 && $holidays[0]->boss_approval == 1) {
+                echo("<script>changeFunction2()</script>");
                 echo("<p>Your holiday has been approved of!</p>");
             }
             elseif ($holidays[0]->manager_approval == 0 && $holidays[0]->boss_approval == 0 && $holidays[0]->is_active == 0) {
@@ -159,12 +180,6 @@
         let numGr = 0;
         let numPur = 0;
         let numPink = 0;
-
-        function disableButton(){
-            var button = document.getElementById("button");
-
-            button.disabled = true;
-        }
 
         function addDate() 
         {
