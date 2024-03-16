@@ -16,6 +16,8 @@ class Invoice_line extends Model
         'invoice_id'
     ];
 
+    public $timestamps = false;
+
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);

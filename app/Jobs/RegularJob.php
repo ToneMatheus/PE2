@@ -8,6 +8,19 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+
+use App\Mail\meter_reading_notice;
+use App\Models\Invoice;
+use App\Models\Invoice_line;
+use App\Mail\InvoiceMail;
+use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+
 
 class RegularJob implements ShouldQueue
 {
@@ -30,6 +43,179 @@ class RegularJob implements ShouldQueue
      */
     public function handle()
     {
-        \Log::info('regular job executed successfully!');
+        //\Log::info('regular job executed successfully!');
+
+        //Aquire the current month
+        $now = Carbon::now();
+        $month = $now->format('m');
+        $year = $now->format('Y');
+        $currentDate = $now->format('Y/m/d');
+
+        $endOfMonth = $now->endOfMonth();
+        $yearAgo = $now->subYear();
+        
+        // Query for users that started a contract this year (base yearly invoice of start contract)
+        /*$customers = DB::table('users')
+        ->join('Customer_contracts', 'users.id', '=', 'Customer_contracts.user_id')
+        ->whereYear('Customer_contracts.start_date', '=', $year)
+        ->select('users.*')
+        ->get();
+
+        //New Customers that need to be invoiced now
+        foreach($customers as $newCustomer){
+            $newCustomersInfo = DB::table('users')
+                ->join('Customer_contracts', 'users.id', '=', 'Customer_contracts.user_id')
+                ->whereYear('Customer_contracts.start_date', '=', $yearAgo->year)
+                ->whereMonth('Customer_contracts.start_date', '=', $yearAgo->month)
+                ->whereDay('Customer_contracts.start_date', '=', $yearAgo->day)
+                ->where('Customer_contracts.id', '=', $newCustomer->id)
+                ->select('users.*')
+                ->get();
+        }
+
+        // Query for users that started a contract before this year (base yearly invoice of the date of the previous yearly invoice)
+        $oldCustomers = DB::table('users')
+            ->join('Customer_contracts', 'users.id', '=', 'Customer_contracts.user_id')
+            ->whereYear('Customer_contracts.start_date', '!=', $year)
+            ->select('users.*')
+            ->get();
+
+        $oldCustomerInfo = [];
+
+        // Old Customers that need to be invoiced now
+        foreach($oldCustomers as $oldCustomer){
+            $oldCustomerInfo[] = Invoice::join('customer_contracts as cc', 'cc.id', '=', 'invoices.customer_contract_id')
+                ->join('users as u', 'u.id', '=', 'cc.user_id')
+                ->where('type', '=', 'Annual')
+                ->latest()
+                ->first();
+        }
+
+        */
+
+        // then we have to check whether we have their meter readings
+        $customersWithReadings = DB::table('users')
+        ->join('Customer_contracts', 'users.id', '=', 'customer_contracts.user_id')
+        ->join('Customer_addresses', 'users.id', '=', 'Customer_addresses.user_id')
+        ->join('Addresses', 'Customer_addresses.Address_id', '=', 'Addresses.id')
+        ->join('Meter_addresses', 'Addresses.id', '=', 'Meter_addresses.address_id')
+        ->join('Meters', 'Meter_addresses.meter_id', '=', 'Meters.id')
+        ->join('Index_values', 'Meters.id', '=', 'Index_values.meter_id')
+        ->whereYear('Index_values.reading_date', '=', $year)
+        ->distinct()
+        ->select('users.id', 'customer_contracts.id as ccID')
+        ->get();
+
+        foreach($customersWithReadings as $customer){
+
+            $consumptions = DB::table('users')
+            ->join('Customer_addresses', 'users.id', '=', 'Customer_addresses.user_id')
+            ->join('Addresses', 'Customer_addresses.Address_id', '=', 'Addresses.id')
+            ->join('Meter_addresses', 'Addresses.id', '=', 'Meter_addresses.Address_id')
+            ->join('Meters', 'Meter_addresses.Meter_id', '=', 'Meters.id')
+            ->join('Index_values', 'Meters.id', '=', 'Index_values.meter_id')
+            ->join('Consumptions', 'Index_values.id', '=', 'Consumptions.Current_index_id')
+            ->whereYear('Index_values.Reading_date', '=', $year)
+            ->where('users.id', '=', $customer->id)
+            ->select('Consumptions.*')
+            ->get();
+
+            $estimationResult = DB::table('users as u')
+            ->join('customer_addresses as ca', 'ca.user_id', '=', 'u.id')
+            ->join('addresses as a', 'ca.address_id', '=', 'a.id')
+            ->join('meter_addresses as ma', 'a.id', '=', 'ma.address_id')
+            ->join('meters as m', 'ma.meter_id', '=', 'm.id')
+            ->join('estimations as e', 'e.meter_id', '=', 'm.id')
+            ->where('u.id', '=', $customer->id)
+            ->select('e.estimation_total')
+            ->first();
+
+            $estimation = $estimationResult->estimation_total;
+
+            $contractProduct = DB::table('contract_products as cp')
+            ->select('cp.id as cpID', 'cp.start_date as cpStartDate', 'p.product_name as productName',
+            'p.id as pID', 't.id as tID')
+            ->join('products as p', 'p.id', '=', 'cp.product_id')
+            ->leftjoin('tariffs as t', 't.id', '=', 'cp.tariff_id')
+            ->where('customer_contract_id', '=', $customer->ccID)
+            ->whereNull('cp.end_date')
+            ->first();
+
+            //without discounts
+            $productTariff = DB::table('products as p')
+            ->join('product_tariffs as pt', 'pt.product_id', '=', 'p.id')
+            ->join('tariffs as t', 't.id', '=', 'pt.id')
+            ->where('p.id', '=', $contractProduct->pID)
+            ->first();
+
+            $monthlyInvoicesQuery = Invoice::where('customer_contract_id', $customer->ccID);
+            $monthlyInvoices = $monthlyInvoicesQuery->get();
+
+            $monthlyAmount = $estimation * $productTariff->rate;
+
+            $extraAmounts = [];
+
+            foreach($consumptions as $consumption){
+                $extraAmount = $consumption->consumption_value * $productTariff->rate;
+                $extraAmounts[] = $extraAmount;
+            }
+
+            $totalExtraAmount = 0;
+
+            foreach($extraAmounts as $extraAmount){
+                $totalExtraAmount += $extraAmount;
+            }
+
+            $invoiceData = [
+                'invoice_date' => $now->format('Y/m/d'),
+                'due_date' => $endOfMonth->format('Y/m/d'),
+                'total_amount' => $totalExtraAmount,
+                'status' => 'sent',
+                'customer_contract_id' => $customer->ccID,
+                'type' => 'Annual'
+            ];
+
+            $invoice = Invoice::create($invoiceData);
+            $lastInserted = $invoice->id;
+
+            $i = 0;
+
+            foreach($consumptions as $consumption){
+                Invoice_line::create([
+                    'type' => 'Electricity',
+                    'unit_price' => $productTariff->rate,
+                    'amount' => $extraAmounts[$i],
+                    'consumption_id' => $consumption->id,
+                    'invoice_id' => $lastInserted
+                ]);
+
+                $i++;
+            }
+           
+            RegularJob::sendMail($invoice, $customer->id);
+            Log::info('Processing user ID: ' . $customer->id);
+        }
+        
+    }
+
+    public function sendMail(Invoice $invoice, $cID)
+    {
+        $user = User::where('id', $cID)->first();
+
+        // Generate PDF
+        $pdf = Pdf::loadView('Invoices.invoice_pdf', compact('invoice'));
+        $pdfData = $pdf->output();
+
+        // Send email with PDF attachment
+        Mail::to('shaunypersy10@gmail.com')->send(new InvoiceMail(
+            $invoice, $user->first_name, $pdfData
+        ));
+    }
+
+    public function download(Request $request)
+    {
+        $invoice = Invoice::where('id', $request->id)->first();
+        $pdf = Pdf::loadView('Invoices.invoice_pdf', compact('invoice'));
+        return $pdf->download('invoice.pdf');
     }
 }

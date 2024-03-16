@@ -18,6 +18,8 @@ class Invoice extends Model
         'type'
     ];
 
+    public $timestamps = false;
+
     public function invoice_lines(): HasMany
     {
         return $this->hasMany(Invoice_line::class);
