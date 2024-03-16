@@ -1,14 +1,18 @@
 <?php
-    // TODO: connect to DB
-    // TODO: get all role_name from roles table -> fill dropdown.
-    // TODO: depending on selected option (dropdown) -> display correct info:
+    // DONE: connect to DB
+    // DONE: get all role_name from roles table -> fill dropdown.
+    // DONE: depending on selected option (dropdown) -> display correct info:
     // - role: role_name directly from dropdown 
     // - role description: (if else) pre written (not from DB)
-    // - permissions: ^^ together with this -> maybe later table with all pages + table to specify role+page for viewing?
+    // - permissions: ^^ together with this -> maybe later table with all pages + table to specify role+page for viewing? (TODO change to pages)
     // - people: 
     //   + get role_id depending on selected role (role_name) from roles table
     //   + get user_id's with role_id from user_roles table (only active)
     //   + get users first_name + last_name using user_id from users table (only active)
+    //    -> dont show people here?
+
+    // TODO: show a table with who manages who. and be able to change that information.
+    // TODO: hierarchy structure ??
 
     $host = "localhost";
     $user = "root";
@@ -21,6 +25,9 @@
     {
         die("Connection to database failed.");
     }
+
+    $managingQuery = "SELECT * FROM leader_relations";
+    $managingResult = $conn->query($managingQuery);
 
     $rolesQuery = "SELECT id, role_name FROM roles";
     $rolesResult = $conn->query($rolesQuery);
@@ -84,6 +91,9 @@
                 <td id="rolePeople">-</td>
             </tr>
         </table>
+        <hr>
+        
+
         
         <script>
             var roleDescriptions = [
