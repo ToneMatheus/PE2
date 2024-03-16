@@ -14,6 +14,7 @@ use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNotaController;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\RelationsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,6 +96,11 @@ Route::get('/contract', [myController::class, 'contract'])->name('contract');
 Route::get('/profile', [myController::class, 'profile'])->name('profile');
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
+
+// routes for relations controlelr
+Route::get('/relations', [RelationsController::class, 'fetchRelations']);
+Route::post('/relations/update', [RelationsController::class, 'updateRelation'])->name('relations.update');
+
 
 //routing to decide whether the manager accepted or rejected holiday request and performing actions based on that
 

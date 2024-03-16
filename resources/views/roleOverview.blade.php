@@ -32,6 +32,18 @@
     $rolesQuery = "SELECT id, role_name FROM roles";
     $rolesResult = $conn->query($rolesQuery);
 
+    $relationsQuery = "
+        SELECT lr.id, lr.leader_id, CONCAT(l.first_name, ' ', l.last_name) AS leader_name, 
+            CONCAT(e.first_name, ' ', e.last_name) AS employee_name, lr.relation
+        FROM leader_relations lr
+        JOIN users l ON lr.leader_id = l.id
+        JOIN users e ON lr.employee_id = e.id";
+    $relationsResult = $conn->query($relationsQuery);
+
+    $leadersQuery = "SELECT id, CONCAT(first_name, ' ', last_name) AS name FROM users";
+    $leadersResult = $conn->query($leadersQuery);
+
+
 ?>
 
 <!DOCTYPE html>
@@ -91,7 +103,115 @@
                 <td id="rolePeople">-</td>
             </tr>
         </table>
+        
+
         <hr>
+        <form id="editRelationForm">
+            <label for="relationListbox">Select a leader-employee relation:</label>
+            <select id="relationListbox" onchange="selectRelation()">
+                <option value="0">Select a relation...</option>
+                <?php
+                    if ($relationsResult->num_rows > 0) {
+                        while ($row = $relationsResult->fetch_assoc()) {
+                            echo "<option value='" . $row["id"] . "' data-leader-id='" . $row["leader_id"] . "'>" . $row["leader_name"] . " is " . $row["relation"] . " of " . $row["employee_name"] . "</option>";
+                        }
+                    }
+                ?>
+            </select>
+            <br>
+            <select id="leaderDropdown" disabled>
+                <?php
+                    if ($leadersResult->num_rows > 0) {
+                        while ($row = $leadersResult->fetch_assoc()) {
+                            echo "<option value='" . $row["id"] . "'>" . $row["name"] . "</option>";
+                        }
+                    }
+                ?>
+            </select>
+            <label for="employeeTextbox">is</label>
+            <input type="text" id="employeeTextbox" disabled>
+
+            <br>
+            <button type="button" onclick="enableEditing()">Edit</button>
+            <button type="button" onclick="saveChanges()" disabled>Save</button>
+        </form>
+        <script>
+            function selectRelation() {
+                var listbox = document.getElementById("relationListbox");
+                var leaderDropdown = document.getElementById("leaderDropdown");
+                var employeeTextbox = document.getElementById("employeeTextbox");
+
+
+                if (listbox.selectedIndex > 0) { 
+                    var selectedOption = listbox.options[listbox.selectedIndex];
+                    var leaderId = selectedOption.getAttribute("data-leader-id"); 
+
+                    var parts = selectedOption.text.split(" is ");
+                    var employeeName = parts.length > 1 ? parts[parts.length - 1] : "";
+
+                    for (var i = 0; i < leaderDropdown.options.length; i++) {
+                        if (leaderDropdown.options[i].value === leaderId) {
+                            leaderDropdown.selectedIndex = i;
+                            break; 
+                        }
+                    }
+
+                   employeeTextbox.value = employeeName.trim();
+                } else {
+                    leaderDropdown.selectedIndex = 0;
+                    employeeTextbox.value = "";
+                }
+            }
+
+            function enableEditing() {
+                document.getElementById("leaderDropdown").disabled = false;
+                document.getElementById("editRelationForm").querySelector("button[type='button']:last-child").disabled = false;
+            }
+            function saveChanges() {
+                var relationId = document.getElementById("relationListbox").value;
+                var newLeaderId = document.getElementById("leaderDropdown").value;
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "{{ route('relations.update') }}", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.setRequestHeader("X-CSRF-Token", "{{ csrf_token() }}");
+                xhr.onreadystatechange = function () {
+                    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                        alert("Relation updated successfully.");
+                        
+                        var fetchXhr = new XMLHttpRequest();
+                        fetchXhr.open("GET", "/relations", true);
+                        fetchXhr.onload = function() {
+                            if (fetchXhr.status === 200) {
+                                var relations = JSON.parse(fetchXhr.responseText);
+                                var relationListbox = document.getElementById("relationListbox");
+                                var leaderDropdown = document.getElementById("leaderDropdown");
+
+                                relationListbox.innerHTML = '<option value="0">Select a relation...</option>';
+
+                                relations.forEach(function(relation) {
+                                    var optionText = relation.leader_name + " is " + relation.relation +" of " + relation.employee_name
+                                    var option = new Option(optionText, relation.id);
+                                    option.setAttribute("data-leader-id", relation.leader_id);
+                                    relationListbox.add(option);
+                                });
+
+                                leaderDropdown.selectedIndex = 0;
+                                leaderDropdown.disabled = true;
+                                document.getElementById("employeeTextbox").value = "";
+                                document.getElementById("editRelationForm").querySelector("button[type='button']:last-child").disabled = true;
+                            }
+                        };
+                        fetchXhr.send();
+                    }
+                };
+                xhr.send("relationId=" + relationId + "&newLeaderId=" + newLeaderId);
+
+                document.getElementById("leaderDropdown").disabled = true;
+                document.getElementById("editRelationForm").querySelector("button[type='button']:last-child").disabled = true;
+            }
+        </script>
+
         
 
         
