@@ -95,3 +95,18 @@ th, td
 p{
   margin: 0;
 }
+
+.table-container{
+  float: left;
+  margin-right: 50px;
+}
+
+table{
+  margin-bottom: 30px;
+  
+}
+
+.loading{
+  width: 60px;
+}
+

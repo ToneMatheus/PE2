@@ -105,7 +105,7 @@ Route::get('/employeeList', [myController::class, 'employeeList'])->name('employ
 
 Route::get('/holidayRequest', function(){
     return view('holidayRequestPage');
-});
+})->name('request');
 
 Route::get('/welcome', function() {
     return view('welcome');

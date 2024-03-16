@@ -96,21 +96,76 @@
                     <button onclick="addDate3()"><div class="square3"></div>
                 </td>
             </tr>
-        </table>    
+        </table>   
+        
+        <div class="sidebar">
+            <label id="label">This label is currently empty</label>
+            <button id="cancel" name="cancel" onclick="cnlButton()">Cancel</button>
+            <button id="button" name="button" onclick="btnClicked()">Submit</button>
+        </div>
     </div>
 
-    
+    <div class="requests">
+        @php 
+            $requests = DB::select("select * from balances where employee_profile_id = 1");
+            $current_credit = $requests[0]->yearly_holiday_credit;
+            $used_credit = $requests[0]->used_holiday_credit;
 
-    <div class="sidebar">
-        <label id="label">This label is currently empty</label>
-        <button id="cancel" name="cancel" onclick="cnlButton()">Cancel</button>
-        <button id="button" name="button" onclick="btnClicked()">Submit</button>
+            echo("<h2>Holiday balance for the year 2024</h2>");
+            echo("<p>Remaining credit: $current_credit</p>");
+            echo("<p>Used credit: $used_credit</p><br/>");
+            
+            if($current_credit == 0){
+                echo("You have used up all your holiday requests for this year");
+                echo ("<script>alert('You have used up all your holiday balance for this year')
+                    var button = document.getElementById(\"button\");
+
+                    button.disabled = true;
+                    </script>");
+            }
+            else{
+                echo("You are still eligible to make requests<hr/>");
+            }
+
+
+            $holidays = DB::select("select * from holidays where employee_profile_id = 1");
+
+            echo("<div class=\"request-status\"><h2>Request status</h2>");
+
+            if($holidays == null){
+                echo("<p><i>No pending requests</i></p>");
+            }
+            elseif ($holidays[0]->is_active == 1){
+                echo("<p>Sent vacation request from the " . $holidays[0]->start_date . " to the " . $holidays[0]->end_date . "</p>");
+                echo("<p><b>Reason for request:</b> " . $holidays[0]->reason . "<hr/>");
+                echo("<h3><i>Awaiting manager response</i></h3>");
+                echo("<img src=/images/loading-windows98.gif alt=\"loading\" class=\"loading\"");
+                echo("<script>var button = document.getElementById(\"button\");
+
+                    button.disabled = true;</script>");
+            }
+            elseif ($holidays[0]->manager_approval == 1 && $holidays[0]->boss_approval == 1) {
+                echo("<p>Your holiday has been approved of!</p>");
+            }
+            elseif ($holidays[0]->manager_approval == 0 && $holidays[0]->boss_approval == 0 && $holidays[0]->is_active == 0) {
+                echo("<p>Holiday request denied</p>");
+            }
+
+            echo("</div>");
+        @endphp
     </div>
 
     <script>
         let numGr = 0;
         let numPur = 0;
         let numPink = 0;
+
+        function disableButton(){
+            var button = document.getElementById("button");
+
+            button.disabled = true;
+        }
+
         function addDate() 
         {
             const selected = document.querySelector(".selected");
@@ -301,6 +356,7 @@
                     {
                         // Handle the response from the server if needed
                         console.log(xhr.responseText);
+                        location.reload();
                     }
                 };
                 xhr.send(params);
@@ -334,12 +390,36 @@
             window.location.href = "{{route('request')}}";
         }
 
+        function disableAllClickableElements() {
+            // Disable all clickable elements on the page
+            var clickableElements = document.querySelectorAll('a, button, input[type="button"], input[type="submit"], select');
+            clickableElements.forEach(function(element) {
+                element.disabled = true;
+            });
+
+            // Remove event listeners from clickable elements
+            clickableElements.forEach(function(element) {
+                element.removeEventListener('click', handleClick);
+            });
+
+            // Prevent default behavior for links
+            var links = document.querySelectorAll('a');
+            links.forEach(function(link) {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                });
+            });
+
+            // Disable form submission
+            var forms = document.querySelectorAll('form');
+            forms.forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                });
+            });
+        }
 
     </script>
-
-    <?php
-  
-    ?>
 
 </body>
 </html>
