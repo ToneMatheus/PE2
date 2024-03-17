@@ -117,25 +117,6 @@ else if(isset($_POST['button']))
             $query2 = "INSERT INTO holidays (employee_profile_id, request_date, start_date, end_date, holiday_type_id, reason, fileLocation, manager_approval, boss_approval, is_active) VALUES ('$employee_profile_id', '$request_date', '$start_date', '$end_date', '$holiday_type_id', '$reason', '$fileLoc', '$manager_approval', '$boss_approval', '$is_active')";
             $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query.");
 
-            $balance = "SELECT yearly_holiday_credit, used_holiday_credit from balances where employee_profile_id = $employee_profile_id";
-            $balance_result = $link->query($balance) or die("Error: an error has occurred while executing the query.");
-            $balances = mysqli_fetch_array($balance_result) or die("Error: an error has occurred while executing the query.");
-
-            $yealy_credit = $balances['yearly_holiday_credit'];
-            $used_credit = $balances['used_holiday_credit'];
-
-            $dateTimestamp1 = strtotime('2024-06-10'); // Convert first date string to timestamp
-            $dateTimestamp2 = strtotime('2024-06-20'); // Convert second date string to timestamp
-            
-            $daysDifference = ($dateTimestamp2 - $dateTimestamp1) / (60 * 60 * 24); //calculate difference in days
-
-            if($daysDifference <= $yealy_credit){
-                $query3 = "UPDATE balances SET yearly_holiday_credit = $yealy_credit - $daysDifference where employee_profile_id = $employee_profile_id";
-                $result3 = $link->query($query3) or die("Error: an error has occured while executing the query.");
-
-                $query4 = "UPDATE balances SET used_holiday_credit = $used_credit + $daysDifference where employee_profile_id = $employee_profile_id";
-                $result4 = $link->query($query4) or die("Error: an error has occured while executing the query.");
-            }
 
         if($result2)
         {
