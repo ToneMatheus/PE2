@@ -8,6 +8,11 @@
 </head>
 <body>
     <h1>Invoices</h1>
+
+    <form action="{{ route('customer.invoices', ['customerContractId' => $customerContractId]) }}" method="GET">
+        <input type="text" name="search" value="{{ old('search') }}">
+        <button type="submit">Search</button>
+    </form>
     <table>
         <thead>
             <tr>
@@ -32,5 +37,6 @@
             @endforeach
         </tbody>
     </table>
+    {{ $invoices->links() }}
 </body>
 </html>
