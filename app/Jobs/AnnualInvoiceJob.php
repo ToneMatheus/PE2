@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 
-class RegularJob implements ShouldQueue
+class AnnualInvoiceJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -190,7 +190,7 @@ class RegularJob implements ShouldQueue
 
             $newInvoiceLines = Invoice_line::where('invoice_id', '=', $lastInserted)->get();
            
-            RegularJob::sendMail($invoice, $customer->id, $consumptions, $estimation, $newInvoiceLines);
+            AnnualInvoiceJob::sendMail($invoice, $customer->id, $consumptions, $estimation, $newInvoiceLines);
         }
         
     }
