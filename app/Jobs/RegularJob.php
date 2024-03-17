@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Log;
 use App\Mail\meter_reading_notice;
 use App\Models\Invoice;
 use App\Models\Invoice_line;
-use App\Mail\InvoiceMail;
+use App\Models\Address;
+use App\Mail\AnnualInvoiceMail;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -148,11 +149,6 @@ class RegularJob implements ShouldQueue
             ->where('p.id', '=', $contractProduct->pID)
             ->first();
 
-            $monthlyInvoicesQuery = Invoice::where('customer_contract_id', $customer->ccID);
-            $monthlyInvoices = $monthlyInvoicesQuery->get();
-
-            $monthlyAmount = $estimation * $productTariff->rate;
-
             $extraAmounts = [];
 
             foreach($consumptions as $consumption){
@@ -191,31 +187,35 @@ class RegularJob implements ShouldQueue
 
                 $i++;
             }
+
+            $newInvoiceLines = Invoice_line::where('invoice_id', '=', $lastInserted)->get();
            
-            RegularJob::sendMail($invoice, $customer->id);
-            Log::info('Processing user ID: ' . $customer->id);
+            RegularJob::sendMail($invoice, $customer->id, $consumptions, $estimation, $newInvoiceLines);
         }
         
     }
 
-    public function sendMail(Invoice $invoice, $cID)
+    public function sendMail(Invoice $invoice, $cID, $consumptions, $estimation, $newInvoiceLines)
     {
-        $user = User::where('id', $cID)->first();
-
+        $user = DB::table('users as u')->join('customer_addresses as ca', 'ca.user_id', '=', 'u.id')
+        ->join('addresses as a', 'a.id', '=', 'ca.address_id')
+        ->where('u.id', '=', $cID)
+        ->first();
+        
         // Generate PDF
-        $pdf = Pdf::loadView('Invoices.invoice_pdf', compact('invoice'));
+        $pdf = Pdf::loadView('Invoices.annual_invoice_pdf', [
+            'invoice' => $invoice,
+            'user' => $user,
+            'consumptions' => $consumptions,
+            'estimation' => $estimation,
+            'newInvoiceLines' => $newInvoiceLines,
+        ], [], 'utf-8');
         $pdfData = $pdf->output();
 
-        // Send email with PDF attachment
-        Mail::to('shaunypersy10@gmail.com')->send(new InvoiceMail(
-            $invoice, $user->first_name, $pdfData
+        //Send email with PDF attachment
+        Mail::to('shaunypersy10@gmail.com')->send(new AnnualInvoiceMail(
+            $invoice, $user, $pdfData, $consumptions, $estimation, $newInvoiceLines
         ));
-    }
 
-    public function download(Request $request)
-    {
-        $invoice = Invoice::where('id', $request->id)->first();
-        $pdf = Pdf::loadView('Invoices.invoice_pdf', compact('invoice'));
-        return $pdf->download('invoice.pdf');
     }
 }

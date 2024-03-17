@@ -12,17 +12,25 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class InvoiceMail extends Mailable
+class AnnualInvoiceMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     protected $invoice;
     protected $user;
+    protected $consumptions;
+    protected $estimation;
+    protected $newInvoiceLines;
+    protected $pdfData;
 
-    public function __construct(Invoice $invoice, $user)
+    public function __construct(Invoice $invoice, $user, $pdfData, $consumptions, $estimation, $newInvoiceLines)
     {
         $this->invoice = $invoice;
         $this->user = $user;
+        $this->consumptions = $consumptions;
+        $this->estimation = $estimation;
+        $this->newInvoiceLines = $newInvoiceLines;
+        $this->pdfData = $pdfData;
     }
 
     public function envelope()
@@ -39,11 +47,11 @@ class InvoiceMail extends Mailable
 
         return $this->view('Invoices.invoice_mail')
                     ->with([
-                        'name' => $this->user->first_name,
-                        'invoiceType' => $this->invoice->type,
-                        'invoiceTotalAmount' => $this->invoice->total_amount,
-                        'invoiceStatus' => $this->invoice->status,
-                        'invoiceDueDate' => $this->invoice->due_date,
+                        'user' => $this->user,
+                        'invoice' => $this->invoice,
+                        'consumptions' => $this->consumptions,
+                        'estimation' => $this->estimation,
+                        'newInvoiceLines' => $this->newInvoiceLines
                     ])
                     ->attachData($pdfData, 'invoice.pdf', [
                         'mime' => 'application/pdf',
@@ -52,7 +60,15 @@ class InvoiceMail extends Mailable
 
     private function generatePdf()
     {
-        $pdf = Pdf::loadView('Invoices.invoice_pdf', ['invoice' => $this->invoice]);
+        $pdf = Pdf::loadView('Invoices.annual_invoice_pdf', [
+            'invoice' => $this->invoice,
+            'user' => $this->user,
+            'consumptions' => $this->consumptions,
+            'estimation' => $this->estimation,
+            'newInvoiceLines' => $this->newInvoiceLines,
+        ], [], 'utf-8');
+        
+             
         return $pdf->output();
     }
 }
