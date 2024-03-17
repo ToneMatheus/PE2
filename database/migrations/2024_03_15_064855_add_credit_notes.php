@@ -14,14 +14,17 @@ return new class extends Migration
     public function up()
     {
         //
-        Schema::table('credit_notes', function (Blueprint $table) {
+        Schema::create('credit_notes', function (Blueprint $table) {
             $table->id();
             $table->string('type');
             $table->text('description');
             $table->decimal('amount', 10, 2); // Adjust precision and scale as needed
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
+        });
+
+        Schema::table('credit_notes', function (Blueprint $table) {
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
 use App\Http\Controllers\CustomerGridViewController;
@@ -14,7 +15,9 @@ use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNotaController;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\RelationsController;
+
+use App\Http\Controllers\FAQController;
+use App\Http\Controllers\MeterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -119,6 +122,14 @@ Route::get('/welcome', function() {
 Route::get('/roles', function () {
     return view('roleOverview');
 });
+
+//cronjobs
+Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+Route::get('/cron-jobs/edit/{job}', [CronJobController::class, 'edit'])->name('edit-cron-job');
+Route::put('/cron-jobs/update/{job}', [CronJobController::class, 'update'])->name('update-cron-job');
+Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
+
+Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
 
 Route::get('/test', function () {
     return view('test');
