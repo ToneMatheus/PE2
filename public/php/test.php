@@ -26,9 +26,10 @@ else if(!isset($_SESSION['pink']))
 {
     $_SESSION['pink'] = array();
 }
-else if(!isset($_SESSION['numCal']))
+
+if (!isset($_SESSION['numCal']) || !is_array($_SESSION['numCal'])) 
 {
-    $_SESSION['numCal'] = "";
+    $_SESSION['numCal'] = array();
 }
 
 
@@ -36,12 +37,10 @@ else if(!isset($_SESSION['numCal']))
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['idNum'])) 
 {
     $idNum = $_POST['idNum'];
-    $_SESSION['numCal'] = $idNum;
     
-    // Now you can use $idNum in your PHP code
     echo "Received idNum: " . $idNum;
 }
-else if(isset($_POST['green']))
+else if(isset($_POST['green']) && isset($_POST['dayNum']))
 {
     $color = $_POST['green'];
     echo "Received green: " . $color;
@@ -49,8 +48,16 @@ else if(isset($_POST['green']))
     $color < 1 ?  $_SESSION['user']['green'] += 1 : $color = 1;
     echo "\n";
     // echo $_SESSION['user']['green'], "test";
+    $idNum = $_POST['dayNum'];
+    $_SESSION['numCal'][] = $idNum;
+    
+    echo "Days stored in session:\n";
+    foreach ($_SESSION['numCal'] as $item) 
+    {
+        echo $item . "\n";
+    }
 } 
-else if(isset($_POST['purple']))
+else if(isset($_POST['purple']) && isset($_POST['dayNum']))
 {
     $color = $_POST['purple'];
     echo "Received purple: " . $color;
@@ -59,7 +66,7 @@ else if(isset($_POST['purple']))
     echo "\n";
     echo $_SESSION['user']['purple'];
 } 
-else if(isset($_POST['pink']))
+else if(isset($_POST['pink']) && isset($_POST['dayNum']))
 {
     $color = $_POST['pink'];
     echo "Received pink: " . $color;
@@ -73,9 +80,19 @@ else if(isset($_POST['button']))
     
     if(isset($_SESSION['user']['green']))
     {
+        // $idNum = $_POST['dayNum'];
+        // $_SESSION['numCal'][] = $idNum;
+        
+        // testing max and min
+        $maxValue = max($_SESSION['numCal']);
+        $minValue = min($_SESSION['numCal']);
+        echo "\nmax: " . $maxValue;
+        echo "\nmin: " . $minValue . "\n";
+
         //calandar day
-        $day = strval($_SESSION['numCal']);
-        $thsDay = "2024/03/$day";
+        //$day = strval($_SESSION['numCal']);
+        $thsDay = "2024/03/$minValue";
+        $scdDay = "2024/03/$maxValue";
         $todayRequest = date("Y/m/d");
         //holiday_types
         // echo 'yes green I guess';
@@ -83,26 +100,36 @@ else if(isset($_POST['button']))
         $type = "Vacation";
         
         // $query = "INSERT INTO holiday_types ('type') VALUES ('$type')";
-        $query = "SELECT * FROM holiday_types";
+        // $query = "SELECT * FROM holiday_types";
         
-        $result = $link->query($query) or die("Error: an error has occurred while executing the query.");
-        if ($result) 
-        {
-            echo("\nAdd type successful!\n");
-            while ($row = mysqli_fetch_array($result))
-            {
+        // $result = $link->query($query) or die("Error: an error has occurred while executing the query.");
+        // if ($result) 
+        // {
+        //     echo("\nAdd type successful!\n");
+        //     while ($row = mysqli_fetch_array($result))
+        //     {
                 
-                $typeDB = $row['type'];
-                echo $typeDB;
-            }
-            echo $_SESSION['numCal'];
+        //         $typeDB = $row['type'];
+        //         echo $typeDB;
+        //     }
+        //     echo $_SESSION['numCal'];
+        // }
+
+        
+
+        $date_now = new DateTime();
+        $date2    = new DateTime("03/$minValue/2024");
+        // check if date is in the past
+        if ($date_now > $date2) 
+        {
+            echo 'the date that you are asking is in the past.';
         }
-
-
+        else
+        {
             $employee_profile_id = mysqli_real_escape_string($link, 1);
             $request_date = mysqli_real_escape_string($link, $todayRequest);
             $start_date = mysqli_real_escape_string($link, $thsDay);
-            $end_date = mysqli_real_escape_string($link, $thsDay);
+            $end_date = mysqli_real_escape_string($link, $scdDay);
             $holiday_type_id = mysqli_real_escape_string($link, 1);
             $reason = mysqli_real_escape_string($link, "Vacation");
             $fileLoc = mysqli_real_escape_string($link, "");
@@ -117,11 +144,16 @@ else if(isset($_POST['button']))
             $query2 = "INSERT INTO holidays (employee_profile_id, request_date, start_date, end_date, holiday_type_id, reason, fileLocation, manager_approval, boss_approval, is_active) VALUES ('$employee_profile_id', '$request_date', '$start_date', '$end_date', '$holiday_type_id', '$reason', '$fileLoc', '$manager_approval', '$boss_approval', '$is_active')";
             $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query.");
 
-
-        if($result2)
-        {
-            echo "\n\n works \n";
+            if($result2)
+            {
+                echo "\n\n works \n";
+            }
         }
+
+        
+
+
+        
     }
     else
     {
