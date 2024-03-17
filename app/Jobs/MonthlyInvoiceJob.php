@@ -56,15 +56,17 @@ class MonthlyInvoiceJob implements ShouldQueue
         ->get();
 
         //add 2 weeks to start_date of contract
-        foreach($newCustomers as $newCustomer){
-            $startDate = Carbon::parse($newCustomer->start_date);
-            $invoiceDate = $startDate->copy()->addWeeks(2);
-            $dueDate = $invoiceDate->copy()->addWeeks(2);
-
-            $formattedInvoiceDate = $invoiceDate->toDateString();
-            $formattedDueDate = $dueDate->toDateString();
-            
-            //$this->generateInvoice($newCustomer, $formattedInvoiceDate, $formattedDueDate);
+        if(!is_null($newCustomers)){
+            foreach($newCustomers as $newCustomer){
+                $startDate = Carbon::parse($newCustomer->start_date);
+                $invoiceDate = $startDate->copy()->addWeeks(2);
+                $dueDate = $invoiceDate->copy()->addWeeks(2);
+    
+                $formattedInvoiceDate = $invoiceDate->toDateString();
+                $formattedDueDate = $dueDate->toDateString();
+                
+                $this->generateInvoice($newCustomer, $formattedInvoiceDate, $formattedDueDate);
+            }
         }
 
         //add 2 weeks to due_date of last monthly invoice
