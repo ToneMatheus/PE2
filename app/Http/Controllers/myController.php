@@ -23,5 +23,9 @@
         public function tariff(){
             return view('tariff');
         }
+
+        public function contractOverview(){
+            return view('contract_overview');
+        }
     }
 ?>

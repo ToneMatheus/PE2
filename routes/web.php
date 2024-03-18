@@ -21,19 +21,24 @@ use App\Http\Controllers\myController;
 */
 
 Route::get('/', function () {
-    return view('login');
+    //return view('login');
+    return view('invoice_overview');
 });
-
+/*
 Route::get("/dashboard", [DashboardController::class, 'index']);
 Route::controller(InvoiceController::class)->group(function () {
     Route::get('/invoices', 'index')->name('invoice.index');
     Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
     Route::get('/invoices/{id}/download', 'download')->name('invoice.download');
-    
-});
+    //Route::get('/contract_overview', 'contractOverview')->name('invoice.download');
+});*/
 
 Route::get("/employees", [EmployeeController::class, 'index']);
-
+/*
+Route::get('/contract_overview', function () {
+    return view('login');
+});*/
+Route::get("/contract_overview", [myController::class, 'contractOverview']);
 
 
 
@@ -67,7 +72,7 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
     //Route::get('/profile', [myController::class, 'profile'])->name('profile');
 });
 
-
+/*
 Route::controller(LoginController::class)->group(function () {
     //show the login view
     Route::get('/login', 'index');
@@ -88,6 +93,12 @@ Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
 Route::get('/profile', [myController::class, 'profile'])->name('profile');
 
+
+Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
+
 Route::get('/test', function () {
     return view('test');
 });
+
+
+*/
