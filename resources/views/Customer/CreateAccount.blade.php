@@ -44,6 +44,27 @@
                 businessOption.style.display = "none";               
             }
         }
+
+        // FIX: API voor address correction en validation.
+        // document.getElementById('Street').addEventListener('input', function() {
+        //     const street = this.value;
+        //     const city = document.querySelector('input[name="City"]').value;
+
+        //     if (street.length > 2) {
+        //         fetch(`/api/address-suggestions?street=${street}&city=${city}`)
+        //             .then(response => response.json())
+        //             .then(data => {
+        //                 const suggestionsContainer = document.getElementById('suggestions');
+        //                 suggestionsContainer.innerHTML = '';
+        //                 data.forEach(suggestion => {
+        //                     const suggestionElement = document.createElement('p');
+        //                     suggestionElement.textContent = suggestion.formatted_address;
+        //                     suggestionsContainer.appendChild(suggestionElement);
+        //                 });
+        //             })
+        //             .catch(error => console.error('Error:', error));
+        //     }
+        // });
     </script>
 
 </head>
@@ -67,6 +88,7 @@
         <div class="box">
             <h1 class="boxHeader">Create account</h1>
             <form method='post' action="{{ route ('postCreateAccountValidate') }}">
+                <!-- TODO: directe validatie als het mogenlijk is. -->
                 <table>
                     <tr>
                         <td>
@@ -220,12 +242,32 @@
                             <label>type of house</label>
                         </td>
                         <td>
-                        <select name="typeHouse">
+                            <select name="typeHouse">
                                 <option value="house" @if(old('typeHouse') == 'house') selected @endif>House</option>
                                 <option value="appartment"  @if(old('typeHouse') == 'appartment') selected @endif>Appartment</option>
                                 <option value="business"  @if(old('typeHouse') == 'business') selected @endif>Business</option>
                             </select>
                         </td>
+
+                        <!-- LOOK: kijk of deze rol werkt.-->
+                        <!-- REF: zie user.php voor hasRole functie -->
+                        <!-- if(auth()->user()hasRole('Manage')) -->
+                            <td>
+                                <label>Role</label>
+                            </td>
+                            <td>
+                                <select name="userRole">
+                                    <option value="1" @if(old('userRole') == '1') selected @endif>Finance analyst</option>
+                                    <option value="2"  @if(old('userRole') == '2') selected @endif>Executive manager</option>
+                                    <option value="3"  @if(old('userRole') == '3') selected @endif>Customer service</option>
+                                    <option value="4"  @if(old('userRole') == '4') selected @endif>Manager</option>
+                                    <option value="5"  @if(old('userRole') == '5') selected @endif>Customer</option>
+                                    <option value="6"  @if(old('userRole') == '6') selected @endif>Field technician</option>
+                                </select>
+                            </td>
+                        <!-- else -->
+                          <!-- <input type="hidden" name="userRole" value="5"> -->
+                        <!-- endif -->
                     </tr>
 
                 </table>

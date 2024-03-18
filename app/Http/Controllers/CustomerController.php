@@ -86,10 +86,18 @@ class CustomerController extends Controller
 
     public function profileValidationCreateAccount(Request $request)
     {
+        //CH de database module gebruiken als validation.
+
+        //CHange database addres link tabel wordt aangepast.
+
+        //TODO: email verification
+        //REF:https://www.youtube.com/watch?v=KiHzbVsErNo
+        
     //     This is an own implemented service provider for swear words
     //     validation. By arandilopez from github
     //     https://github.com/arandilopez/laravel-profane
 
+    /* FIX: dat het addres moet kloppen.
     //     Get postal code en city name out of xml file 
         $xmlPathFlanders = storage_path('app/PostalCodes/FlandersPostalInfo20240301L72.xml');
         $xmlStringFlanders = File::get($xmlPathFlanders);
@@ -130,10 +138,11 @@ class CustomerController extends Controller
             $postalcodeWallonia = (string) $postalInfoWallonia->children('com', true)->code->objectIdentifier;
             $cityWallonia = (string)$postalInfoWallonia->children('com', true)->name->spelling;
             $validPostcodesWallonia[$postalcodeWallonia] = $cityWallonia;
-        }
+        }*/
 
         $isCompany = $request->get('isCompany') ? 1 : 0;
         $companyNameRules = $isCompany ? 'required' : '';
+
 
         $validator = Validator::make($request->all(), [
             'FirstName' => 'required',
@@ -219,11 +228,11 @@ class CustomerController extends Controller
 
         // Update klantgegevens met bedrijfsnaam en telefoonnummer als deze zijn ingevuld
         if ($CompanyName !=='' && $isCompany == 1){
-
             DB::table('users')->where('id', $userID)->update(['company_name' => $CompanyName]);
         }
 
-// ?: bus kan ook optioneel zijn.
+
+// REVIEW: bus kan ook optioneel zijn.
 
         $Street = $request->input('Street');
         $Number = $request->input('Number');
@@ -241,15 +250,22 @@ class CustomerController extends Controller
             'city' => $City, 'province' => $Province, 'type' => $typeHouse]);
         }
 
-        
+        DB::table('users')->where('id', $userID)->update(['address_id' => $addresID]);
 
 
 // ?: Hoe worden de rollen bepaald. enkel manager kan account aan maken met aangepaste rol. anders altijd customer.
 // ?:hetzelfde voor is_billing_addres norm altijd 1. manager enkel op 0 zetten.
         
-        return redirect()->back()->with('success', 'Account created');
-        
+//?: vragen of dit goed is. dat customer_addresses auto moet gevuld worden bij aanmaken.
 
+        $mytime = Carbon::now()->format('Y-m-d');
+        DB::table('customer_addresses')->insert(['user_id' => $userID, 'address_id' => $addresID, 'start_date' => $mytime]);
+
+        $roleID = $request->input('userRole');
+
+        DB::table('user_roles')->insert(['user_id' => $userID, 'role_id' => $roleID]);
+
+        return redirect()->back()->with('success', 'Account created');
     }
 }
 

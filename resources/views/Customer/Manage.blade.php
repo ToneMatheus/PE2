@@ -25,7 +25,7 @@
                 <li><a href="{{ route('createUser') }}">Create account</a></li>
             </ul>
         </nav>
-
+<!-- TODO: daadwerkelijke data weergeven. -->
         <div class="box">
             <h1 class="boxHeader" id="test">Your personal info</h1>
             <!-- Password -->
@@ -117,6 +117,7 @@
 
         </div>
 
+        <!-- TODO: een 2de adres toe voegen of meerdere addressen. -->
         <div class="box">
             <h1 class="boxHeader">Your house info</h1>
             <table class="boxTable" id="box1_table_1">

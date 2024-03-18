@@ -1,11 +1,9 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DomPDFController;
-use App\Http\Controllers\myController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\CustomerController;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,69 +11,28 @@ use App\Http\Controllers\CustomerController;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
 |
 */
 
-//Role system
-//Customer
-Route::middleware(['auth', 'role:Customer'])->group(function (){
-
+Route::get('/', function () {
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
 });
 
-//Employee
-Route::middleware(['auth', 'notrole:Customer'])->group(function (){
-    //Only Finance
-    Route::middleware(['auth', 'role:Finance analyst'])->group(function () {
-        Route::get('/tariff', [EmployeeController::class, 'tariff'])->name('tariff');
-    });
-    
-    //Only Manager
-    Route::middleware(['auth', 'role:Manager'])->group(function (){
-    
-    });
-    
-    //Only Executive Manager
-    Route::middleware(['auth', 'role:Executive Manager'])->group(function (){
-    
-    });
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-    //Every Employee
-    
-    //Route::get('/profile', [myController::class, 'profile'])->name('profile');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-
-//to download the pdf of the contract and salary pages
-Route::get('/downloadPayslip', [DomPDFController::class, 'getPaySlipPDF'])->name('downloadPayslip');
-Route::get('/downloadContract', [DomPDFController::class, 'getContractPDF'])->name('downloadContract');
-
-//the routes to the pages
-Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
-Route::get('/payList', [myController::class, 'payList'])->name('payList');
-Route::get('/contract', [myController::class, 'contract'])->name('contract');
-Route::get('/profile', [myController::class, 'profile'])->name('profile');
-
-Route::get('/test', function () {
-    return view('test');
-});
-
-/*Joren*/
-//routes for custmer data for customer
-Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
-Route::get('/Customer/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
-
-Route::post('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');})->name('ChangeUser');
-Route::get('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');});
-
-// Validation route's to change customer info by customer
-Route::post('/Customer/Manage/Change/User/post/email', [CustomerController::class, 'emailValidationChangeUserInfo']) ->name('postEmail');
-Route::post('/Customer/Manage/Change/User/post/profile', [CustomerController::class, 'profileValidationChangeUserInfo']) ->name('postProfile');
-Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::class, 'passwdValidationChangeUserInfo']) ->name('postPasswd');
-
-// Validation route's to create a customer account by customer
-Route::post('/Customer/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
+require __DIR__.'/auth.php';
