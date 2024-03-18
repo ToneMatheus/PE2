@@ -31,33 +31,6 @@ use App\Http\Controllers\CronJobController;
 |
 */
 
-<<<<<<< HEAD
-Route::get('/', function () {
-    //return view('login');
-    return view('invoice_overview');
-});
-/*
-Route::get("/dashboard", [DashboardController::class, 'index']);
-Route::controller(InvoiceController::class)->group(function () {
-    Route::get('/invoices', 'index')->name('invoice.index');
-    Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
-    Route::get('/invoices/{id}/download', 'download')->name('invoice.download');
-    //Route::get('/contract_overview', 'contractOverview')->name('invoice.download');
-});*/
-
-Route::get("/employees", [EmployeeController::class, 'index']);
-/*
-Route::get('/contract_overview', function () {
-    return view('login');
-});*/
-Route::get("/contract_overview", [myController::class, 'contractOverview']);
-
-
-
-
-//          routes Tone
-=======
->>>>>>> 5f91c401f1bda0402e039541e3c0bbc30e955cb2
 //Role system
 //Customer
 Route::middleware(['auth', 'role:Customer'])->group(function (){
@@ -86,17 +59,6 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
     //Route::get('/profile', [myController::class, 'profile'])->name('profile');
 });
 
-<<<<<<< HEAD
-/*
-Route::controller(LoginController::class)->group(function () {
-    //show the login view
-    Route::get('/login', 'index');
-    //authenticate the loginform and attempt authentication
-    Route::post('/login', 'login');
-    //logout via laravel Auth
-    Route::get('/logout', 'logout');
-    
-=======
 Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
 Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
 Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add'); 
@@ -112,7 +74,6 @@ Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_m
 
 Route::get('/dashboard', function () {
     return view('Meters/employeeDashboard');
->>>>>>> 5f91c401f1bda0402e039541e3c0bbc30e955cb2
 });
 Route::get('meters', [MeterController::class,'showMeters']);
 Route::get('/consumption', function () {
@@ -163,9 +124,6 @@ Route::get('/test', function () {
 });
 
 
-<<<<<<< HEAD
-*/
-=======
 Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
 Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
 Route::put('/customer/{id}/{cpID}', [CustomerGridViewController::class, 'update'])->name('customer.update');
@@ -214,4 +172,3 @@ Route::controller(InvoiceController::class)->group(function () {
 Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
 Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
 Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
->>>>>>> 5f91c401f1bda0402e039541e3c0bbc30e955cb2
