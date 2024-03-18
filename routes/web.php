@@ -19,6 +19,7 @@ use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
 use App\Http\Controllers\CronJobController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\GuestController;
 
 
 /*
@@ -46,35 +47,37 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/login', [LoginController::class, 'showLoginForm'])->middleware('guest');
+
 require __DIR__.'/auth.php';
 
-//Role system
-//Customer
-Route::middleware(['auth', 'role:Customer'])->group(function (){
+// //Role system
+// //Customer
+// Route::middleware(['auth', 'role:Customer'])->group(function (){
 
-});
+// });
 
-//Employee
-Route::middleware(['auth', 'notrole:Customer'])->group(function (){
-    //Only Finance
-    Route::middleware(['auth', 'role:Finance analyst'])->group(function () {
+// //Employee
+// Route::middleware(['auth', 'notrole:Customer'])->group(function (){
+//     //Only Finance
+//     Route::middleware(['auth', 'role:Finance analyst'])->group(function () {
 
-    });
+//     });
     
-    //Only Manager
-    Route::middleware(['auth', 'role:Manager'])->group(function (){
+//     //Only Manager
+//     Route::middleware(['auth', 'role:Manager'])->group(function (){
     
-    });
+//     });
     
-    //Only Executive Manager
-    Route::middleware(['auth', 'role:Executive Manager'])->group(function (){
+//     //Only Executive Manager
+//     Route::middleware(['auth', 'role:Executive Manager'])->group(function (){
     
-    });
+//     });
 
-    //Every Employee
+//     //Every Employee
     
-    //Route::get('/profile', [myController::class, 'profile'])->name('profile');
-});
+//     //Route::get('/profile', [myController::class, 'profile'])->name('profile');
+// });
 
 Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
 Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
@@ -114,7 +117,7 @@ Route::get('/downloadContract', [DomPDFController::class, 'getContractPDF'])->na
 Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
 Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
-Route::get('/profile', [myController::class, 'profile'])->name('profile');
+Route::get('/profileEmployee', [myController::class, 'profile'])->name('profile');
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
 
