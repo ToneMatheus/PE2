@@ -13,8 +13,11 @@ class advancemailcontroller extends Controller
         $invoice = Invoice::find($invoiceID);
         $invoice_info = $invoice->invoice_lines;
 
-        $total_amount = DB::select('SELECT i.total_amount FROM invoices i 
-        WHERE i.id = '.$invoiceID.';');
+        //$total_amount = DB::select('SELECT i.total_amount FROM invoices i 
+        //WHERE i.id = '.$invoiceID.';');
+        $total_amount = Invoice::select('total_amount')
+        ->where('id', $invoiceID)
+        ->first();
 
         $user_info = DB::select('SELECT u.email, u.first_name, u.last_name FROM invoices i 
         LEFT JOIN customer_contracts cc 
