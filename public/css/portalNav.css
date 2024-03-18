@@ -7,16 +7,16 @@ body {
 .header-class {
     text-align: center;
     padding: 20px;
-    background-color: #003366; /* dark blue */
-    border-bottom: 1px solid #000033; /* darker blue */
+    background-color: #003366; 
+    border-bottom: 1px solid #000033;
 }
 
 .header-title {
-    color: #ffffff; /* white */
+    color: #ffffff;
 }
 
 .nav-class {
-    background-color: #003366; /* dark blue */
+    background-color: #003366; 
 }
 
 .nav-list-class {
@@ -48,4 +48,14 @@ body {
 
 .nav-list-class li a:hover {
     background-color: #005599;
+}
+
+.invoice-footer {
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+    background-color: #003366;
+    color: white;
+    position: absolute;
+    bottom: 0;
 }

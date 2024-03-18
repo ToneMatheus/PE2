@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Invoice;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerPortalController extends Controller
 {
@@ -28,5 +30,15 @@ class CustomerPortalController extends Controller
     
         $invoices = $query->paginate(10);
         return view('Customers/CustomerInvoiceView', ['invoices' => $invoices, 'customerContractId' => $customerContractId]);
+    }
+
+    public function showConsumptionHistory()
+    {
+        $consumptionData = DB::table('index_values')
+            ->where('meter_id', Auth::id())
+            ->orderBy('reading_date')
+            ->get();
+
+        return view('Customers/CustomerConsumptionHistory', ['consumptionData' => $consumptionData]);
     }
 }

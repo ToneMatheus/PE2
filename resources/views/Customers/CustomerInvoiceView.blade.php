@@ -43,5 +43,6 @@
     </div>
     {{ $invoices->links() }}
     </div>
+    @include('Customers.WebPortalFooter')
 </body>
 </html>
