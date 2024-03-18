@@ -266,7 +266,10 @@
             else 
             {
                 var url = "{{ asset('php/test.php') }}";
-                var params = $color + $num; // Send $idNum value as a POST parameter
+                var idNum = $idNum;
+                //var color = $color;
+                var color = $num;
+                var params = "dayNum=" + encodeURIComponent(idNum) + "&" + $color + encodeURIComponent(color);
                 //params += "color=" + $color;
                 xhr.open("POST", url, true);
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
