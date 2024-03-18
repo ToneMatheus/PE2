@@ -1,0 +1,16 @@
+.requests{
+    padding: 20px;
+    border: 1px solid black;
+    width: fit-content;
+
+}
+
+.accept{
+    background-color: green;
+    color: white;
+}
+
+.reject{
+    background-color: red;
+    color: white;
+}

@@ -1,0 +1,50 @@
+/* style of the user info box*/
+/* header box */
+.box{
+    background-color: #9d9d9d;
+    margin: 50px;
+}
+
+.boxHeader{
+    color: #ffffff;
+    background-color: #6b6b6b;
+    text-align: center;
+    padding: 20px 0px;
+}
+
+.boxinfo{
+    margin: 10px 5px;
+}
+
+.boxTable{
+    display: 	inline-table;
+    width: 47.8%;
+    text-align: center;
+    margin: 1%;
+}
+
+.boxTable tr td:first-child{
+    width: 23%;
+    text-align: right;
+}
+
+.boxTable tr td:nth-child(2){
+    padding-left: 10px;
+    padding-right: 15px;
+}
+
+.boxTable tr td:last-child{
+    width: 75%;
+    text-align: left;
+}
+
+.change{
+    margin-left: 48%;
+    margin-bottom: 1%;
+}
+
+/* ----------------------------------------------- */
+/* style of the house info */
+/* .box2{
+    
+} */
