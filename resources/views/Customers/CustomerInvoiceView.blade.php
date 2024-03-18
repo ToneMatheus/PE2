@@ -4,16 +4,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Customer Invoices</title>
-    <link href="{{ asset('css/gridview.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/customerPortal.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/portalNav.css') }}" rel="stylesheet">
 </head>
 <body>
-    <h1>Invoices</h1>
-
-    <form action="{{ route('customer.invoices', ['customerContractId' => $customerContractId]) }}" method="GET">
+    @include('Customers.WebPortalNav')
+    <div class="invoice-content">
+    <h1 class="invoice-title">Invoices</h1>
+    <div class="content-wrapper">
+    <form class="search-form" action="{{ route('customer.invoices', ['customerContractId' => $customerContractId]) }}" method="GET">
         <input type="text" name="search" value="{{ old('search') }}">
         <button type="submit">Search</button>
     </form>
-    <table>
+    <table class="invoice-table">
         <thead>
             <tr>
                 <th>Invoice ID</th>
@@ -37,6 +40,8 @@
             @endforeach
         </tbody>
     </table>
+    </div>
     {{ $invoices->links() }}
+    </div>
 </body>
 </html>
