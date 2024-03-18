@@ -36,3 +36,12 @@
 .invoice-table th {
     background-color: #0056b3;
 }
+
+
+.content {
+    width: 1000px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}

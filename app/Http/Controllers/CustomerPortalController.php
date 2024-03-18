@@ -35,7 +35,7 @@ class CustomerPortalController extends Controller
     public function showConsumptionHistory()
     {
         $consumptionData = DB::table('index_values')
-            ->where('meter_id', Auth::id())
+            ->where('meter_id',1) //Auth::id())
             ->orderBy('reading_date')
             ->get();
 
