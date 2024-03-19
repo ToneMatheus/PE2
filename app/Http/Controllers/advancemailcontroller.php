@@ -56,22 +56,19 @@ class advancemailcontroller extends Controller
         //gather data of users: name, e-mail
         //gather data of lines of invoice
         $invoice = new Invoice();
-        
         $invoice = Invoice::find($invoiceID);
         $invoice_info = $invoice->invoice_lines;
 
-        /*$total_amount = Invoice::select('total_amount')
-            ->where('id', $invoiceID)
-            ->first();
+        $total_amount = Invoice::where('id', $invoiceID)->value('total_amount');
 
         $user_info = Invoice::select('users.email', 'users.first_name', 'users.last_name')
             ->leftJoin('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
             ->leftJoin('users', 'customer_contracts.user_id', '=', 'users.id')
             ->where('invoices.id', $invoiceID)
-            ->first();*/
+            ->first();
 
         //DELETE IF NO ISSUES:
-        $total_amount = DB::select('SELECT i.total_amount FROM invoices i 
+        /*$total_amount = DB::select('SELECT i.total_amount FROM invoices i 
         WHERE i.id = '.$invoiceID.';');
 
         $user_info = DB::select('SELECT u.email, u.first_name, u.last_name FROM invoices i 
@@ -79,7 +76,7 @@ class advancemailcontroller extends Controller
         ON i.customer_contract_id = cc.id 
         LEFT JOIN users u 
         ON cc.user_id = u.id
-        WHERE i.id = '.$invoiceID.';');
+        WHERE i.id = '.$invoiceID.';');*/
 
         //return new \App\Mail\weekAdvanceReminder($invoice_info, $total_amount, $user_info);
 
