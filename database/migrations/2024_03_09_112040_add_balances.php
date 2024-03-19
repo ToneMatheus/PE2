@@ -15,7 +15,8 @@ return new class extends Migration
             $table->bigInteger('holiday_type_id')->unsigned();
             $table->tinyInteger('yearly_holiday_credit')->default(20);
             $table->unsignedTinyInteger('used_holiday_credit')->default(0);
-            $table->tinyInteger('previous_holiday_credit')->default(0);
+            $table->date('start_date');
+            $table->date('end_date')->nullable();
         });
     }
 
