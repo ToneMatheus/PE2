@@ -87,6 +87,6 @@ class WeekAdvanceReminderJob implements ShouldQueue
 
         //return new \App\Mail\weekAdvanceReminder($invoice_info, $total_amount, $user_info);
 
-        Mail::to('cornelie.hanssens@gmail.com')->send(new weekAdvanceReminder($invoice_info, $total_amount, $user_info));
+        Mail::to('niki.de.visscher@gmail.com')->send(new weekAdvanceReminder($invoice_info, $total_amount, $user_info));
     }
 }
