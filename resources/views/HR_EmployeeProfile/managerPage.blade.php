@@ -76,67 +76,132 @@
 
                 "); 
             }
-            echo("</table>");
+            echo("</table><hr/>");
 
+            echo("<h2>Holiday overview</h2>");
             echo("<table style=\"width: 90%\">");
+            }
 
-                $previousMonth = null; // Variable to store the previous month
-                foreach($requests as $holiday) {
-                    $startDate = Carbon::parse($holiday->start_date); // Accessing the property directly
-                    $endDate = Carbon::parse($holiday->end_date); // Accessing the property directly
 
-                    $startDay = $startDate->day;
-                    $month = $startDate->month;
-                    $year = $startDate->year;
+            //Holiday overview in calendar view
 
-                    $endDay = $endDate->day;
-                    $days = $endDate->diffInDays($startDate);
 
-                    //to get the number of days in this month
-                    $daysInMonth = Carbon::create($year, $month)->daysInMonth;
 
-                    $fullMonthName = $startDate->format('F');
+            $previousMonth = null; // Variable to store the previous month
+            $holidayTypeColors = [];
+            $currentMonthHolidays = [];
+            $legendDisplayed = false;
 
-                    // Display the month name if it's different from the previous month
-                    if ($fullMonthName != $previousMonth) {
-                        echo("<h2>$fullMonthName $year</h2>");
-                        $previousMonth = $fullMonthName; // Update the previous month
+            $requests = DB::select("select * from holidays where is_active = 0 and manager_approval = 1 order by request_date desc");
+
+            if(!empty($requests)){
+                foreach ($requests as $holiday) {
+                //fetch the holiday type
+                $employee_id = $holiday->employee_profile_id;
+                $holidayTypeID = $holiday->holiday_type_id;
+
+                // Check if color is already assigned to this holiday type
+                if (!isset($holidayTypeColors[$holidayTypeID])) {
+                    // Generate a random color
+                    $randomColor = '#' . substr(md5(rand()), 0, 6);
+
+                    // Assign the random color to the holiday type
+                    $holidayTypeColors[$holidayTypeID] = $randomColor;
+                }
+
+                $startDate = Carbon::parse($holiday->start_date); // Accessing the property directly
+                $endDate = Carbon::parse($holiday->end_date); // Accessing the property directly
+
+                $startDay = $startDate->day;
+                $month = $startDate->month;
+                $year = $startDate->year;
+
+                $endDay = $endDate->day;
+                $days = $endDate->diffInDays($startDate);
+
+                //to get the number of days in this month
+                $daysInMonth = Carbon::create($year, $month)->daysInMonth;
+
+                $fullMonthName = $startDate->format('F');
+
+                // Display the month name if it's different from the previous month
+                if ($fullMonthName != $previousMonth) {
+                    // If this is not the first month, close the previous table
+                    if ($previousMonth !== null) {
+                        echo('</table>');
                     }
 
-                    // Table for each month
-                    echo("<table style=\"width: 100%\">");
-
-                    // Loop to display the dates above the cells
-                    echo("<tr>");
-                    for($i = 0; $i <= $daysInMonth; $i++) {
-                        if($i == 0) {
+                    // Start a new table for the current month
+                    echo("<h2>$fullMonthName $year</h2>");
+                    echo('<table>');
+                    echo('<tr>');
+                    // Make the first <td> spanning multiple columns
+                    echo("<td>Name</td>");
+                    for ($i = 1; $i <= $daysInMonth; $i++) { // Start from 2 since the first <td> is spanning multiple columns
+                        if ($i == 0) {
                             echo("<th></th>");
+                        } elseif ($i < 10 && $i > 0) {
+                            echo("<th>0$i</th>");
                         } else {
                             echo("<th>$i</th>");
                         }
                     }
-                    echo("</tr>");
+                    echo('</tr>');
+                    $currentMonthHolidays = []; // Reset for the new month
+                    $previousMonth = $fullMonthName; // Update the previous month
+                }
 
-                    // New row for each holiday
-                    echo("<tr>");
-                    echo("<td>" . $fullname[0]->first_name . " " . $fullname[0]->last_name . "</td>");
-                    for($i = 1; $i <= $daysInMonth; $i++) {
-                        if ($i >= $startDay && $i <= $endDay) {
-                            echo("<td style=\"border: 1px solid black; background-color: grey\"></td>");
-                        } else {
-                            echo("<td style=\"border: 1px solid black;\"></td>");
+                //selecting the name of each employee
+                $fullname = DB::select("select first_name, last_name from users where employee_profile_id = $employee_id");
+
+                // Add current holiday to the list of holidays for the month
+                $currentMonthHolidays[] = [
+                    'name' => $fullname[0]->first_name . " " . $fullname[0]->last_name,
+                    'startDay' => $startDay,
+                    'endDay' => $endDay,
+                    'holidayTypeID' => $holidayTypeID
+                ];
+                
+                if ($currentMonthHolidays) {
+                    foreach ($currentMonthHolidays as $holidayInfo) {
+                        echo('<tr>');
+                        echo("<td>{$holidayInfo['name']}</td>");
+                        for ($i = 1; $i <= $daysInMonth; $i++) {
+                            if ($i >= $holidayInfo['startDay'] && $i <= $holidayInfo['endDay']) {
+                                // Generate a unique CSS class based on holiday type ID
+                                $cssClass = "holiday_type_" . $holidayInfo['holidayTypeID'];
+                                echo("<td class=\"$cssClass\" style=\"border: 1px solid black; background-color: {$holidayTypeColors[$holidayInfo['holidayTypeID']]}\"></td>");
+                            } else {
+                                echo("<td style=\"border: 1px solid black;\"></td>");
+                            }
                         }
+                        echo('</tr>');
                     }
-                    echo("</tr>");
-
-                    echo("</table>");
                 }
+            }
 
-                if (empty($requests)) {
-                    echo("<p><i>There are no requests at the moment</i></p>");
+            // Display the legend box
+            if (!$legendDisplayed) {
+                echo('<tr><td colspan="' . ($daysInMonth + 1) . '">');
+                echo('<h4>Legend:</h4>');
+                echo('<ul>');
+                foreach ($holidayTypeColors as $holidayTypeID => $color) {
+                    // Fetch holiday type details from the database
+                    $holidayType = DB::select("SELECT * FROM holiday_types WHERE id = $holidayTypeID");
+                    $typeName = $holidayType[0]->type;
+                    echo("<li style=\"color: $color;\">$typeName</li>");
                 }
-        }
+                echo('</ul>');
+                echo('</td></tr>');
+                $legendDisplayed = true;
+            }
 
+            // Close the last table if there are remaining holidays
+            if ($previousMonth !== null) {
+                echo('</table>');
+            }
+
+            }
     @endphp
 
     </div> 
