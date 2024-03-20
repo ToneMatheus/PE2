@@ -11,6 +11,9 @@ use PHPUnit\Event\Code\Test;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ConfirmationMailRegistration;
+use League\CommonMark\Extension\Table\Table;
 
 class CustomerController extends Controller
 {
@@ -147,8 +150,8 @@ class CustomerController extends Controller
         $validator = Validator::make($request->all(), [
             'FirstName' => 'required',
             'LastName' => 'required',
-            'Email' => 'required | email | unique:users,email',
-            'Username' => 'required | profane | unique:users,username',
+            'Email' => 'required | email', // | unique:users,email',
+            'Username' => 'required | profane', // | unique:users,username',
             'Calling' => 'required',
             'PhoneNummer' => 'required', //vragen of het required moet zijn.
             'PaswdNew1' => 'required | min:8 | regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
@@ -221,7 +224,7 @@ class CustomerController extends Controller
 
         // Insert gebruiker en krijg de ID van de zojuist ingevoegde gebruiker
         $userID = DB::table('users')->insertGetId(['username' => $Username, 'first_name' => $FirstName, 'last_name' => $LastName, 'password' => $Paswd,
-            'is_company' => $isCompany, 'email' => $Email, 'birth_date' => $BD, 'phone_nbr' => $phoneNumber]);
+            'is_company' => $isCompany, 'email' => $Email, 'birth_date' => $BD, 'phone_nbr' => $phoneNumber, 'is_activate' => 0]);
         
         
         $CompanyName = $request->input('CompanyName');
@@ -242,15 +245,18 @@ class CustomerController extends Controller
         $City = $request->input('City');
         $typeHouse = $request->input('typeHouse');
 
-        $addresID = DB::table('addresses')->where('street', $Street)->where('number', $Number)->where('box', $Bus)->where('postal_code', $PostalCode)
+        $addresID = DB::table('addresses')->select('id')->where('street', $Street)->where('number', $Number)->where('box', $Bus)->where('postal_code', $PostalCode)
         ->where('city', $City)->where('province', $Province)->where('type', $typeHouse)->first();
 
         if($addresID ==null){
             $addresID = DB::table('addresses')->insertGetId(['street' => $Street, 'number' => $Number, 'box' => $Bus, 'postal_code' => $PostalCode,
             'city' => $City, 'province' => $Province, 'type' => $typeHouse]);
         }
+        else{
+            $addresID = $addresID->id;
+        }
 
-        DB::table('users')->where('id', $userID)->update(['address_id' => $addresID]);
+        //DB::table('users')->where('id', $userID)->update(['address_id' => $addresID]);
 
 
 // ?: Hoe worden de rollen bepaald. enkel manager kan account aan maken met aangepaste rol. anders altijd customer.
@@ -259,13 +265,30 @@ class CustomerController extends Controller
 //?: vragen of dit goed is. dat customer_addresses auto moet gevuld worden bij aanmaken.
 
         $mytime = Carbon::now()->format('Y-m-d');
+
         DB::table('customer_addresses')->insert(['user_id' => $userID, 'address_id' => $addresID, 'start_date' => $mytime]);
 
         $roleID = $request->input('userRole');
 
+        
         DB::table('user_roles')->insert(['user_id' => $userID, 'role_id' => $roleID]);
 
-        return redirect()->back()->with('success', 'Account created');
+        // send confirmation mail
+        Mail::to($Email)->send(new ConfirmationMailRegistration($userID));
+
+        //doe dit hier onder vanaf op de knop uit de mail geduuwt werd 
+
+        // return redirect()->back()->with('success', 'Account created');
+        return redirect()->route('createUser')->with('wait', 'Confurm account in mail to go further');
+    }
+
+    public function activateAccount($userID)
+    {
+        DB::table('users')->where('id', $userID)->update(['is_activate' => 1]);
+        
+        // return view('createUser')->with('success', 'Account created');
+        return redirect()->route('createUser')->with('success', 'Account created');
+
     }
 }
 

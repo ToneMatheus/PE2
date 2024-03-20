@@ -299,3 +299,9 @@
         {{ session('success') }}
     </div>
 @endif
+
+@if(session('wait'))
+    <div class="alert alert-success">
+        {{ session('wait') }}
+    </div>
+@endif
