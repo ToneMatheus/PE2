@@ -51,10 +51,14 @@
                         success: function(data){
                             $('#productSelect').empty();
                             $.each(data, function(index, product){
-                                $('#productSelect').append($('<option>', {
+                                var option = $('<option>', {
                                     value: product.id,
                                     text: product.product_name
-                                }));
+                                });
+                                if (product.product_name == '{{ $productTariff->product_name }}' && product.type == '{{ $productTariff->type }}') {
+                                    option.prop('selected', true);
+                                }
+                                $('#productSelect').append(option);
                             });
                         }
                     });
@@ -123,10 +127,14 @@
 
         <select name="type" id="typeSelect">
             @foreach ($types as $type)
-                <option value="{{$type->type}}">{{$type->type}}</option>
+                @if($productTariff->type == $type->type)
+                    <option value="{{$type->type}}" selected>{{$type->type}}</option>
+                @else
+                    <option value="{{$type->type}}">{{$type->type}}</option>
+                @endif
             @endforeach
         </select>
-
+        
         @if(isset($discount))
 
             @php
