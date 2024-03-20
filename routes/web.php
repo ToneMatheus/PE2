@@ -173,4 +173,5 @@ Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('cred
 
 //Customer Portal
 Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
-Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionHistory'])->name('customer.consumption-history');
+Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
+Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);

@@ -5,6 +5,7 @@
     <link href="{{ asset('css/portalNav.css') }}" rel="stylesheet">
     <link href="{{ asset('css/customerPortal.css') }}" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
     @include('Customers.WebPortalNav')
@@ -16,9 +17,10 @@
     <script>
         var consumptionData = @json($consumptionData);
     </script>
-
-    <script src="{{ asset('js/consumptionChart.js') }}"></script>
-
+    <script src="/js/consumptionChart.js"></script>
+    <button onclick="fetchData('week')">Week</button>
+    <button onclick="fetchData('month')">Month</button>
+    <button onclick="fetchData('year')">Year</button>
     @include('Customers.WebPortalFooter')
 </body>
 </html>
