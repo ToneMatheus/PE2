@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 use App\Models\Invoice;
 use App\Models\Invoice_line;
@@ -40,12 +41,20 @@ class MonthlyInvoiceJob implements ShouldQueue
 
        //Query new customers (this month)       
        $newCustomers = User::join('customer_contracts as cc', 'cc.user_id', '=', 'users.id')
+       ->join('Customer_addresses', 'users.id', '=', 'Customer_addresses.user_id')
+       ->join('Addresses', 'Customer_addresses.Address_id', '=', 'Addresses.id')
+       ->join('Meter_addresses', 'Addresses.id', '=', 'Meter_addresses.address_id')
+       ->join('Meters', 'Meter_addresses.meter_id', '=', 'Meters.id')
        ->whereMonth('cc.start_date', '=', $month)
        ->whereYear('cc.start_date', '=', $year)
        ->get();
 
        //Query old customers
        $oldCustomers = User::join('customer_contracts as cc', 'cc.user_id', '=', 'users.id')
+       ->join('Customer_addresses', 'users.id', '=', 'Customer_addresses.user_id')
+       ->join('Addresses', 'Customer_addresses.Address_id', '=', 'Addresses.id')
+       ->join('Meter_addresses', 'Addresses.id', '=', 'Meter_addresses.address_id')
+       ->join('Meters', 'Meter_addresses.meter_id', '=', 'Meters.id')
         ->where(function($query) use ($month, $year) {
             $query->whereYear('cc.start_date', '<', $year)
                 ->orWhere(function($query) use ($month, $year) {
@@ -53,6 +62,7 @@ class MonthlyInvoiceJob implements ShouldQueue
                         ->whereMonth('cc.start_date', '<', $month);
                 });
         })
+        ->select('cc.id as ccID','cc.start_date as start_date' ,'users.id as uID')
         ->get();
 
         //add 2 weeks to start_date of contract
@@ -74,14 +84,16 @@ class MonthlyInvoiceJob implements ShouldQueue
             //Query amount of invoice this year
             $amountInvoices = Invoice::where('type', '=', 'Monthly')
             ->whereYear('invoices.invoice_date', '=', $year)
-            ->where('invoices.customer_contract_id', '=', $oldCustomer->id)
+            ->where('invoices.customer_contract_id', '=', $oldCustomer->ccID)
             ->count();
+
+            Log::info($oldCustomer);
 
             if($amountInvoices < 12) {
                 //Query last monthly invoice
                 $lastInvoice = Invoice::where('type', '=', 'Monthly')
                 ->whereYear('invoice_date', '=', $year)
-                ->where('customer_contract_id', '=', $oldCustomer->id)
+                ->where('customer_contract_id', '=', $oldCustomer->ccID)
                 ->orderBy('invoice_date', 'desc')
                 ->first();
 
@@ -104,7 +116,7 @@ class MonthlyInvoiceJob implements ShouldQueue
             ->join('meter_addresses as ma', 'a.id', '=', 'ma.address_id')
             ->join('meters as m', 'ma.meter_id', '=', 'm.id')
             ->join('estimations as e', 'e.meter_id', '=', 'm.id')
-            ->where('u.id', '=', $customer->user_id)
+            ->where('u.id', '=', $customer->uID)
             ->select('e.estimation_total')
             ->first();
 
@@ -115,7 +127,7 @@ class MonthlyInvoiceJob implements ShouldQueue
             'p.id as pID', 't.id as tID')
             ->join('products as p', 'p.id', '=', 'cp.product_id')
             ->leftjoin('tariffs as t', 't.id', '=', 'cp.tariff_id')
-            ->where('customer_contract_id', '=', $customer->id)
+            ->where('customer_contract_id', '=', $customer->ccID)
             ->whereNull('cp.end_date')
             ->first();
 
@@ -134,7 +146,7 @@ class MonthlyInvoiceJob implements ShouldQueue
                 'due_date' => $invoiceDueDate,
                 'total_amount' => $totalAmount,
                 'status' => 'sent',
-                'customer_contract_id' => $customer->id,
+                'customer_contract_id' => $customer->ccID,
                 'type' => 'Monthly'
             ];
 
@@ -166,14 +178,15 @@ class MonthlyInvoiceJob implements ShouldQueue
             ]);
 
             $newInvoiceLines = Invoice_line::where('invoice_id', '=', $lastInserted)->get();
-            MonthlyInvoiceJob::sendMail($invoice, $customer->user_id, $estimation, $newInvoiceLines);
+            MonthlyInvoiceJob::sendMail($invoice, $customer->uID, $estimation, $newInvoiceLines);
     }
 
-    public function sendMail(Invoice $invoice, $cID, $estimation, $newInvoiceLines)
+    public function sendMail(Invoice $invoice, $uID, $estimation, $newInvoiceLines)
     {
         $user = DB::table('users as u')->join('customer_addresses as ca', 'ca.user_id', '=', 'u.id')
         ->join('addresses as a', 'a.id', '=', 'ca.address_id')
-        ->where('u.id', '=', $cID)
+        ->where('a.is_billing_address', '=', 1)
+        ->where('u.id', '=', $uID)
         ->first();
         
         // Generate PDF
