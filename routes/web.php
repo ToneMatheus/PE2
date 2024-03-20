@@ -47,9 +47,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/login', [LoginController::class, 'showLoginForm'])->middleware('guest');
-
 require __DIR__.'/auth.php';
+
 
 // //Role system
 // //Customer
@@ -79,110 +78,110 @@ require __DIR__.'/auth.php';
 //     //Route::get('/profile', [myController::class, 'profile'])->name('profile');
 // });
 
-Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
-Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
-Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add'); 
-Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
+// Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
+// Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
+// Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add'); 
+// Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
 
-//invoice query routes
-Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
-Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
+// //invoice query routes
+// Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
+// Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
 
-//preview advance reminder mail for testing
-Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
-// Meters branch
+// //preview advance reminder mail for testing
+// Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
+// // Meters branch
 
-Route::get('/dashboardEmployee', function () {
-    return view('Meters/employeeDashboard');
-});
-Route::get('meters', [MeterController::class,'showMeters']);
-Route::get('/consumption', function () {
-    return view('Meters/consumption');
-});
-Route::get('/consumption1', function () {
-    return view('Meters/consumption1');
-});
-Route::get('/indexvalues', function () {
-    return view('Meters/indexvalues');
-});
-
-// Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-// Route::post('login', [LoginController::class, 'login']);
-
-//to download the pdf of the contract and salary pages
-Route::get('/downloadPayslip', [DomPDFController::class, 'getPaySlipPDF'])->name('downloadPayslip');
-Route::get('/downloadContract', [DomPDFController::class, 'getContractPDF'])->name('downloadContract');
-
-//the routes to the pages
-Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
-Route::get('/payList', [myController::class, 'payList'])->name('payList');
-Route::get('/contract', [myController::class, 'contract'])->name('contract');
-Route::get('/profileEmployee', [myController::class, 'profile'])->name('profile');
-Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
-Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
-
-// Route::get('/welcome', function () {
-//     return view('welcome');
+// Route::get('/dashboardEmployee', function () {
+//     return view('Meters/employeeDashboard');
 // });
-Route::get('/roles', function () {
-    return view('roleOverview');
-});
+// Route::get('meters', [MeterController::class,'showMeters']);
+// Route::get('/consumption', function () {
+//     return view('Meters/consumption');
+// });
+// Route::get('/consumption1', function () {
+//     return view('Meters/consumption1');
+// });
+// Route::get('/indexvalues', function () {
+//     return view('Meters/indexvalues');
+// });
 
-//cronjobs
-Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
-Route::get('/cron-jobs/edit/{job}', [CronJobController::class, 'edit'])->name('edit-cron-job');
-Route::put('/cron-jobs/update/{job}', [CronJobController::class, 'update'])->name('update-cron-job');
-Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
+// // Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+// // Route::post('login', [LoginController::class, 'login']);
 
-Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
+// //to download the pdf of the contract and salary pages
+// Route::get('/downloadPayslip', [DomPDFController::class, 'getPaySlipPDF'])->name('downloadPayslip');
+// Route::get('/downloadContract', [DomPDFController::class, 'getContractPDF'])->name('downloadContract');
 
-Route::get('/test', function () {
-    return view('test');
-});
+// //the routes to the pages
+// Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
+// Route::get('/payList', [myController::class, 'payList'])->name('payList');
+// Route::get('/contract', [myController::class, 'contract'])->name('contract');
+// Route::get('/profileEmployee', [myController::class, 'profile'])->name('profile');
+// Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
+// Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
+
+// // Route::get('/welcome', function () {
+// //     return view('welcome');
+// // });
+// Route::get('/roles', function () {
+//     return view('roleOverview');
+// });
+
+// //cronjobs
+// Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+// Route::get('/cron-jobs/edit/{job}', [CronJobController::class, 'edit'])->name('edit-cron-job');
+// Route::put('/cron-jobs/update/{job}', [CronJobController::class, 'update'])->name('update-cron-job');
+// Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
+
+// Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
+
+// Route::get('/test', function () {
+//     return view('test');
+// });
 
 
-Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
-Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
-Route::put('/customer/{id}/{cpID}', [CustomerGridViewController::class, 'update'])->name('customer.update');
-Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
+// Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
+// Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
+// Route::put('/customer/{id}/{cpID}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+// Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
 
-Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
+// Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
 
-// Ticket page | Accessible by everyone
-Route::controller(TicketController::class)->group(function () {
-    Route::get('/create-ticket', 'showForm')->name('create-ticket');
-    Route::post('/submitted-ticket', 'store')->name('submitted-ticket');
-    Route::get('/submitted-ticket', 'showSubmittedTicket')->name('show-ticket');
-});
-Route::get('/faq', [FAQController::class, 'showFAQ'])->name('faq');
+// // Ticket page | Accessible by everyone
+// Route::controller(TicketController::class)->group(function () {
+//     Route::get('/create-ticket', 'showForm')->name('create-ticket');
+//     Route::post('/submitted-ticket', 'store')->name('submitted-ticket');
+//     Route::get('/submitted-ticket', 'showSubmittedTicket')->name('show-ticket');
+// });
+// Route::get('/faq', [FAQController::class, 'showFAQ'])->name('faq');
 
-Route::get('/customer/overview', [SimpleUserOverViewController::class, 'overview'])->name('overview');
+// Route::get('/customer/overview', [SimpleUserOverViewController::class, 'overview'])->name('overview');
 
 
-//routes for custmer data for customer
-Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
-Route::get('/Customer/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
+// //routes for custmer data for customer
+// Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
+// Route::get('/Customer/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
 
-Route::post('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');})->name('ChangeUser');
-Route::get('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');});
+// Route::post('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');})->name('ChangeUser');
+// Route::get('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');});
 
-// Validation route's to change customer info by customer
-Route::post('/Customer/Manage/Change/User/post/email', [CustomerController::class, 'emailValidationChangeUserInfo']) ->name('postEmail');
-Route::post('/Customer/Manage/Change/User/post/profile', [CustomerController::class, 'profileValidationChangeUserInfo']) ->name('postProfile');
-Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::class, 'passwdValidationChangeUserInfo']) ->name('postPasswd');
+// // Validation route's to change customer info by customer
+// Route::post('/Customer/Manage/Change/User/post/email', [CustomerController::class, 'emailValidationChangeUserInfo']) ->name('postEmail');
+// Route::post('/Customer/Manage/Change/User/post/profile', [CustomerController::class, 'profileValidationChangeUserInfo']) ->name('postProfile');
+// Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::class, 'passwdValidationChangeUserInfo']) ->name('postPasswd');
 
-// Validation route's to create a customer account by customer
-Route::post('/Customer/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
+// // Validation route's to create a customer account by customer
+// Route::post('/Customer/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
 
-Route::controller(InvoiceController::class)->group(function () {
-    Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
-    Route::get('/invoices/{id}/download', 'download')->name('invoice.download');
-});
+// Route::controller(InvoiceController::class)->group(function () {
+//     Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
+//     Route::get('/invoices/{id}/download', 'download')->name('invoice.download');
+// });
 
-Route::controller(InvoiceController::class)->group(function () {
-    Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
-});
-//All routes for credit notes
-Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
-Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
-Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
+// Route::controller(InvoiceController::class)->group(function () {
+//     Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
+// });
+// //All routes for credit notes
+// Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
+// Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
+// Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
