@@ -62,13 +62,22 @@ function calculateAverage(consumptionData, timeframe) {
                 return data;
             });
         case 'month':
-            let weeklyResult = [];
-            for(let i = 0; i < averagedData.length; i += 7) {
-                let weekData = averagedData.slice(i, i + 7);
+            let monthlyResult = [];
+            let startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+            let endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+            let startOfWeek = startOfMonth;
+            while (startOfWeek <= endOfMonth) {
+                let endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(endOfWeek.getDate() + 6);
+                if (endOfWeek > endOfMonth) {
+                    endOfWeek = endOfMonth;
+                }
+                let weekData = averagedData.filter(data => new Date(data.reading_date) >= startOfWeek && new Date(data.reading_date) <= endOfWeek);
                 let average = weekData.reduce((a, b) => a + b.reading_value, 0) / weekData.length;
-                weeklyResult.push({ reading_date: `Week ${weeklyResult.length + 1}`, reading_value: average });
+                monthlyResult.push({ reading_date: `Week Starting ${startOfWeek.toISOString().split('T')[0]}`, reading_value: average });
+                startOfWeek.setDate(startOfWeek.getDate() + 7);
             }
-            return weeklyResult;
+            return monthlyResult;
         case 'year':
             return averagedData.map((data, index) => {
                 let date = new Date(data.reading_date);
