@@ -51,12 +51,21 @@ class InvoiceSeeder extends Seeder
                 'status' => 'paid',
                 'customer_contract_id' => 2,
                 'type' => 'Monthly'
+            ],
+            [
+                'id' => 5,
+                'invoice_date' => '2024-03-15',
+                'due_date' => '2024-03-29',
+                'total_amount' => 455.4,
+                'status' => 'sent',
+                'customer_contract_id' => 2,
+                'type' => 'Monthly'
             ]
         ]);
 
         DB::table('invoices')->insert([
             [
-                'id' => 5,
+                'id' => 6,
                 'invoice_date' => '2024-01-15',
                 'due_date' => '2024-01-30',
                 'total_amount' => 108.75,
@@ -65,7 +74,7 @@ class InvoiceSeeder extends Seeder
                 'type' => 'Monthly'
             ],
             [
-                'id' => 6,
+                'id' => 7,
                 'invoice_date' => '2024-02-15',
                 'due_date' => '2024-02-29',
                 'total_amount' => 108.75,
@@ -77,7 +86,7 @@ class InvoiceSeeder extends Seeder
 
         DB::table('invoices')->insert([
             [
-                'id' => 7,
+                'id' => 8,
                 'invoice_date' => '2024-01-15',
                 'due_date' => '2024-01-30',
                 'total_amount' => 99.8,
@@ -86,7 +95,7 @@ class InvoiceSeeder extends Seeder
                 'type' => 'Monthly'
             ],
             [
-                'id' => 8,
+                'id' => 9,
                 'invoice_date' => '2024-02-15',
                 'due_date' => '2024-02-29',
                 'total_amount' => 99.8,

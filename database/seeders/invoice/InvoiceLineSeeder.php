@@ -36,7 +36,7 @@ class InvoiceLineSeeder extends Seeder
             ]);
         }
 
-        for($i = 3; $i <= 4; $i++){
+        for($i = 3; $i <= 5; $i++){
             DB::table('invoice_lines')->insert([
                 'type' => 'Electricity',
                 'unit_price' => 0.28,
@@ -62,7 +62,7 @@ class InvoiceLineSeeder extends Seeder
             ]);
         }
 
-        for($i = 5; $i <= 6; $i++){
+        for($i = 6; $i <= 7; $i++){
             DB::table('invoice_lines')->insert([
                 'type' => 'Electricity',
                 'unit_price' => 0.25,
@@ -88,7 +88,7 @@ class InvoiceLineSeeder extends Seeder
             ]);
         }
 
-        for($i = 7; $i <= 8; $i++){
+        for($i = 8; $i <= 9; $i++){
             DB::table('invoice_lines')->insert([
                 'type' => 'Electricity',
                 'unit_price' => 0.25,
