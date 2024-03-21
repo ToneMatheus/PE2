@@ -81,24 +81,27 @@
             <tr>
                 <td id='selection'>
                     <p>Vacation</p>
-                    <button onclick="addDate()"><div class="square"></div>
+                    <button id="btn" onclick="addDate()"><div class="square"></div>
                 </td>
             </tr>
             <tr>
                 <td id='selection'>
                     <p>Parental Leave</p>
-                    <button onclick="addDate2()"><div class="square2"></div>
+                    <button id="btn" onclick="addDate2()"><div class="square2"></div>
                 </td>
             </tr>
             <tr>
                 <td id='selection'>
                     <p>Sick Leave</p>
-                    <button onclick="addDate3()"><div class="square3"></div>
+                    <button id="btn" onclick="addDate3()"><div class="square3"></div>
                 </td>
             </tr>
         </table>   
         <div id="errorMsg">
             <p>The date that you are asking is in the past.</p>
+        </div>
+        <div id="scsMsg">
+            <p>The request has been send.</p>
         </div>
         <div class="sidebar">
             <label id="label">This label is currently empty</label>
@@ -109,6 +112,7 @@
     </div>
 
     <script>
+        var visBool = false;
         let numGr = 0;
         let numPur = 0;
         let numPink = 0;
@@ -305,26 +309,37 @@
 
         function btnClicked()
         {
-            var xhr = new XMLHttpRequest();
-            if (xhr == null) 
+            if(visBool)
             {
-                alert("Browser does not support HTTP Request");
-            } 
-            else 
+                cnlButton();
+            }
+            else
             {
-                var url = "{{ asset('php/test.php') }}";
-                var params = "button"; // Send $idNum value as a POST parameter
-                //params += "color=" + $color;
-                xhr.open("POST", url, true);
-                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState == 4 && xhr.status == 200) 
-                    {
-                        // Handle the response from the server if needed
-                        console.log(xhr.responseText);
-                    }
-                };
-                xhr.send(params);
+                var div3 = document.getElementById('scsMsg');
+                div3.style.visibility='visible';
+                visBool = true;
+
+                var xhr = new XMLHttpRequest();
+                if (xhr == null) 
+                {
+                    alert("Browser does not support HTTP Request");
+                } 
+                else 
+                {
+                    var url = "{{ asset('php/test.php') }}";
+                    var params = "button"; // Send $idNum value as a POST parameter
+                    //params += "color=" + $color;
+                    xhr.open("POST", url, true);
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) 
+                        {
+                            // Handle the response from the server if needed
+                            console.log(xhr.responseText);
+                        }
+                    };
+                    xhr.send(params);
+                }
             }
         }
 

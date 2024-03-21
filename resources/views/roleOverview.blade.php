@@ -60,7 +60,7 @@
         </header>
         <h1>Hierarchy/Roles</h1>
 
-        <form action="" method="GET">
+        {{-- <form action="" method="GET">
             <label for="role">Select a role:</label>
             <select name="role" id="role" onchange="updateRoleInfo()">
                 <option value="0">Select a role...</option>
@@ -78,9 +78,36 @@
                     }
                 ?>
             </select>
-        </form>
-        <hr>
+        </form> --}}
 
+        <table>
+            <tr>
+                <th>role</th>
+                <th>permissions</th>
+            </tr>
+            
+            <tr>
+                <td>customer</td>
+                <td>registration, login, profile, all customer date overviews (personal data and tarrifs), their invoices</td>
+            </tr>
+
+            <tr>
+                <td>employee</td>
+                <td>holiday form, personal payment info, their payslips, role hierarchy</td>
+            </tr>
+
+            <tr>
+                <td>manager</td>
+                <td>all of the above + hierarchy edit availability and holiday requests</td>
+            </tr>
+
+            <tr>
+                <td>boss</td>
+                <td>all of the above + holiday requests that have been sent through by managers, all company income, overview of balance...</td>
+            </tr>
+        </table>
+        <hr>
+{{-- 
         <table id="roleInfoTable">
             <tr>
                 <th>Attribute</th>
@@ -103,7 +130,7 @@
                 <td id="rolePeople">-</td>
             </tr>
         </table>
-        
+         --}}
 
         <hr>
         <form id="editRelationForm">
