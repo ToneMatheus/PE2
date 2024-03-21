@@ -12,9 +12,9 @@ class CreditNote extends Model
 
     protected $fillable = [
         'type',
+        'status',
         'description',
-        'amount',
-        'customer_id',
+        'user_id',
     ];
 
     public function user()
@@ -22,5 +22,8 @@ class CreditNote extends Model
         return $this->belongsTo(User::class);
     }
 
-    use HasFactory;
+    public function lines()
+    {
+        return $this->hasMany(CreditNoteLine::class);
+    }
 }

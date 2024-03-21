@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Mail;
 class InvoiceController extends Controller
 {
     //
-
+    
    
     public function store(Request $request)
     {

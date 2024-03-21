@@ -13,14 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        //
-        Schema::create('credit_notes', function (Blueprint $table) {
+        Schema::create('credit_note_lines', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('type')->nullable();
-            $table->boolean('status');
-            $table->text('description')->nullable();
-            $table->double('amount')->nullable(); 
-            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('product');
+            $table->integer('quantity');
+            $table->float('price')->default(0.0); 
+            $table->float('amount')->default(0.0);
+            $table->foreignId('credit_note_id')->references('id')->on('credit_notes')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -33,6 +32,6 @@ return new class extends Migration
     public function down()
     {
         //
-        Schema::dropIfExists('credit_notes');
+        Schema::dropIfExists('credit_note_lines');
     }
 };
