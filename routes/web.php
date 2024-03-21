@@ -12,7 +12,6 @@ use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
-use App\Http\Controllers\CreditNotaController;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FAQController;
@@ -119,7 +118,7 @@ Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->na
 
 
 //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
-Route::get('/contract_overview', [ContractController::class, 'index']);
+Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
 
 Route::get('/test', function () {
     return view('test');
