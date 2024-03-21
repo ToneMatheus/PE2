@@ -45,6 +45,11 @@ class MeterController extends Controller
         }
         $code .= (10 - ($sum % 10)) % 10;
         return $code;
+
+
+
+
+        
         }
 
         $latest = DB::table('meter')->latest('id')->first();
