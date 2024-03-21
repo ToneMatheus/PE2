@@ -60,4 +60,10 @@ class User extends Authenticatable
         return $this->hasMany(CreditNote::class);
     }
 
+
+    //! de onderstaande functie zou moeten toe gevoegd worden. afhenkelijk van wat er gedaan wordt met het role systeem.
+    // public function hasRole($role)
+    // {
+    //     return $this->role === $role;
+    // }
 }
