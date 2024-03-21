@@ -25,6 +25,7 @@
                 <th>Due Date</th>
                 <th>Status</th>
                 <th>Type</th>
+                <th>View Invoice</th>
             </tr>
         </thead>
         <tbody>
@@ -34,8 +35,9 @@
                     <td>{{ $invoice->total_amount }}</td>
                     <td>{{ $invoice->invoice_date }}</td>
                     <td>{{ $invoice->due_date }}</td>
-                    <td>{{ $invoice->status }}</td>
+                    <td style="background-color: {{ $invoice->status == 'paid' ? 'green' : ($invoice->status == 'pending' ? 'yellow' : ($invoice->status == 'sent' ? 'red' : 'white')) }}">{{ $invoice->status }}</td>
                     <td>{{ $invoice->type }}</td>
+                    <td><a href="{{ route('invoice.download', $invoice->id) }}">View invoice</a></td>
                 </tr>
             @endforeach
         </tbody>
