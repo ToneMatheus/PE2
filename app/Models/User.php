@@ -56,10 +56,7 @@ class User extends Authenticatable
         return \Illuminate\Support\Facades\Validator::make($input, $rules)->passes();
     }
     
-    public function addresses()
-    {
-        return $this->hasMany(Address::class);
-    }
+ 
     public function creditNotes()
     {
         return $this->hasMany(CreditNote::class);

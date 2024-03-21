@@ -16,6 +16,8 @@
 
             @if($roleHelper->hasRole($user->ID, 'Finance analyst'))
                 <li><a href="{{route('tariff')}}">Tariff</a></li>
+                <li><a href="{{route('invoice_query')}}">Invoice Query</a></li>
+                <li><a href="{{route('unpaid_invoice_query')}}">Unpaid Invoice Query</a></li>
             @endif
         </ul>
     </body>
