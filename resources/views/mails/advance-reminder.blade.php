@@ -49,6 +49,10 @@
     </table>
 
     <p>
+        Please log in to our website to fill in payment.
+    </p>
+
+    <p>
         If your payment has already been settled when you recieve this e-mail, you can ignore this reminder.
     </p>
     
