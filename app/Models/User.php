@@ -30,11 +30,6 @@ class User extends Authenticatable
             'birth_date' => self::VALIDATION_RULE_BIRTHDATE,
     ];
 
-    public function addresses()
-    {
-        return $this->hasMany(Address::class);
-    }
-
     protected $table = 'users';
     protected $primaryKey = 'id';
 
