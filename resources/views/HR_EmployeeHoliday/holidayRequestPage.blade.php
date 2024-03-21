@@ -97,12 +97,15 @@
                 </td>
             </tr>
         </table>   
-        
+        <div id="errorMsg">
+            <p>The date that you are asking is in the past.</p>
+        </div>
         <div class="sidebar">
             <label id="label">This label is currently empty</label>
             <button id="cancel" name="cancel" onclick="cnlButton()">Cancel</button>
             <button id="button" name="button" onclick="btnClicked()">Submit</button>
         </div>
+        
     </div>
 
     <script>
@@ -127,15 +130,31 @@
                 }
                 else
                 {
-                    selected.classList.add("added");
+                    
                     //$idNum = document.getElementById("label").textContent;
                    <?php if(isset($_POST['idNum'])){$idNum = $_POST['idNum'];}?>
                     if(typeof $idNum !== 'undefined')
                     {
-                        $color = 'green';
-                        //console.log($color  + " " +$idNum);
-                        numGr++;
-                        countColor('green=', numGr)
+                       var dayNum = $idNum;
+                        var date_now = new Date();
+                        var idnum = <?php if(isset($_POST['idNum'])){echo $_POST['idNum'];}else{ echo 0;} ?>;
+                        var date2    = new Date("2024-03-" + dayNum);
+                        var div2 = document.getElementById('errorMsg');
+                        // check if date is in the past
+                        if (date_now > date2) 
+                        {
+                            div2.style.visibility='visible'
+                        }
+                        else
+                        {
+                            div2.style.visibility='hidden'
+                            selected.classList.add("added");
+                            $color = 'green';
+                            //console.log($color  + " " +$idNum);
+                            numGr++;
+                            countColor('green=', numGr)
+                        }
+                       
 
                     }
                     
@@ -337,6 +356,8 @@
         }
 
     </script>
+
+
 
 </body>
 </html>

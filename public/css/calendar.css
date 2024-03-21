@@ -110,3 +110,8 @@ table{
   width: 60px;
 }
 
+#errorMsg
+{
+  color:red;
+  visibility: hidden;
+}
