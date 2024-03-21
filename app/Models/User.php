@@ -27,7 +27,7 @@ class User extends Authenticatable
             'password' => self::VALIDATION_RULE_PASSWORD,
             'email' => self::VALIDATION_RULE_EMAIL,
             'phone_nbr' => self::VALIDATION_RULE_PHONE_NBR,
-            'birth_date' => self::VALIDATION_RULE_BIRTHDATE,
+            // 'birth_date' => self::VALIDATION_RULE_BIRTHDATE,
     ];
 
     public function addresses()
@@ -39,19 +39,17 @@ class User extends Authenticatable
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id',
         'username',
         'first_name',
         'last_name',
         'password',
-        'address_id',
         'employee_profile_id',
         'is_company',
         'company_name',
-        'email',
         'phone_nbr',
         'birth_date',
-        'is_active'
+        'is_activate',
+        'email',
     ];
 
     public static function validate(array $input): bool

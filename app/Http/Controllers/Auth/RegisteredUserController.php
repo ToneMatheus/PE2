@@ -23,6 +23,17 @@ class RegisteredUserController extends Controller
         return view('auth.register');
     }
 
+    public const VALIDATION_RULES = [
+        // 'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+        // 'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        'username' => 'required|string|max:255|unique:users',
+        'first_name' => 'required|string|max:255',
+        'last_name' => 'required|string|max:255',
+        'password' => 'required|string|min:8|confirmed',
+        'phone_nbr' => 'required|digits:10',
+    ];
+
     /**
      * Handle an incoming registration request.
      *
@@ -30,18 +41,16 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        $request->validate(self::VALIDATION_RULES);
 
         $user = User::create([
-            'name' => $request->name,
+            'username' => $request->username,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'phone_nbr' => $request->phone_nbr,
         ]);
-
         event(new Registered($user));
 
         Auth::login($user);
