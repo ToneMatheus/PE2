@@ -23,10 +23,19 @@ class Kernel extends ConsoleKernel
             $timeParts = explode(':', $cronjob->scheduled_time);
             $hour = $timeParts[0];
             $minute = $timeParts[1];
-
-            $schedule->job(new $jobClass())->monthlyOn($cronjob->scheduled_day, $hour . ':' . $minute);
+            
+            switch ($cronjob->interval) {
+                case 'daily':
+                    $schedule->job(new $jobClass())->dailyAt($hour . ':' . $minute);
+                    break;
+                case 'monthly':
+                    $schedule->job(new $jobClass())->monthlyOn($cronjob->scheduled_day, $hour . ':' . $minute);
+                    break;
+                case 'yearly':
+                    $schedule->job(new $jobClass())->yearlyOn($cronjob->scheduled_month, $cronjob->scheduled_day, $hour . ':' . $minute);
+                    break;
+            }
         }
-
     }
 
     /**
