@@ -18,6 +18,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
 use App\Http\Controllers\CronJobController;
+use App\Http\Controllers\ContractController;
 
 
 /*
@@ -117,7 +118,8 @@ Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('ru
 Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
 
 
-Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
+//Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
+Route::get('/contract_overview', [ContractController::class, 'index']);
 
 Route::get('/test', function () {
     return view('test');

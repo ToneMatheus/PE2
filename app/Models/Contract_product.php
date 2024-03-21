@@ -31,11 +31,11 @@ class Contract_product extends Model
     {
         return $this->belongsTo(Tariff::class);
     }
-
-    /*public function customer_contract(): BelongsTo
+    
+    public function customer_contract(): BelongsTo
     {
-        return $this->belongsTo(Customer_contract::class);
-    }*/
+        return $this->belongsTo(Customer_contracts::class, 'customer_contract_id');
+    }
 
     use HasFactory;
 }

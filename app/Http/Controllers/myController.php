@@ -28,17 +28,16 @@
             return view('tariff');
         }
 
-<<<<<<< HEAD
         public function contractOverview(){
-            return view('contract_overview');
-=======
+            return view('customer.contractOverview');
+        }
+
         public function manager(){
             return view('managerPage');
         }
 
         public function employeeList(){
             return view('employeeList');
->>>>>>> 5f91c401f1bda0402e039541e3c0bbc30e955cb2
         }
     }
 ?>
