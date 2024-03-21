@@ -14,5 +14,7 @@
 
     @livewireScripts
 
+    <a href="./meters/add" style="background-color: #c2c2c2">Add Meter</a>
+
 </body>
 </html>

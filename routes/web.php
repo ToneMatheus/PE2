@@ -20,6 +20,8 @@ use App\Http\Controllers\MeterController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UtilityController;
 use App\Http\Controllers\CronJobController;
+use App\Http\Controllers\meterreading;
+use App\Models\MeterReading as ModelsMeterReading;
 
 
 /*
@@ -45,25 +47,25 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
     Route::middleware(['auth', 'role:Finance analyst'])->group(function () {
 
     });
-    
+
     //Only Manager
     Route::middleware(['auth', 'role:Manager'])->group(function (){
-    
+
     });
-    
+
     //Only Executive Manager
     Route::middleware(['auth', 'role:Executive Manager'])->group(function (){
-    
+
     });
 
     //Every Employee
-    
+
     //Route::get('/profile', [myController::class, 'profile'])->name('profile');
 });
 
 Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
 Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
-Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add'); 
+Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add');
 Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
 
 //invoice query routes
@@ -74,6 +76,7 @@ Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'un
 Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
 // Meters branch
 
+//Meters Group
 Route::get('/dashboard', function () {
     return view('Meters/employeeDashboard');
 });
@@ -90,19 +93,11 @@ Route::post('meters/add', [MeterController::class,'addMeters']);
 Route::get('/consumption', function () {
     return view('Meters/consumption');
 });
-Route::get('/consumption1', function () {
-    return view('Meters/consumption1');
-});
-Route::get('/indexvalues', function () {
-    return view('Meters/indexvalues');
-});
 
-Route::get('/usercontroller', function(){
-    return view('Meters/usercontroller');
-});
+Route::get('/Meter_History', [MeterController::class, 'showMeterHistory'])->name('Meter_History');
 
-Route::get('/user', [UserController::class, 'index']);
-Route::post('/user', [UserController::class, 'getUserData']);
+Route::get('/Consumption_Readings', [MeterController::class, 'showConsumptionReading'])->name('Consumption_Reading');
+
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);

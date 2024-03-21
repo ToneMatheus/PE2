@@ -9,7 +9,6 @@
     <title>Add Meter</title>
 </head>
 <body>
-    <h1></h1>
     <form action="/meters/add" method="POST">
         @csrf
         <label for="type">Type:</label>
