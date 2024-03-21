@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Meter;
+use App\Models\MeterReading;
 use Illuminate\Support\Facades\DB;
 
 class MeterController extends Controller
@@ -54,5 +55,16 @@ class MeterController extends Controller
             'status' => request('status')
         ]);
         return redirect('/meters');
+    }
+
+    public function showMeterHistory()
+    {
+        return view('Meters/Meter_History');
+
+    }
+
+    public function showConsumptionReading()
+    {
+        return view('Meters/Consumption_Reading');
     }
 }
