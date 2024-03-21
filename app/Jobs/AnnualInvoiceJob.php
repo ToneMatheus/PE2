@@ -202,7 +202,7 @@ class AnnualInvoiceJob implements ShouldQueue
         ->where('a.is_billing_address', '=', 1)
         ->where('u.id', '=', $customer->uID)
         ->first();
-        
+
         // Generate PDF
         $pdf = Pdf::loadView('Invoices.annual_invoice_pdf', [
             'invoice' => $invoice,
