@@ -161,7 +161,6 @@ Route::post('/user/Create/validate', [CustomerController::class, 'profileValidat
 Route::get('/activate-account/{userId}', [CustomerController::class, 'activateAccount'])->name('activate.account');
 
 
-
 Route::controller(InvoiceController::class)->group(function () {
     Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
     Route::get('/invoices/{id}/download', 'download')->name('invoice.download');

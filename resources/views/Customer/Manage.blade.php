@@ -51,7 +51,7 @@
                         <p>:</p>
                     </td>
                     <td>
-                        <p>testname</p>
+                        <p>{{$user->first_name}}</p>
                     </td>
                 </tr>
 

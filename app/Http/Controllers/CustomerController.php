@@ -18,7 +18,10 @@ use League\CommonMark\Extension\Table\Table;
 class CustomerController extends Controller
 {
     public function Manage(){
-        return view('Customer.Manage');
+        //LOOK verander dit als login gemaakt is.
+        $user = DB::table('users')->where('id', 1)->first();
+
+        return view('Customer.Manage', compact('user'));
     }
 
     public function emailValidationChangeUserInfo(Request $request)

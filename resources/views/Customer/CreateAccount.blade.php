@@ -274,10 +274,7 @@
                 @csrf
                 <input type="submit" value="Create" id="createAccount">
             </form>
-        </div>
-
-        //LOOK: je krijgt een beveseging email.
-            
+        </div>           
 
     </div>
 </body>
