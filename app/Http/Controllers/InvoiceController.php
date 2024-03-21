@@ -115,5 +115,20 @@ class InvoiceController extends Controller
         $pdf = Pdf::loadView('Invoices.invoice_pdf', compact('invoice'));
         return $pdf->download('invoice.pdf');
     }
-
+    public function showForm()
+    {
+        return view('Invoices.AddInvoiceExtra');
+    }
+    public function AddInvoiceExtra(Request $request)
+    {
+        $type = $request->input('type');
+        $amount = $request->input('amount');
+        $userID = $request->input('userID');
+        $amount = floatval($amount);
+        DB::table('invoice_extras')->insert(array(
+            'type' => $type,
+            'amount' => $amount,
+            'user_id' => $userID,
+            'is_active' => 1));
+    }
 }

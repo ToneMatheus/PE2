@@ -178,3 +178,6 @@ Route::post('/EstimationGuestForm', [EstimationController::class, 'ShowGuestEner
 
 Route::get('/CreateInvoice', [EstimationController::class, 'showButton'])->name('EstimationPage');
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
+
+Route::get('/addInvoiceExtraForm', [InvoiceController::class, 'showForm'])->name('addInvoiceExtraForm');
+Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
