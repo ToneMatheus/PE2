@@ -19,9 +19,18 @@ class CustomerController extends Controller
 {
     public function Manage(){
         //LOOK verander dit als login gemaakt is.
-        $user = DB::table('users')->where('id', 1)->first();
+        $user = DB::table('users')->where('id', 39)->first();
+        // $adres = DB::table('addresses')->where('id', 18)->first();
+        $customerAdresses = DB::table('customer_addresses')->where('user_id', $user->id)->get();
 
-        return view('Customer.Manage', compact('user'));
+        $adresses = [];
+
+        foreach($customerAdresses as $cusadr){
+            $adresses[] = DB::table('addresses')->where('id', $cusadr->address_id)->first();
+        }
+        // return view('Customer.Manage', compact('user', 'adres'));
+        // return view('Customer.Manage', compact('user', 'customerAdresses', 'adres'));
+        return view('Customer.Manage', compact('user', 'adresses'));
     }
 
     public function emailValidationChangeUserInfo(Request $request)
@@ -226,6 +235,7 @@ class CustomerController extends Controller
         $phoneNumber = $request->input('PhoneNummer');
 
         // Insert gebruiker en krijg de ID van de zojuist ingevoegde gebruiker
+        // ? moeten we de calling ook niet opslaan (MS of MR)
         $userID = DB::table('users')->insertGetId(['username' => $Username, 'first_name' => $FirstName, 'last_name' => $LastName, 'password' => $Paswd,
             'is_company' => $isCompany, 'email' => $Email, 'birth_date' => $BD, 'phone_nbr' => $phoneNumber, 'is_activate' => 0]);
         
