@@ -77,6 +77,11 @@ Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_m
 Route::get('/dashboard', function () {
     return view('Meters/employeeDashboard');
 });
+
+Route::get('/meter-dashboard', function () {
+    return view('Meters/meterdashboard');
+});
+
 Route::get('meters', [MeterController::class,'showMeters']);
 Route::get('/meters/add', function () {
     return view('Meters/addmeter');

@@ -10,10 +10,10 @@ class Meter_Reader_Schedule extends Model
 {
     protected $fillable = [
         'id',
-        'start_date',
-        'end_date',
-        'address_id',
-        'meter_id'
+        'employee_profile_id',
+        'reading_date',
+        'meter_id',
+        'status'
     ];
 
     use HasFactory;
