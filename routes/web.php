@@ -13,6 +13,8 @@ use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNotaController;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\HolidayController;
+
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
 use App\Http\Controllers\CronJobController;
@@ -119,11 +121,28 @@ Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
 Route::get('/profileEmployee', [myController::class, 'profile'])->name('profile');
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
+Route::get('/managerList', [myController::class, 'managerList'])->name('managerList');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
 
-// Route::get('/welcome', function () {
-//     return view('welcome');
-// });
+// routes for relations controlelr
+Route::get('/relations', [RelationsController::class, 'fetchRelations']);
+Route::post('/relations/update', [RelationsController::class, 'updateRelation'])->name('relations.update');
+
+
+//routing to decide whether the manager accepted or rejected holiday request and performing actions based on that
+
+
+//Route::get('/holidayRequest', [myController::class, 'holiday'])->name('request');
+
+//Route::get('/holidayRequest', function() {  return view('holidayRequest');  })->name('request');
+
+Route::get('/holidayRequest', function(){
+    return view('holidayRequestPage');
+})->name('request');
+
+Route::get('/welcome', function() {
+    return view('welcome');
+}) -> name('welcome');
 Route::get('/roles', function () {
     return view('roleOverview');
 });
@@ -139,6 +158,10 @@ Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->na
 Route::get('/test', function () {
     return view('test');
 });
+Route::get('/roleOverview', function () {
+    return view('roleOverview');
+});
+
 
 
 Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
@@ -178,11 +201,8 @@ Route::post('/user/Create/validate', [CustomerController::class, 'profileValidat
 Route::get('/activate-account/{userId}', [CustomerController::class, 'activateAccount'])->name('activate.account');
 
 
-Route::controller(InvoiceController::class)->group(function () {
-    Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
-    Route::get('/invoices/{id}/download', 'download')->name('invoice.download');
-});
 
+Route::get('/holidays', [HolidayController::class, 'index']);
 Route::controller(InvoiceController::class)->group(function () {
     Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
 });

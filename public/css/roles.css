@@ -20,7 +20,7 @@ form {
     margin: 20px 0;
 }
 
-select {
+select, input {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;

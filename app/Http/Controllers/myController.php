@@ -28,12 +28,22 @@
             return view('tariff');
         }
 
-        public function manager(){
-            return view('managerPage');
+        public function manager(Request $request){
+            $id = $request->input('manager_id');
+
+            return view('managerPage', ['manager_id' => $id]);
         }
 
         public function employeeList(){
             return view('employeeList');
+        }
+
+        public function holiday(){
+            return view('holidayRequestPage');
+        }
+
+        public function managerList(){
+            return view('managerList');
         }
     }
 ?>
