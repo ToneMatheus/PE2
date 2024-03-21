@@ -99,6 +99,7 @@ Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
 Route::get('/profile', [myController::class, 'profile'])->name('profile');
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
+Route::get('/managerList', [myController::class, 'managerList'])->name('managerList');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
 
 // routes for relations controlelr

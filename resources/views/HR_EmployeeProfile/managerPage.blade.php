@@ -29,16 +29,14 @@
     </style>
 
 </head>
-<body>
+<body style="background-color: #D6D5C9">
     <h1>Welcome manager</h1><br/>
-
-    <a href="{{route('employeeList')}}"><h5>Employee list</h5></a><br/>
-
-    <h3>Holiday requests</h3>
 
     <div class="requests">
     @php
         use Carbon\Carbon;
+
+        $manager_id = request()->input('manager_id');
 
         if(request('decline') == 1){
             $id = request('id');
@@ -52,16 +50,53 @@
         }
     
         // Selecting all holiday requests and sorting them by request date in descending order
-        $requests = DB::select("select * from holidays where is_active = 1 order by request_date desc");
+        //$requests = DB::select("select * from holidays where is_active = 1 order by request_date desc");
+        
+        //selecting the holidays requests based on which employees that are under the manager
+        $manager_user = DB::select("select * from users where id = $manager_id");
+    
+        echo("<h4>Employees managed by " . $manager_user[0]->first_name . "</h4>");
 
-        if(!empty($requests)){
+        $employee_manager_relation = DB::select("select * from leader_relations where leader_id = $manager_id and relation = 'manager'");
+
+
+        $all_requests = [];
+
+        foreach ($employee_manager_relation as $relation) {
+            // Fetch holidays for the current employee
+            $requests = DB::select("select * from holidays where employee_profile_id = " . $relation->employee_id . " and is_active = 1");
+            
+            // Append the requests for the current employee to the array
+            $all_requests = array_merge($all_requests, $requests);
+
+            // Select the employee profiles under this manager
+            $employees = DB::select("select * from users where employee_profile_id = " . $relation->employee_id);
+            
+            // Output the employee names
+            echo("<table style=\"width: 40%\">");
+                echo("<th>EmployeeID</th><th>Name</th>");
+            foreach ($employees as $employee) {
+                echo("<tr>");
+                    echo("<td>" . $employee->employee_profile_id . "</td>");
+                    echo("<td>" . $employee->first_name . " " . $employee->last_name . "</td>");
+                echo("</tr>");
+            }
+            echo("</table>");
+        }
+
+        echo("<br/><br/>");
+
+        if(!empty($all_requests)){
+            echo("<h3>Holiday requests</h3><br/>");
             echo("<table><th>Request date</th><th>Employee name</th><th>Start date</th><th>End date</th><th>Reason</th><th>Actions</th>");
-            foreach ($requests as $request) {
+            foreach ($all_requests as $request) {
                 // Getting the name of the employee that made the request
                 $employee_id = $request->employee_profile_id;
                 $request_id = $request->id;
 
                 $fullname = DB::select("select first_name, last_name from users where employee_profile_id = $employee_id");
+
+
 
                 echo("
                     <tr>
@@ -70,16 +105,20 @@
                         <td>$request->start_date</td>
                         <td>$request->end_date</td>
                         <td>$request->reason</td>
-                        <td><a href=\"" . route('managerPage', ['accept' => 1, 'id' => $employee_id, 'req_id' => $request_id ]) . "\"><button class=\"accept\">Accept</button></a> 
-                        <a href=\"" . route('managerPage', ['decline' => 1, 'id' => $employee_id, 'req_id' => $request_id ]) . "\"><button class=\"reject\">Decline</button></a> </td>
+                        <td><a href=\"" . route('managerPage', ['accept' => 1, 'id' => $employee_id, 'req_id' => $request_id, 'manager_id' => $manager_id ]) . "\"><button class=\"accept\">Accept</button></a> 
+                        <a href=\"" . route('managerPage', ['decline' => 1, 'id' => $employee_id, 'req_id' => $request_id, 'manager_id' => $manager_id ]) . "\"><button class=\"reject\">Decline</button></a> </td>
                     </tr>
 
                 "); 
             }
             echo("</table><hr/>");
 
-            echo("<h2>Holiday overview</h2>");
+            echo("<br/><br/>");
+            echo("<h2>Holiday overview</h2><br/>");
             echo("<table style=\"width: 90%\">");
+            }
+            else{
+                echo("<i>No pending requests at the moment</i>");
             }
 
 
@@ -92,10 +131,23 @@
             $currentMonthHolidays = [];
             $legendDisplayed = false;
 
-            $requests = DB::select("select * from holidays where is_active = 0 and manager_approval = 1 order by request_date desc");
+            $all_requests2 = [];
 
-            if(!empty($requests)){
-                foreach ($requests as $holiday) {
+            foreach ($employee_manager_relation as $relation) {
+                // Fetch holidays for the current employee
+                $requests = DB::select("select * from holidays where employee_profile_id = " . $relation->employee_id . " and is_active = 0 and manager_approval = 1 order by start_date");
+                
+                // Append the requests for the current employee to the array
+                $all_requests2 = array_merge($all_requests2, $requests);
+
+                // Select the employee profiles under this manager
+                $employees = DB::select("select * from users where employee_profile_id = " . $relation->employee_id);
+                
+            }
+
+
+            if(!empty($all_requests2)){
+                foreach ($all_requests2 as $holiday) {
                 //fetch the holiday type
                 $employee_id = $holiday->employee_profile_id;
                 $holidayTypeID = $holiday->holiday_type_id;
@@ -132,8 +184,8 @@
                     }
 
                     // Start a new table for the current month
-                    echo("<h2>$fullMonthName $year</h2>");
-                    echo('<table>');
+                    echo("<h4>$fullMonthName $year</h4>");
+                    echo("<table>");
                     echo('<tr>');
                     // Make the first <td> spanning multiple columns
                     echo("<td>Name</td>");
@@ -179,10 +231,14 @@
                     }
                 }
             }
+            // Close the last table if there are remaining holidays
+            if ($previousMonth !== null) {
+                echo('</table>');
+            }
 
             // Display the legend box
             if (!$legendDisplayed) {
-                echo('<tr><td colspan="' . ($daysInMonth + 1) . '">');
+                echo("<div class=\"legend\">");
                 echo('<h4>Legend:</h4>');
                 echo('<ul>');
                 foreach ($holidayTypeColors as $holidayTypeID => $color) {
@@ -192,15 +248,9 @@
                     echo("<li style=\"color: $color;\">$typeName</li>");
                 }
                 echo('</ul>');
-                echo('</td></tr>');
+                echo('</div>');
                 $legendDisplayed = true;
             }
-
-            // Close the last table if there are remaining holidays
-            if ($previousMonth !== null) {
-                echo('</table>');
-            }
-
             }
     @endphp
 
@@ -209,8 +259,3 @@
     </div>
 </body>
 </html>
-
-<!--echo("<div class=\"holiday-row\">
-    <div class=\"employee-name\">" . $fullname[0]->first_name . "</div>
-    <div class=\"bar\" style=\"width: {{ 3 * 20 }}px;\"></div>
-    </div>");-->

@@ -32,3 +32,9 @@ th {
 tr:nth-child(even) {
     background-color: white;
 }
+
+.legend{
+    background-color: white;
+    width: 20%;
+    padding: 20px;
+}
