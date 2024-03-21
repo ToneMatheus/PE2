@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\SimpleUserOverViewController;
-use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
@@ -21,6 +19,8 @@ use App\Http\Controllers\CronJobController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\CustomerPortalController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\SimpleUserOverViewController;
 
 
 /*
@@ -29,8 +29,8 @@ use App\Http\Controllers\CustomerPortalController;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
 |
 */
 
@@ -158,10 +158,10 @@ Route::get('/faq', [FAQController::class, 'showFAQ'])->name('faq');
 
 Route::get('/customer/overview', [SimpleUserOverViewController::class, 'overview'])->name('overview');
 
-
+/*JOREN*/
 //routes for custmer data for customer
 Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
-Route::get('/Customer/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
+Route::get('/user/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
 
 Route::post('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');})->name('ChangeUser');
 Route::get('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');});
@@ -172,7 +172,11 @@ Route::post('/Customer/Manage/Change/User/post/profile', [CustomerController::cl
 Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::class, 'passwdValidationChangeUserInfo']) ->name('postPasswd');
 
 // Validation route's to create a customer account by customer
-Route::post('/Customer/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
+Route::post('/user/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
+
+// Set active user when email confirm
+Route::get('/activate-account/{userId}', [CustomerController::class, 'activateAccount'])->name('activate.account');
+
 
 Route::controller(InvoiceController::class)->group(function () {
     Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
