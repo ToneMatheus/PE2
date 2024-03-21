@@ -36,7 +36,7 @@
 
             function showForm() {
                 document.getElementById('addTariff').style.display = 'block';
-                document.getElementById('addBttn1').style.display = 'none';
+                document.getElementById('addBttn').style.display = 'none';
             }
 
             function confirmCancel() {
