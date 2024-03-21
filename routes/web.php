@@ -148,7 +148,7 @@ Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class
 
 Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
 
-// Ticket page | Accessible by everyone
+// Ticket/FAQ page | Accessible by everyone
 Route::controller(TicketController::class)->group(function () {
     Route::get('/create-ticket', 'showForm')->name('create-ticket');
     Route::post('/submitted-ticket', 'store')->name('submitted-ticket');
