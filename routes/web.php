@@ -18,6 +18,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
 use App\Http\Controllers\CronJobController;
+use App\Http\Controllers\EstimationController;
 
 
 /*
@@ -170,3 +171,10 @@ Route::controller(InvoiceController::class)->group(function () {
 Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
 Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
 Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
+
+//Guest routes for estimations
+Route::get('/EstimationGuestForm', [EstimationController::class, 'showGuestForm'])->name('EstimationGuestForm');
+Route::post('/EstimationGuestForm', [EstimationController::class, 'ShowGuestEnergyEstimate'])->name('EstimationGuestResult');
+
+Route::get('/CreateInvoice', [EstimationController::class, 'showButton'])->name('EstimationPage');
+Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
