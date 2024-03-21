@@ -16,6 +16,9 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
 use App\Http\Controllers\CronJobController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\GuestController;
+use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 
@@ -30,6 +33,23 @@ use App\Http\Controllers\SimpleUserOverViewController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
+
 
 //Role system
 //Customer
@@ -72,7 +92,7 @@ Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'un
 Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
 // Meters branch
 
-Route::get('/dashboard', function () {
+Route::get('/dashboardEmployee', function () {
     return view('Meters/employeeDashboard');
 });
 Route::get('meters', [MeterController::class,'showMeters']);
@@ -86,8 +106,8 @@ Route::get('/indexvalues', function () {
     return view('Meters/indexvalues');
 });
 
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
+// Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+// Route::post('login', [LoginController::class, 'login']);
 
 //to download the pdf of the contract and salary pages
 Route::get('/downloadPayslip', [DomPDFController::class, 'getPaySlipPDF'])->name('downloadPayslip');
@@ -97,13 +117,13 @@ Route::get('/downloadContract', [DomPDFController::class, 'getContractPDF'])->na
 Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
 Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
-Route::get('/profile', [myController::class, 'profile'])->name('profile');
+Route::get('/profileEmployee', [myController::class, 'profile'])->name('profile');
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
 
-Route::get('/welcome', function () {
-    return view('welcome');
-});
+// Route::get('/welcome', function () {
+//     return view('welcome');
+// });
 Route::get('/roles', function () {
     return view('roleOverview');
 });
@@ -128,9 +148,6 @@ Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class
 
 Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
 
-Route::get('/', function () {
-    return view('welcome');
-});
 // Ticket page | Accessible by everyone
 Route::controller(TicketController::class)->group(function () {
     Route::get('/create-ticket', 'showForm')->name('create-ticket');
@@ -173,3 +190,8 @@ Route::controller(InvoiceController::class)->group(function () {
 Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
 Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
 Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
+
+//Customer Portal
+Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
+Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
+Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
