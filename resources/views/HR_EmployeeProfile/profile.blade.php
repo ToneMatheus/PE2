@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 @php
-  $userID = 1;//this is to be changed by the real id!
+  $userID = 3;//this is to be changed by the real id!
 
   $users = DB::select("select * from users where id = $userID");//selecting employee information
 
@@ -10,10 +10,17 @@
           $firstName = htmlspecialchars($user->first_name);
           $email = htmlspecialchars($user->email);
           $phone = htmlspecialchars($user->phone_nbr);
-          $addressID = htmlspecialchars($user->address_id);
           $employeeProfileID = htmlspecialchars($user->employee_profile_id);
         
           //fetching user address from the db
+          $employee_profile = DB::select("select * from employee_profiles where id = $userID");
+          $emp_id = $employee_profile[0]->id;
+          $user = DB::select("select * from users where employee_profile_id = $emp_id");
+          $user_id = $user[0]->id;
+          $address = DB::select("select * from customer_addresses where user_id = $user_id");
+          $addressID = htmlspecialchars($address[0]->address_id);
+          $emp_address = DB::select("select * from addresses where id = $addressID");
+
           $address = DB::select("select * from addresses where id = $addressID");
           foreach ($address as $add){
             $street = htmlspecialchars($add->street);

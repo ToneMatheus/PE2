@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\SimpleUserOverViewController;
-use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
@@ -12,16 +10,26 @@ use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
-use App\Http\Controllers\CreditNotaController;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\HolidayController;
+
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UtilityController;
 use App\Http\Controllers\CronJobController;
+
 use App\Http\Controllers\meterreading;
 use App\Models\MeterReading as ModelsMeterReading;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\GuestController;
+use App\Http\Controllers\CustomerPortalController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\SimpleUserOverViewController;
+use App\Http\Controllers\ContractController;
+use App\Http\Controllers\RelationsController;
+
 
 
 /*
@@ -30,10 +38,27 @@ use App\Models\MeterReading as ModelsMeterReading;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
+
 
 //Role system
 //Customer
@@ -76,6 +101,7 @@ Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'un
 Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
 // Meters branch
 
+
 //Meters Group
 Route::get('/dashboard', [MeterController::class, 'viewScheduledMeters']);
 Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters']);
@@ -83,8 +109,9 @@ Route::put('/all_meters_dashboard', [MeterController::class, 'assignment'])->nam
 
 Route::get('/enterIndexEmployee', [MeterController::class, 'enterIndex']);
 Route::post('/enterIndexEmployee', [MeterController::class, 'submitIndex'])->name("submitIndex");
-
-
+Route::get('/dashboardEmployee', function () {
+    return view('Meters/employeeDashboard');
+});
 
 Route::get('meters', [MeterController::class,'showMeters']);
 Route::get('/meters/add', function () {
@@ -100,8 +127,8 @@ Route::get('/Meter_History', [MeterController::class, 'showMeterHistory'])->name
 Route::get('/Consumption_Readings', [MeterController::class, 'showConsumptionReading'])->name('Consumption_Reading');
 
 
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
+// Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+// Route::post('login', [LoginController::class, 'login']);
 
 //to download the pdf of the contract and salary pages
 Route::get('/downloadPayslip', [DomPDFController::class, 'getPaySlipPDF'])->name('downloadPayslip');
@@ -111,13 +138,30 @@ Route::get('/downloadContract', [DomPDFController::class, 'getContractPDF'])->na
 Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
 Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
-Route::get('/profile', [myController::class, 'profile'])->name('profile');
+Route::get('/profileEmployee', [myController::class, 'profile'])->name('profile');
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
+Route::get('/managerList', [myController::class, 'managerList'])->name('managerList');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
 
-Route::get('/welcome', function () {
+// routes for relations controlelr
+Route::get('/relations', [RelationsController::class, 'fetchRelations']);
+Route::post('/relations/update', [RelationsController::class, 'updateRelation'])->name('relations.update');
+
+
+//routing to decide whether the manager accepted or rejected holiday request and performing actions based on that
+
+
+//Route::get('/holidayRequest', [myController::class, 'holiday'])->name('request');
+
+//Route::get('/holidayRequest', function() {  return view('holidayRequest');  })->name('request');
+
+Route::get('/holidayRequest', function(){
+    return view('holidayRequestPage');
+})->name('request');
+
+Route::get('/welcome', function() {
     return view('welcome');
-});
+}) -> name('welcome');
 Route::get('/roles', function () {
     return view('roleOverview');
 });
@@ -130,9 +174,17 @@ Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('ru
 
 Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
 
+
+//Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
+Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
+
 Route::get('/test', function () {
     return view('test');
 });
+Route::get('/roleOverview', function () {
+    return view('roleOverview');
+});
+
 
 
 Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
@@ -142,10 +194,7 @@ Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class
 
 Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
 
-Route::get('/', function () {
-    return view('welcome');
-});
-// Ticket page | Accessible by everyone
+// Ticket/FAQ page | Accessible by everyone
 Route::controller(TicketController::class)->group(function () {
     Route::get('/create-ticket', 'showForm')->name('create-ticket');
     Route::post('/submitted-ticket', 'store')->name('submitted-ticket');
@@ -155,10 +204,10 @@ Route::get('/faq', [FAQController::class, 'showFAQ'])->name('faq');
 
 Route::get('/customer/overview', [SimpleUserOverViewController::class, 'overview'])->name('overview');
 
-
+/*JOREN*/
 //routes for custmer data for customer
 Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
-Route::get('/Customer/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
+Route::get('/user/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
 
 Route::post('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');})->name('ChangeUser');
 Route::get('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');});
@@ -169,13 +218,14 @@ Route::post('/Customer/Manage/Change/User/post/profile', [CustomerController::cl
 Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::class, 'passwdValidationChangeUserInfo']) ->name('postPasswd');
 
 // Validation route's to create a customer account by customer
-Route::post('/Customer/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
+Route::post('/user/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
 
-Route::controller(InvoiceController::class)->group(function () {
-    Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
-    Route::get('/invoices/{id}/download', 'download')->name('invoice.download');
-});
+// Set active user when email confirm
+Route::get('/activate-account/{userId}', [CustomerController::class, 'activateAccount'])->name('activate.account');
 
+
+
+Route::get('/holidays', [HolidayController::class, 'index']);
 Route::controller(InvoiceController::class)->group(function () {
     Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
 });
@@ -183,3 +233,8 @@ Route::controller(InvoiceController::class)->group(function () {
 Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
 Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
 Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
+
+//Customer Portal
+Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
+Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
+Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
