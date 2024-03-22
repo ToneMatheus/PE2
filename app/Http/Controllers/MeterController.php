@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Meter;
 use App\Models\Meter_Reader_Schedule;
 use App\Models\MeterReading;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class MeterController extends Controller
@@ -104,7 +105,8 @@ class MeterController extends Controller
         $meter_id = $request->input('meter_id');
         $assignment = $request->input('assignment');
 
-        DB::update('UPDATE meter_reader_schedules SET employee_profile_id = ? WHERE meter_id = ?', [intval($assignment), intval($meter_id)]);
+        DB::update('UPDATE meter_reader_schedules SET employee_profile_id = ? WHERE meter_id = ?', [intval($assignment). intval($meter_id)]);
+       // DB::update('UPDATE meter_reader_schedules SET employee_profile_id = 3 WHERE meter_id = 5');
 
         return redirect('/all_meters_dashboard');
     }
@@ -115,10 +117,11 @@ class MeterController extends Controller
     }
 
     public function submitIndex(Request $request) {
+        $date = Carbon::now()->toDateString();
         $meter_id = $request->input('meter_id');
         $index_value = $request->input('index_value');
 
-        DB::insert('INSERT INTO index_values (reading_date, meter_id, reading_value) VALUES ("2024-03-22", ?, ?)', [$meter_id, $index_value]);
+        DB::insert('INSERT INTO index_values (reading_date, meter_id, reading_value) VALUES (?, ?, ?)', [$date, $meter_id, $index_value]);
         return redirect('enterIndexEmployee');
     }
 }
