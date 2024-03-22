@@ -77,9 +77,7 @@ Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_m
 // Meters branch
 
 //Meters Group
-Route::get('/dashboard', function () {
-    return view('Meters/employeeDashboard');
-});
+Route::get('/dashboard', [MeterController::class, 'viewScheduledMeters']);
 
 Route::get('/meter-dashboard', function () {
     return view('Meters/meterdashboard');

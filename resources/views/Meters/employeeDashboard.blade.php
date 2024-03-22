@@ -27,27 +27,17 @@
                         <th>Name</th>
                         <th>Address</th>
                     </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Lydia Peeters</td>
-                        <td>Jan Pieter de Nayerlaan 5, Sint-Katelijne-Waver</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Aryan Van der Ven</td>
-                        <td>Koning Albertplein 2, Mechelen</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>John Doe</td>
-                        <td>Nekkerspoelstraat 285, Mechelen</td>
-                    </tr>
+
+                    @foreach($results as $result)
+                        <tr>
+                            <td>{{ $loop->index + 1 }}</td>
+                            <td>{{ $result->first_name.' '.$result->last_name }}</td>
+                            <td>{{ $result->street.' '.$result->number.', '.$result->city  }}</td>
+                        </tr>
+                    @endforeach
                 </table>
             </div>
             <div class="mapContainer">
-                <!-- <gmp-map center="48.8583984375,2.2944705486297607" zoom="14" map-id="DEMO_MAP_ID">
-                <gmp-advanced-marker position="48.8583984375,2.2944705486297607" title="My location"></gmp-advanced-marker>
-                </gmp-map> -->
                 <iframe class="map" src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyByBdD-HWq4mvd5hh2A_4HsIV3kBpp2HiI
                 &amp;origin=Koning+Albertplein+2+Mechelen&amp;destination=Jan+Pieter+de+Nayerlaan+5&amp;waypoints=Nekkerspoelstraat+285+Mechelen&amp;avoid=tolls|highways" allowfullscreen=""></iframe>
             </div>
