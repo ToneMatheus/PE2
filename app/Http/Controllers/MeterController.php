@@ -45,11 +45,6 @@ class MeterController extends Controller
         }
         $code .= (10 - ($sum % 10)) % 10;
         return $code;
-
-
-
-
-        
         }
 
         $latest = DB::table('meter')->latest('id')->first();
@@ -80,8 +75,33 @@ class MeterController extends Controller
         JOIN meter_addresses on addresses.id = meter_addresses.address_id
         JOIN meters on meter_addresses.meter_id = meters.id
         JOIN meter_reader_schedules on meters.id = meter_reader_schedules.meter_id
+        WHERE meter_reader_schedules.reading_date = \'2024-03-21\' AND meter_reader_schedules.employee_profile_id = 1
+        AND meter_readers_schedule.status = \'unread\';');
+
+        $employeeName = DB::select('SELECT users.first_name FROM users WHERE users.employee_profile_id = 1;');
+
+        return view("Meters/employeeDashboard",['results'=>$results, 'employeeName'=>$employeeName]);
+    }
+
+    public function viewAllMeters(Request $request) {
+        $results = DB::select('SELECT u.first_name, u.last_name, addresses.street, addresses.number, addresses.postal_code, addresses.city, meters.EAN, e.first_name AS assigned_to FROM users as u
+        RIGHT JOIN customer_addresses on u.id = customer_addresses.user_id
+        RIGHT JOIN addresses on customer_addresses.address_id = addresses.id
+        RIGHT JOIN meter_addresses on addresses.id = meter_addresses.address_id
+        RIGHT JOIN meters on meter_addresses.meter_id = meters.id
+        RIGHT JOIN meter_reader_schedules on meters.id = meter_reader_schedules.meter_id
+        RIGHT JOIN users e on e.employee_profile_id = meter_reader_schedules.employee_profile_id
         WHERE meter_reader_schedules.reading_date = \'2024-03-21\';');
 
-        return view("Meters/employeeDashboard",['results'=>$results]);
+        $employees = DB::select('SELECT DISTINCT e.first_name FROM users as u
+        RIGHT JOIN customer_addresses on u.id = customer_addresses.user_id
+        RIGHT JOIN addresses on customer_addresses.address_id = addresses.id
+        RIGHT JOIN meter_addresses on addresses.id = meter_addresses.address_id
+        RIGHT JOIN meters on meter_addresses.meter_id = meters.id
+        RIGHT JOIN meter_reader_schedules on meters.id = meter_reader_schedules.meter_id
+        RIGHT JOIN users e on e.employee_profile_id = meter_reader_schedules.employee_profile_id
+        WHERE meter_reader_schedules.reading_date = \'2024-03-21\';');
+
+        return view("Meters/all_meters_dashboard",['results'=>$results, 'employees'=>$employees]);
     }
 }

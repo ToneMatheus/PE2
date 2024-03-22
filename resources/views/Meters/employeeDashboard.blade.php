@@ -16,7 +16,9 @@
     </nav>
     <div class="container">
         <div class="title">
-            <h1>Good morning, Employee</h1>
+            @foreach($employeeName as $employee)
+                <h1>Good morning, {{$employee->first_name}}</h1>
+            @endforeach
         </div>
         <div class="schedule">
             <div class="scheduleTableDiv">
