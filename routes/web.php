@@ -14,6 +14,7 @@ use App\Http\Controllers\CreditNotaController;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\RelationsController;
 
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
