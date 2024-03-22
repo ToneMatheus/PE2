@@ -15,7 +15,7 @@
 
         foreach($managers as $manager){
             echo("<div>");
-                echo("<a href=\"" . route('managerPage', ['manager_id' => $manager->user_id]) . "\">$manager->first_name</a>");
+                echo("<a href=\"" . route('managerPage', ['manager_id' => $manager->user_id]) . "\" style=\"font-size: 25px\">$manager->first_name</a>");
             echo("</div>");
         }
     @endphp
