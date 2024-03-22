@@ -57,6 +57,7 @@ th, td
   height: 50px;
   width: 50px;
   background-color: green;
+  border-radius: 10px;
 }
 
 .square2 
@@ -64,6 +65,7 @@ th, td
   height: 50px;
   width: 50px;
   background-color: purple;
+  border-radius: 10px;
 }
 
 .square3 
@@ -71,15 +73,20 @@ th, td
   height: 50px;
   width: 50px;
   background-color: pink;
+  border-radius: 10px;
 }
 
 .table-container {
-  white-space: nowrap; /* Prevent line breaks */
+  white-space: nowrap; 
+  background-color: rgb(230, 230, 230);
+  border-radius: 15px;
+  padding: 20px;
+  border: 2px solid black;
 }
 .table-container table {
-  display: inline-block; /* Display tables inline */
-  vertical-align: top; /* Align them at the top */
-  margin-right: 10px; /* Add some space between tables */
+  display: inline-block; 
+  vertical-align: top; 
+  margin-right: 10px; 
 }
 .prev-month
 {
@@ -94,4 +101,36 @@ th, td
 
 p{
   margin: 0;
+}
+
+.table-container{
+  float: left;
+  margin-right: 50px;
+}
+
+table{
+  margin-bottom: 30px;
+  
+}
+
+.loading{
+  width: 60px;
+}
+
+#errorMsg
+{
+  color:red;
+  visibility: hidden;
+}
+
+#btn
+{
+  border: none;
+  background-color: rgb(230, 230, 230);
+}
+
+#scsMsg
+{
+  visibility: hidden;
+  color:darkgreen;
 }
