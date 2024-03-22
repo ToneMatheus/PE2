@@ -26,7 +26,7 @@
                             <td class="px-4 py-2 border">{{ $job->name }}</td>
                             <td class="px-4 py-2 border">{{ $job->interval }}</td>
                             <td class="px-4 py-2 border">{{ $job->scheduled_day }}</td>
-                            <td class="px-4 py-2 border">{{ $job->scheduled_Month }}</td>
+                            <td class="px-4 py-2 border">{{ $job->scheduled_month }}</td>
                             <td class="px-4 py-2 border">{{ $job->scheduled_time }}</td>
                             <td class="px-4 py-2 border">
                                 <div class="flex gap-2">
