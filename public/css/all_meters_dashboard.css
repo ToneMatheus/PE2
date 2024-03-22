@@ -51,3 +51,12 @@ nav {
 .scheduleTable tr:nth-child(odd){
     background-color: lightgray;
 }
+
+button {
+    margin: 10px;
+    text-align: center;
+}
+
+.meter_id {
+    visibility: hidden;
+}

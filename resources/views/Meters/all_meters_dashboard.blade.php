@@ -19,6 +19,7 @@
             <th>Address</th>
             <th>Assigned to</th>
             <th>Change assignment to</th>
+            <th>Save changes</th>
         </tr>
 
         @foreach($results as $result)
@@ -27,15 +28,22 @@
                 <td>{{ $result->first_name.' '.$result->last_name }}</td>
                 <td>{{ $result->street.' '.$result->number.', '.$result->city  }}</td>
                 <td>{{ $result->assigned_to }}</td>
+                <form method="POST" action="{{ route('assignment_change') }}">
+                    @csrf
+                    @method('PUT')
                 <td>
-                    <select>
+                    <input type='hidden' name='meter_id' class="meter_id" value={{$result->meter_id}}>
+                    <select name='assignment' class='assignment'>
                         @foreach($employees as $employee)
-                            <option value={{$employee->first_name}} {{$result->assigned_to == $employee->first_name ? 'selected' : ''}}>{{ $employee->first_name }}</option>
+                            <option value={{$employee->employee_id}} {{$result->assigned_to == $employee->first_name ? 'selected' : ''}}>{{ $employee->first_name }}</option>
                         @endforeach
                     </select>
                 </td>
+                <td><button type="submit">Apply changes</button></td>
             </tr>
         @endforeach
     </table>
+    
+    </form>
 </body>
 </html>
