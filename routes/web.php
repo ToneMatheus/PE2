@@ -10,7 +10,6 @@ use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
-use App\Http\Controllers\CreditNotaController;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HolidayController;
@@ -24,6 +23,10 @@ use App\Http\Controllers\GuestController;
 use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
+use App\Http\Controllers\ContractController;
+use App\Http\Controllers\RelationsController;
+
+
 
 
 /*
@@ -156,6 +159,10 @@ Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('ru
 
 Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
 
+
+//Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
+Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
+
 Route::get('/test', function () {
     return view('test');
 });
@@ -172,7 +179,7 @@ Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class
 
 Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
 
-// Ticket page | Accessible by everyone
+// Ticket/FAQ page | Accessible by everyone
 Route::controller(TicketController::class)->group(function () {
     Route::get('/create-ticket', 'showForm')->name('create-ticket');
     Route::post('/submitted-ticket', 'store')->name('submitted-ticket');
