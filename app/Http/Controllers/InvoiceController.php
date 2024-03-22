@@ -10,6 +10,7 @@ use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -24,6 +25,7 @@ class InvoiceController extends Controller
         $month = $now->month;
         $year = $now->year;
 
+        //Hardcoded to have some data because most data is from januari
         $month = 01;
         // Query for users that started a contract this month of the year
         $customers = DB::table('users')
@@ -39,7 +41,7 @@ class InvoiceController extends Controller
             ->join('meter_addresses', 'addresses.id', '=', 'meter_addresses.address_id')
             ->join('meters', 'meter_addresses.meter_id', '=', 'meters.id')
             ->join('index_values', 'meters.id', '=', 'index_values.meter_id')
-            ->whereYear('index_values.reading_date', '=', $year)
+            ->where('index_values.reading_date', '>=', $now->subYear(1))
             ->select('users.*')
             ->get();
         //To get a list of customers that requruire a yearly contract but without meter readings, we can compare the customers list and the customersWithReadings list
@@ -57,7 +59,7 @@ class InvoiceController extends Controller
             ->join('meter_addresses', 'addresses.id', '=', 'meter_addresses.address_id')
             ->join('meters', 'meter_addresses.meter_id', '=', 'meters.id')
             ->join('meter_reader_schedules', 'meters.id', '=', 'meter_reader_schedules.meter_id')
-            ->whereYear('meter_reader_schedules.reading_date', '>', $year-3)
+            ->whereYear('meter_reader_schedules.reading_date', '>', $now->subYear(3))
             ->where('users.id', '=', $customer->id)
             ->select('meter_reader_schedules.*')
             ->get();
@@ -83,7 +85,7 @@ class InvoiceController extends Controller
             ->join('meters', 'meter_addresses.meter_id', '=', 'meters.id')
             ->join('index_values', 'meters.id', '=', 'index_values.meter_id')
             ->join('consumptions', 'index_values.id', '=', 'consumptions.current_index_id')
-            ->whereYear('index_values.reading_date', '=', $year)
+            ->whereYear('index_values.reading_date', '>=', $now->subYear(1))
             ->where('users.id', '=', $customer->id)
             ->select('consumptions.*', 'index_values.*')
             ->get();
@@ -95,15 +97,6 @@ class InvoiceController extends Controller
             ->select('customer_contracts.id')
             ->get();
 
-            //Grab tarrifs
-            $tariffQuery = DB::table('customer_contracts as cc')
-            ->join('contract_products as cp', 'cp.customer_contract_id', '=', 'cc.id')
-            ->join('products as p', 'p.id', '=', 'cp.product_id')
-            ->join('product_tariffs as pt', 'pt.product_id', '=', 'p.id')
-            ->join('tariffs as t', 't.id', '=', 'pt.tariff_id')
-            ->first();
-            $tariff = $tariffQuery->rate;
-
             $total_amount = 0;
             $invoice_model = [
                 'invoice_date' => $now,
@@ -114,6 +107,25 @@ class InvoiceController extends Controller
             ];
 
             $invoice = Invoice::create($invoice_model);
+
+            //Making 2 base models for invoice lines for basic fees
+            $service_fee_model = [
+                'type' => 'Basic Service Fee',
+                'unit_price' => 10,
+                'amount' => 1,
+                'consumption_id',
+                'invoice_id' => $invoice->id,
+            ];
+            $distribution_fee_model = [
+                'type' => 'Basic Distribution Fee',
+                'unit_price' => 10,
+                'amount' => 1,
+                'consumption_id',
+                'invoice_id' => $invoice->id,
+            ];
+            Invoice_line::create($service_fee_model);
+            Invoice_line::create($distribution_fee_model);
+
             foreach($consumptions as $consumption){
                 Invoice_line::create($consumption, $invoice->id);
             }
@@ -148,8 +160,18 @@ class InvoiceController extends Controller
     public function download(Request $request)
     {
         $invoice = Invoice::where('id', $request->id)->first();
-        $pdf = Pdf::loadView('Invoices.invoice_pdf', compact('invoice'));
-        return $pdf->download('invoice.pdf');
+        $user_id = DB::table('users')
+        ->join('customer_contracts', 'users.id', '=', 'customer_contracts.user_id')
+        ->join('invoices', 'customer_contracts.id','=', 'invoices.customer_contract_id')
+        ->where('invoices.id', '=', $invoice->id)
+        ->select('users.id')
+        ->get();
+        //Validate the logged in user is the actual data owner of the invoice data because it gets triggered via GET requests
+        if(Auth::user()->id == $user_id){
+            $pdf = Pdf::loadView('Invoices.invoice_pdf', compact('invoice'));
+            return $pdf->download('invoice.pdf');
+        }
+        
     }
 
 }
