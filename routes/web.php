@@ -23,6 +23,7 @@ use App\Http\Controllers\GuestController;
 use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
+use App\Http\Controllers\RelationsController;
 
 
 /*
