@@ -160,11 +160,9 @@ Route::post('/Customer/Create/validate', [CustomerController::class, 'profileVal
 Route::controller(InvoiceController::class)->group(function () {
     Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
     Route::get('/invoices/{id}/download', 'download')->name('invoice.download');
+    Route::get('/invoices/run', 'run')->name('invoice.run');
 });
 
-Route::controller(InvoiceController::class)->group(function () {
-    Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
-});
 //All routes for credit notes
 Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
 Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
