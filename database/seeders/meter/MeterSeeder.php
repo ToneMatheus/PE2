@@ -13,7 +13,7 @@ class MeterSeeder extends Seeder
     {
         $meters = [];
 
-        for($i = 1; $i <= 4; $i++){
+        for($i = 1; $i <= 8; $i++){
             $meters[] = [
                 'id' => $i,
                 'EAN' => sprintf("%018d", rand(0, 999999999999999999)),

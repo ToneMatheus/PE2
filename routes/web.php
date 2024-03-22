@@ -10,19 +10,26 @@ use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
-use App\Http\Controllers\CreditNotaController;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HolidayController;
 
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\UtilityController;
 use App\Http\Controllers\CronJobController;
+
+use App\Http\Controllers\meterreading;
+use App\Models\MeterReading as ModelsMeterReading;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
+use App\Http\Controllers\ContractController;
+use App\Http\Controllers\RelationsController;
+
 
 
 /*
@@ -65,25 +72,25 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
     Route::middleware(['auth', 'role:Finance analyst'])->group(function () {
 
     });
-    
+
     //Only Manager
     Route::middleware(['auth', 'role:Manager'])->group(function (){
-    
+
     });
-    
+
     //Only Executive Manager
     Route::middleware(['auth', 'role:Executive Manager'])->group(function (){
-    
+
     });
 
     //Every Employee
-    
+
     //Route::get('/profile', [myController::class, 'profile'])->name('profile');
 });
 
 Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
 Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
-Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add'); 
+Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add');
 Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
 
 //invoice query routes
@@ -94,19 +101,31 @@ Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'un
 Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
 // Meters branch
 
+
+//Meters Group
+Route::get('/dashboard', [MeterController::class, 'viewScheduledMeters']);
+Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters']);
+Route::put('/all_meters_dashboard', [MeterController::class, 'assignment'])->name("assignment_change");
+
+Route::get('/enterIndexEmployee', [MeterController::class, 'enterIndex']);
+Route::post('/enterIndexEmployee', [MeterController::class, 'submitIndex'])->name("submitIndex");
 Route::get('/dashboardEmployee', function () {
     return view('Meters/employeeDashboard');
 });
+
 Route::get('meters', [MeterController::class,'showMeters']);
+Route::get('/meters/add', function () {
+    return view('Meters/addmeter');
+});
+Route::post('meters/add', [MeterController::class,'addMeters']);
 Route::get('/consumption', function () {
     return view('Meters/consumption');
 });
-Route::get('/consumption1', function () {
-    return view('Meters/consumption1');
-});
-Route::get('/indexvalues', function () {
-    return view('Meters/indexvalues');
-});
+
+Route::get('/Meter_History', [MeterController::class, 'showMeterHistory'])->name('Meter_History');
+
+Route::get('/Consumption_Readings', [MeterController::class, 'showConsumptionReading'])->name('Consumption_Reading');
+
 
 // Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 // Route::post('login', [LoginController::class, 'login']);
@@ -154,6 +173,10 @@ Route::put('/cron-jobs/update/{job}', [CronJobController::class, 'update'])->nam
 Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
 
 Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
+
+
+//Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
+Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
 
 Route::get('/test', function () {
     return view('test');

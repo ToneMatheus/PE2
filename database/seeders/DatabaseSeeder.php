@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
 
             Meter\MeterSeeder::class,
             Meter\MeterAddressSeeder::class,
+            Meter\MeterReaderScheduleSeeder::class,
 
             Invoice\EstimationSeeder::class,
             Invoice\TariffSeeder::class,
