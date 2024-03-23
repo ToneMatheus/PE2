@@ -1,10 +1,15 @@
 @php
-$userID = 1;//To be replaced by the real ID!
+use Carbon\Carbon;
+
+$userID = 3;//To be replaced by the real ID!
 
 $contract = DB::select("select * from employee_contracts where employee_profile_id = $userID");
 $employee_profile = DB::select("select * from employee_profiles where id = $userID");
-$user = DB::select("select * from users where employee_profile_id = $userID");
-$addressID = htmlspecialchars($user[0]->address_id);
+$emp_id = $employee_profile[0]->id;
+$user = DB::select("select * from users where employee_profile_id = $emp_id");
+$user_id = $user[0]->id;
+$address = DB::select("select * from customer_addresses where user_id = $user_id");
+$addressID = htmlspecialchars($address[0]->address_id);
 $emp_address = DB::select("select * from addresses where id = $addressID");
 $payslips = DB::select("select IBAN, amount_per_hour from payslips where employee_profile_id = $userID");
 

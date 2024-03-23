@@ -10,6 +10,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\DB;
 
 class TicketController extends Controller
 {
@@ -27,7 +28,20 @@ class TicketController extends Controller
             'description' => 'required',
         ]);
 
-        $user = Auth::user();
+        $user = Auth::check() ? Auth::user() : null;
+
+        $roleUser = null;
+        $roleName = null;
+
+        if ($user) {
+            $roleUser = DB::table('user_roles')->where('user_id', $user->id)->first();
+            if ($roleUser) {
+                $role = DB::table('roles')->where('id', $roleUser->role_id)->first();
+                if ($role) {
+                    $roleName = $role->role_name;
+                }
+            }
+        }
 
         // create ticket
         $ticket = new Ticket();
@@ -36,8 +50,8 @@ class TicketController extends Controller
         $ticket->issue = $validatedData['issue'];
         $ticket->description = $validatedData['description'];
         $ticket->active = 0;
-        $ticket->role = auth()->check() ? auth()->user()->role : null;
-        $ticket->user_id = auth()->check() ? auth()->user()->id : null;
+        $ticket->role = $roleName;
+        $ticket->user_id = $user ? $user->id : null;
         $ticket->save();
 
         return redirect()->route('show-ticket')->with(['ticket' => $ticket]);
