@@ -1,4 +1,4 @@
-@extends('layouts.app') {{-- Assuming you have a layout file --}}
+@extends('layouts.main_layout')
 
 @section('content')
     <div class="container">
