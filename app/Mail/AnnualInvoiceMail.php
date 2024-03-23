@@ -22,8 +22,9 @@ class AnnualInvoiceMail extends Mailable
     protected $estimation;
     protected $newInvoiceLine;
     protected $pdfData;
+    protected $meterReadings;
 
-    public function __construct(Invoice $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine)
+    public function __construct(Invoice $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings)
     {
         $this->invoice = $invoice;
         $this->user = $user;
@@ -31,6 +32,7 @@ class AnnualInvoiceMail extends Mailable
         $this->estimation = $estimation;
         $this->newInvoiceLine = $newInvoiceLine;
         $this->pdfData = $pdfData;
+        $this->meterReadings = $meterReadings;
     }
 
     public function envelope()
@@ -51,7 +53,8 @@ class AnnualInvoiceMail extends Mailable
                         'invoice' => $this->invoice,
                         'consumptions' => $this->consumption,
                         'estimation' => $this->estimation,
-                        'newInvoiceLine' => $this->newInvoiceLine
+                        'newInvoiceLine' => $this->newInvoiceLine,
+                        'meterReadings' => $this->meterReadings
                     ])
                     ->attachData($pdfData, 'invoice.pdf', [
                         'mime' => 'application/pdf',
@@ -66,6 +69,7 @@ class AnnualInvoiceMail extends Mailable
             'consumption' => $this->consumption,
             'estimation' => $this->estimation,
             'newInvoiceLine' => $this->newInvoiceLine,
+            'meterReadings' => $this->meterReadings
         ], [], 'utf-8');
         
              

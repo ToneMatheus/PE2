@@ -100,12 +100,9 @@ class AnnualInvoiceJob implements ShouldQueue
         ->join('Meter_addresses', 'Addresses.id', '=', 'Meter_addresses.address_id')
         ->join('Meters', 'Meter_addresses.meter_id', '=', 'Meters.id')
         ->join('Index_values', 'Meters.id', '=', 'Index_values.meter_id')
-        //->whereYear('Index_values.reading_date', '=', $year)
-        ->distinct()
-        //->select('users.id as uID', 'customer_contracts.id as ccID', 'meters.id as mID')
+        ->whereYear('Index_values.reading_date', '=', $year)
+        ->select('users.id as uID', 'customer_contracts.id as ccID', 'meters.id as mID')
         ->get();
-
-        dd($customersWithReadings);
 
         foreach($customersWithReadings as $customer){
             $consumption = DB::table('users')
@@ -119,6 +116,15 @@ class AnnualInvoiceJob implements ShouldQueue
             ->where('meters.id', '=', $customer->mID)
             ->select('Consumptions.*')
             ->first();
+
+            $meterReadings = DB::table('index_values')
+            ->where(function ($query) use ($year) {
+                $query->whereYear('reading_date', $year)
+                    ->orWhereYear('reading_date', $year - 1);
+            })
+            ->where('meter_id', '=', $customer->mID)
+            ->select('reading_value')
+            ->get();
 
             $estimationResult = DB::table('users as u')
             ->join('customer_addresses as ca', 'ca.user_id', '=', 'u.id')
@@ -137,6 +143,7 @@ class AnnualInvoiceJob implements ShouldQueue
             'p.id as pID')
             ->join('products as p', 'p.id', '=', 'cp.product_id')
             ->where('customer_contract_id', '=', $customer->ccID)
+            ->where('meter_id', '=', $customer->mID)
             ->whereNull('cp.end_date')
             ->first();
 
@@ -168,14 +175,14 @@ class AnnualInvoiceJob implements ShouldQueue
                 'consumption_id' => $consumption->id,
                 'invoice_id' => $lastInserted
             ]);
-        }
-
+            
             $newInvoiceLine = Invoice_line::where('invoice_id', '=', $lastInserted)->first();
            
-            AnnualInvoiceJob::sendMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine);  
+            AnnualInvoiceJob::sendMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings);  
+        }
     }
 
-    public function sendMail(Invoice $invoice, $customer, $consumption, $estimation, $newInvoiceLine)
+    public function sendMail(Invoice $invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings)
     {
         $user = DB::table('users as u')
         ->join('customer_addresses as ca', 'ca.user_id', '=', 'u.id')
@@ -191,12 +198,13 @@ class AnnualInvoiceJob implements ShouldQueue
             'consumption' => $consumption,
             'estimation' => $estimation,
             'newInvoiceLine' => $newInvoiceLine,
+            'meterReadings' => $meterReadings
         ], [], 'utf-8');
         $pdfData = $pdf->output();
 
         //Send email with PDF attachment
         Mail::to('shaunypersy10@gmail.com')->send(new AnnualInvoiceMail(
-            $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine
+            $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings
         ));
 
     }

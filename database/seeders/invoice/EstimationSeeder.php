@@ -20,7 +20,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3000,
+            'estimation_total' => 3200,
             'meter_id' => 1],
             [
                 'nbr_occupants' => 20,
@@ -49,7 +49,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3100,
+            'estimation_total' => 3300,
             'meter_id' => 3
             ],
             [
@@ -64,7 +64,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3300,
+            'estimation_total' => 3400,
             'meter_id' => 4
             ]
         ]);

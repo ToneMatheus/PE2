@@ -4,7 +4,7 @@
         'July', 'August', 'September', 'October', 'November', 'December'
     ];
 
-    $i = 0;
+    $totalAmount = 0;
 @endphp
 
 <!DOCTYPE html>
@@ -15,6 +15,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Annual Invoice</title>
+    <style>
+        table{
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: solid 1px black;
+        }
+    </style>
 </head>
 <body>
     <div id="company">
@@ -60,19 +69,48 @@
         @foreach($months as $month)
             @php
                 $paid = $newInvoiceLine->unit_price * ($estimation / 12);
+                $totalAmount += $paid;
             @endphp
 
             <tr>
                 <td>{{$month}}</td>
-                <td>{{$estimation/12}}</td>
-                <td>{{$consumption->consumption_value}}</td>
-                <td>{{$paid}}</td>
-                <td>{{$newInvoiceLine->amount}}</td>
+                <td>{{round($estimation/12, 2)}}</td>
+                
+                @if($meterReadings[0] <= $meterReadings[1])
+                    <td>{{round(($estimation/12) + ($consumption->consumption_value / 12), 2)}}</td>
+                @else
+                    <td>{{round($consumption->consumption_value / 12, 2)}}</td>
+                @endif
+
+                <td>{{round($paid, 2)}}</td>
+                <td>{{round($newInvoiceLine->amount / 12, 2)}}</td>
             </tr>
         @endforeach
 
     </table>
 
-    <h2>Total Amount: {{$invoice->total_amount}}</h2> 
+    <p></p>
+
+    <table>
+        <tr>
+            <th>Year</th>
+            <th>Estimated Consumption</th>
+            <th>Actual Consumption</th>
+            <th>Paid</th>
+            <th>Amount</th>
+        </tr>
+        <tr>
+                <td></td>
+                <td>{{$estimation}}</td>
+                <td>{{$meterReadings[1]->reading_value}}</td>
+                <td>{{round($totalAmount, 2)}}</td>
+                <td>{{round($newInvoiceLine->amount, 2)}}</td>
+            </tr>
+    </table>
+    <h2>Total Amount: {{round($invoice->total_amount, 2)}}</h2> 
+
+    @if($meterReadings[0] > $meterReadings[1])
+        <p>Deduction of amount on the next invoice.</p>
+    @endif
 </body>
 </html>
