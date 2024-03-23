@@ -28,7 +28,6 @@ return new class extends Migration
 
         Schema::table('contract_products', function (Blueprint $table) {
             $table->foreign('customer_contract_id')->references('id')->on('customer_contracts');
-            $table->foreign('tariff_id')->references('id')->on('tariffs');
             $table->foreign('product_id')->references('id')->on('products');
             $table->foreign('meter_id')->references('id')->on('meters');
         });
