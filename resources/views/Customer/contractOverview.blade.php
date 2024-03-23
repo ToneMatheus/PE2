@@ -11,7 +11,6 @@
 
 <body>
 
-
 <div class="container">
     <div class="row heading">
         <div class="col_1">nr</div>
@@ -26,7 +25,7 @@
     </div>
     
     <!-- 
-    //TODO contract => contract_products;
+    //contract => contract_products;
      -->
     @foreach($contracts as $contract)
     <div class="row">
@@ -50,44 +49,3 @@
 </div>
 </body>
 </html>
-
-
-<!--
-
-@foreach($contracts as $contract)
-    <div class="row">
-        <div class="col_1">{{ $contract->id }}</div>
-        <div class="col_2">{{ $contract->customer_contract_id }}</div>
-        
-        <div class="col_3">{{ $contract->product->product_name}}</div>
-        <div class="col_4">{{ $contract->product->type}}</div>
-        <div class="col_5">{{ $contract->product->description}}</div>
-        <div class="col_6">{{ $contract->customer_contract->type}}</div>
-    </div>
-@endforeach
-
-
-@foreach($contracts as $contract)
-    <div class="row">
-        <div class="col_1">{{ $contract->id }}</div>
-        <div class="col_2">{{ $contract->customer_contract_id }}</div>
-        
-        <div>{{ $contract->product->product_name}}</div>
-        <div>{{ $contract->product->type}}</div>
-        <div>{{ $contract->product->description}}</div>
-    </div>
-@endforeach
-
-
-@foreach($contracts as $contract)
-        <tr>
-            <td>{{ $contract->id }}</td>
-            <td>{{ $contract->customer_contract_id }}</td>
-            
-            <td>{{ $contract->product->product_name}}</td>
-            <td>{{ $contract->product->type}}</td>
-            <td>{{ $contract->product->description}}</td>
-        </tr>
-        @endforeach
-
--->
