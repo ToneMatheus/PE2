@@ -50,9 +50,7 @@ class AnnualInvoiceJob implements ShouldQueue
         $now = Carbon::now();
         $month = $now->format('m');
         $year = $now->format('Y');
-        $currentDate = $now->format('Y/m/d');
 
-        $endOfMonth = Carbon::now()->endOfMonth();
         $yearAgo = $now->subYear();
         
         // Query for users that started a contract this year (base yearly invoice of start contract)
@@ -102,13 +100,15 @@ class AnnualInvoiceJob implements ShouldQueue
         ->join('Meter_addresses', 'Addresses.id', '=', 'Meter_addresses.address_id')
         ->join('Meters', 'Meter_addresses.meter_id', '=', 'Meters.id')
         ->join('Index_values', 'Meters.id', '=', 'Index_values.meter_id')
-        ->whereYear('Index_values.reading_date', '=', $year)
+        //->whereYear('Index_values.reading_date', '=', $year)
         ->distinct()
-        ->select('users.id as uID', 'customer_contracts.id as ccID', 'meters.id as mID')
+        //->select('users.id as uID', 'customer_contracts.id as ccID', 'meters.id as mID')
         ->get();
 
+        dd($customersWithReadings);
+
         foreach($customersWithReadings as $customer){
-            $consumptions = DB::table('users')
+            $consumption = DB::table('users')
             ->join('Customer_addresses', 'users.id', '=', 'Customer_addresses.user_id')
             ->join('Addresses', 'Customer_addresses.Address_id', '=', 'Addresses.id')
             ->join('Meter_addresses', 'Addresses.id', '=', 'Meter_addresses.Address_id')
@@ -118,7 +118,7 @@ class AnnualInvoiceJob implements ShouldQueue
             ->whereYear('Index_values.Reading_date', '=', $year)
             ->where('meters.id', '=', $customer->mID)
             ->select('Consumptions.*')
-            ->get();
+            ->first();
 
             $estimationResult = DB::table('users as u')
             ->join('customer_addresses as ca', 'ca.user_id', '=', 'u.id')
@@ -134,9 +134,8 @@ class AnnualInvoiceJob implements ShouldQueue
 
             $contractProduct = DB::table('contract_products as cp')
             ->select('cp.id as cpID', 'cp.start_date as cpStartDate', 'p.product_name as productName',
-            'p.id as pID', 't.id as tID')
+            'p.id as pID')
             ->join('products as p', 'p.id', '=', 'cp.product_id')
-            ->leftjoin('tariffs as t', 't.id', '=', 'cp.tariff_id')
             ->where('customer_contract_id', '=', $customer->ccID)
             ->whereNull('cp.end_date')
             ->first();
@@ -148,23 +147,12 @@ class AnnualInvoiceJob implements ShouldQueue
             ->where('p.id', '=', $contractProduct->pID)
             ->first();
 
-            $extraAmounts = [];
-
-            foreach($consumptions as $consumption){
-                $extraAmount = $consumption->consumption_value * $productTariff->rate;
-                $extraAmounts[] = $extraAmount;
-            }
-
-            $totalExtraAmount = 0;
-
-            foreach($extraAmounts as $extraAmount){
-                $totalExtraAmount += $extraAmount;
-            }
+            $extraAmount = ($consumption->consumption_value) ? $consumption->consumption_value * $productTariff->rate : 0;
 
             $invoiceData = [
                 'invoice_date' => $now->format('Y/m/d'),
-                'due_date' => $endOfMonth->format('Y/m/d'),
-                'total_amount' => $totalExtraAmount,
+                'due_date' => $now->copy()->addWeeks(2)->format('Y/m/d'),
+                'total_amount' => $extraAmount,
                 'status' => 'sent',
                 'customer_contract_id' => $customer->ccID,
                 'type' => 'Annual'
@@ -173,28 +161,21 @@ class AnnualInvoiceJob implements ShouldQueue
             $invoice = Invoice::create($invoiceData);
             $lastInserted = $invoice->id;
 
-            $i = 0;
-
-            foreach($consumptions as $consumption){
-                Invoice_line::create([
-                    'type' => 'Electricity',
-                    'unit_price' => $productTariff->rate,
-                    'amount' => $extraAmounts[$i],
-                    'consumption_id' => $consumption->id,
-                    'invoice_id' => $lastInserted
-                ]);
-
-                $i++;
-            }
-
-            $newInvoiceLines = Invoice_line::where('invoice_id', '=', $lastInserted)->get();
-           
-            AnnualInvoiceJob::sendMail($invoice, $customer, $consumptions, $estimation, $newInvoiceLines);
+            Invoice_line::create([
+                'type' => 'Electricity',
+                'unit_price' => $productTariff->rate,
+                'amount' => $extraAmount,
+                'consumption_id' => $consumption->id,
+                'invoice_id' => $lastInserted
+            ]);
         }
-        
+
+            $newInvoiceLine = Invoice_line::where('invoice_id', '=', $lastInserted)->first();
+           
+            AnnualInvoiceJob::sendMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine);  
     }
 
-    public function sendMail(Invoice $invoice, $customer, $consumptions, $estimation, $newInvoiceLines)
+    public function sendMail(Invoice $invoice, $customer, $consumption, $estimation, $newInvoiceLine)
     {
         $user = DB::table('users as u')
         ->join('customer_addresses as ca', 'ca.user_id', '=', 'u.id')
@@ -207,15 +188,15 @@ class AnnualInvoiceJob implements ShouldQueue
         $pdf = Pdf::loadView('Invoices.annual_invoice_pdf', [
             'invoice' => $invoice,
             'user' => $user,
-            'consumptions' => $consumptions,
+            'consumption' => $consumption,
             'estimation' => $estimation,
-            'newInvoiceLines' => $newInvoiceLines,
+            'newInvoiceLine' => $newInvoiceLine,
         ], [], 'utf-8');
         $pdfData = $pdf->output();
 
         //Send email with PDF attachment
         Mail::to('shaunypersy10@gmail.com')->send(new AnnualInvoiceMail(
-            $invoice, $user, $pdfData, $consumptions, $estimation, $newInvoiceLines
+            $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine
         ));
 
     }

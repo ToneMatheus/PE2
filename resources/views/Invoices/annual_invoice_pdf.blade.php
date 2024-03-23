@@ -57,23 +57,18 @@
             <th>Amount</th>
         </tr>
 
-        @foreach($consumptions as $consumption)
+        @foreach($months as $month)
             @php
-                $newInvoiceLine = $newInvoiceLines[$i];
-                $paid = $newInvoiceLine->unit_price * $estimation;
-
-                $amount = $newInvoiceLine->amount
+                $paid = $newInvoiceLine->unit_price * ($estimation / 12);
             @endphp
 
             <tr>
-                <td>{{$months[$i]}}</td>
-                <td>{{$estimation}}</td>
+                <td>{{$month}}</td>
+                <td>{{$estimation/12}}</td>
                 <td>{{$consumption->consumption_value}}</td>
                 <td>{{$paid}}</td>
-                <td>{{$amount}}</td>
+                <td>{{$newInvoiceLine->amount}}</td>
             </tr>
-
-            @php $i++; @endphp
         @endforeach
 
     </table>
