@@ -14,6 +14,7 @@ use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\RelationsController;
+use App\Http\Controllers\TeamController;
 
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
@@ -163,6 +164,10 @@ Route::get('/welcome', function() {
 Route::get('/roles', function () {
     return view('roleOverview');
 });
+Route::get('/teamOverview', function () {
+    return view('teamOverview');
+});
+Route::get('/teams', [TeamController::class, 'index']);
 
 //cronjobs
 Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
