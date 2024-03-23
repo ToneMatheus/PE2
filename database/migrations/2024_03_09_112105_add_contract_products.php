@@ -16,6 +16,7 @@ return new class extends Migration
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->date('start_date');
             $table->date('end_date')->nullable();
+            $table->bigInteger('meter_id')->unsigned();
         });
     }
 
