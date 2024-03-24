@@ -22,7 +22,7 @@ class EmployeeProfileSeeder extends Seeder
             [
                 'id' => 2,
                 'hire_date' => '2024-01-01',
-                'department' => null,
+                'department' => 'Sales and marketing',
                 'nationality' => 'Belgian',
                 'sex' => 'Male'
             ],
@@ -30,6 +30,48 @@ class EmployeeProfileSeeder extends Seeder
                 'id' => 3,
                 'hire_date' => '2024-01-01',
                 'department' => 'Customer service',
+                'nationality' => 'Belgian',
+                'sex' => 'Female'
+            ],
+            [   
+                'id' => 4,
+                'hire_date' => '2024-01-01',
+                'department' => 'Maintenace & IT',
+                'nationality' => 'Belgian',
+                'sex' => 'Male'
+            ],
+            [   
+                'id' => 5,
+                'hire_date' => '2024-01-01',
+                'department' => 'Maintenace & IT',
+                'nationality' => 'Belgian',
+                'sex' => 'Male'
+            ],
+            [   
+                'id' => 6,
+                'hire_date' => '2024-01-01',
+                'department' => 'Customer service',
+                'nationality' => 'Belgian',
+                'sex' => 'Male'
+            ],
+            [   
+                'id' => 7,
+                'hire_date' => '2024-01-01',
+                'department' => 'Finance',
+                'nationality' => 'Belgian',
+                'sex' => 'Female'
+            ],
+            [   
+                'id' => 8,
+                'hire_date' => '2024-01-01',
+                'department' => 'Finance',
+                'nationality' => 'Belgian',
+                'sex' => 'Female'
+            ],
+            [   
+                'id' => 9,
+                'hire_date' => '2024-01-01',
+                'department' => 'Sales and marketing',
                 'nationality' => 'Belgian',
                 'sex' => 'Female'
             ],
