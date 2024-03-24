@@ -10,40 +10,55 @@ class IndexValueSeeder extends Seeder
 {
     public function run()
     {
-        function generateIndexValues($startDate, $rangeMin, $rangeMax, $meterID, &$id) {
-            $currentDate = $startDate->copy(); // Ensure original start date is not modified
-            $endDate = Carbon::now(); // Current date
-        
-            while ($currentDate->lte($endDate)) {
-                DB::table('index_values')->insert([
-                    'reading_date' => $currentDate->format('Y-m-d'),
-                    'reading_value' => rand($rangeMin, $rangeMax),
-                    'meter_id' => $meterID,
-                ]);
-
-                $currentDate->addMonth();
-                $id++;
-            }
-        }
-        
-        $startYear = 2024;
-        $startDate = Carbon::create($startYear, 1, 1);
-        $id = 1;
-        
-        $meterRanges = [
-            ['id' => 1, 'rangeMin' => 300, 'rangeMax' => 500],
-            ['id' => 2, 'rangeMin' => 1600, 'rangeMax' =>  2000],
-            ['id' => 3, 'rangeMin' => 200, 'rangeMax' => 400],
-            ['id' => 4, 'rangeMin' => 400, 'rangeMax' => 500],
-        ];
-        
-        foreach ($meterRanges as $meter) {
-            $meterID = $meter['id'];
-            $rangeMin = $meter['rangeMin'];
-            $rangeMax = $meter['rangeMax'];
-            $tempId = $id; // Store the starting id for this meter
-            generateIndexValues($startDate, $rangeMin, $rangeMax, $meterID, $tempId);
-            $id = $tempId; // Update the main id counter
-        }
+        DB::table('index_values')->insert([
+            [
+                'id' => 1,
+                'reading_date' => '2023-01-01',
+                'reading_value' => 3200,
+                'meter_id' => 1
+            ],
+            [
+                'id' => 2,
+                'reading_date' => '2023-01-01',
+                'reading_value' => 6500,
+                'meter_id' => 2
+            ],
+            [
+                'id' => 3,
+                'reading_date' => '2023-01-01',
+                'reading_value' => 3300,
+                'meter_id' => 3
+            ],
+            [
+                'id' => 4,
+                'reading_date' => '2023-01-01',
+                'reading_value' => 3400,
+                'meter_id' => 4
+            ],
+            [
+                'id' => 5,
+                'reading_date' => '2024-01-01',
+                'reading_value' => 3300,
+                'meter_id' => 1
+            ],
+            [
+                'id' => 6,
+                'reading_date' => '2024-01-01',
+                'reading_value' => 6600,
+                'meter_id' => 2
+            ],
+            [
+                'id' => 7,
+                'reading_date' => '2024-01-01',
+                'reading_value' => 3400,
+                'meter_id' => 3
+            ],
+            [
+                'id' => 8,
+                'reading_date' => '2024-01-01',
+                'reading_value' => 3200,
+                'meter_id' => 4
+            ],
+        ]);
     }
 }
