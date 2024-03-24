@@ -164,10 +164,8 @@ Route::get('/welcome', function() {
 Route::get('/roles', function () {
     return view('roleOverview');
 });
-Route::get('/teamOverview', function () {
-    return view('teamOverview');
-});
-Route::get('/teams', [TeamController::class, 'index']);
+Route::get('/teamOverview', [TeamController::class, 'index']);
+
 
 //cronjobs
 Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
