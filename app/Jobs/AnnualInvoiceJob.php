@@ -101,7 +101,6 @@ class AnnualInvoiceJob implements ShouldQueue
         ->join('Meters', 'Meter_addresses.meter_id', '=', 'Meters.id')
         ->join('Index_values', 'Meters.id', '=', 'Index_values.meter_id')
         ->whereYear('Index_values.reading_date', '=', $year)
-        ->where('Customer_contracts.user_id', '=', 5)
         ->select('users.id as uID', 'customer_contracts.id as ccID', 'meters.id as mID')
         ->get();
 
