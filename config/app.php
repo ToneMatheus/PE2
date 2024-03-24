@@ -1,6 +1,6 @@
 <?php
 
-use Barryvdh\DomPDF\Facade\Pdf;
+//use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Facade;
 
 return [
@@ -18,6 +18,7 @@ return [
 
     'providers' => [
         LaravelProfane\ProfaneServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
     ],
 
     /*
@@ -224,7 +225,15 @@ return [
     |
     */
 
+    
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
+    
+    /*
+    'aliases' => [
+        // Andere aliassen hier ...
+        //'PDF' => Barryvdh\DomPDF\Facade::class,
+    ],*/
+
 ];

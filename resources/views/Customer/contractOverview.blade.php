@@ -42,7 +42,8 @@
         <div class="col_7">{{ $contract->product->type}}</div>
         
         <div class="col_8">{{ $contract->customer_contract->type }}</div>
-        <div class="col_9"><button class="btn" style="width:100%"><i class="fa fa-download"></i> Download</button></div>
+        <!-- <div class="col_9"><button class="btn" style="width:100%"><i class="fa fa-download"></i> Download</button></div> -->
+        <div class="col_9"><a href="/contract_overview/{{ $contract->id }}/download"><button class="btn" style="width:100%"><i class="fa fa-download"></i> Download</button></a></div>
     </div>
     @endforeach
 
