@@ -156,14 +156,45 @@ class AnnualInvoiceJob implements ShouldQueue
 
             $extraAmount = ($consumption->consumption_value) ? $consumption->consumption_value * $productTariff->rate : 0;
 
-            $invoiceData = [
-                'invoice_date' => $now->format('Y/m/d'),
-                'due_date' => $now->copy()->addWeeks(2)->format('Y/m/d'),
-                'total_amount' => $extraAmount,
-                'status' => 'sent',
-                'customer_contract_id' => $customer->ccID,
-                'type' => 'Annual'
-            ];
+            if($extraAmount > 0){                   //Invoice
+                $invoiceData = [
+                    'invoice_date' => $now->format('Y/m/d'),
+                    'due_date' => $now->copy()->addWeeks(2)->format('Y/m/d'),
+                    'total_amount' => $extraAmount,
+                    'status' => 'sent',
+                    'customer_contract_id' => $customer->ccID,
+                    'type' => 'Annual'
+                ];
+            } else{                                 //Credit note
+                $invoiceData = [
+                    'invoice_date' => $now->format('Y/m/d'),
+                    'due_date' => $now->copy()->addWeeks(2)->format('Y/m/d'),
+                    'total_amount' => $extraAmount,
+                    'status' => 'sent',
+                    'customer_contract_id' => $customer->ccID,
+                    'type' => 'Credit note'
+                ];
+
+                $stagedInvoiceData = [              //Staging next invoice with reduction
+                    'invoice_date' => $now->copy()->addWeeks(2)->format('Y/m/d'),
+                    'due_date' => $now->copy()->addWeeks(4)->format('Y/m/d'),
+                    'total_amount' => 0,
+                    'status' => 'pending',
+                    'customer_contract_id' => $customer->ccID,
+                    'type' => 'Monthly'
+                ];
+
+                $stagedInvoice = Invoice::create($stagedInvoiceData);
+                $lastInsertedStaged = $stagedInvoice->id;
+
+                Invoice_line::create([
+                    'type' => 'Credit Note',
+                    'unit_price' => null,
+                    'amount' => $extraAmount,
+                    'consumption_id' => null,
+                    'invoice_id' => $lastInsertedStaged
+                ]);
+            }
 
             $invoice = Invoice::create($invoiceData);
             $lastInserted = $invoice->id;

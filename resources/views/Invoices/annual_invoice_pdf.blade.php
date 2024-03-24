@@ -76,11 +76,7 @@
                 <td>{{$month}}</td>
                 <td>{{round($estimation/12, 2)}}</td>
                 
-                @if($meterReadings[0] <= $meterReadings[1])
-                    <td>{{round(($estimation/12) + ($consumption->consumption_value / 12), 2)}}</td>
-                @else
-                    <td>{{round($consumption->consumption_value / 12, 2)}}</td>
-                @endif
+                <td>{{round(($estimation/12) + ($consumption->consumption_value / 12), 2)}}</td>
 
                 <td>{{round($paid, 2)}}</td>
                 <td>{{round($newInvoiceLine->amount / 12, 2)}}</td>
@@ -110,7 +106,7 @@
     <h2>Total Amount: {{round($invoice->total_amount, 2)}}</h2> 
 
     @if($meterReadings[0] > $meterReadings[1])
-        <p>Deduction of amount on the next invoice.</p>
+        <p>Reduction on total amount of the next invoice.</p>
     @endif
 </body>
 </html>
