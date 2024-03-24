@@ -1,4 +1,5 @@
 @php
+    use Carbon\Carbon;
     $months = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
@@ -62,6 +63,7 @@
             <th>Month</th>
             <th>Estimated Consumption</th>
             <th>Actual Consumption</th>
+            <th>Discount Rate</th>
             <th>Paid</th>
             <th>Amount</th>
         </tr>
@@ -69,18 +71,30 @@
         @foreach($months as $month)
             @php
                 $paid = $newInvoiceLine->unit_price * ($estimation / 12);
+
+                $discountRate = 0;
+                foreach ($discounts as $discount) {
+                    $startMonth = Carbon::parse($discount->start_date)->format('F');
+                    $endMonth = Carbon::parse($discount->end_date)->format('F');
+
+                    if ($month >= $startMonth && $month <= $endMonth) {
+                        $discountRate = $discount->rate;
+                        break;
+                    }
+                }
+
+                $paid -= ($paid * $discountRate);
                 $totalAmount += $paid;
             @endphp
 
             <tr>
-                <td>{{$month}}</td>
-                <td>{{round($estimation/12, 2)}}</td>
-                
-                <td>{{round(($estimation/12) + ($consumption->consumption_value / 12), 2)}}</td>
-
-                <td>{{round($paid, 2)}}</td>
-                <td>{{round($newInvoiceLine->amount / 12, 2)}}</td>
-            </tr>
+            <td>{{ $month }}</td>
+            <td>{{ round($estimation / 12, 2) }}</td>
+            <td>{{ round(($estimation / 12) + ($consumption->consumption_value / 12), 2) }}</td>
+            <td>{{ $discountRate }}</td>
+            <td>{{ round($paid, 2) }}</td>
+            <td>{{ round(($newInvoiceLine->amount / 12) - ($newInvoiceLine->amount / 12) * $discountRate, 2) }}</td>
+        </tr>
         @endforeach
 
     </table>

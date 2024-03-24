@@ -101,6 +101,7 @@ class AnnualInvoiceJob implements ShouldQueue
         ->join('Meters', 'Meter_addresses.meter_id', '=', 'Meters.id')
         ->join('Index_values', 'Meters.id', '=', 'Index_values.meter_id')
         ->whereYear('Index_values.reading_date', '=', $year)
+        ->where('Customer_contracts.user_id', '=', 5)
         ->select('users.id as uID', 'customer_contracts.id as ccID', 'meters.id as mID')
         ->get();
 
@@ -148,13 +149,49 @@ class AnnualInvoiceJob implements ShouldQueue
             ->first();
 
             //without discounts
+
+            $discounts = DB::table('discounts as d')
+            ->where('d.contract_product_id', '=', $contractProduct->cpID)
+            ->whereYear('d.start_date', '=', $year)
+            ->whereDate('d.end_date', '>=', $now->format('Y/m/d'))
+            ->get();
+
             $productTariff = DB::table('products as p')
             ->join('product_tariffs as pt', 'pt.product_id', '=', 'p.id')
             ->join('tariffs as t', 't.id', '=', 'pt.id')
             ->where('p.id', '=', $contractProduct->pID)
+            ->whereNull('pt.end_date')
             ->first();
 
-            $extraAmount = ($consumption->consumption_value) ? $consumption->consumption_value * $productTariff->rate : 0;
+            //dd($discounts);
+
+            $extraAmount = 0;
+
+            if(!is_null($discounts)){
+                for ($i = 1; $i <= 12; $i++) {
+                    $discountRate = 0;
+                
+                    foreach ($discounts as $discount) {
+                        $startMonth = (new Carbon($discount->start_date))->format('m');
+                        $endMonth = (new Carbon($discount->end_date))->format('m');
+                
+                        if ($i >= $startMonth && $i <= $endMonth) {
+                            $discountRate = $discount->rate;
+                            break;
+                        }
+                    }
+    
+                    $monthlyExtraAmount = ($consumption->consumption_value / 12) * $productTariff->rate;
+    
+                    if ($discountRate > 0) {
+                        $monthlyExtraAmount -= ($monthlyExtraAmount * $discountRate);
+                    }
+                
+                    $extraAmount += $monthlyExtraAmount;
+                }
+            } else {
+                $extraAmount = ($consumption->consumption_value) ? $consumption->consumption_value * $productTariff->rate : 0;
+            }
 
             if($extraAmount > 0){                   //Invoice
                 $invoiceData = [
@@ -209,11 +246,11 @@ class AnnualInvoiceJob implements ShouldQueue
             
             $newInvoiceLine = Invoice_line::where('invoice_id', '=', $lastInserted)->first();
            
-            AnnualInvoiceJob::sendMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings);  
+            AnnualInvoiceJob::sendMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts);  
         }
     }
 
-    public function sendMail(Invoice $invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings)
+    public function sendMail(Invoice $invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts)
     {
         $user = DB::table('users as u')
         ->join('customer_addresses as ca', 'ca.user_id', '=', 'u.id')
@@ -229,13 +266,14 @@ class AnnualInvoiceJob implements ShouldQueue
             'consumption' => $consumption,
             'estimation' => $estimation,
             'newInvoiceLine' => $newInvoiceLine,
-            'meterReadings' => $meterReadings
+            'meterReadings' => $meterReadings,
+            'discounts' => $discounts
         ], [], 'utf-8');
         $pdfData = $pdf->output();
 
         //Send email with PDF attachment
         Mail::to('shaunypersy10@gmail.com')->send(new AnnualInvoiceMail(
-            $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings
+            $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts
         ));
 
     }
