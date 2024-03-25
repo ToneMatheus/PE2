@@ -177,6 +177,8 @@ Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->na
 
 //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
 Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
+Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
+
 
 Route::get('/test', function () {
     return view('test');

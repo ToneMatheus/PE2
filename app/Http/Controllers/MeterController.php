@@ -78,7 +78,7 @@ class MeterController extends Controller
         JOIN meters on meter_addresses.meter_id = meters.id
         JOIN meter_reader_schedules on meters.id = meter_reader_schedules.meter_id
         WHERE meter_reader_schedules.reading_date = \'2024-03-21\' AND meter_reader_schedules.employee_profile_id = 1
-        AND meter_readers_schedule.status = \'unread\';');
+        AND meter_reader_schedules.status = \'unread\';');
 
         $employeeName = DB::select('SELECT users.first_name FROM users WHERE users.employee_profile_id = 1;');
 
