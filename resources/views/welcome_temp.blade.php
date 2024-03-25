@@ -34,6 +34,8 @@
         <li><a href="{{ url('/contract') }}">Contract</a></li>
         <li><a href="{{ url('/profile') }}">Profile</a></li>
         <li><a href="{{ url('/holidayRequest') }}">Holiday Request</a></li>
+        <li><a href="{{ url('/tariff') }}">Tariffs</a></li>
+        <li><a href="{{ url('/customerGridView') }}">Customer Service</a></li>
     </ul>
 
     <div id="slideshow">
