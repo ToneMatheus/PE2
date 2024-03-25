@@ -36,11 +36,16 @@
             $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
             $daysInPrevMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth - 1, $currentYear);
 
+            // Calculate the month and year for the next month
+            $nextMonth = $currentMonth == 12 ? 1 : $currentMonth + 1;
+            $nextYear = $currentMonth == 12 ? $currentYear + 1 : $currentYear;
+
             // Calculate the day of the week of the first day of the month
             $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
 
             $monthsName = array("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC");
             $numMonth = $currentMonth - 1;
+            echo "<button id='floBtn'>next</button><button id='floBtn'>back</button>";
             echo "<h1 id='monthName'> $monthsName[$numMonth] </h1>";
 
             // Start the table and iterate through each day of the month
@@ -59,10 +64,17 @@
                         echo "<td class='prev-month'>$prevMonthDayCount</td>";
                         $prevMonthDayCount++;
                     } 
-                    elseif (($row == 0 && $col < $firstDayOfMonth) || $dayCount > $daysInMonth) 
+                    else if ($dayCount > $daysInMonth) 
                     {
-                        // Fill empty cells before the first day of the month and after the last day of the month
-                        echo "<td></td>";
+                        // Fill empty cells with days from the next month if needed
+                        echo "<td class='prev-month'>" . ($dayCount - $daysInMonth) . "</td>";
+                        $dayCount++;
+                    }
+                    else if($col == 6 || $col == 7)
+                    {
+                        $class = isset($_SESSION['addedCells'][$dayCount]) ? 'added' : '';
+                        echo "<td class='{$class} weekend'>{$dayCount}</td>";
+                        $dayCount++;
                     } 
                     else 
                     {
