@@ -6,16 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Employee_contract extends Model
+class User_Role extends Model
 {
-    protected $fillable = [
-        'employee_profile_id',
-        'start_date',
-        'end_date',
-        'type',
-        'status',
-        'salary_per_month'
-    ];
-
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'role_id',
+        'is_active'
+    ];
 }

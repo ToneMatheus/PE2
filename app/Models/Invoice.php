@@ -23,10 +23,10 @@ class Invoice extends Model
         return $this->hasMany(Invoice_line::class);
     } 
 
-    /*public function customer_contract(): BelongsTo
+    public function customer_contract(): BelongsTo
     {
-        return $this->belongsTo(Customer_contract::class);
-    }*/
+        return $this->belongsTo(Customer_contracts::class);
+    }
 
     use HasFactory;
 }

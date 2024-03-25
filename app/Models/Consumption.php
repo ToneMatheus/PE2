@@ -4,18 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Employee_contract extends Model
+class Consumption extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'employee_profile_id',
         'start_date',
         'end_date',
-        'type',
-        'status',
-        'salary_per_month'
+        'consumption_value',
+        'prev_index_id',
+        'current_index_id'
     ];
-
-    use HasFactory;
 }
