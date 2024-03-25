@@ -45,6 +45,10 @@ use App\Http\Controllers\ContractController;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/temp', function () {
+    return view('welcome_temp');
+});
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
