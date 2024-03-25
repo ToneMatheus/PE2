@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Balance extends Model
 {
@@ -17,4 +18,14 @@ class Balance extends Model
         'start_date',
         'end_date'
     ];
+
+    public function employee_profile(): BelongsTo
+    {
+        return $this->belongsTo(Employee_Profile::class);
+    }
+
+    public function holiday_type(): BelongsTo
+    {
+        return $this->belongsTo(Holiday_Type::class);
+    }
 }

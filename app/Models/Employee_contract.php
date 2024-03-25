@@ -18,4 +18,9 @@ class Employee_contract extends Model
     ];
 
     use HasFactory;
+
+    public function employee_profile(): BelongsTo
+    {
+        return $this->belongsTo(Employee_Profile::class);
+    }
 }

@@ -13,4 +13,14 @@ class Holiday_Type extends Model
     protected $fillable = [
         'type'
     ];
+
+    public function balances(): HasMany
+    {
+        return $this->hasMany(Balance::class);
+    }
+
+    public function holidays(): HasMany
+    {
+        return $this->hasMany(Holiday::class);
+    }
 }

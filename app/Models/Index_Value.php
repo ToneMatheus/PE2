@@ -16,4 +16,19 @@ class Index_Value extends Model
         'reading_value',
         'meter_id'
     ];
+
+    public function meter(): BelongsTo
+    {
+        return $this->belongsTo(Meter::class);
+    }
+
+    public function prev_consumptions(): HasMany
+    {
+        return $this->hasMany(Consumption::class, 'prev_index_id');
+    }  
+
+    public function current_consumptions(): HasMany
+    {
+        return $this->hasMany(Consumption::class, 'current_index_id');
+    }  
 }

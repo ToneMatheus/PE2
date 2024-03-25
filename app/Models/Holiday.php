@@ -21,4 +21,14 @@ class Holiday extends Model
         'boss_approval',
         'is_active'
     ];
+
+    public function employee_profile(): BelongsTo
+    {
+        return $this->belongsTo(Employee_Profile::class);
+    }
+
+    public function holiday_type(): BelongsTo
+    {
+        return $this->belongsTo(Holiday_Type::class);
+    }
 }

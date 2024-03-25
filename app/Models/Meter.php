@@ -36,6 +36,11 @@ class Meter extends Model
          return $this->hasMany(Estimation::class);
      } 
 
+     public function index_values(): HasMany
+     {
+         return $this->hasMany(Index_Value::class);
+     } 
+
      public function meter_reader_schedules(): HasMany
      {
          return $this->hasMany(Meter_Reader_Schedule::class);

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Ticket extends Model
 {
@@ -42,5 +43,10 @@ class Ticket extends Model
         $rules = static::VALIDATION_RULES;
 
         return \Illuminate\Support\Facades\Validator::make($input, $rules)->passes();
+    }
+
+    public function ticket(): BelongsTo
+    {
+        return $this->belongsTo(Ticket::class);
     }
 }
