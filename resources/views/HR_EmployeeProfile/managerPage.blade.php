@@ -57,20 +57,26 @@
         $manager_user = DB::select("select * from users where id = $manager_id");
         echo("<h4>Employees managed by " . $manager_user[0]->first_name . "</h4>");
 
-        $employee_manager_relation = DB::select("select * from leader_relations where leader_id = $manager_id and relation = 'manager'");
+        //$employee_manager_relation = DB::select("SELECT * FROM users INNER JOIN team_members ON team_members.user_id = users.id WHERE team_members.is_manager = 0");
+        $team_members = [];
 
+        $manager_team = DB::select("select team_id from team_members where user_id = $manager_id");
+        $employee_manager_relation = DB::select("select * from team_members where team_id = " . $manager_team[0]->team_id. " and is_manager = 0");
 
         $all_requests = [];
 
         foreach ($employee_manager_relation as $relation) {
+            $team_members = DB::select("select * from users where id = $relation->user_id");
+            $emp_profile_id = $team_members[0]->employee_profile_id;
+
             // Fetch holidays for the current employee
-            $requests = DB::select("select * from holidays where employee_profile_id = " . $relation->employee_id . " and is_active = 1");
+            $requests = DB::select("SELECT * FROM holidays WHERE employee_profile_id = $emp_profile_id AND is_active = 1");
             
             // Append the requests for the current employee to the array
             $all_requests = array_merge($all_requests, $requests);
 
             // Select the employee profiles under this manager
-            $employees = DB::select("select * from users where employee_profile_id = " . $relation->employee_id);
+            $employees = DB::select("select * from users where employee_profile_id = $emp_profile_id");
             
             // Output the employee names
             if(!empty($employees)){
@@ -140,14 +146,16 @@
             $all_requests2 = [];
 
             foreach ($employee_manager_relation as $relation) {
+                $team_members = DB::select("select * from users where id = $relation->user_id");
+
                 // Fetch holidays for the current employee
-                $requests = DB::select("select * from holidays where employee_profile_id = " . $relation->employee_id . " and is_active = 0 and manager_approval = 1 order by start_date");
+                $requests = DB::select("select * from holidays where employee_profile_id = " . $team_members[0]->employee_profile_id . " and is_active = 0 and manager_approval = 1 order by start_date");
                 
                 // Append the requests for the current employee to the array
                 $all_requests2 = array_merge($all_requests2, $requests);
 
                 // Select the employee profiles under this manager
-                $employees = DB::select("select * from users where employee_profile_id = " . $relation->employee_id);
+                $employees = DB::select("select * from users where employee_profile_id = " . $team_members[0]->employee_profile_id);
                 
             }
 
