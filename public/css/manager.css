@@ -15,8 +15,8 @@
 }
 
 table {
-    width: 100%;
     border-collapse: collapse;
+    min-width: max-content;
 }
 
 th, td {
@@ -35,6 +35,10 @@ tr:nth-child(even) {
 
 .legend{
     background-color: white;
-    width: 20%;
+    width: 50%;
     padding: 20px;
+}
+
+.col-10{
+    margin: auto;
 }

@@ -69,49 +69,69 @@
 <body class="body">
     <div class="container-trui">
         <div class="profile-card">
-          <img src="/images/profile.jpg" alt="profile" class="profile-image"/>
+          <div class="top"><img src="/images/profile.jpg" alt="profile" class="profile-image"/>
           <p class="name">@php echo ("" . $firstName . " " . $lastName); @endphp</p>
-          <p>@php echo ($job . "\n" . $dept); @endphp</p>
+          <p>@php echo ($job . "\n" . $dept); @endphp</p><br/></div>
+          <h5>About</h5>
+          <p>Address:<br/>@php echo $userAddress; @endphp</p>
+          <p>Nationality:<br/>@php echo $nationality @endphp</p>
+          <p>Sex:<br/>@php echo $sex @endphp</p>
+          <hr>
+          <h5>Contact</h5>
+          <p>Email:<br/>@php echo $email @endphp</p>
+          <p>Phone:<br/>@php echo $phone @endphp</p>
+
         </div>
 
-        <div class="details">
-          <h5>About</h5>
-          <hr>
-          <p><div class="text">Address:</div>@php echo $userAddress; @endphp</p>
-          <p><div class="text">Nationality:</div>@php echo $nationality @endphp</p>
-          <p><div class="text">Sex:</div>@php echo $sex @endphp</p>
-          <hr>
+        <div class="middle"> 
+          <div class="card">
+            <div class="card-header">
+              My notifcations
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">Cras justo odio</li>
+              <li class="list-group-item">Dapibus ac facilisis in</li>
+              <li class="list-group-item">Vestibulum at eros</li>
+            </ul>
+          </div>
 
-          <h5>Contact</h5>
-          <hr>
-          <p><div class="text">Email:</div>@php echo $email @endphp</p>
-          <p><div class="text">Phone:</div>@php echo $phone @endphp</p>
-          <hr/>
+          <div class="card">
+            <div class="card-header">
+              My tasks
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">Cras justo odio</li>
+              <li class="list-group-item">Dapibus ac facilisis in</li>
+              <li class="list-group-item">Vestibulum at eros</li>
+            </ul>
+          </div>
 
-          <h5>Notes</h5>
-          <hr/>
-            <p>@php echo $notes @endphp</p>
-          <hr/>
+          <div class="card">
+            <div class="card-header">
+              My documents
+            </div>
+            <ul class="list-group list-group-flush">
+              <a href="{{route('contract')}}"><li class="list-group-item">My contract - from @php echo ("". $start . ""); @endphp to @php echo ("". $end . ""); @endphp</li></a>
+              <li class="list-group-item"><a href="{{route('payList')}}">My payslips</a></li>
+              <a href="{{route('employeeBenefits')}}"><li class="list-group-item">My benefits</li></a>
+            </ul>
+          </div>
         </div>
 
         <div class="right-side">
-          <a href="{{route('payList')}}" class="salary-link">
+          <a href="{{route('request')}}" class="salary-link">
             <div class="salary">
-              <h5><u>My salaries</u></h5>
+              <h5><u>Request a holiday</u></h5>
               <p>Click on this box to see all of your payslips from your first to last.</p>
             </div>
           </a>
   
-          <!--Not first checking if the the contract table is empty because there shouldn't be an employee in the company that doesn't have a contract-->
-          <a href="{{route('contract')}}">
-            <div class="contract">
-              <h5 style="margin-bottom: 20px"><u>My contract</u></h5>
-              <p><b>From:</b> Energy company</p>
-              <p><b>To: </b>@php echo ("" . $firstName . " " . $lastName); @endphp</p>
-              <p><b>Start date: </b><i>@php echo ("". $start . ""); @endphp</i></p>
-              <p><b>End date: </b><i>@php echo ("". $end . ""); @endphp</i></p>
+            <div class="news">
+              <h5 style="margin-bottom: 20px"><u>Daily news</u></h5>
+
+              <p>What's on the menu?<br/>fish and chips</p>
             </div>
-          </a>
         </div>
+
     </div>
 </body>

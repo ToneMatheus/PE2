@@ -96,11 +96,14 @@
             echo("</table>");
         }
 
+        echo("<h4>Chat</h4>");
+        echo("<textarea></textarea>");
+        echo("<button>Click me</button>");
         echo("<br/><br/>");
 
         if(!empty($all_requests)){
             echo("<h3>Holiday requests</h3><br/>");
-            echo("<table><th>Request date</th><th>Employee name</th><th>Start date</th><th>End date</th><th>Holiday type</th><th>Actions</th>");
+            echo("<table><th>Request date</th><th>Employee name</th><th>Start date</th><th>End date</th><th>Number of days</th><th>Holiday type</th><th>Actions</th>");
             foreach ($all_requests as $request) {
                 // Getting the name of the employee that made the request
                 $employee_id = $request->employee_profile_id;
@@ -110,6 +113,12 @@
                 $fullname = DB::select("select first_name, last_name from users where employee_profile_id = $employee_id");
                 $holiday_type_name = DB::select("select * from holiday_types where id = $holiday_type");
 
+                $startDate = Carbon::parse($request->start_date);
+                $endDate = Carbon::parse($request->end_date);
+
+                // Calculate the difference in days
+                $diffInDays = $endDate->diffInDays($startDate);
+                $diffInDays += 1;
 
                 echo("
                     <tr>
@@ -117,6 +126,7 @@
                         <td>" . $fullname[0]->first_name . " " . $fullname[0]->last_name . "</td>
                         <td>$request->start_date</td>
                         <td>$request->end_date</td>
+                        <td>$diffInDays</td>
                         <td>" . $holiday_type_name[0]->type ."</td>
                         <td><a href=\"" . route('managerPage', ['accept' => 1, 'id' => $employee_id, 'req_id' => $request_id, 'manager_id' => $manager_id ]) . "\"><button class=\"accept\">Accept</button></a> 
                         <a href=\"" . route('managerPage', ['decline' => 1, 'id' => $employee_id, 'req_id' => $request_id, 'manager_id' => $manager_id ]) . "\"><button class=\"reject\">Decline</button></a> </td>
@@ -161,7 +171,7 @@
 
 
             if (!empty($all_requests2)) {
-                echo("<h2>Holiday overview</h2><br/>");
+                echo("<div class=\"col-10\"><h2>Holiday overview</h2><br/>");
                 // Initialize variables
                 $previousMonth = null;
                 $legendDisplayed = false;
@@ -181,7 +191,7 @@
                 foreach ($holidaysByMonth as $monthYear => $holidays) {
                     list($fullMonthName, $year) = explode(' ', $monthYear);
                     echo("<h4>$fullMonthName $year</h4>");
-                    echo("<table>");
+                    echo("<table style=\"float: left\">");
                     echo('<tr>');
                     echo("<td>Name</td>");
 
@@ -246,6 +256,7 @@
                     echo('</div>');
                     $legendDisplayed = true;
                 }
+                echo("</div>");
             }
 
     @endphp
