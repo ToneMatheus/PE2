@@ -1,11 +1,11 @@
-<header class="header-class">
-    <h1 class="header-title">Energy Company Web Portal</h1>
+<header class="bg-blue-500 text-white text-2xl p-5">
+    <h1>Energy Company Web Portal</h1>
 </header>
-<nav class="nav-class">
-    <ul class="nav-list-class">
-        <li><a href="{{ url('/') }}">Home</a></li>
-        <li><a href="{{ url('customer/invoices/1') }}">Invoice status</a></li>
-        <li><a href="{{ url('/customer/consumption-history') }}">Consumption history</a></li>
-        <li><a href="{{ url('/profile') }}">Profile</a></li>
+<nav class="bg-blue-700 text-white p-5">
+    <ul class="flex space-x-4">
+        <li><a href="{{ url('/') }}" class="hover:underline">Home</a></li>
+        <li><a href="{{ url('customer/invoiceStatus') }}" class="hover:underline">Invoice status</a></li>
+        <li><a href="{{ url('/customer/consumption-history') }}" class="hover:underline">Consumption history</a></li>
+        <li><a href="{{ url('/profile') }}" class="hover:underline">Profile</a></li>
     </ul>
 </nav>

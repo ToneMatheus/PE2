@@ -10,13 +10,18 @@ use Carbon\Carbon;
 
 class CustomerPortalController extends Controller
 {
-    public function invoiceView(Request $request, $customerContractId)
+    public function invoiceView(Request $request)
     {
+        Auth::loginUsingId(1);
+
         $search = $request->get('search');
+        $status = $request->get('status');
         $query = Invoice::query();
+
+        $user = auth()->user();
     
         if ($search) {
-            $query->where('customer_contract_id', $customerContractId)
+            $query->where('customer_contract_id', $user->id)
                   ->where(function ($query) use ($search) {
                       $query->where('id', $search)
                             ->orWhere('total_amount', $search)
@@ -26,11 +31,17 @@ class CustomerPortalController extends Controller
                             ->orWhere('type', $search);
                   });
         } else {
-            $query->where('customer_contract_id', $customerContractId);
+            $query->where('customer_contract_id', $user->id);
+        }
+
+        $sentInvoicesSum = Invoice::where('status', 'sent')->sum('total_amount');
+
+        if ($status) {
+            $query->where('status', $status);
         }
     
         $invoices = $query->paginate(10);
-        return view('Customers/CustomerInvoiceView', ['invoices' => $invoices, 'customerContractId' => $customerContractId]);
+        return view('Customers/CustomerInvoiceView', compact('invoices', 'sentInvoicesSum'));
     }
 
     public function showConsumptionHistory($timeframe = 'month')
