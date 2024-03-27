@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
+use App\Services\InvoiceFineService;
+
 class MonthlyInvoiceJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -176,6 +178,9 @@ class MonthlyInvoiceJob implements ShouldQueue
                 'consumption_id' => null,
                 'invoice_id' => $lastInserted
             ]);
+
+            $fineService = new InvoiceFineService;
+            $fineService->unpaidInvoiceFine($lastInserted);
 
             $newInvoiceLines = Invoice_line::where('invoice_id', '=', $lastInserted)->get();
             MonthlyInvoiceJob::sendMail($invoice, $customer->uID, $estimation, $newInvoiceLines);
