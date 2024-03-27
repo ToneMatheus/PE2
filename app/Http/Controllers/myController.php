@@ -28,6 +28,10 @@
             return view('tariff');
         }
 
+        public function contractOverview(){
+            return view('customer.contractOverview');
+        }
+
         public function manager(Request $request){
             $id = $request->input('manager_id');
 

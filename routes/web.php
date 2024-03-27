@@ -10,7 +10,6 @@ use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
-use App\Http\Controllers\CreditNotaController;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HolidayController;
@@ -23,7 +22,10 @@ use App\Http\Controllers\GuestController;
 use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
+use App\Http\Controllers\ContractController;
 use App\Http\Controllers\RelationsController;
+
+
 
 
 /*
@@ -155,6 +157,10 @@ Route::put('/cron-jobs/update/{job}', [CronJobController::class, 'update'])->nam
 Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
 
 Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
+
+
+//Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
+Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
 
 Route::get('/test', function () {
     return view('test');
