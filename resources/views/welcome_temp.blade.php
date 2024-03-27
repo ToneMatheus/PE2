@@ -16,9 +16,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{{ asset('css/dashboardSlideshow.css') }}" rel="stylesheet">
-    <script src="{{ asset('js/JQUERY.js') }}"></script>
-    <script src="{{ asset('js/slideshow.js') }}"></script>
     <title>links</title>
 </head>
 <body>
@@ -35,16 +32,6 @@
         <li><a href="{{ url('/profile') }}">Profile</a></li>
         <li><a href="{{ url('/holidayRequest') }}">Holiday Request</a></li>
     </ul>
-
-    <div id="slideshow">
-        <div><img src="{{ asset('images/texture2.jpg') }}" alt="" class="slideImage"></div>
-        <div><img src="{{ asset('images/texture4.jpg') }}" alt="" class="slideImage"></div>
-        <div><img src="{{ asset('images/texture3.jpg') }}" alt="" class="slideImage"></div>
-        <div><img src="{{ asset('images/texture1.jpg') }}" alt="" class="slideImage"></div>
-    </div>
-
-    <?php
-    ?>
 
 </body>
 </html>
