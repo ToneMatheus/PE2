@@ -23,7 +23,7 @@ use App\Services\InvoiceFineService;
 
 class advancemailcontroller extends Controller
 {
-    /*public function index()
+    public function index()
     {
             //Query which invoices have not been paid yet and are due in 1 week
         $unpaidInvoices = Invoice::select('id')
@@ -60,7 +60,7 @@ class advancemailcontroller extends Controller
             ->first();
 
         Mail::to('niki.de.visscher@gmail.com')->send(new weekAdvanceReminder($invoice_info, $total_amount, $user_info));
-    }*/
+    }
 
     /*public function index()
     {
@@ -229,15 +229,6 @@ class advancemailcontroller extends Controller
             ->first();
 
             $estimation = $estimationResult->estimation_total;
-
-            /*$contractProduct = DB::table('contract_products as cp')
-            ->select('cp.id as cpID', 'cp.start_date as cpStartDate', 'p.product_name as productName',
-            'p.id as pID', 't.id as tID')
-            ->join('products as p', 'p.id', '=', 'cp.product_id')
-            ->leftjoin('tariffs as t', 't.id', '=', 'cp.tariff_id')
-            ->where('customer_contract_id', '=', $customer->ccID)
-            ->whereNull('cp.end_date')
-            ->first();*/
 
             $contractProduct = DB::table('contract_products as cp')
             ->select('cp.id as cpID', 'cp.start_date as cpStartDate', 'p.product_name as productName',
