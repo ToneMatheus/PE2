@@ -14,6 +14,8 @@ class Team extends Model
         'team_name',
     ];
     use HasFactory;
+
+    public $timestamps = false;
     
     public function teamMember(): HasMany
     {

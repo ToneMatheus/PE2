@@ -30,6 +30,7 @@ use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\NewEmployeeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -169,6 +170,9 @@ Route::get('/roles', function () {
     return view('roleOverview');
 });
 Route::get('/teamOverview', [TeamController::class, 'index']);
+
+Route::get('/newEmployee', [NewEmployeeController::class, 'showNewEmployee'])->name('newEmployee');
+Route::post('/newEmployee/add', [NewEmployeeController::class, 'processEmployee'])->name('newEmployee.add');
 
 
 //cronjobs
