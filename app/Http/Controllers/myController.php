@@ -123,9 +123,9 @@
             return view('employeeBenefits');
         }
 
-        public function store(Request $request, $id, $action, $note=null)
+        public function store(Request $request, $id)
         {
-            if ($request->input('input_data') != "") {
+           // if ($request->input('input_data') != null) {
                 // Fetch the existing data from the database
                 $existingData = DB::table('employee_profiles')->where('id', $id)->value('notes');
                 
@@ -138,7 +138,9 @@
         
                     // Update the database record with the concatenated value
                     DB::table('employee_profiles')->where('id', $id)->update(['notes' => $concatenatedData]);
-                } else {
+                } 
+                
+                if ($request->input('action') == 'del') {
                     $notes = explode(',', $existingData); // Corrected: explode the string directly
                     $noteToDelete = $request->input('note');
                     if (($key = array_search($noteToDelete, $notes)) !== false) {
@@ -149,8 +151,7 @@
                         DB::table('employee_profiles')->where('id', $id)->update(['notes' => $updatedString]);
                     }
                 }
-            }
-        
+           // }
             return view('profile');
         }
 

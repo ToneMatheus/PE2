@@ -115,11 +115,13 @@
             </div>
             <ul class="list-group list-group-flush">
               @foreach($notes as $note)
-              <li class="list-group-item" style="display: flex; justify-content: space-between">{{$note}} 
-                <form method="POST" action="{{ route('storeTaskData', ['id' => $userID, 'action' => 'del', 'note' => $note]) }}">
-                  @csrf <!-- Include CSRF token for security -->
-                  <button type="submit" style="background: none; border: none; padding: 0;"><img src="/images/cancel.png" alt="cancel image" style="width: 15px"/></button>
-                </form></li>
+                @if($note != '')
+                <li class="list-group-item" style="display: flex; justify-content: space-between">{{$note}} 
+                  <form method="POST" action="{{ route('storeTaskData', ['id' => $userID, 'action' => 'del', 'note' => $note]) }}">
+                    @csrf <!-- Include CSRF token for security -->
+                    <button type="submit" style="background: none; border: none; padding: 0;"><img src="/images/cancel.png" alt="cancel image" style="width: 15px"/></button>
+                  </form></li>
+                @endif
               @endforeach
             </ul>
           </div>
