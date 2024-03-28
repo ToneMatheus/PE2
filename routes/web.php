@@ -137,6 +137,7 @@ Route::get('/Consumption_Readings', [MeterController::class, 'showConsumptionRea
 //to download the pdf of the contract and salary pages
 Route::get('/downloadPayslip', [DomPDFController::class, 'getPaySlipPDF'])->name('downloadPayslip');
 Route::get('/downloadContract', [DomPDFController::class, 'getContractPDF'])->name('downloadContract');
+Route::get('/downloadBenefits', [DomPDFController::class, 'getBenefitsPDF'])->name('downloadBenefits');
 
 //the routes to the pages
 Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
@@ -146,6 +147,7 @@ Route::get('/profileEmployee', [myController::class, 'profile'])->name('profile'
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
 Route::get('/managerList', [myController::class, 'managerList'])->name('managerList');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
+Route::get('/employeeBenefits', [myController::class, 'benefits'])->name('employeeBenefits');
 
 // routes for relations controlelr
 Route::get('/relations', [RelationsController::class, 'fetchRelations']);

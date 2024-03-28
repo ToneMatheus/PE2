@@ -28,32 +28,32 @@ class TeamMembersSeeder extends Seeder
             'is_manager' => 0,
         ],
         [
-            'user_id' => 4,
+            'user_id' => 10,
             'team_id' => 2,
             'is_manager' => 1,
         ],
         [
-            'user_id' => 5,
+            'user_id' => 11,
             'team_id' => 2,
             'is_manager' => 0,
         ],
         [
-            'user_id' => 6,
+            'user_id' => 12,
             'team_id' => 2,
             'is_manager' => 0,
         ],
         [
-            'user_id' => 7,
+            'user_id' => 13,
             'team_id' => 3,
             'is_manager' => 1,
         ],
         [
-            'user_id' => 8,
+            'user_id' => 14,
             'team_id' => 3,
             'is_manager' => 0,
         ],
         [
-            'user_id' => 9,
+            'user_id' => 15,
             'team_id' => 3,
             'is_manager' => 0,
         ],
