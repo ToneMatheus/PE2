@@ -42,12 +42,15 @@ class NewEmployeeController extends Controller
             'salary_per_month' => $request->input('salary')
         ]);
 
-        //new User
         //username & email generated
+        $username = $request->input('firstName')[0] . $request->input('name')[0] . $employee->id;
+        $email = $request->input('firstName') . $request->input('name') . '@example.com';
+
+        //new User
         $userData = [
-            'username' => 'default',
-            'password' => 'default',
-            'email' => 'default',
+            'username' => $username,
+            'password' => 'default',    //mail to change  
+            'email' => $email,
             'first_name' => $request->input('firstName'),
             'last_name' => $request->input('name'),
             'employee_profile_id' => $request->input($employee->id),
