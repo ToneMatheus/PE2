@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 
 class CustomerPortalController extends Controller
 {
@@ -34,11 +35,14 @@ class CustomerPortalController extends Controller
             $query->where('customer_contract_id', $user->id);
         }
 
-        $sentInvoicesSum = Invoice::where('status', 'sent')->sum('total_amount');
+        $sentInvoicesSum = Invoice::where('customer_contract_id', $user->id)
+                          ->where('status', 'sent')
+                          ->sum('total_amount');
 
         if ($status) {
             $query->where('status', $status);
         }
+
     
         $invoices = $query->paginate(10);
         return view('Customers/CustomerInvoiceView', compact('invoices', 'sentInvoicesSum'));
@@ -77,5 +81,11 @@ class CustomerPortalController extends Controller
     {
         $consumptionData = $this->showConsumptionHistory('month')->getData();
         return view('Customers/CustomerConsumptionHistory', ['consumptionData' => $consumptionData]);
+    }
+
+    public function changeLocale(Request $request)
+    {
+        session(['applocale' => $request->locale]);
+        return back();
     }
 }
