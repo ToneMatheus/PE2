@@ -21,7 +21,8 @@ return new class extends Migration
             $table->string('email', 50);
             $table->string('phone_nbr', 15);
             $table->date('birth_date')->nullable();
-            $table->unsignedTinyInteger('is_activate')->default(1);
+            $table->unsignedTinyInteger('is_active')->default(1);
+            $table->enum('title', ['Mr', 'Ms', 'X'])->nullable();
         });
     }
 

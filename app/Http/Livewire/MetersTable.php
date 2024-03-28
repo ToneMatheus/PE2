@@ -11,7 +11,7 @@ class MetersTable extends Component
     use WithPagination;
 
     public $search = '';
-    public $perPage = 2;
+    public $perPage = 10;
     public $type = '';
     public $status = '';
 

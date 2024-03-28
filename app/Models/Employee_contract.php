@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Employee_contract extends Model
 {
@@ -17,4 +18,9 @@ class Employee_contract extends Model
     ];
 
     use HasFactory;
+
+    public function employee_profile(): BelongsTo
+    {
+        return $this->belongsTo(Employee_Profile::class);
+    }
 }
