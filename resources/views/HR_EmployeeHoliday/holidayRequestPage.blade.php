@@ -9,6 +9,20 @@
     //     echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
     // }
 
+    if(!isset($_SESSION['currentM']))
+    {
+        $_SESSION['currentM'] = date('n');
+        $t = $_SESSION['currentM'];
+    }
+    else
+    {
+        $t = $_SESSION['currentM'];
+    }
+
+    if(!isset($_SESSION['currentY']))
+    {
+        $_SESSION['currentY'] = date('Y');
+    }
 ?>
 
 <!DOCTYPE html>
@@ -28,32 +42,140 @@
 
     <div class="table-container">
         <?php
-            // Get the current month and year
-            $currentMonth = date('n');
-            $currentYear = date('Y');
+            $currentMonth1 = date('n');
+            $currentYear1 = date('Y');
+            if(isset($_GET['Mf']))
+            {
+                echo $_SESSION['currentM'];
+                $t = $_SESSION['currentM'];
 
-            // Get the number of days in the current month and the previous month
-            $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
-            $daysInPrevMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth - 1, $currentYear);
+                $_SESSION['currentY'] = $currentYear1;
+                $currentYear = $_SESSION['currentY']; 
+
+                // Calculate the month and year for the next month
+                if(!$_GET['Mf'] == "12" && $_SESSION['currentM'] == 0)
+                {
+                    $currentMonth = $_SESSION['currentM'] + 1;
+                    $_SESSION['currentM'] = $currentMonth;
+                }
+                else if($_GET['Mf'] == "12" && $_SESSION['currentM'] == 0)
+                {
+                    $currentMonth = $currentMonth1 == 12 ? 1 : $currentMonth1 + 1;
+                    $_SESSION['currentM'] = $currentMonth;
+                }
+                else
+                {
+                    $currentMonth = $_SESSION['currentM'] + 1;
+                    $_SESSION['currentM'] = $currentMonth;
+                }
+
+                
+            
+             
+                
+                //$currentYear = $ted == 12 ? $currentYear1 + 1 : $currentYear1;
+                echo $_SESSION['currentM'];
+                //$t = $t == 12 ? $t = 0 : $t = $_SESSION['currentM'];
+                $t = $_SESSION['currentM'] + 1;
+                if($t == 13)
+                    $t = 1;
+                
+            }
+            else if(isset($_GET['Mb']))
+            {
+                echo $_SESSION['currentM'];
+                if(!$_GET['Mb'] == "12" && $_SESSION['currentM'] == 0)
+                {
+                    $currentMonth = $_SESSION['currentM'] - 1;
+                    $_SESSION['currentM'] = $currentMonth;
+                }
+                else if ($_GET['Mb'] == "12" && $_SESSION['currentM'] == 0)
+                {
+                    $currentMonth = $currentMonth1 == 12 ? 1 : $currentMonth1 - 1;
+                    $_SESSION['currentM'] = $currentMonth;
+                }
+                else
+                {
+                    $currentMonth = $_SESSION['currentM'] - 1;
+                    $_SESSION['currentM'] = $currentMonth;
+                }
+                
+                $_SESSION['currentY'] = $currentYear1;
+                $currentYear = $_SESSION['currentY']; 
+
+                echo $_SESSION['currentM'];
+                $t = $_SESSION['currentM'] - 1;
+                if($t == 0)
+                    $t = 12;
+                
+            }
+            else
+            {
+                // Get the current month and year
+                $currentMonth = date('n');
+                $currentYear = date('Y');
+            }
 
             // Calculate the month and year for the next month
-            $nextMonth = $currentMonth == 12 ? 1 : $currentMonth + 1;
-            $nextYear = $currentMonth == 12 ? $currentYear + 1 : $currentYear;
+            // $nextMonth = $currentMonth == 12 ? 1 : $currentMonth + 1;
+            // $nextYear = $currentMonth == 12 ? $currentYear + 1 : $currentYear;
+
+            if($currentMonth == 13)
+            {
+                $currentMonth = 1;
+                $_SESSION['currentM'] = 1;
+                $t = $_SESSION['currentM'];
+                $_SESSION['currentM'] = $currentYear;
+                if($currentYear != $currentYear1 - 1)
+                    $currentYear++;
+                $daysInPrevMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear - 1);
+                $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+            }
+            else if($currentMonth == 0)
+            {
+                $currentMonth = 12;
+                $_SESSION['currentM'] = 12;
+                $t = 0;
+                $_SESSION['currentM'] = $currentYear;
+                if($currentYear == $currentYear1)
+                    $currentYear--;
+                echo $currentYear;
+                $daysInPrevMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear - 1);
+                $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+            }
+            else
+            {
+                $daysInPrevMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear - 1);
+                $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+            }
+
+            // Get the number of days in the current month and the previous month
+            
 
             // Calculate the day of the week of the first day of the month
             $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
 
             $monthsName = array("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC");
             $numMonth = $currentMonth - 1;
-            echo "<button id='floBtn'>next</button><button id='floBtn'>back</button>";
+            
+            
+            echo "<form method='get'><button id='floBtn' name='cncel' value=''>home</button><button id='floBtn' name='Mf' value='$t'>next</button><button id='floBtn' name='Mb' value='$t'>back</button></form>";
             echo "<h1 id='monthName'> $monthsName[$numMonth] </h1>";
-
+            
+            if(isset($_GET['cncel']))
+            {
+                echo "pressed";
+                
+                unset($_SESSION['currentM']);
+                unset($_SESSION['currentY']);
+                session_destroy();
+            }
             // Start the table and iterate through each day of the month
             echo "<table id='calendar'>";
             $dayCount = 1;
             $prevMonthDayCount = $daysInPrevMonth - $firstDayOfMonth + 2;
             //echo "<tr><td> $currentMonth </td></tr>";
-            for ($row = 0; $row < 5; $row++) 
+            for ($row = 0; $row < 6; $row++) 
             {
                 echo "<tr>";
                 for ($col = 1; $col <= 7; $col++) 

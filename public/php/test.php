@@ -361,6 +361,8 @@ else if(isset($_POST['cancel']))
 {
     // Unset session variable
     unset($_SESSION['user']);
+    unset($_SESSION['currentM']);
+    unset($_SESSION['currentY']);
 
     // Destroy the session
     session_destroy();
