@@ -33,7 +33,7 @@
         </nav>
 
         <div class="top-page">
-          <img src="/images/green-energy.jpeg" alt="green energy"/>
+          <img src="/images/energy-company.jpg" alt="green energy"/>
           <h1>Are you interested in working with us? Check out our different job offers</h1>
         </div>
         <div class="container">
