@@ -18,19 +18,23 @@ class AnnualInvoiceMail extends Mailable
 
     protected $invoice;
     protected $user;
-    protected $consumptions;
+    protected $consumption;
     protected $estimation;
-    protected $newInvoiceLines;
+    protected $newInvoiceLine;
     protected $pdfData;
+    protected $meterReadings;
+    protected $discounts;
 
-    public function __construct(Invoice $invoice, $user, $pdfData, $consumptions, $estimation, $newInvoiceLines)
+    public function __construct(Invoice $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts)
     {
         $this->invoice = $invoice;
         $this->user = $user;
-        $this->consumptions = $consumptions;
+        $this->consumption = $consumption;
         $this->estimation = $estimation;
-        $this->newInvoiceLines = $newInvoiceLines;
+        $this->newInvoiceLine = $newInvoiceLine;
         $this->pdfData = $pdfData;
+        $this->meterReadings = $meterReadings;
+        $this->discounts = $discounts;
     }
 
     public function envelope()
@@ -49,9 +53,11 @@ class AnnualInvoiceMail extends Mailable
                     ->with([
                         'user' => $this->user,
                         'invoice' => $this->invoice,
-                        'consumptions' => $this->consumptions,
+                        'consumptions' => $this->consumption,
                         'estimation' => $this->estimation,
-                        'newInvoiceLines' => $this->newInvoiceLines
+                        'newInvoiceLine' => $this->newInvoiceLine,
+                        'meterReadings' => $this->meterReadings,
+                        'discounts' => $this->discounts
                     ])
                     ->attachData($pdfData, 'invoice.pdf', [
                         'mime' => 'application/pdf',
@@ -63,9 +69,11 @@ class AnnualInvoiceMail extends Mailable
         $pdf = Pdf::loadView('Invoices.annual_invoice_pdf', [
             'invoice' => $this->invoice,
             'user' => $this->user,
-            'consumptions' => $this->consumptions,
+            'consumption' => $this->consumption,
             'estimation' => $this->estimation,
-            'newInvoiceLines' => $this->newInvoiceLines,
+            'newInvoiceLine' => $this->newInvoiceLine,
+            'meterReadings' => $this->meterReadings,
+            'discounts' => $this->discounts
         ], [], 'utf-8');
         
              

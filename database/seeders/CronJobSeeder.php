@@ -13,18 +13,17 @@ class CronJobSeeder extends Seeder
         DB::table('cron_jobs')->insert([
             [
                 'name' => 'AnnualInvoiceJob',
+                'interval' => 'yearly',
                 'scheduled_day' => 15,
-                'scheduled_time' => '08:02:00'
+                'scheduled_month' => 6,
+                'scheduled_time' => '10:15:00'
             ],
             [
                 'name' => 'MonthlyInvoiceJob',
+                'interval' => 'monthly',
                 'scheduled_day' => 15,
-                'scheduled_time' => '08:02:00'
-            ],
-            [
-                'name' => 'WeekAdvanceReminderJob',
-                'scheduled_day' => 15,
-                'scheduled_time' => '08:02:00'
+                'scheduled_month' => null,
+                'scheduled_time' => '22:30:00'
             ]
         ]);
     }

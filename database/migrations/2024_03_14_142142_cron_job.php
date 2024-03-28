@@ -16,8 +16,9 @@ return new class extends Migration
         Schema::create('cron_jobs', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('description')->nullable();
-            $table->integer('scheduled_day');
+            $table->string('interval')->nullable();
+            $table->integer('scheduled_day')->nullable();
+            $table->integer('scheduled_month')->nullable();
             $table->time('scheduled_time');
             $table->timestamps();
         });

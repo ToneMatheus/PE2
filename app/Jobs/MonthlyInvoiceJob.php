@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
+use App\Services\InvoiceFineService;
+
 class MonthlyInvoiceJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -122,11 +124,22 @@ class MonthlyInvoiceJob implements ShouldQueue
 
             $estimation = $estimationResult->estimation_total;
 
-            $contractProduct = DB::table('contract_products as cp')
+            //tariff_id no longer in contract_products table, see edited query below
+            /*$contractProduct = DB::table('contract_products as cp')
             ->select('cp.id as cpID', 'cp.start_date as cpStartDate', 'p.product_name as productName',
             'p.id as pID', 't.id as tID')
             ->join('products as p', 'p.id', '=', 'cp.product_id')
             ->leftjoin('tariffs as t', 't.id', '=', 'cp.tariff_id')
+            ->where('customer_contract_id', '=', $customer->ccID)
+            ->whereNull('cp.end_date')
+            ->first();*/
+
+            $contractProduct = DB::table('contract_products as cp')
+            ->select('cp.id as cpID', 'cp.start_date as cpStartDate', 'p.product_name as productName',
+            'p.id as pID', 't.id as tID')
+            ->join('products as p', 'p.id', '=', 'cp.product_id')
+            ->leftjoin('product_tariffs as pt', 'pt.product_id', '=', 'p.id')
+            ->leftjoin('tariffs as t', 'pt.tariff_id', '=', 't.id')
             ->where('customer_contract_id', '=', $customer->ccID)
             ->whereNull('cp.end_date')
             ->first();
@@ -176,6 +189,9 @@ class MonthlyInvoiceJob implements ShouldQueue
                 'consumption_id' => null,
                 'invoice_id' => $lastInserted
             ]);
+
+            $fineService = new InvoiceFineService;
+            $fineService->unpaidInvoiceFine($lastInserted);
 
             $newInvoiceLines = Invoice_line::where('invoice_id', '=', $lastInserted)->get();
             MonthlyInvoiceJob::sendMail($invoice, $customer->uID, $estimation, $newInvoiceLines);

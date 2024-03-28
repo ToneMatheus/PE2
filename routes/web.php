@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
+use App\Http\Controllers\InvoiceRemindersController;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNoteController;
@@ -102,8 +103,9 @@ Route::get('/tariff/products/{type}', [EmployeeController::class, 'getProductByT
 Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
 Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
 
-//preview advance reminder mail for testing
+//view invoice reminder mails for testing
 Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
+Route::get('/reminders', [InvoiceRemindersController::class, 'index'])->name("invoice_reminder");
 // Meters branch
 
 
@@ -173,8 +175,9 @@ Route::get('/roles', function () {
 
 //cronjobs
 Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
-Route::get('/cron-jobs/edit/{job}', [CronJobController::class, 'edit'])->name('edit-cron-job');
-Route::put('/cron-jobs/update/{job}', [CronJobController::class, 'update'])->name('update-cron-job');
+Route::get('/cron-jobs/schedule/edit/{job}', [CronJobController::class, 'edit_schedule'])->name('edit-schedule-cron-job');
+Route::post('/cron-jobs/schedule/store{job}', [CronJobController::class, 'store_schedule'])->name('store-schedule-cron-job');
+Route::post('/cron-jobs/schedule/disable{job}', [CronJobController::class, 'disable_schedule'])->name('disable-schedule-cron-job');
 Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
 
 Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
@@ -241,6 +244,16 @@ Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credi
 Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
 Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
 
+//Customer Portal
+Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
+Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
+Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
+
+//Customer Portal
+Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
+Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
+Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
+
 //Guest routes for estimations
 Route::get('/EstimationGuestForm', [EstimationController::class, 'showGuestForm'])->name('EstimationGuestForm');
 Route::post('/EstimationGuestForm', [EstimationController::class, 'ShowGuestEnergyEstimate'])->name('EstimationGuestResult');
@@ -254,3 +267,4 @@ Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'
 Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
 Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
 Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
+Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');

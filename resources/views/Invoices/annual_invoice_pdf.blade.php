@@ -1,10 +1,11 @@
 @php
+    use Carbon\Carbon;
     $months = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
     ];
 
-    $i = 0;
+    $totalAmount = 0;
 @endphp
 
 <!DOCTYPE html>
@@ -15,6 +16,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Annual Invoice</title>
+    <style>
+        table{
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: solid 1px black;
+        }
+    </style>
 </head>
 <body>
     <div id="company">
@@ -53,31 +63,64 @@
             <th>Month</th>
             <th>Estimated Consumption</th>
             <th>Actual Consumption</th>
+            <th>Discount Rate</th>
             <th>Paid</th>
             <th>Amount</th>
         </tr>
 
-        @foreach($consumptions as $consumption)
+        @foreach($months as $month)
             @php
-                $newInvoiceLine = $newInvoiceLines[$i];
-                $paid = $newInvoiceLine->unit_price * $estimation;
+                $paid = $newInvoiceLine->unit_price * ($estimation / 12);
 
-                $amount = $newInvoiceLine->amount
+                $discountRate = 0;
+                foreach ($discounts as $discount) {
+                    $startMonth = Carbon::parse($discount->start_date)->format('F');
+                    $endMonth = Carbon::parse($discount->end_date)->format('F');
+
+                    if ($month >= $startMonth && $month <= $endMonth) {
+                        $discountRate = $discount->rate;
+                        break;
+                    }
+                }
+
+                $paid -= ($paid * $discountRate);
+                $totalAmount += $paid;
             @endphp
 
             <tr>
-                <td>{{$months[$i]}}</td>
-                <td>{{$estimation}}</td>
-                <td>{{$consumption->consumption_value}}</td>
-                <td>{{$paid}}</td>
-                <td>{{$amount}}</td>
-            </tr>
-
-            @php $i++; @endphp
+            <td>{{ $month }}</td>
+            <td>{{ round($estimation / 12, 2) }}</td>
+            <td>{{ round(($estimation / 12) + ($consumption->consumption_value / 12), 2) }}</td>
+            <td>{{ $discountRate }}</td>
+            <td>{{ round($paid, 2) }}</td>
+            <td>{{ round(($newInvoiceLine->amount / 12) - ($newInvoiceLine->amount / 12) * $discountRate, 2) }}</td>
+        </tr>
         @endforeach
 
     </table>
 
-    <h2>Total Amount: {{$invoice->total_amount}}</h2> 
+    <p></p>
+
+    <table>
+        <tr>
+            <th>Year</th>
+            <th>Estimated Consumption</th>
+            <th>Actual Consumption</th>
+            <th>Paid</th>
+            <th>Amount</th>
+        </tr>
+        <tr>
+                <td></td>
+                <td>{{$estimation}}</td>
+                <td>{{$meterReadings[1]->reading_value}}</td>
+                <td>{{round($totalAmount, 2)}}</td>
+                <td>{{round($newInvoiceLine->amount, 2)}}</td>
+            </tr>
+    </table>
+    <h2>Total Amount: {{round($invoice->total_amount, 2)}}</h2> 
+
+    @if($meterReadings[0] > $meterReadings[1])
+        <p>Reduction on total amount of the next invoice.</p>
+    @endif
 </body>
 </html>
