@@ -16,5 +16,7 @@ class Employee_contract extends Model
         'salary_per_month'
     ];
 
+    public $timestamps = false;
+
     use HasFactory;
 }

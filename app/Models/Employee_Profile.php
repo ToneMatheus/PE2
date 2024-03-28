@@ -9,14 +9,14 @@ class Employee_Profile extends Model
 {
     use HasFactory;
 
-    public const VALIDATION_RULE_JOB = ['required'];
+    //public const VALIDATION_RULE_JOB = ['required'];
     public const VALIDATION_RULE_HIRE_DATE = ['required'];
-    public const VALIDATION_RULE_DEPARTMENT = ['required'];
+    //public const VALIDATION_RULE_DEPARTMENT = ['required'];
 
     public const VALIDATION_RULES = [
-        'job',
+        //'job',
         'hire_date',
-        'department'
+        //'department'
     ];
 
     protected $fillable = [
@@ -29,6 +29,7 @@ class Employee_Profile extends Model
         'sex'
     ];
 
+    public $timestamps = false;
     protected $table = 'employee_profiles';
     protected $primaryKey = 'id';
     
