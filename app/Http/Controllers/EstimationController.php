@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Estimation;
+use App\Models\Meter;
+use Carbon\Carbon;
 
 class EstimationController extends Controller
 {
@@ -14,18 +16,6 @@ class EstimationController extends Controller
     {
         return view('Invoices.testingEstimation');
     }
-    public function generateOneInvoice(Request $request)
-    {
-        $request->validate([
-            'customerID' => 'required|integer|min:1|max:10',
-        ], [
-            'customerID.min' => 'This field must be at least 1.','customerID.max' => 'There are only 2 customers ATM, sorry!',
-        ]);
-        $customer = $request->input('customerID');
-        dd($this->CalculateMonthlyEnergyAmount($customer));
-    }
-
-
     // Guest Public functions
     /**
      * @param \Illuminate\Http\Request $request
@@ -44,32 +34,43 @@ class EstimationController extends Controller
         return view('Invoices.EstimationGuest');
     }
     /**
-     * @param int $meterID
-     * @return int
+     * @return void
      */
-    public static function CalculateMonthlyEnergyAmount(int $meterID): int
+    public static function UpdateAllEstimation(): void
     {
-        $meterValue = DB::table('index_values')->orderby('reading_value','desc')->where('meter_id', $meterID)->take(2)->pluck('reading_value')->toArray();
-        if (count($meterValue) >= 2)
-        {   
-
-            $difference = abs($meterValue[0] - $meterValue[1]);
-            if ($difference > 0)
-            {
-                $totalMeterEstimateYear = $difference;
-            }
-            else
-            {
-                $totalMeterEstimateYear = EstimationController::calculateMeterEnergyEstimate($meterID);
-            }
+        
+        $meters = Estimation::select('meter_id')->get()->toArray();
+        foreach ($meters as $meter) {
+            EstimationController::UpdateEstimation($meter['meter_id']);
         }
-        else
-        {
-            $totalMeterEstimateYear = EstimationController::calculateMeterEnergyEstimate($meterID);
+    }
+    /**
+     * @param int $meterID
+     * @return void
+     */
+    private static function UpdateEstimation(int $meterID): void
+    {
+        $now = Carbon::now();
+        $month = $now->format('m');
+        $year = $now->format('Y');
+        $meterReadings = DB::table('index_values')
+            ->where(function ($query) use ($year) {
+                $query->whereYear('reading_date', $year)
+                    ->orWhereYear('reading_date', $year - 1);
+            })
+            ->where('meter_id', '=', $meterID)
+            ->select('reading_value')
+            ->get()->toArray();
+        if (sizeof($meterReadings) == 2) {
+            $difference = abs($meterReadings[0]->reading_value - $meterReadings[1]->reading_value);
+            DB::table('estimations')->where('meter_id', $meterID)->update(array('estimation_total' => $difference));
         }
-        $totalMeterEstimateYear = EstimationController::calculateMeterEnergyEstimate($meterID);
-        $EstimationMonthly = $totalMeterEstimateYear/12;
-        return $EstimationMonthly;
+        else if (sizeof($meterReadings) == 1) {
+            DB::table('estimations')->where('meter_id', $meterID)->update(array('estimation_total' => $$meterReadings[0]->reading_value));
+        }
+        else {
+            EstimationController::calculateMeterEnergyEstimate($meterID);
+        }
     }
     // Guest Private functions
     /**
@@ -173,7 +174,6 @@ class EstimationController extends Controller
                              $estimateWashers + $estimateComputers + $estimateEntertainment +
                              $estimateDishwashers); // We always round up!
 
-        //$estimationTotal = DB::table('estimations')->where('meter_id', $meterID)->pluck('estimation_total');
         $estimationTotal = Estimation::where('meter_id', $meterID)->pluck('estimation_total')->first();
         $estimationTotal = collect($estimationTotal)->flatten()->all();
         if ($estimationTotal == $totalMeterEstimateYear)

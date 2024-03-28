@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Invoice;
 use App\Models\Invoice_line;
 use App\Models\User;
+use App\Models\CreditNote;
 
 use App\Mail\MonthlyInvoiceMail;
 
@@ -91,7 +92,7 @@ class MonthlyInvoiceJob implements ShouldQueue
 
             Log::info($oldCustomer);
 
-            if($amountInvoices < 12) {
+            // if($amountInvoices < 12) {
                 //Query last monthly invoice
                 $lastInvoice = Invoice::where('type', '=', 'Monthly')
                 ->whereYear('invoice_date', '=', $year)
@@ -107,7 +108,7 @@ class MonthlyInvoiceJob implements ShouldQueue
                 $formattedDueDate = $newInvoiceDueDate->toDateString();
 
                 $this->generateInvoice($oldCustomer, $formattedInvoiceDate, $formattedDueDate);
-            }
+            // }
         }
     }
 
@@ -154,6 +155,21 @@ class MonthlyInvoiceJob implements ShouldQueue
             $estimatedAmount = $estimation * $productTariff->rate;
             $totalAmount = $estimatedAmount + 20;           //Transport & distribution costs
 
+            //Check for extra invoice lines
+            $extraInvoiceLines = DB::table('users as u')
+            ->select('cn.id', 'cn.type', 'cn.amount')
+            ->join('credit_notes as cn', 'cn.user_id', '=', 'u.id')
+            ->where('u.id', '=', $customer->uID)
+            ->where('cn.is_active', '=', 1)
+            ->where('cn.is_credit', '=', 0)
+            ->get()->toArray();
+            //Add to totalamount
+            if (sizeof($extraInvoiceLines) > 0){
+                foreach ($extraInvoiceLines as $extraInvoiceLine) {
+                    $totalAmount += $extraInvoiceLine->amount;
+                }
+            }
+
             $invoiceData = [
                 'invoice_date' => $invoiceDate,
                 'due_date' => $invoiceDueDate,
@@ -169,7 +185,7 @@ class MonthlyInvoiceJob implements ShouldQueue
             Invoice_line::create([
                 'type' => 'Electricity',
                 'unit_price' => $productTariff->rate,
-                'amount' => $estimatedAmount,
+                'amount' => $estimation,
                 'consumption_id' => null,
                 'invoice_id' => $lastInserted
             ]);
@@ -189,15 +205,29 @@ class MonthlyInvoiceJob implements ShouldQueue
                 'consumption_id' => null,
                 'invoice_id' => $lastInserted
             ]);
+            //Add extra invoice line if there are any
+            if (sizeof($extraInvoiceLines) > 0){
+                foreach ($extraInvoiceLines as $extraInvoiceLine) {
+                    Invoice_line::create([
+                        'type' => $extraInvoiceLine->type,
+                        'unit_price' => $extraInvoiceLine->amount,
+                        'amount' => 1,
+                        'consumption_id' => null,
+                        'invoice_id' => $lastInserted
+                    ]);
+                    CreditNote::where('id', $extraInvoiceLine->id)
+                    ->update(['is_active' => 0]);
+                }
+            }
 
             $fineService = new InvoiceFineService;
             $fineService->unpaidInvoiceFine($lastInserted);
 
             $newInvoiceLines = Invoice_line::where('invoice_id', '=', $lastInserted)->get();
-            MonthlyInvoiceJob::sendMail($invoice, $customer->uID, $estimation, $newInvoiceLines);
+            MonthlyInvoiceJob::sendMail($invoice, $customer->uID, $newInvoiceLines);
     }
 
-    public function sendMail(Invoice $invoice, $uID, $estimation, $newInvoiceLines)
+    public function sendMail(Invoice $invoice, $uID, $newInvoiceLines)
     {
         $user = DB::table('users as u')->join('customer_addresses as ca', 'ca.user_id', '=', 'u.id')
         ->join('addresses as a', 'a.id', '=', 'ca.address_id')
@@ -209,14 +239,13 @@ class MonthlyInvoiceJob implements ShouldQueue
         $pdf = Pdf::loadView('Invoices.monthly_invoice_pdf', [
             'invoice' => $invoice,
             'user' => $user,
-            'estimation' => $estimation,
             'newInvoiceLines' => $newInvoiceLines,
         ], [], 'utf-8');
         $pdfData = $pdf->output();
 
         //Send email with PDF attachment
-        Mail::to('shaunypersy10@gmail.com')->send(new MonthlyInvoiceMail(
-            $invoice, $user, $pdfData, $estimation, $newInvoiceLines
+        Mail::to('yannick.strackx@gmail.com')->send(new MonthlyInvoiceMail(
+            $invoice, $user, $pdfData, $newInvoiceLines
         ));
 
     }

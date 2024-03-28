@@ -20,6 +20,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->double('amount')->nullable(); 
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedTinyInteger('is_credit')->default(1);
+            $table->unsignedTinyInteger('is_active')->default(1);
             $table->timestamps();
         });
     }

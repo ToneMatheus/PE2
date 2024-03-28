@@ -1,5 +1,5 @@
 <?php
-namespace Database\Seeders\Meter;
+namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -38,5 +38,4 @@ class ConsumptionSeeder extends Seeder
             }
         }
     }
-}
 }

@@ -261,8 +261,12 @@ Route::post('/EstimationGuestForm', [EstimationController::class, 'ShowGuestEner
 Route::get('/CreateInvoice', [EstimationController::class, 'showButton'])->name('EstimationPage');
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
 
-Route::get('/addInvoiceExtraForm', [InvoiceController::class, 'showForm'])->name('addInvoiceExtraForm');
 Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
+
+//test route
+Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
+Route::post('/TestUserList', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('TestUserList');
+
 //Customer Portal
 Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
 Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');

@@ -16,6 +16,7 @@ use App\Models\Invoice_line;
 use App\Models\Address;
 use App\Mail\AnnualInvoiceMail;
 use App\Models\User;
+use App\Http\Controllers\EstimationController;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -245,7 +246,8 @@ class AnnualInvoiceJob implements ShouldQueue
             
             $newInvoiceLine = Invoice_line::where('invoice_id', '=', $lastInserted)->first();
            
-            AnnualInvoiceJob::sendMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts);  
+            AnnualInvoiceJob::sendMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts);
+            EstimationController::UpdateAllEstimation();  
         }
     }
 
@@ -271,7 +273,7 @@ class AnnualInvoiceJob implements ShouldQueue
         $pdfData = $pdf->output();
 
         //Send email with PDF attachment
-        Mail::to('shaunypersy10@gmail.com')->send(new AnnualInvoiceMail(
+        Mail::to('yannick.strackx@gmail.com')->send(new AnnualInvoiceMail(
             $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts
         ));
 
