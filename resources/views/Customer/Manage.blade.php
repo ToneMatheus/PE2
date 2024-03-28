@@ -25,7 +25,6 @@
                 <li><a href="{{ route('createUser') }}">Create account</a></li>
             </ul>
         </nav>
-<!-- TODO: daadwerkelijke data weergeven. -->
         <div class="box">
             <h1 class="boxHeader" id="test">Your personal info</h1>
             <!-- Password -->
@@ -198,7 +197,6 @@
                             </td>
                         </tr>
 
-                        <!-- Bus moet nog in de in de database kunnen geplaatst worden -->
                         <tr>
                             <td>
                                 <p>bus</p>
@@ -214,6 +212,8 @@
 
                 <p>Je kan mss een change Request doen. dat je het kan aan passen maar niet direct wordt aangepast. tot het is goed gekeurd is.</p>
                 <form>
+                    <!-- LOOK als ik op change duw dat je het juiste adres kan gaan aanpassen. -->
+                    <!-- TEST zet de value mss naar het id van het adres. -->
                     <input type="button" value="change" class="change">
                 </form>
             </div>

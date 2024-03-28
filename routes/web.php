@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Crypt;
 use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
@@ -44,7 +45,8 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update.profile');
+    Route::patch('/profile', [ProfileController::class, 'updateAddress'])->name('profile.update.address');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -159,6 +161,7 @@ Route::get('/faq', [FAQController::class, 'showFAQ'])->name('faq');
 Route::get('/customer/overview', [SimpleUserOverViewController::class, 'overview'])->name('overview');
 
 /*JOREN*/
+//CH mag weg
 //routes for custmer data for customer
 Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
 Route::get('/user/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
@@ -173,9 +176,10 @@ Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::cla
 
 // Validation route's to create a customer account by customer
 Route::post('/user/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
+//CH tot hier
 
 // Set active user when email confirm
-Route::get('/activate-account/{userId}', [CustomerController::class, 'activateAccount'])->name('activate.account');
+Route::get('/confirm-email/{token}', [ProfileController::class, 'confirmEmail'])->name('email-confirmation');
 
 
 Route::controller(InvoiceController::class)->group(function () {
