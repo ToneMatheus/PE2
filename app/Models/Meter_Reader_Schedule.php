@@ -10,7 +10,6 @@ class Meter_Reader_Schedule extends Model
 {
     protected $table = 'meter_reader_schedules';
     protected $fillable = [
-        'id',
         'employee_profile_id',
         'reading_date',
         'meter_id',
@@ -18,4 +17,14 @@ class Meter_Reader_Schedule extends Model
     ];
 
     use HasFactory;
+
+    public function meter(): BelongsTo
+    {
+        return $this->belongsTo(Meter::class);
+    }
+
+    public function employee_profile(): BelongsTo
+    {
+        return $this->belongsTo(Employee_Profile::class);
+    }
 }

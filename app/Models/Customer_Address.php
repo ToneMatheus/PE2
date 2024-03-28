@@ -6,20 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Meter_Addresses extends Model
+class Customer_Address extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'start_date',
         'end_date',
-        'address_id',
-        'meter_id'
+        'user_id',
+        'address_id'
     ];
 
-    use HasFactory;
-
-    public function meter(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Meter::class);
+        return $this->belongsTo(User::class);
     }
 
     public function address(): BelongsTo
