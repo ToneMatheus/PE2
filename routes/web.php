@@ -151,6 +151,8 @@ Route::get('/employeeBenefits', [myController::class, 'benefits'])->name('employ
 Route::post('/profileEmployee/{id}', [myController::class, 'store'])->name('storeTaskData');
 Route::get('/hiringManger', [myController::class, 'hiringManager'])->name('hiringManager');
 Route::get('/jobOffers', [myController::class, 'jobs'])->name('jobs');
+Route::get('/jobDescription', [myController::class, 'jobDescription'])->name('jobDescription');
+Route::get('/jobApply', [myController::class, 'jobApply'])->name('jobApply');
 
 // routes for relations controlelr
 Route::get('/relations', [RelationsController::class, 'fetchRelations']);

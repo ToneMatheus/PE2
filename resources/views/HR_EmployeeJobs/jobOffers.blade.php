@@ -52,7 +52,7 @@
                     <img src="{{URL('/images/careers_in_electrical_engineering.jpg')}}" class="card-img-top" alt="electrical engineer">
                     <div class="card-body">
                       <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s </p>
-                      <a href="#" class="card-link">Read more</a>
+                      <a href="{{route('jobDescription')}}" class="card-link">Read more</a>
                     </div>
                   </div>
 
@@ -63,7 +63,7 @@
                     <img src="{{URL('/images/project_manager.jpg')}}" class="card-img-top" alt="gas">
                     <div class="card-body">
                       <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</p>
-                      <a href="#" class="card-link">Read more</a>
+                      <a href="{{route('jobDescription')}}" class="card-link">Read more</a>
                     </div>
                   </div>
 
@@ -74,7 +74,7 @@
                     <img src="{{URL('/images/wind-turbine-tech.png')}}" class="card-img-top" alt="meter">
                     <div class="card-body">
                       <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</p>
-                      <a href="#" class="card-link">Read more</a>
+                      <a href="{{route('jobDescription')}}" class="card-link">Read more</a>
                     </div>
                   </div>
             </div>
