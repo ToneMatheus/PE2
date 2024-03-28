@@ -23,10 +23,10 @@ class Invoice_line extends Model
         return $this->belongsTo(Invoice::class);
     }
 
-    /*public function consumption(): BelongsTo
+    public function consumption(): BelongsTo
     {
         return $this->belongsTo(Consumption::class);
-    }*/
+    }
 
     use HasFactory;
 }

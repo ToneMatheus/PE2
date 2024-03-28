@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
@@ -27,31 +29,25 @@ class User extends Authenticatable
             'password' => self::VALIDATION_RULE_PASSWORD,
             'email' => self::VALIDATION_RULE_EMAIL,
             'phone_nbr' => self::VALIDATION_RULE_PHONE_NBR,
-            'birth_date' => self::VALIDATION_RULE_BIRTHDATE,
+            // 'birth_date' => self::VALIDATION_RULE_BIRTHDATE,
     ];
-
-    public function addresses()
-    {
-        return $this->hasMany(Address::class);
-    }
 
     protected $table = 'users';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id',
         'username',
         'first_name',
         'last_name',
         'password',
-        'address_id',
         'employee_profile_id',
         'is_company',
         'company_name',
-        'email',
         'phone_nbr',
         'birth_date',
-        'is_active'
+        'is_active',
+        'email',
+        'title'
     ];
 
     public static function validate(array $input): bool
@@ -67,4 +63,30 @@ class User extends Authenticatable
         return $this->hasMany(CreditNote::class);
     }
 
+
+    //! de onderstaande functie zou moeten toe gevoegd worden. afhenkelijk van wat er gedaan wordt met het role systeem.
+    // public function hasRole($role)
+    // {
+    //     return $this->role === $role;
+    // }
+
+    public function team_members(): HasMany
+    {
+        return $this->hasMany(Team_Member::class);
+    }  
+
+    public function user_roles(): HasMany
+    {
+        return $this->hasMany(User_Role::class);
+    }  
+
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class);
+    }  
+    
+    public function employee_profile(): BelongsTo
+    {
+        return $this->belongsTo(Employee_Profile::class);
+    }
 }

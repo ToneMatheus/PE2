@@ -9,22 +9,18 @@ class ConsumptionSeeder extends Seeder
 {
     public function run()
     {
-        DB::table('consumptions')->insert([
-            [
-                'start_date' => '2024-01-01',
-                'end_date' => '2024-02-01',
-                'consumption_value' => 35,
-                'prev_index_id' => 1,
-                'current_index_id' => 2 
-            ],
-            [
-                'start_date' => '2024-02-01',
-                'end_date' => '2024-03-01',
-                'consumption_value' => 30,
-                'prev_index_id' => 2,
-                'current_index_id' => 3 
-            ]
-        ]);
+        for($i = 1; $i <= 4; $i++){
+            DB::table('consumptions')->insert([
+                'start_date' => '2022-01-01',
+                'end_date' => '2023-01-01',
+                'consumption_value' => 0,
+                'prev_index_id' => null,
+                'current_index_id' => $i
+            ]);
+        }
+        
+        for($i = 1; $i <= 4; $i++){
+            $indexValues = DB::table('index_values')->where('meter_id', '=', $i)->get();
 
         DB::table('consumptions')->insert([
             [
@@ -77,4 +73,5 @@ class ConsumptionSeeder extends Seeder
             ]
         ]);
     }
+}
 }
