@@ -161,5 +161,13 @@
         public function hiringManager(){
             return view('HR_EmployeeJobs.hiringManager');
         }
+
+        public function jobDescription(){
+            return view('HR_EmployeeJobs.jobDescription');
+        }
+
+        public function jobApply(){
+            return view('HR_EmployeeJobs.jobApply');
+        }
     }
 ?>
