@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Payslips extends Model
 {
     protected $fillable = [
+        'employee_profile_id',
         'startDate',
         'endDate',
         'creationDate',
@@ -15,7 +16,6 @@ class Payslips extends Model
         'totalHours',
         'IBAN',
         'amountPerHour',
-        'employeeID',
     ];
 
     use HasFactory;

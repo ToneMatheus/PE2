@@ -138,7 +138,7 @@ Route::get('/downloadPayslip', [DomPDFController::class, 'getPaySlipPDF'])->name
 Route::get('/downloadContract', [DomPDFController::class, 'getContractPDF'])->name('downloadContract');
 Route::get('/downloadBenefits', [DomPDFController::class, 'getBenefitsPDF'])->name('downloadBenefits');
 
-//the routes to the pages
+//the routes to most of the hr pages
 Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
 Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
@@ -147,6 +147,9 @@ Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage'
 Route::get('/managerList', [myController::class, 'managerList'])->name('managerList');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
 Route::get('/employeeBenefits', [myController::class, 'benefits'])->name('employeeBenefits');
+Route::post('/profileEmployee/{id}', [myController::class, 'store'])->name('storeTaskData');
+Route::get('/hiringManger', [myController::class, 'hiringManager'])->name('hiringManager');
+Route::get('/jobOffers', [myController::class, 'jobs'])->name('jobs');
 
 // routes for relations controlelr
 Route::get('/relations', [RelationsController::class, 'fetchRelations']);

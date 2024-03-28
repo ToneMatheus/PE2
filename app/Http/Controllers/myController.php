@@ -122,5 +122,44 @@
         public function benefits(){
             return view('employeeBenefits');
         }
+
+        public function store(Request $request, $id, $action, $note=null)
+        {
+            if ($request->input('input_data') != "") {
+                // Fetch the existing data from the database
+                $existingData = DB::table('employee_profiles')->where('id', $id)->value('notes');
+                
+                if ($request->input('action') == 'add') {
+                    // Get the new data from the request
+                    $newData = $request->input('input_data');
+        
+                    // Concatenate the new data with the existing data
+                    $concatenatedData = htmlspecialchars($newData . ',' . $existingData);
+        
+                    // Update the database record with the concatenated value
+                    DB::table('employee_profiles')->where('id', $id)->update(['notes' => $concatenatedData]);
+                } else {
+                    $notes = explode(',', $existingData); // Corrected: explode the string directly
+                    $noteToDelete = $request->input('note');
+                    if (($key = array_search($noteToDelete, $notes)) !== false) {
+                        unset($notes[$key]); // Remove the note from the array
+                        $updatedString = implode(',', $notes); // Join the array back into a string
+                
+                        // Update the database record
+                        DB::table('employee_profiles')->where('id', $id)->update(['notes' => $updatedString]);
+                    }
+                }
+            }
+        
+            return view('profile');
+        }
+
+        public function jobs(){
+            return view('HR_EmployeeJobs.jobOffers');
+        }
+
+        public function hiringManager(){
+            return view('HR_EmployeeJobs.hiringManager');
+        }
     }
 ?>
