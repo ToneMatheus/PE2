@@ -32,6 +32,7 @@ use App\Http\Controllers\RelationsController;
 
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -59,34 +60,36 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-
-//Role system
-//Customer
-Route::middleware(['auth', 'role:Customer'])->group(function (){
-
+Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
+    
 });
 
-//Employee
-Route::middleware(['auth', 'notrole:Customer'])->group(function (){
-    //Only Finance
-    Route::middleware(['auth', 'role:Finance analyst'])->group(function () {
-
-    });
-
-    //Only Manager
-    Route::middleware(['auth', 'role:Manager'])->group(function (){
-
-    });
-
-    //Only Executive Manager
-    Route::middleware(['auth', 'role:Executive Manager'])->group(function (){
-
-    });
-
-    //Every Employee
-
-    //Route::get('/profile', [myController::class, 'profile'])->name('profile');
+Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
+    
 });
+
+Route::middleware(['checkUserRole:FINANCE_ANALYST'])->group(function() {
+    
+});
+
+Route::middleware(['checkUserRole:EXECUTIVE_MANAGER'])->group(function() {
+    
+});
+
+Route::middleware(['checkUserRole:CUSTOMER_SERVICE'])->group(function() {
+    
+});
+
+Route::middleware(['checkUserRole:CUSTOMER'])->group(function() {
+    
+});
+
+Route::middleware(['checkUserRole:FIELD_TECHNICIAN'])->group(function() {
+    
+});
+
+// EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
+
 
 Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
 Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
