@@ -50,7 +50,7 @@ class InvoiceFinalWarning extends Mailable
     public function content()
     {
         return new Content(
-            view: 'view.name',
+            view: 'mails\invoice_final_warning',
         );
     }
 

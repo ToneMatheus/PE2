@@ -18,7 +18,7 @@ class InvoiceFineService
 
         $ccID = Invoice::where('id', $invoiceID)->value('customer_contract_id');
         $status = Invoice::select('status')
-            ->where('customer_contract_id', 1)
+            ->where('customer_contract_id', $ccID)
             ->where('due_date', '<=', now()->subDays(14))
             ->orderBy('invoice_date', 'desc')
             ->limit(1)

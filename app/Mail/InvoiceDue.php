@@ -50,7 +50,7 @@ class InvoiceDue extends Mailable
     public function content()
     {
         return new Content(
-            view: 'view.name',
+            view: 'mails\invoice_due_mail',
         );
     }
 

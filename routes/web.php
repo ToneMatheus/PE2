@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
+use App\Http\Controllers\InvoiceRemindersController;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNoteController;
@@ -99,8 +100,9 @@ Route::get('/tariff/products/{type}', [EmployeeController::class, 'getProductByT
 Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
 Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
 
-//preview advance reminder mail for testing
+//view invoice reminder mails for testing
 Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
+Route::get('/reminders', [InvoiceRemindersController::class, 'index'])->name("invoice_reminder");
 // Meters branch
 
 
