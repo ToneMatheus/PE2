@@ -23,6 +23,14 @@ return new class extends Migration
             $table->boolean('is_enabled')->default(true);
             $table->timestamps();
         });
+
+        Schema::create('cron_job_histories', function (Blueprint $table) {
+            $table->id();
+            $table->string('job_name');
+            $table->string('status');
+            $table->timestamp('completed_at');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -32,6 +40,7 @@ return new class extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('cron_job_histories');
         Schema::dropIfExists('cron_jobs');
     }
 };

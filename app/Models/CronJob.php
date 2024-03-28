@@ -11,7 +11,6 @@ class CronJob extends Model
         'scheduled_day',
         'scheduled_month',
         'scheduled_time',
-        'status',
         'is_enabled'
     ];
 

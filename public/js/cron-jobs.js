@@ -22,3 +22,25 @@ function showFields() {
         scheduled_time_field.classList.remove('hidden');
     }
 }
+
+async function showHistory(cronJob) {
+    const historyResponse = await fetch(`/cron-jobs/${cronJob}/history/1`);
+    const historyHtml = await historyResponse.text();
+
+    // Display history data in modal
+    const historyModal = document.querySelector('.history-modal');
+    historyModal.querySelector('.history-content').innerHTML = historyHtml;
+    historyModal.classList.remove('hidden');
+}
+
+async function showHistoryPage(cronJob, page){
+    const historyResponse = await fetch(`/cron-jobs/${cronJob}/history/${page}`);
+    const historyHtml = await historyResponse.text();
+
+    // Display history data in modal
+    document.querySelector('.history-modal').querySelector('.history-content').innerHTML = historyHtml;
+}
+
+function closeHistoryModal() {
+    document.querySelector('.history-modal').classList.add('hidden');
+}
