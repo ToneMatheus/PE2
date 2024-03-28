@@ -51,7 +51,7 @@
     </div>
 
     <div class="mx-auto" style="text-align: center">
-        <h4>Does that description fit you? then <a href="#"><b>Apply now</b></a></h4>
+        <h4>Does that description fit you? then <a href="{{route('jobApply')}}"><b>Apply now</b></a></h4>
     </div>
 
     <!--footer -->
