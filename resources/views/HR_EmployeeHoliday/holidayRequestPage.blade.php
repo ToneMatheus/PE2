@@ -1,13 +1,26 @@
 <?php
     session_start();
-// function debug_to_console($data) 
-    // {
-    //     $output = $data;
-    //     if (is_array($output))
-    //         $output = implode(',', $output);
+
+    $host = '127.0.0.1';
+    $user = 'root';
+    $password = '';
+    $database = 'energy_supplier';
+
+    $link = mysqli_connect($host, $user, $password, $database) or die("Error: no connection can be made to the host");
+    mysqli_select_db($link, $database) or die("Error: the database could not be opened");
+
     
-    //     echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
-    // }
+    $query = "SELECT * FROM `balances` WHERE `id` = 1";
+    $result = $link->query($query) or die("Error: an error has occurred while executing the query.");
+
+   
+    while ($row = mysqli_fetch_array($result))
+    {
+        $credit = $row['yearly_holiday_credit'];
+        
+    }
+
+    // SELECT * FROM `balances`
 
     if(!isset($_SESSION['currentM']))
     {
@@ -231,12 +244,12 @@
                 </td>
             </tr>
         </table>   
-        <div id="errorMsg">
-            <p>The date that you are asking is in the past.</p>
+        <div >
+            <p id="errorMsg">The date that you are asking is in the past.</p>
+            <p id="scsMsg">The request has been send.</p>
+            <p id="errorCredit">Sorry you don't have enough credit. You only have <?php echo $credit; ?> more days.</p>
         </div>
-        <div id="scsMsg">
-            <p>The request has been send.</p>
-        </div>
+        <br>
         <div class="sidebar">
             <label id="label">This label is currently empty</label>
             <button id="cancel" name="cancel" onclick="cnlButton()">Cancel</button>
@@ -250,10 +263,12 @@
         let numGr = 0;
         let numPur = 0;
         let numPink = 0;
+        var div4 = document.getElementById('errorCredit');
 
         function addDate() 
         {
             const selected = document.querySelector(".selected");
+            div4.style.visibility='hidden';
     
             if (selected) 
             {
@@ -282,6 +297,7 @@
                         if (date_now > date2) 
                         {
                             div2.style.visibility='visible'
+                            console.log("<?php echo $credit; ?>")
                         }
                         else
                         {
@@ -443,9 +459,16 @@
 
         function btnClicked()
         {
+            var cre = "<?php echo $credit; ?>";
             if(visBool)
             {
                 cnlButton();
+            }
+            else if(numGr > cre)
+            {
+                
+                div4.style.visibility='visible';
+                console.log('bro, what are you doing??');
             }
             else
             {
