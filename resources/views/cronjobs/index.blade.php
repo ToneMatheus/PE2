@@ -12,6 +12,7 @@
                         <th class="px-4 py-2 bg-gray-200 border-b">Scheduled Day</th>
                         <th class="px-4 py-2 bg-gray-200 border-b">Scheduled Month</th>
                         <th class="px-4 py-2 bg-gray-200 border-b">Scheduled Time</th>
+                        <th class="px-4 py-2 bg-gray-200 border-b">Is Enabled</th>
                         <th class="px-4 py-2 bg-gray-200 border-b">Actions</th>
                     </tr>
                 </thead>
@@ -26,8 +27,13 @@
                             <td class="px-4 py-2 border">{{ $job->name }}</td>
                             <td class="px-4 py-2 border">{{ $job->interval }}</td>
                             <td class="px-4 py-2 border">{{ $job->scheduled_day }}</td>
-                            <td class="px-4 py-2 border">{{ $job->scheduled_month }}</td>
+                            <td class="px-4 py-2 border">
+                                @if ($job->scheduled_month !== null)
+                                    {{ date('F', mktime(0, 0, 0, $job->scheduled_month, 10)) }}
+                                @endif
+                            </td>
                             <td class="px-4 py-2 border">{{ $job->scheduled_time }}</td>
+                            <td class="px-4 py-2 border">{{ $job->is_enabled ? 'Yes' : 'No' }}</td>
                             <td class="px-4 py-2 border">
                                 <div class="flex gap-2">
                                     <form method="POST" action="{{ route('run-cron-job', ['job' => $job->name]) }}">
@@ -35,9 +41,14 @@
                                         <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" type="submit">Run Job</button>
                                     </form>
                                     <a class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" href="{{ route('edit-schedule-cron-job', ['job' => $job->name]) }}">edit</a>
-                                    <form method="POST" action="{{ route('disable-schedule-cron-job', ['job' => $job->name]) }}">
+                                    <form method="POST" action="{{ route('toggle-schedule-cron-job', ['job' => $job->name]) }}">
                                         @csrf
-                                        <button class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded" type="submit">disable</button>
+                                        @if ($job->is_enabled)
+                                            <button class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded" type="submit">disable</button>
+                                        @else
+                                            <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" type="submit">enable</button>
+                                        @endif
+                                        
                                     </form>
                                 </div>
                             </td>

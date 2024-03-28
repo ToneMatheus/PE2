@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('scheduled_day')->nullable();
             $table->integer('scheduled_month')->nullable();
             $table->time('scheduled_time');
+            $table->boolean('is_enabled')->default(true);
             $table->timestamps();
         });
     }

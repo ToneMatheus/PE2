@@ -10,6 +10,12 @@ class CronJob extends Model
         'interval', 
         'scheduled_day',
         'scheduled_month',
-        'scheduled_time'
+        'scheduled_time',
+        'status',
+        'is_enabled'
+    ];
+
+    protected $attributes = [
+        'is_enabled' => true,
     ];
 }

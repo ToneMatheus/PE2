@@ -89,10 +89,11 @@ class CronJobController extends Controller
         return redirect()->back()->with('success', 'Schedule updated successfully');
     }
 
-    public function disable_schedule($job){
+    public function toggle_schedule($job){
         $cronjob = CronJob::where('name', $job)->first(); 
         if ($cronjob != null){
-            $cronjob->delete();
+            $cronjob->is_enabled = !$cronjob->is_enabled;
+            $cronjob->save();
         }
         
         return redirect()->back()->with('success', 'Schedule updated successfully');

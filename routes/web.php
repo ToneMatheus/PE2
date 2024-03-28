@@ -174,7 +174,7 @@ Route::get('/roles', function () {
 Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
 Route::get('/cron-jobs/schedule/edit/{job}', [CronJobController::class, 'edit_schedule'])->name('edit-schedule-cron-job');
 Route::post('/cron-jobs/schedule/store{job}', [CronJobController::class, 'store_schedule'])->name('store-schedule-cron-job');
-Route::post('/cron-jobs/schedule/disable{job}', [CronJobController::class, 'disable_schedule'])->name('disable-schedule-cron-job');
+Route::post('/cron-jobs/schedule/toggle{job}', [CronJobController::class, 'toggle_schedule'])->name('toggle-schedule-cron-job');
 Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
 
 Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
