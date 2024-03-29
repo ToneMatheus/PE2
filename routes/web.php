@@ -165,6 +165,8 @@ Route::get('/roles', function () {
     return view('roleOverview');
 });
 Route::get('/teamOverview', [TeamController::class, 'index']);
+Route::post('/add-team', [TeamController::class, 'addTeam'])->name('add.team');
+
 
 
 //cronjobs
