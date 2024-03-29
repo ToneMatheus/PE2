@@ -130,7 +130,7 @@ class InvoiceController extends Controller
                 Invoice_line::create($consumption, $invoice->id);
             }
             
-            $credit_notes = DB::table('users')->join('credit_notes', $customer->id , '=', 'credit_notes.user_id')->select('credit-notes.*');
+            $credit_notes = CreditNote::where('user_id', $customer->id);
             if($credit_notes != null){
                 foreach($credit_notes as $note){
                     $creditNoteLines = $note->lines();

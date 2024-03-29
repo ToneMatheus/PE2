@@ -1,7 +1,8 @@
 @extends('layouts.main_layout')
 
 @section('content')
-    <div class="flex justify-center align-center flex-col w-1/2 p-4">
+    <div class="flex justify-center align-center flex-col p-4">
+        <a href="{{ URL::previous() }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 self-start rounded">Back</a>    
         <h2 class="font-bold text-lg mt-2">Create Credit Note</h2>
         <form method="POST" action="{{ route('credit-notes.store') }}">
             @csrf
