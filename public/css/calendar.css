@@ -139,7 +139,12 @@ table{
   visibility: hidden;
   color:darkgreen;
 }
-#floBtn
+#floBtn ,#floBtnB
 {
   float: right;
+}
+#errorCredit
+{
+  color:lightsalmon;
+  visibility: hidden;
 }
