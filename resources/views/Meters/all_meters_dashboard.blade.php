@@ -40,10 +40,9 @@
                     </select>
                 </td>
                 <td><button type="submit">Apply changes</button></td>
+                </form>
             </tr>
         @endforeach
     </table>
-    
-    </form>
 </body>
 </html>
