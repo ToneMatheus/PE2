@@ -68,23 +68,23 @@ Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
 
 });
 
-Route::middleware(['checkUserRole:FINANCE_ANALYST'])->group(function() {
+Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(function() {
 
 });
 
-Route::middleware(['checkUserRole:EXECUTIVE_MANAGER'])->group(function() {
+Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group(function() {
 
 });
 
-Route::middleware(['checkUserRole:CUSTOMER_SERVICE'])->group(function() {
+Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(function() {
 
 });
 
-Route::middleware(['checkUserRole:CUSTOMER'])->group(function() {
+Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function() {
 
 });
 
-Route::middleware(['checkUserRole:FIELD_TECHNICIAN'])->group(function() {
+Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
 
 });
 
@@ -106,7 +106,7 @@ Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_m
 
 
 //Meters Group
-Route::get('/dashboard', [MeterController::class, 'viewScheduledMeters']);
+Route::get('/meters_dashboard', [MeterController::class, 'viewScheduledMeters']);
 Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters']);
 Route::put('/all_meters_dashboard', [MeterController::class, 'assignment'])->name("assignment_change");
 
