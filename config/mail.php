@@ -95,6 +95,7 @@ return [
                 'postmark',
             ],
         ],
+        'mailtrap'=> 'mailtrap'
     ],
 
     /*

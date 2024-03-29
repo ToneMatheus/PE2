@@ -1,6 +1,3 @@
-.is-invalid{
-    color: red;
-}
-.alert{
-    color: red;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

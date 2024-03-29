@@ -16,6 +16,11 @@ return new class extends Migration
             $table->bigInteger('product_id')->unsigned();
             $table->bigInteger('tariff_id')->unsigned();
         });
+
+        Schema::table('product_tariffs', function (Blueprint $table) {
+            $table->foreign('product_id')->references('id')->on('products');
+            $table->foreign('tariff_id')->references('id')->on('tariffs');
+        });
     }
 
     public function down()
