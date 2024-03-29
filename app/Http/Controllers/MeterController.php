@@ -86,14 +86,15 @@ class MeterController extends Controller
     }
 
     public function viewAllMeters(Request $request) {
-        $results = DB::select('SELECT u.first_name, u.last_name, addresses.street, addresses.number, addresses.postal_code, addresses.city, meters.EAN, meters.ID AS meter_id, e.first_name AS assigned_to FROM users as u
+        $results = DB::select('SELECT u.id, u.first_name, u.last_name, addresses.street, addresses.number, addresses.postal_code, addresses.city, meters.EAN, meters.ID AS meter_id, meter_reader_schedules.id, e.first_name AS assigned_to FROM users as u
         RIGHT JOIN customer_addresses on u.id = customer_addresses.user_id
         RIGHT JOIN addresses on customer_addresses.address_id = addresses.id
         RIGHT JOIN meter_addresses on addresses.id = meter_addresses.address_id
         RIGHT JOIN meters on meter_addresses.meter_id = meters.id
         RIGHT JOIN meter_reader_schedules on meters.id = meter_reader_schedules.meter_id
         RIGHT JOIN users e on e.employee_profile_id = meter_reader_schedules.employee_profile_id
-        WHERE meter_reader_schedules.reading_date = \'2024-03-21\';');
+        WHERE meter_reader_schedules.reading_date = \'2024-03-21\'
+        ORDER BY u.id;');
 
         $employees = DB::select('SELECT u.first_name, u.employee_profile_id AS employee_id FROM users as u
         WHERE u.employee_profile_id IS NOT NULL;');
@@ -104,9 +105,12 @@ class MeterController extends Controller
     public function assignment(Request $request) {
         $meter_id = $request->input('meter_id');
         $assignment = $request->input('assignment');
+        $id = DB::select('SELECT id FROM meter_reader_schedules WHERE meter_id = ?', [$meter_id]);
 
-        DB::update('UPDATE meter_reader_schedules SET employee_profile_id = ? WHERE meter_id = ?', [intval($assignment). intval($meter_id)]);
-       // DB::update('UPDATE meter_reader_schedules SET employee_profile_id = 3 WHERE meter_id = 5');
+        $data = Meter_Reader_Schedule::find($id[0]->id);
+        $data->employee_profile_id = $assignment;
+        $data->timestamps=false;
+        $data->save();
 
         return redirect('/all_meters_dashboard');
     }
