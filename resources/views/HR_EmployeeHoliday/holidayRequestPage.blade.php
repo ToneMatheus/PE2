@@ -270,15 +270,28 @@
         var div4 = document.getElementById('errorCredit');
         var btn1 = document.getElementById('floBtnB');
         var arrWe = [];
+        var toDay = new Date();
 
         var M = <?php 
         if(isset($_SESSION['currentM']))
-            echo "$t";
+            echo "$currentMonth";
         else
             echo 0;
         ?>;
 
-        if(M > 3)
+        var Y = <?php 
+        if(isset($_SESSION['currentY']))
+            echo "$currentYear";
+        else
+            echo 0;
+        ?>;
+        //M--;
+        console.log("M: " + M + "\n" + "Y: " + Y);
+        var noDay = new Date(Y+"-"+M+"-"+"1")
+        console.log("cal: " +noDay);
+
+        if(noDay > toDay)
+        //if(toDay < 3)
         {
             btn1.disabled = false;
         }

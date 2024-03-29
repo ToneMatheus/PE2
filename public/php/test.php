@@ -90,7 +90,7 @@ else if(isset($_POST['pink']) && isset($_POST['dayNum']))
 }
 else if(isset($_POST['button']))
 {
-    
+    // TODO: send the month (and maybe year) to the request
     if(isset($_SESSION['user']['green']))
     {
         $array =  $_SESSION['numCal'];
