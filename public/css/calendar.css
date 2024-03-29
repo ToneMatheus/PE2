@@ -139,7 +139,7 @@ table{
   visibility: hidden;
   color:darkgreen;
 }
-#floBtn
+#floBtn ,#floBtnB
 {
   float: right;
 }

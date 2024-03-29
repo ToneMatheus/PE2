@@ -174,12 +174,12 @@
             $numMonth = $currentMonth - 1;
             
             
-            echo "<form method='get'><button id='floBtn' name='cncel' value=''>home</button><button id='floBtn' name='Mf' value='$t'>next</button><button id='floBtn' name='Mb' value='$t'>back</button></form>";
+            echo "<form method='get'><button id='floBtn' name='cncel' value=''>home</button><button id='floBtn' name='Mf' value='$t'>next</button><button id='floBtnB' name='Mb' value='$t' disabled>back</button></form>";
             echo "<h1 id='monthName'> $monthsName[$numMonth] </h1>";
             
             if(isset($_GET['cncel']))
             {
-                echo "pressed";
+                // echo "pressed";
                 
                 unset($_SESSION['currentM']);
                 unset($_SESSION['currentY']);
@@ -268,7 +268,22 @@
         let numPur = 0;
         let numPink = 0;
         var div4 = document.getElementById('errorCredit');
+        var btn1 = document.getElementById('floBtnB');
         var arrWe = [];
+
+        var M = <?php 
+        if(isset($_SESSION['currentM']))
+            echo "$t";
+        else
+            echo 0;
+        ?>;
+
+        if(M > 3)
+        {
+            btn1.disabled = false;
+        }
+
+
 
         function addDate() 
         {
