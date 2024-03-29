@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'Customer Invoices' => 'Klantfacturen',
+    'Customer Invoices' => 'facturen',
     'Invoices' => 'Facturen',
     'Total Amount to be paid' => 'Totaal te betalen bedrag',
     'Amount' => 'Bedrag',

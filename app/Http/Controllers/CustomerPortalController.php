@@ -43,7 +43,7 @@ class CustomerPortalController extends Controller
             $query->where('status', $status);
         }
 
-    
+        $query->orderBy('invoice_date', 'desc');
         $invoices = $query->paginate(10);
         return view('Customers/CustomerInvoiceView', compact('invoices', 'sentInvoicesSum'));
     }

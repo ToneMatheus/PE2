@@ -74,7 +74,6 @@
 
                     <div>
                         <span class="relative z-0 inline-flex shadow-sm ml-2">
-                            <!-- Previous Page Link -->
                             @if ($invoices->onFirstPage())
                                 <span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5">
                                     &laquo; {!! __('pagination.Previous') !!}
@@ -85,7 +84,6 @@
                                 </a>
                             @endif
 
-                            <!-- Pagination Elements Here -->
                             @foreach (range(1, $invoices->lastPage()) as $i)
                                 @if ($i == $invoices->currentPage())
                                     <span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5">{{ $i }}</span>
@@ -94,7 +92,6 @@
                                 @endif
                             @endforeach
 
-                            <!-- Next Page Link -->
                             @if ($invoices->hasMorePages())
                                 <a href="{{ $invoices->nextPageUrl() }}" class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 leading-5 hover:text-gray-700">
                                     {!! __('pagination.Next') !!} &raquo;
