@@ -8,6 +8,31 @@
         <link href="/css/nav.css" rel="stylesheet" type="text/css"/>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <title>Hiring manager page</title>
+
+        <script>
+          function check()
+          {
+              var title = document.getElementById('title').value;
+              var desc = document.getElementById('desc').value;
+  
+              if(title == "" || desc == "")
+              {
+                  if(title == "")
+                  {
+                      document.getElementById('title').placeholder = 'This field in required!'
+                  }
+  
+                  if(desc == "")
+                  {
+                      document.getElementById('desc').placeholder = "This field is required!"
+                  }
+                  
+              return false;
+              }
+  
+              return true;
+          }
+      </script>
     </head>
     <body style="background-color: #a2bce0;">
         <nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary">
@@ -32,11 +57,11 @@
         <h1 style="text-align: center; margin: 80px 0px; "><u>Hiring manager</u></h1>
         <div class="container-trui">
             <div class="c col-4">   
-                <form action="#">
+                <form action="#" onsubmit="return check()">
                     <fieldset>
                         <legend>Add job opportunity</legend>
                         <div class="form-group">
-                            <label for="title">Job title:</label>
+                            <label for="title">Job title: *</label>
                             <input type="text" class="form-control" id="title">
                         </div>
                         <div class="form-group">
@@ -44,11 +69,11 @@
                             <input type="text" class="form-control" id="img">
                         </div>
                         <div class="form-group">
-                            <label for="desc">Job description:</label>
+                            <label for="desc">Job description: *</label>
                             <textarea class="form-control" id="desc" rows="3"></textarea>
                         </div>
                     </fieldset>
-                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                    <button type="submit" class="btn btn-primary">Add offer</button>
                 </form>
             </div>
     
