@@ -44,8 +44,9 @@ class User extends Authenticatable
         'company_name',
         'phone_nbr',
         'birth_date',
-        'is_activate',
+        'is_active',
         'email',
+        'title'
     ];
 
     public static function validate(array $input): bool
@@ -72,4 +73,24 @@ class User extends Authenticatable
     // {
     //     return $this->role === $role;
     // }
+
+    public function team_members(): HasMany
+    {
+        return $this->hasMany(Team_Member::class);
+    }  
+
+    public function user_roles(): HasMany
+    {
+        return $this->hasMany(User_Role::class);
+    }  
+
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class);
+    }  
+    
+    public function employee_profile(): BelongsTo
+    {
+        return $this->belongsTo(Employee_Profile::class);
+    }
 }

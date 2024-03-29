@@ -24,10 +24,10 @@ class Estimation extends Model
         'meter_id'
     ];
 
-    /*public function meter(): BelongsTo
+    public function meter(): BelongsTo
     {
         return $this->belongsTo(Meter::class);
-    }*/
+    }
 
     use HasFactory;
 }
