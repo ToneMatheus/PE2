@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('username', 50);
             $table->string('first_name', 50);
             $table->string('last_name', 50);
-            $table->string('password', 100);
+            $table->string('phone_nbr', 100);
             $table->bigInteger('employee_profile_id')->unsigned()->nullable();
             $table->unsignedTinyInteger('is_company')->default(0);
             $table->string('company_name', 50)->nullable();

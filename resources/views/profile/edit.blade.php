@@ -19,6 +19,16 @@
                 </div>
             </div>
 
+            <!-- LOOK om hier een foreach loop te zetten -->
+            {{--@foreach ($addresses as $address)--}}
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                <div class="max-w-xl">
+                    {{--@include('profile.partials.update-address-form', ['address' => $address])--}}
+                    @include('profile.partials.update-address-form')
+                </div>
+            </div>
+            {{--@endforeach--}}
+
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     @include('profile.partials.delete-user-form')

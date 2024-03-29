@@ -9,18 +9,40 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
+use App\Mail\ConfirmationMailRegistration;
+use Illuminate\Support\Facades\Mail;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    public const VALIDATION_RULE_USERNAME = ['required'];
+    public $timestamps = false;
+
+    public const VALIDATION_RULE_USERNAME = ['string', 'max:255', 'required'];
     public const VALIDATION_RULE_FIRST_NAME = ['required'];
     public const VALIDATION_RULE_LAST_NAME = ['required'];
-    public const VALIDATION_RULE_PASSWORD = ['required'];
-    public const VALIDATION_RULE_EMAIL = ['required'];
+    public const VALIDATION_RULE_PASSWORD = ['required', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'];
+    public const VALIDATION_RULE_EMAIL = ['required', 'email'];
     public const VALIDATION_RULE_PHONE_NBR = ['required'];
-    public const VALIDATION_RULE_BIRTHDATE = ['required'];
+    public const VALIDATION_RULE_BIRTHDATE = ['required', 'date', 'before:-18 years', 'after:-150 years'];
+
+    public const VALIDATION_MESSAGES = [
+        'username.required' => 'Username is required',
+        'first_name.required' => 'First name is required',
+        'last_name.required' => 'Last name is required',
+        'password.required' => 'Password is required',
+        'password.min' => 'Password must be at least 8 characters long',
+        'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, and one number',
+        'email.required' => 'Email is required',
+        'email.email' => 'Invalid email format',
+        'email.unique' => 'Email already exists',
+        'phone_nbr.required' => 'Phone number is required',
+        'birth_date.required' => 'Birth date is required',
+        'birth_date.date' => 'Invalid date format',
+        'birth_date.before' => 'You need to be older. At least 18 years old',
+        'birth_date.after' => 'Birth date is too old',
+    ];
 
     public const VALIDATION_RULES = [
             'username' => self::VALIDATION_RULE_USERNAME,
@@ -29,7 +51,7 @@ class User extends Authenticatable
             'password' => self::VALIDATION_RULE_PASSWORD,
             'email' => self::VALIDATION_RULE_EMAIL,
             'phone_nbr' => self::VALIDATION_RULE_PHONE_NBR,
-            // 'birth_date' => self::VALIDATION_RULE_BIRTHDATE,
+            'birth_date' => self::VALIDATION_RULE_BIRTHDATE,
     ];
 
     protected $table = 'users';
@@ -63,8 +85,22 @@ class User extends Authenticatable
         return $this->hasMany(CreditNote::class);
     }
 
+    //TEST dit mag weg als van ProfileController lijn 53 - 60 werkt.
+    // public function saveWithoutEmail()
+    // {
+    //     $email = $this->email;
 
-    //! de onderstaande functie zou moeten toe gevoegd worden. afhenkelijk van wat er gedaan wordt met het role systeem.
+    //     // dd($this->getOriginal('email'));
+    //     $this->email = $this->getOriginal('email');
+
+    //     $this->save();
+
+    //     $this->email = $email;
+    // }
+    //TEST tot hier
+
+
+    //! de onderstaande functie zou moeten toe gevoegd worden. afhenkelijk van wat er gedaan wordt met het role systeem. voor creation van een nieuwe employee
     // public function hasRole($role)
     // {
     //     return $this->role === $role;
