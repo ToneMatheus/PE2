@@ -55,6 +55,8 @@
 
     <div class="table-container">
         <?php
+            $wee = array();
+
             $currentMonth1 = date('n');
             $currentYear1 = date('Y');
             if(isset($_GET['Mf']))
@@ -209,6 +211,8 @@
                     {
                         $class = isset($_SESSION['addedCells'][$dayCount]) ? 'added' : '';
                         echo "<td class='{$class} weekend'>{$dayCount}</td>";
+                        array_push($wee, "$dayCount");
+                        //$wee = ["$dayCount"];
                         $dayCount++;
                     } 
                     else 
@@ -264,6 +268,7 @@
         let numPur = 0;
         let numPink = 0;
         var div4 = document.getElementById('errorCredit');
+        var arrWe = [];
 
         function addDate() 
         {
@@ -291,7 +296,8 @@
                        var dayNum = $idNum;
                         var date_now = new Date();
                         var idnum = <?php if(isset($_POST['idNum'])){echo $_POST['idNum'];}else{ echo 0;} ?>;
-                        var date2    = new Date("2024-03-" + dayNum);
+                        var dateMonth = <?php if(isset($_SESSION['currentM'])){echo $_SESSION['currentM'];}else{ echo 0;} ?>;
+                        var date2    = new Date("2024-" + dateMonth + "-" + dayNum);
                         var div2 = document.getElementById('errorMsg');
                         // check if date is in the past
                         if (date_now > date2) 
@@ -305,7 +311,23 @@
                             selected.classList.add("added");
                             $color = 'green';
                             //console.log($color  + " " +$idNum);
-                            numGr++;
+                            // console.log(<?php
+                            //     $js_array = json_encode($wee);
+                            //     echo "$js_array";
+                            // ?>);
+                            arrWe = (<?php
+                                $js_array = json_encode($wee);
+                                echo "$js_array";
+                            ?>);
+
+                            console.log(arrWe);
+                            console.log(dayNum);
+
+                            if(!arrWe.includes(dayNum))
+                            {
+                                numGr++;
+                            }
+                            console.log(numGr);
                             countColor('green=', numGr)
                         }
                        
@@ -431,31 +453,35 @@
 
         function countColor($color, $num)
         {
-            var xhr = new XMLHttpRequest();
-            if (xhr == null) 
+            if($num != 0)
             {
-                alert("Browser does not support HTTP Request");
-            } 
-            else 
-            {
-                var url = "{{ asset('php/test.php') }}";
-                var idNum = $idNum;
-                //var color = $color;
-                var color = $num;
-                var params = "dayNum=" + encodeURIComponent(idNum) + "&" + $color + encodeURIComponent(color);
-                //params += "color=" + $color;
-                xhr.open("POST", url, true);
-                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState == 4 && xhr.status == 200) 
-                    {
-                        // Handle the response from the server if needed
-                        console.log(xhr.responseText);
-                    }
-                };
-                xhr.send(params);
+                var xhr = new XMLHttpRequest();
+                if (xhr == null) 
+                {
+                    alert("Browser does not support HTTP Request");
+                } 
+                else 
+                {
+                    var url = "{{ asset('php/test.php') }}";
+                    var idNum = $idNum;
+                    //var color = $color;
+                    var color = $num;
+                    var params = "dayNum=" + encodeURIComponent(idNum) + "&" + $color + encodeURIComponent(color);
+                    //params += "color=" + $color;
+                    xhr.open("POST", url, true);
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) 
+                        {
+                            // Handle the response from the server if needed
+                            console.log(xhr.responseText);
+                        }
+                    };
+                    xhr.send(params);
+                }
             }
         }
+
 
         function btnClicked()
         {
