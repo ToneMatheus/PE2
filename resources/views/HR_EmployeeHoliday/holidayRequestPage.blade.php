@@ -299,6 +299,7 @@
                 else if (selected.classList.contains('added'))
                 {
                     selected.classList.remove("added");
+                    numGr--;
                     // updateSession(selected.textContent, 'remove');
                 }
                 else
