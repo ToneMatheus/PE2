@@ -24,9 +24,6 @@
                   <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="#">Jobs</a>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{{route('hiringManager')}}">Hiring manager</a>
-                  </li>
                 </ul>
               </div>
             </div>
