@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -18,8 +17,8 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userid = Auth::user()->id;
-        $isCompany = DB::table('users')->select('is_company')->where('id', $userid)->first()->is_company;
+        $user = Auth::user();
+        $isCompany = $user->is_company;
         $companyNameRules = $isCompany ? 'required' : '';
 
         return [

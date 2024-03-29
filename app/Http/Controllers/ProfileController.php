@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\AddressUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,12 +25,12 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        // $customerAdresses = DB::table('customer_addresses')->where('user_id', $request->user()->id)->get();
-        $customerAdresses = Customer_Address::where('user_id',$request->user()->id )->get();
+        $customerAddresses = Customer_Address::where('user_id', $request->user()->id)->get();
+
 
         $addresses = [];
 
-        foreach($customerAdresses as $cusadr){
+        foreach($customerAddresses as $cusadr){
             $addresses[] = Address::where('id', $cusadr->address_id)->first();
             // $addresses[] = DB::table('addresses')->where('id', $cusadr->address_id)->first();
         }
@@ -37,10 +38,12 @@ class ProfileController extends Controller
         return view('profile.edit', [
             'user' => $request->user(),
             'addresses' => $addresses,
-            'address' => $addresses[0],
-            'test' => 'test',
         ]);
     }
+
+    /**
+     * Update the user profile info
+     */
 
     public function updateProfile(ProfileUpdateRequest $request): RedirectResponse
     {
@@ -48,8 +51,14 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        $user->saveWithoutEmail();
-        
+        //TEST test dit of dit werkt. want krijg nu deze error "Trying to access array offset on value of type null" maar denk dat het komt omdat de mailserver zijn max limiet bereikt heeft
+        // $user->saveWithoutEmail();
+
+        $email = $user->email;
+        $user->email = $user->getOriginal('email');
+        $user->save();
+        $user->email = $email;
+        //TEST tot hier
             if ($user->isDirty('email')) 
             {
                 Mail::to($user->email)->send(new ConfirmationMailRegistration($user));
@@ -115,9 +124,10 @@ class ProfileController extends Controller
     /**
      * Update the user address
      */
-    public function updateAddress(ProfileUpdateRequest $request): RedirectResponse
+    public function updateAddress(AddressUpdateRequest $request): RedirectResponse
     {
-        dd($request->Address);
+        dd($request->Address());
+
     }
 
     /**

@@ -85,17 +85,19 @@ class User extends Authenticatable
         return $this->hasMany(CreditNote::class);
     }
 
-    public function saveWithoutEmail()
-    {
-        $email = $this->email;
+    //TEST dit mag weg als van ProfileController lijn 53 - 60 werkt.
+    // public function saveWithoutEmail()
+    // {
+    //     $email = $this->email;
 
-        // dd($this->getOriginal('email'));
-        $this->email = $this->getOriginal('email');
+    //     // dd($this->getOriginal('email'));
+    //     $this->email = $this->getOriginal('email');
 
-        $this->save();
+    //     $this->save();
 
-        $this->email = $email;
-    }
+    //     $this->email = $email;
+    // }
+    //TEST tot hier
 
 
     //! de onderstaande functie zou moeten toe gevoegd worden. afhenkelijk van wat er gedaan wordt met het role systeem. voor creation van een nieuwe employee
