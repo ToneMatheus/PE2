@@ -30,6 +30,8 @@ use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\NewEmployeeController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +47,10 @@ use App\Http\Controllers\ContractController;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/temp', function () {
+    return view('welcome_temp');
+});
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -58,34 +64,36 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
+Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
+    
+});
 
-//Role system
-//Customer
-Route::middleware(['auth', 'role:Customer'])->group(function (){
+Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
 
 });
 
-//Employee
-Route::middleware(['auth', 'notrole:Customer'])->group(function (){
-    //Only Finance
-    Route::middleware(['auth', 'role:Finance analyst'])->group(function () {
-
-    });
-
-    //Only Manager
-    Route::middleware(['auth', 'role:Manager'])->group(function (){
-
-    });
-
-    //Only Executive Manager
-    Route::middleware(['auth', 'role:Executive Manager'])->group(function (){
-
-    });
-
-    //Every Employee
-
-    //Route::get('/profile', [myController::class, 'profile'])->name('profile');
+Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(function() {
+    
 });
+
+Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group(function() {
+    
+});
+
+Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(function() {
+    
+});
+
+Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function() {
+    
+});
+
+Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
+    
+});
+
+// EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
+
 
 Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
 Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
@@ -102,7 +110,7 @@ Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_m
 
 
 //Meters Group
-Route::get('/dashboard', [MeterController::class, 'viewScheduledMeters']);
+Route::get('/meters_dashboard', [MeterController::class, 'viewScheduledMeters']);
 Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters']);
 Route::put('/all_meters_dashboard', [MeterController::class, 'assignment'])->name("assignment_change");
 
@@ -132,8 +140,9 @@ Route::get('/Consumption_Readings', [MeterController::class, 'showConsumptionRea
 //to download the pdf of the contract and salary pages
 Route::get('/downloadPayslip', [DomPDFController::class, 'getPaySlipPDF'])->name('downloadPayslip');
 Route::get('/downloadContract', [DomPDFController::class, 'getContractPDF'])->name('downloadContract');
+Route::get('/downloadBenefits', [DomPDFController::class, 'getBenefitsPDF'])->name('downloadBenefits');
 
-//the routes to the pages
+//the routes to most of the hr pages
 Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
 Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
@@ -141,6 +150,12 @@ Route::get('/profileEmployee', [myController::class, 'profile'])->name('profile'
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
 Route::get('/managerList', [myController::class, 'managerList'])->name('managerList');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
+Route::get('/employeeBenefits', [myController::class, 'benefits'])->name('employeeBenefits');
+Route::post('/profileEmployee/{id}', [myController::class, 'store'])->name('storeTaskData');
+Route::get('/hiringManger', [myController::class, 'hiringManager'])->name('hiringManager');
+Route::get('/jobOffers', [myController::class, 'jobs'])->name('jobs');
+Route::get('/jobDescription', [myController::class, 'jobDescription'])->name('jobDescription');
+Route::get('/jobApply', [myController::class, 'jobApply'])->name('jobApply');
 
 // routes for relations controlelr
 Route::get('/relations', [RelationsController::class, 'fetchRelations']);
@@ -168,6 +183,9 @@ Route::get('/teamOverview', [TeamController::class, 'index']);
 Route::post('/add-team', [TeamController::class, 'addTeam'])->name('add.team');
 
 
+Route::get('/newEmployee', [NewEmployeeController::class, 'showNewEmployee'])->name('newEmployee');
+Route::post('/newEmployee/add', [NewEmployeeController::class, 'processEmployee'])->name('newEmployee.add');
+
 
 //cronjobs
 Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
@@ -180,6 +198,8 @@ Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->na
 
 //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
 Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
+Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
+
 
 Route::get('/test', function () {
     return view('test');

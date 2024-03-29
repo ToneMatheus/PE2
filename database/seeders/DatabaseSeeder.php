@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             Employee\HolidayTypeSeeder::class,
             Employee\BalanceSeeder::class,
             Employee\HolidaySeeder::class,
+            Employee\TeamsSeeder::class,
+            Employee\TeamMembersSeeder::class,
 
             Customer\CustomerContractSeeder::class,
             Customer\CustomerAddressSeeder::class,

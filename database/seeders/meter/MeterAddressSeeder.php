@@ -13,12 +13,12 @@ class MeterAddressSeeder extends Seeder
     {
         $adds = [];
 
-        for($i=1; $i <= 7; $i++){
+        for($i=3; $i <= 10; $i++){
             $adds[] = [
                 'start_date' => '2024-01-01',
                 'end_date' => null,
                 'address_id' => $i,
-                'meter_id' => $i
+                'meter_id' => $i-2
             ];
         }
 

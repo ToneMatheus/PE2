@@ -24,5 +24,15 @@
 
             return $pdf->download('contract.pdf');
         }
+
+        public function getBenefitsPDF(Request $request){
+            $data = [
+                'title' => 'Your benefits'
+            ];
+
+            $pdf = PDF::loadView('employeeBenefitsView', $data);
+
+            return $pdf->download('employee_benefits.pdf');
+        }
     }
 ?>

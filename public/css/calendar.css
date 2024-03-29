@@ -24,6 +24,11 @@ th, td
   margin-top: 20px;
 }
 
+.weekend
+{
+  background-color: darkgrey;
+}
+
 .added 
 {
   background-color: rgb(4, 185, 22);
@@ -133,4 +138,13 @@ table{
 {
   visibility: hidden;
   color:darkgreen;
+}
+#floBtn ,#floBtnB
+{
+  float: right;
+}
+#errorCredit
+{
+  color:lightsalmon;
+  visibility: hidden;
 }

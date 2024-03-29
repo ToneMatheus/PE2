@@ -1,0 +1,12 @@
+.c{
+    padding-top: 50px;
+}
+
+.container-trui{
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+}

@@ -57,20 +57,26 @@
         $manager_user = DB::select("select * from users where id = $manager_id");
         echo("<h4>Employees managed by " . $manager_user[0]->first_name . "</h4>");
 
-        $employee_manager_relation = DB::select("select * from leader_relations where leader_id = $manager_id and relation = 'manager'");
+        //$employee_manager_relation = DB::select("SELECT * FROM users INNER JOIN team_members ON team_members.user_id = users.id WHERE team_members.is_manager = 0");
+        $team_members = [];
 
+        $manager_team = DB::select("select team_id from team_members where user_id = $manager_id");
+        $employee_manager_relation = DB::select("select * from team_members where team_id = " . $manager_team[0]->team_id. " and is_manager = 0");
 
         $all_requests = [];
 
         foreach ($employee_manager_relation as $relation) {
+            $team_members = DB::select("select * from users where id = $relation->user_id");
+            $emp_profile_id = $team_members[0]->employee_profile_id;
+
             // Fetch holidays for the current employee
-            $requests = DB::select("select * from holidays where employee_profile_id = " . $relation->employee_id . " and is_active = 1");
+            $requests = DB::select("SELECT * FROM holidays WHERE employee_profile_id = $emp_profile_id AND is_active = 1");
             
             // Append the requests for the current employee to the array
             $all_requests = array_merge($all_requests, $requests);
 
             // Select the employee profiles under this manager
-            $employees = DB::select("select * from users where employee_profile_id = " . $relation->employee_id);
+            $employees = DB::select("select * from users where employee_profile_id = $emp_profile_id");
             
             // Output the employee names
             if(!empty($employees)){
@@ -90,11 +96,14 @@
             echo("</table>");
         }
 
+        echo("<h4>Chat</h4>");
+        echo("<textarea></textarea>");
+        echo("<button>Click me</button>");
         echo("<br/><br/>");
 
         if(!empty($all_requests)){
             echo("<h3>Holiday requests</h3><br/>");
-            echo("<table><th>Request date</th><th>Employee name</th><th>Start date</th><th>End date</th><th>Holiday type</th><th>Actions</th>");
+            echo("<table><th>Request date</th><th>Employee name</th><th>Start date</th><th>End date</th><th>Number of days</th><th>Holiday type</th><th>Actions</th>");
             foreach ($all_requests as $request) {
                 // Getting the name of the employee that made the request
                 $employee_id = $request->employee_profile_id;
@@ -104,6 +113,12 @@
                 $fullname = DB::select("select first_name, last_name from users where employee_profile_id = $employee_id");
                 $holiday_type_name = DB::select("select * from holiday_types where id = $holiday_type");
 
+                $startDate = Carbon::parse($request->start_date);
+                $endDate = Carbon::parse($request->end_date);
+
+                // Calculate the difference in days
+                $diffInDays = $endDate->diffInDays($startDate);
+                $diffInDays += 1;
 
                 echo("
                     <tr>
@@ -111,6 +126,7 @@
                         <td>" . $fullname[0]->first_name . " " . $fullname[0]->last_name . "</td>
                         <td>$request->start_date</td>
                         <td>$request->end_date</td>
+                        <td>$diffInDays</td>
                         <td>" . $holiday_type_name[0]->type ."</td>
                         <td><a href=\"" . route('managerPage', ['accept' => 1, 'id' => $employee_id, 'req_id' => $request_id, 'manager_id' => $manager_id ]) . "\"><button class=\"accept\">Accept</button></a> 
                         <a href=\"" . route('managerPage', ['decline' => 1, 'id' => $employee_id, 'req_id' => $request_id, 'manager_id' => $manager_id ]) . "\"><button class=\"reject\">Decline</button></a> </td>
@@ -140,20 +156,22 @@
             $all_requests2 = [];
 
             foreach ($employee_manager_relation as $relation) {
+                $team_members = DB::select("select * from users where id = $relation->user_id");
+
                 // Fetch holidays for the current employee
-                $requests = DB::select("select * from holidays where employee_profile_id = " . $relation->employee_id . " and is_active = 0 and manager_approval = 1 order by start_date");
+                $requests = DB::select("select * from holidays where employee_profile_id = " . $team_members[0]->employee_profile_id . " and is_active = 0 and manager_approval = 1 order by start_date");
                 
                 // Append the requests for the current employee to the array
                 $all_requests2 = array_merge($all_requests2, $requests);
 
                 // Select the employee profiles under this manager
-                $employees = DB::select("select * from users where employee_profile_id = " . $relation->employee_id);
+                $employees = DB::select("select * from users where employee_profile_id = " . $team_members[0]->employee_profile_id);
                 
             }
 
 
             if (!empty($all_requests2)) {
-                echo("<h2>Holiday overview</h2><br/>");
+                echo("<div class=\"col-10\"><h2>Holiday overview</h2><br/>");
                 // Initialize variables
                 $previousMonth = null;
                 $legendDisplayed = false;
@@ -173,7 +191,7 @@
                 foreach ($holidaysByMonth as $monthYear => $holidays) {
                     list($fullMonthName, $year) = explode(' ', $monthYear);
                     echo("<h4>$fullMonthName $year</h4>");
-                    echo("<table>");
+                    echo("<table style=\"float: left\">");
                     echo('<tr>');
                     echo("<td>Name</td>");
 
@@ -238,6 +256,7 @@
                     echo('</div>');
                     $legendDisplayed = true;
                 }
+                echo("</div>");
             }
 
     @endphp

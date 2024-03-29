@@ -4,13 +4,16 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <link href="/css/hiringManger.css" rel="stylesheet" type="text/css"/>
+        <link href="/css/contract.css" rel="stylesheet" type="text/css"/>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <title>Hiring manager page</title>
+        <title>Employee benefits</title>
     </head>
-    <body>
-        <form>
-            
-        </form>
+    <body class="body">
+        <div class="container">
+            <div class="content">
+                @include('employeeBenefitsView');
+            </div>
+            <a style="margin-left: 900px;" href="{{route('downloadBenefits')}}"><button>Download pdf</button></a>
+        </div>
     </body>
 </html>

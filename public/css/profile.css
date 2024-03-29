@@ -9,25 +9,26 @@
     display: flex;
     justify-content: space-between;
     font-size: 17px;
-    padding: 0px 150px;
-}
-
-/*adding borders to each div*/
-.container-trui div:not(.text, .right-side, .salary, .contract){
-    border: 2px solid black;
-    background-color: white;
+    padding: 0px 70px;
 }
 
 /*sizing the image*/
 .profile-image{
-    width: 200px;
+    width: 100px;
+    border-radius: 100%;
+    padding-top: 20px;
+}
+
+.top{
+    background-color:rgb(188, 186, 186);
 }
 
 /*adjusting the div that contains the image*/
 .profile-card{
     text-align: center;
-    padding: 20px;
-    height: 340px;
+    padding: 10px;
+    background-color: white;
+    width: 23%;
 }
 
 .details{
@@ -65,34 +66,41 @@
     color: black;
 }
 
-.text{
-    font-weight: bold;
-    display: inline-block;
-    width: 200px;
-}
-
 /*employee name*/
 .name{
     font-size: 30px;
 }
 
 /*the contract box*/
-.contract{
+.news{
     margin-top: 20px;
-    height: 300px;
+    height: 150px;
     background-color: white;
     color: black;
     box-shadow: 2px 2px 2px;
     padding: 10px;
 }
 
-.contract:hover{
-    box-shadow: none;
-    background-color: #323031;
-    color: white;
-    text-decoration: none;
+.middle div{
+    width: 750px;
+    
 }
 
-h5{
-    padding-top: 15px;
+.card{
+    margin-top: 20px;
 }
+
+.card li:hover{
+    background-color: rgb(176, 176, 176);
+}
+
+.card a{
+    text-decoration: none;
+    color: black;
+}
+
+.card a:hover{
+    text-decoration: none;
+    color: black;
+}
+

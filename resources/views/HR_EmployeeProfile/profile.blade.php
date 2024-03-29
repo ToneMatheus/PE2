@@ -40,6 +40,7 @@
             $notes = htmlspecialchars($detail->notes);
             $job = htmlspecialchars($detail->job);
             $dept = htmlspecialchars($detail->department);
+            $notes = explode(',', $detail->notes);
           }
       }
   } 
@@ -51,6 +52,8 @@
     $end = htmlspecialchars($info->end_date);
   }
 
+  //fetch holiday balance for this employee
+  $balance = DB::select("select * from balances where employee_profile_id = $employeeProfileID");
 
 @endphp
 
@@ -69,49 +72,83 @@
 <body class="body">
     <div class="container-trui">
         <div class="profile-card">
-          <img src="/images/profile.jpg" alt="profile" class="profile-image"/>
+          <div class="top"><img src="/images/profile.jpg" alt="profile" class="profile-image"/>
           <p class="name">@php echo ("" . $firstName . " " . $lastName); @endphp</p>
-          <p>@php echo ($job . "\n" . $dept); @endphp</p>
+          <p>@php echo ($job . "\n" . $dept); @endphp</p><br/></div>
+          <h5>About</h5>
+          <p>Address:<br/>@php echo $userAddress; @endphp</p>
+          <p>Nationality:<br/>@php echo $nationality @endphp</p>
+          <p>Sex:<br/>@php echo $sex @endphp</p>
+          <hr>
+          <h5>Contact</h5>
+          <p>Email:<br/>@php echo $email @endphp</p>
+          <p>Phone:<br/>@php echo $phone @endphp</p>
+
         </div>
 
-        <div class="details">
-          <h5>About</h5>
-          <hr>
-          <p><div class="text">Address:</div>@php echo $userAddress; @endphp</p>
-          <p><div class="text">Nationality:</div>@php echo $nationality @endphp</p>
-          <p><div class="text">Sex:</div>@php echo $sex @endphp</p>
-          <hr>
+        <div class="middle"> 
+          <div class="card">
+            <div class="card-header" style="background-color: rgb(148, 146, 146);">
+              My notifcations
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">Cras justo odio</li>
+              <li class="list-group-item">Dapibus ac facilisis in</li>
+              <li class="list-group-item">Vestibulum at eros</li>
+            </ul>
+          </div>
 
-          <h5>Contact</h5>
-          <hr>
-          <p><div class="text">Email:</div>@php echo $email @endphp</p>
-          <p><div class="text">Phone:</div>@php echo $phone @endphp</p>
-          <hr/>
+          <div class="card">
+            <div class="card-header" style="background-color: rgb(148, 146, 146);">
+              My documents
+            </div>
+            <ul class="list-group list-group-flush">
+              <a href="{{route('contract')}}"><li class="list-group-item">My contract - from @php echo ("". $start . ""); @endphp to @php echo ("". $end . ""); @endphp</li></a>
+              <a href="{{route('payList')}}"><li class="list-group-item">My payslips</li></a>
+              <a href="{{route('employeeBenefits')}}"><li class="list-group-item">My benefits</li></a>
+            </ul>
+          </div>
 
-          <h5>Notes</h5>
-          <hr/>
-            <p>@php echo $notes @endphp</p>
-          <hr/>
+          <div class="card">
+            <div class="card-header" style="background-color: rgb(148, 146, 146);">
+              My tasks
+            </div>
+            <ul class="list-group list-group-flush">
+              @foreach($notes as $note)
+                @if($note != '')
+                <li class="list-group-item" style="display: flex; justify-content: space-between">{{$note}} 
+                  <form method="POST" action="{{ route('storeTaskData', ['id' => $userID, 'action' => 'del', 'note' => $note]) }}">
+                    @csrf <!-- Include CSRF token for security -->
+                    <button type="submit" style="background: none; border: none; padding: 0;"><img src="/images/cancel.png" alt="cancel image" style="width: 15px"/></button>
+                  </form></li>
+                @endif
+              @endforeach
+            </ul>
+          </div>
         </div>
 
         <div class="right-side">
-          <a href="{{route('payList')}}" class="salary-link">
+          <a href="{{route('request')}}" class="salary-link">
             <div class="salary">
-              <h5><u>My salaries</u></h5>
-              <p>Click on this box to see all of your payslips from your first to last.</p>
+              <h5><u>Request a holiday</u></h5>
+              <p>You still have @php echo("<b><u>" . $balance[0]->yearly_holiday_credit . "</u></b>");@endphp holiday credits left</p>
             </div>
           </a>
   
-          <!--Not first checking if the the contract table is empty because there shouldn't be an employee in the company that doesn't have a contract-->
-          <a href="{{route('contract')}}">
-            <div class="contract">
-              <h5 style="margin-bottom: 20px"><u>My contract</u></h5>
-              <p><b>From:</b> Energy company</p>
-              <p><b>To: </b>@php echo ("" . $firstName . " " . $lastName); @endphp</p>
-              <p><b>Start date: </b><i>@php echo ("". $start . ""); @endphp</i></p>
-              <p><b>End date: </b><i>@php echo ("". $end . ""); @endphp</i></p>
+            <div class="news">
+              <h5 style="margin-bottom: 20px"><u>Daily news</u></h5>
+
+              <!--<p id="profile-content">$profileContent}}</p>-->
             </div>
-          </a>
+
+            <form method="POST" action="{{ route('storeTaskData', ['id' => $userID, 'action' => 'add', 'note' => '']) }}">
+              @csrf
+              <h3 style="margin-top: 40px; text-align: center">To do list</h3>
+              <input type="text" name="input_data" style="width: 100%; height: 100px;"/><br/>
+              <button type="submit" class="btn btn-secondary" style="margin-top: 10px">Add task</button>
+            </form>
+          
         </div>
+
     </div>
 </body>
