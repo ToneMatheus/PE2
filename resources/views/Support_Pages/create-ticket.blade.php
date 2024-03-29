@@ -1,5 +1,5 @@
 {{-- -*-html-*- --}}
-{{-- <x-app-layout> --}}
+<x-app-layout>
   <title>Ticket Support</title>
     <div>
 
@@ -23,4 +23,4 @@
         <button type=submit>Submit</button>
       </form>
     </div>
-{{-- </x-app-layout> --}}
+</x-app-layout>
