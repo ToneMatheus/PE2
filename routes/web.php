@@ -15,6 +15,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\RelationsController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TariffController;
 
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
@@ -92,10 +93,10 @@ Route::middleware(['auth', 'notrole:Customer'])->group(function (){
     //Route::get('/profile', [myController::class, 'profile'])->name('profile');
 });
 
-Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
-Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
-Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add');
-Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
+Route::get('/tariff', [TariffController::class, 'showTariff'])->name('tariff');
+Route::get('/tariff/delete/{pID}/{tID}', [TariffController::class, 'inactivateTariff'])->name('tariff.delete');
+Route::post('/tariff/add', [TariffController::class, 'processTariff'])->name('tariff.add');
+Route::post('/tariff/edit/{pID}/{tID}', [TariffController::class, 'editTariff'])->name('tariff.edit');
 
 //invoice query routes
 Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
