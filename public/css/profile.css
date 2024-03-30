@@ -74,15 +74,11 @@
 /*the contract box*/
 .news{
     margin-top: 20px;
-    height: 300px;
+    height: 150px;
     background-color: white;
     color: black;
     box-shadow: 2px 2px 2px;
     padding: 10px;
-}
-
-h5{
-    padding-top: 15px;
 }
 
 .middle div{
@@ -93,3 +89,18 @@ h5{
 .card{
     margin-top: 20px;
 }
+
+.card li:hover{
+    background-color: rgb(176, 176, 176);
+}
+
+.card a{
+    text-decoration: none;
+    color: black;
+}
+
+.card a:hover{
+    text-decoration: none;
+    color: black;
+}
+

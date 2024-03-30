@@ -1,14 +1,41 @@
 <?php
     session_start();
-// function debug_to_console($data) 
-    // {
-    //     $output = $data;
-    //     if (is_array($output))
-    //         $output = implode(',', $output);
-    
-    //     echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
-    // }
 
+    $host = '127.0.0.1';
+    $user = 'root';
+    $password = '';
+    $database = 'energy_supplier';
+
+    $link = mysqli_connect($host, $user, $password, $database) or die("Error: no connection can be made to the host");
+    mysqli_select_db($link, $database) or die("Error: the database could not be opened");
+
+    
+    $query = "SELECT * FROM `balances` WHERE `id` = 1";
+    $result = $link->query($query) or die("Error: an error has occurred while executing the query.");
+
+   
+    while ($row = mysqli_fetch_array($result))
+    {
+        $credit = $row['yearly_holiday_credit'];
+        
+    }
+
+    // SELECT * FROM `balances`
+
+    if(!isset($_SESSION['currentM']))
+    {
+        $_SESSION['currentM'] = date('n');
+        $t = $_SESSION['currentM'];
+    }
+    else
+    {
+        $t = $_SESSION['currentM'];
+    }
+
+    if(!isset($_SESSION['currentY']))
+    {
+        $_SESSION['currentY'] = date('Y');
+    }
 ?>
 
 <!DOCTYPE html>
@@ -28,32 +55,142 @@
 
     <div class="table-container">
         <?php
-            // Get the current month and year
-            $currentMonth = date('n');
-            $currentYear = date('Y');
+            $wee = array();
 
-            // Get the number of days in the current month and the previous month
-            $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
-            $daysInPrevMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth - 1, $currentYear);
+            $currentMonth1 = date('n');
+            $currentYear1 = date('Y');
+            if(isset($_GET['Mf']))
+            {
+                echo $_SESSION['currentM'];
+                $t = $_SESSION['currentM'];
+
+                $_SESSION['currentY'] = $currentYear1;
+                $currentYear = $_SESSION['currentY']; 
+
+                // Calculate the month and year for the next month
+                if(!$_GET['Mf'] == "12" && $_SESSION['currentM'] == 0)
+                {
+                    $currentMonth = $_SESSION['currentM'] + 1;
+                    $_SESSION['currentM'] = $currentMonth;
+                }
+                else if($_GET['Mf'] == "12" && $_SESSION['currentM'] == 0)
+                {
+                    $currentMonth = $currentMonth1 == 12 ? 1 : $currentMonth1 + 1;
+                    $_SESSION['currentM'] = $currentMonth;
+                }
+                else
+                {
+                    $currentMonth = $_SESSION['currentM'] + 1;
+                    $_SESSION['currentM'] = $currentMonth;
+                }
+
+                
+            
+             
+                
+                //$currentYear = $ted == 12 ? $currentYear1 + 1 : $currentYear1;
+                echo $_SESSION['currentM'];
+                //$t = $t == 12 ? $t = 0 : $t = $_SESSION['currentM'];
+                $t = $_SESSION['currentM'] + 1;
+                if($t == 13)
+                    $t = 1;
+                
+            }
+            else if(isset($_GET['Mb']))
+            {
+                echo $_SESSION['currentM'];
+                if(!$_GET['Mb'] == "12" && $_SESSION['currentM'] == 0)
+                {
+                    $currentMonth = $_SESSION['currentM'] - 1;
+                    $_SESSION['currentM'] = $currentMonth;
+                }
+                else if ($_GET['Mb'] == "12" && $_SESSION['currentM'] == 0)
+                {
+                    $currentMonth = $currentMonth1 == 12 ? 1 : $currentMonth1 - 1;
+                    $_SESSION['currentM'] = $currentMonth;
+                }
+                else
+                {
+                    $currentMonth = $_SESSION['currentM'] - 1;
+                    $_SESSION['currentM'] = $currentMonth;
+                }
+                
+                $_SESSION['currentY'] = $currentYear1;
+                $currentYear = $_SESSION['currentY']; 
+
+                echo $_SESSION['currentM'];
+                $t = $_SESSION['currentM'] - 1;
+                if($t == 0)
+                    $t = 12;
+                
+            }
+            else
+            {
+                // Get the current month and year
+                $currentMonth = date('n');
+                $currentYear = date('Y');
+            }
 
             // Calculate the month and year for the next month
-            $nextMonth = $currentMonth == 12 ? 1 : $currentMonth + 1;
-            $nextYear = $currentMonth == 12 ? $currentYear + 1 : $currentYear;
+            // $nextMonth = $currentMonth == 12 ? 1 : $currentMonth + 1;
+            // $nextYear = $currentMonth == 12 ? $currentYear + 1 : $currentYear;
+
+            if($currentMonth == 13)
+            {
+                $currentMonth = 1;
+                $_SESSION['currentM'] = 1;
+                $t = $_SESSION['currentM'];
+                $_SESSION['currentM'] = $currentYear;
+                if($currentYear != $currentYear1 - 1)
+                    $currentYear++;
+                $daysInPrevMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear - 1);
+                $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+            }
+            else if($currentMonth == 0)
+            {
+                $currentMonth = 12;
+                $_SESSION['currentM'] = 12;
+                $t = 0;
+                $_SESSION['currentM'] = $currentYear;
+                if($currentYear == $currentYear1)
+                    $currentYear--;
+                echo $currentYear;
+                $daysInPrevMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear - 1);
+                $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+            }
+            else
+            {
+                $daysInPrevMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear - 1);
+                $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+            }
+
+            // Get the number of days in the current month and the previous month
+            
 
             // Calculate the day of the week of the first day of the month
             $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
 
             $monthsName = array("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC");
             $numMonth = $currentMonth - 1;
-            echo "<button id='floBtn'>next</button><button id='floBtn'>back</button>";
+            
+            
+            echo "<form method='get'><button id='floBtn' name='cncel' value=''>home</button><button id='floBtn' name='Mf' value='$t'>next</button><button id='floBtnB' name='Mb' value='$t' disabled>back</button></form>";
             echo "<h1 id='monthName'> $monthsName[$numMonth] </h1>";
-
+            
+            if(isset($_GET['cncel']))
+            {
+                // echo "pressed";
+                
+                unset($_SESSION['currentM']);
+                unset($_SESSION['currentY']);
+                session_destroy();
+            }
             // Start the table and iterate through each day of the month
             echo "<table id='calendar'>";
             $dayCount = 1;
             $prevMonthDayCount = $daysInPrevMonth - $firstDayOfMonth + 2;
             //echo "<tr><td> $currentMonth </td></tr>";
-            for ($row = 0; $row < 5; $row++) 
+            for ($row = 0; $row < 6; $row++) 
             {
                 echo "<tr>";
                 for ($col = 1; $col <= 7; $col++) 
@@ -74,6 +211,8 @@
                     {
                         $class = isset($_SESSION['addedCells'][$dayCount]) ? 'added' : '';
                         echo "<td class='{$class} weekend'>{$dayCount}</td>";
+                        array_push($wee, "$dayCount");
+                        //$wee = ["$dayCount"];
                         $dayCount++;
                     } 
                     else 
@@ -109,12 +248,12 @@
                 </td>
             </tr>
         </table>   
-        <div id="errorMsg">
-            <p>The date that you are asking is in the past.</p>
+        <div >
+            <p id="errorMsg">The date that you are asking is in the past.</p>
+            <p id="scsMsg">The request has been send.</p>
+            <p id="errorCredit">Sorry you don't have enough credit. You only have <?php echo $credit; ?> more days.</p>
         </div>
-        <div id="scsMsg">
-            <p>The request has been send.</p>
-        </div>
+        <br>
         <div class="sidebar">
             <label id="label">This label is currently empty</label>
             <button id="cancel" name="cancel" onclick="cnlButton()">Cancel</button>
@@ -128,10 +267,41 @@
         let numGr = 0;
         let numPur = 0;
         let numPink = 0;
+        var div4 = document.getElementById('errorCredit');
+        var btn1 = document.getElementById('floBtnB');
+        var arrWe = [];
+        var toDay = new Date();
+
+        var M = <?php 
+        if(isset($_SESSION['currentM']))
+            echo "$currentMonth";
+        else
+            echo 0;
+        ?>;
+
+        var Y = <?php 
+        if(isset($_SESSION['currentY']))
+            echo "$currentYear";
+        else
+            echo 0;
+        ?>;
+        //M--;
+        console.log("M: " + M + "\n" + "Y: " + Y);
+        var noDay = new Date(Y+"-"+M+"-"+"1")
+        console.log("cal: " +noDay);
+
+        if(noDay > toDay)
+        //if(toDay < 3)
+        {
+            btn1.disabled = false;
+        }
+
+
 
         function addDate() 
         {
             const selected = document.querySelector(".selected");
+            div4.style.visibility='hidden';
     
             if (selected) 
             {
@@ -142,6 +312,7 @@
                 else if (selected.classList.contains('added'))
                 {
                     selected.classList.remove("added");
+                    numGr--;
                     // updateSession(selected.textContent, 'remove');
                 }
                 else
@@ -154,12 +325,14 @@
                        var dayNum = $idNum;
                         var date_now = new Date();
                         var idnum = <?php if(isset($_POST['idNum'])){echo $_POST['idNum'];}else{ echo 0;} ?>;
-                        var date2    = new Date("2024-03-" + dayNum);
+                        var dateMonth = <?php if(isset($_SESSION['currentM'])){echo $_SESSION['currentM'];}else{ echo 0;} ?>;
+                        var date2    = new Date("2024-" + dateMonth + "-" + dayNum);
                         var div2 = document.getElementById('errorMsg');
                         // check if date is in the past
                         if (date_now > date2) 
                         {
                             div2.style.visibility='visible'
+                            console.log("<?php echo $credit; ?>")
                         }
                         else
                         {
@@ -167,7 +340,23 @@
                             selected.classList.add("added");
                             $color = 'green';
                             //console.log($color  + " " +$idNum);
-                            numGr++;
+                            // console.log(<?php
+                            //     $js_array = json_encode($wee);
+                            //     echo "$js_array";
+                            // ?>);
+                            arrWe = (<?php
+                                $js_array = json_encode($wee);
+                                echo "$js_array";
+                            ?>);
+
+                            console.log(arrWe);
+                            console.log(dayNum);
+
+                            if(!arrWe.includes(dayNum))
+                            {
+                                numGr++;
+                            }
+                            console.log(numGr);
                             countColor('green=', numGr)
                         }
                        
@@ -293,37 +482,48 @@
 
         function countColor($color, $num)
         {
-            var xhr = new XMLHttpRequest();
-            if (xhr == null) 
+            if($num != 0)
             {
-                alert("Browser does not support HTTP Request");
-            } 
-            else 
-            {
-                var url = "{{ asset('php/test.php') }}";
-                var idNum = $idNum;
-                //var color = $color;
-                var color = $num;
-                var params = "dayNum=" + encodeURIComponent(idNum) + "&" + $color + encodeURIComponent(color);
-                //params += "color=" + $color;
-                xhr.open("POST", url, true);
-                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState == 4 && xhr.status == 200) 
-                    {
-                        // Handle the response from the server if needed
-                        console.log(xhr.responseText);
-                    }
-                };
-                xhr.send(params);
+                var xhr = new XMLHttpRequest();
+                if (xhr == null) 
+                {
+                    alert("Browser does not support HTTP Request");
+                } 
+                else 
+                {
+                    var url = "{{ asset('php/test.php') }}";
+                    var idNum = $idNum;
+                    //var color = $color;
+                    var color = $num;
+                    var params = "dayNum=" + encodeURIComponent(idNum) + "&" + $color + encodeURIComponent(color);
+                    //params += "color=" + $color;
+                    xhr.open("POST", url, true);
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) 
+                        {
+                            // Handle the response from the server if needed
+                            console.log(xhr.responseText);
+                        }
+                    };
+                    xhr.send(params);
+                }
             }
         }
 
+
         function btnClicked()
         {
+            var cre = "<?php echo $credit; ?>";
             if(visBool)
             {
                 cnlButton();
+            }
+            else if(numGr > cre)
+            {
+                
+                div4.style.visibility='visible';
+                console.log('bro, what are you doing??');
             }
             else
             {

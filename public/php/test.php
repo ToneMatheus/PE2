@@ -90,7 +90,7 @@ else if(isset($_POST['pink']) && isset($_POST['dayNum']))
 }
 else if(isset($_POST['button']))
 {
-    
+    // TODO: send the month (and maybe year) to the request
     if(isset($_SESSION['user']['green']))
     {
         $array =  $_SESSION['numCal'];
@@ -361,6 +361,8 @@ else if(isset($_POST['cancel']))
 {
     // Unset session variable
     unset($_SESSION['user']);
+    unset($_SESSION['currentM']);
+    unset($_SESSION['currentY']);
 
     // Destroy the session
     session_destroy();

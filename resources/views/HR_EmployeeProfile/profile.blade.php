@@ -40,6 +40,7 @@
             $notes = htmlspecialchars($detail->notes);
             $job = htmlspecialchars($detail->job);
             $dept = htmlspecialchars($detail->department);
+            $notes = explode(',', $detail->notes);
           }
       }
   } 
@@ -51,6 +52,8 @@
     $end = htmlspecialchars($info->end_date);
   }
 
+  //fetch holiday balance for this employee
+  $balance = DB::select("select * from balances where employee_profile_id = $employeeProfileID");
 
 @endphp
 
@@ -85,7 +88,7 @@
 
         <div class="middle"> 
           <div class="card">
-            <div class="card-header">
+            <div class="card-header" style="background-color: rgb(148, 146, 146);">
               My notifcations
             </div>
             <ul class="list-group list-group-flush">
@@ -96,24 +99,30 @@
           </div>
 
           <div class="card">
-            <div class="card-header">
-              My tasks
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">Cras justo odio</li>
-              <li class="list-group-item">Dapibus ac facilisis in</li>
-              <li class="list-group-item">Vestibulum at eros</li>
-            </ul>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
+            <div class="card-header" style="background-color: rgb(148, 146, 146);">
               My documents
             </div>
             <ul class="list-group list-group-flush">
               <a href="{{route('contract')}}"><li class="list-group-item">My contract - from @php echo ("". $start . ""); @endphp to @php echo ("". $end . ""); @endphp</li></a>
-              <li class="list-group-item"><a href="{{route('payList')}}">My payslips</a></li>
+              <a href="{{route('payList')}}"><li class="list-group-item">My payslips</li></a>
               <a href="{{route('employeeBenefits')}}"><li class="list-group-item">My benefits</li></a>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-header" style="background-color: rgb(148, 146, 146);">
+              My tasks
+            </div>
+            <ul class="list-group list-group-flush">
+              @foreach($notes as $note)
+                @if($note != '')
+                <li class="list-group-item" style="display: flex; justify-content: space-between">{{$note}} 
+                  <form method="POST" action="{{ route('storeTaskData', ['id' => $userID, 'action' => 'del', 'note' => $note]) }}">
+                    @csrf <!-- Include CSRF token for security -->
+                    <button type="submit" style="background: none; border: none; padding: 0;"><img src="/images/cancel.png" alt="cancel image" style="width: 15px"/></button>
+                  </form></li>
+                @endif
+              @endforeach
             </ul>
           </div>
         </div>
@@ -122,15 +131,23 @@
           <a href="{{route('request')}}" class="salary-link">
             <div class="salary">
               <h5><u>Request a holiday</u></h5>
-              <p>Click on this box to see all of your payslips from your first to last.</p>
+              <p>You still have @php echo("<b><u>" . $balance[0]->yearly_holiday_credit . "</u></b>");@endphp holiday credits left</p>
             </div>
           </a>
   
             <div class="news">
               <h5 style="margin-bottom: 20px"><u>Daily news</u></h5>
 
-              <p>What's on the menu?<br/>fish and chips</p>
+              <!--<p id="profile-content">$profileContent}}</p>-->
             </div>
+
+            <form method="POST" action="{{ route('storeTaskData', ['id' => $userID, 'action' => 'add', 'note' => '']) }}">
+              @csrf
+              <h3 style="margin-top: 40px; text-align: center">To do list</h3>
+              <input type="text" name="input_data" style="width: 100%; height: 100px;"/><br/>
+              <button type="submit" class="btn btn-secondary" style="margin-top: 10px">Add task</button>
+            </form>
+          
         </div>
 
     </div>

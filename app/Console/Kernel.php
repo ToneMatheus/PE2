@@ -27,11 +27,16 @@ class Kernel extends ConsoleKernel
             $schedule->job(new $jobClass())->monthlyOn($cronjob->scheduled_day, $hour . ':' . $minute);
         }
 
+
+
+        //to automate the creation of payslips
+       // $schedule->command('insert:data')->daily(); 
     }
 
     /**
      * Register the commands for the application.
-     */
+     */        
+
     protected function commands(): void
     {
         $this->load(__DIR__.'/Commands');
