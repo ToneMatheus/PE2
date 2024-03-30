@@ -12,7 +12,7 @@
         <h1>New Employee</h1>
         
         <!-- Username generated like schoolID, email based of generated email & password default that they have to change (mail) -->
-        <form method="post" action="{{ route('newEmployee.add') }}">
+        <form method="post" action="{{ route('Employees.add') }}">
             @csrf
             <h2>Personal info:</h2>
             <div class="row">

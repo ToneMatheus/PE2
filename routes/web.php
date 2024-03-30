@@ -101,6 +101,10 @@ Route::get('/tariff/delete/{pID}/{tID}', [TariffController::class, 'inactivateTa
 Route::post('/tariff/add', [TariffController::class, 'processTariff'])->name('tariff.add');
 Route::post('/tariff/edit/{pID}/{tID}', [TariffController::class, 'editTariff'])->name('tariff.edit');
 
+Route::get('/employeeOverview', [EmployeeController::class, 'showEmployees'])->name('Employees');
+Route::post('/employeeOverview/add', [EmployeeController::class, 'processEmployee'])->name('Employees.add');
+
+
 //invoice query routes
 Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
 Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
@@ -182,11 +186,6 @@ Route::get('/roles', function () {
 });
 Route::get('/teamOverview', [TeamController::class, 'index']);
 Route::post('/add-team', [TeamController::class, 'addTeam'])->name('add.team');
-
-
-Route::get('/newEmployee', [NewEmployeeController::class, 'showNewEmployee'])->name('newEmployee');
-Route::post('/newEmployee/add', [NewEmployeeController::class, 'processEmployee'])->name('newEmployee.add');
-
 
 //cronjobs
 Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
