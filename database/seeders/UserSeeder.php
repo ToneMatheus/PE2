@@ -167,6 +167,7 @@ class UserSeeder extends Seeder
                 'email' => 'joseph@gmail',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
             [   
                 'id' => 11,
@@ -180,6 +181,7 @@ class UserSeeder extends Seeder
                 'email' => 'jimmy@gmail',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
             [   
                 'id' => 12,
@@ -193,6 +195,7 @@ class UserSeeder extends Seeder
                 'email' => 'james@gmail',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
             [   
                 'id' => 13,
@@ -206,6 +209,7 @@ class UserSeeder extends Seeder
                 'email' => 'jane@gmail',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
             [   
                 'id' => 14,
@@ -219,6 +223,7 @@ class UserSeeder extends Seeder
                 'email' => 'pearl@gmail',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
             [   
                 'id' => 15,
@@ -232,6 +237,7 @@ class UserSeeder extends Seeder
                 'email' => 'rose@gmail',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
         ]);
     }

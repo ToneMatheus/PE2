@@ -11,7 +11,7 @@ class EmployeeProfileSeeder extends Seeder
 {
     public function run(): void
     {
-        Employee_profile::create([
+        Employee_profile::insert([
             [
                 'id' => 1,
                 'hire_date' => '2024-01-01',
