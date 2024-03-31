@@ -41,6 +41,7 @@ class UserSeeder extends Seeder
                 'email' => 'bob@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
             [   //Employee
                 'id' => 2,
@@ -54,6 +55,7 @@ class UserSeeder extends Seeder
                 'email' => 'jef@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
             [   //Employee who's Customer
                 'id' => 3,
@@ -67,6 +69,7 @@ class UserSeeder extends Seeder
                 'email' => 'kim@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
             [   //Commercial Customer
                 'id' => 4,
@@ -80,6 +83,7 @@ class UserSeeder extends Seeder
                 'email' => 'emily@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
             [   //Residential Customer
                 'id' => 5,
@@ -93,6 +97,7 @@ class UserSeeder extends Seeder
                 'email' => 'ann@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
             [   
                 'id' => 6,
@@ -106,6 +111,7 @@ class UserSeeder extends Seeder
                 'email' => 'marie@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
             [   
                 'id' => 7,
@@ -119,6 +125,7 @@ class UserSeeder extends Seeder
                 'email' => 'mark@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
             [   
                 'id' => 8,
@@ -132,6 +139,7 @@ class UserSeeder extends Seeder
                 'email' => 'rob@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
             [   
                 'id' => 9,
@@ -145,6 +153,7 @@ class UserSeeder extends Seeder
                 'email' => 'jan@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
             ],
             [   
                 'id' => 10,
