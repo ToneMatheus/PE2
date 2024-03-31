@@ -21,8 +21,6 @@ class EmployeeProfileSeeder extends Seeder
                 'id' => 2,
                 'hire_date' => '2024-01-01',
                 'work_email' => 'jd2@example.com',
-                'nationality' => 'Belgian',
-                'sex' => 'Male'
             ],
             [
                 'id' => 3,
@@ -32,86 +30,62 @@ class EmployeeProfileSeeder extends Seeder
             [   
                 'id' => 4,
                 'hire_date' => '2024-01-01',
-                'department' => 'Maintenace & IT',
-                'nationality' => 'Belgian',
-                'sex' => 'Male'
+                'work_email' => 'kd3@example.com'
             ],
             [   
                 'id' => 5,
                 'hire_date' => '2024-01-01',
-                'department' => 'Maintenace & IT',
-                'nationality' => 'Belgian',
-                'sex' => 'Male'
+                'work_email' => 'kd3@example.com'
             ],
             [   
                 'id' => 6,
                 'hire_date' => '2024-01-01',
-                'department' => 'Customer service',
-                'nationality' => 'Belgian',
-                'sex' => 'Male'
+                'work_email' => 'kd3@example.com'
             ],
             [   
                 'id' => 7,
                 'hire_date' => '2024-01-01',
-                'department' => 'Finance',
-                'nationality' => 'Belgian',
-                'sex' => 'Female'
+                'work_email' => 'kd3@example.com'
             ],
             [   
                 'id' => 8,
                 'hire_date' => '2024-01-01',
-                'department' => 'Finance',
-                'nationality' => 'Belgian',
-                'sex' => 'Female'
+                'work_email' => 'kd3@example.com'
             ],
             [   
                 'id' => 9,
                 'hire_date' => '2024-01-01',
-                'department' => 'Sales and marketing',
-                'nationality' => 'Belgian',
-                'sex' => 'Female'
+                'work_email' => 'kd3@example.com'
             ],
             [   
                 'id' => 4,
                 'hire_date' => '2024-01-01',
-                'department' => 'Maintenace & IT',
-                'nationality' => 'Belgian',
-                'sex' => 'Male'
+                'work_email' => 'kd3@example.com'
             ],
             [   
                 'id' => 5,
                 'hire_date' => '2024-01-01',
-                'department' => 'Maintenace & IT',
-                'nationality' => 'Belgian',
-                'sex' => 'Male'
+                'work_email' => 'kd3@example.com'
             ],
             [   
                 'id' => 6,
                 'hire_date' => '2024-01-01',
-                'department' => 'Customer service',
-                'nationality' => 'Belgian',
-                'sex' => 'Male'
+                'work_email' => 'kd3@example.com'
             ],
             [   
                 'id' => 7,
                 'hire_date' => '2024-01-01',
-                'department' => 'Finance',
-                'nationality' => 'Belgian',
-                'sex' => 'Female'
+                'work_email' => 'kd3@example.com'
             ],
             [   
                 'id' => 8,
                 'hire_date' => '2024-01-01',
-                'department' => 'Finance',
-                'nationality' => 'Belgian',
-                'sex' => 'Female'
+                'work_email' => 'kd3@example.com'
             ],
             [   
                 'id' => 9,
                 'hire_date' => '2024-01-01',
-                'department' => 'Sales and marketing',
-                'nationality' => 'Belgian',
-                'sex' => 'Female'
+                'work_email' => 'kd3@example.com'
             ],
         ]);
     }
