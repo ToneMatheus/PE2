@@ -41,12 +41,16 @@
                                             <option value="X" @if($employee->title == 'X') selected @endif>Mx.</option>
                                         </select>
                                     </p>
+                                    <p>
+                                        <label for="nationality">Nationality:</label>
+                                        <input type="text" id="nationality" name="nationality" value="{{$employee->nationality}}" required/>
+                                    </p>
                                 </div>
 
                                 <div class="col-3">
                                     <p>
-                                        <label for="nationality">Nationality:</label>
-                                        <input type="text" id="nationality" name="nationality" value="{{$employee->nationality}}"  required/>
+                                        <label for="personEmail">Email:</label>
+                                        <input type="email" id="personEmail" name="personalEmail" value="{{$employee->email}}" required/>
                                     </p>
                                     <p>
                                         <label for="phoneNbr">Phone Number:</label>

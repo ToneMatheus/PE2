@@ -77,12 +77,16 @@
                             <option value="X">Mx.</option>
                         </select>
                     </p>
+                    <p>
+                        <label for="nationality">Nationality:</label>
+                        <input type="text" id="nationality" name="nationality" required/>
+                    </p>
                 </div>
 
                 <div class="col-3">
                     <p>
-                        <label for="nationality">Nationality:</label>
-                        <input type="text" id="nationality" name="nationality" required/>
+                        <label for="personEmail">Email:</label>
+                        <input type="email" id="personEmail" name="personalEmail" required/>
                     </p>
                     <p>
                         <label for="phoneNbr">Phone Number:</label>

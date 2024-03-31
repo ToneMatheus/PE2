@@ -25,7 +25,8 @@ class EmployeeController extends Controller
         $employees = User::whereNotNull('employee_profile_id')
         ->join('team_members as tm', 'tm.user_id', '=', 'users.id')
         ->join('teams as t', 't.id', '=', 'tm.team_id')
-        ->where('is_active', '=', 1)
+        ->where('tm.is_active', '=', 1)
+        ->where('users.is_active', '=', 1)
         ->paginate(5); 
         
         $teams = Team::all();
@@ -36,12 +37,17 @@ class EmployeeController extends Controller
 
     public function processEmployee(Request $request) {
         //new Employee_profile
-        $employeeData = [
+        $employee = Employee_profile::create([
             'hire_date' => $request->input('startDate'),
-            'nationality' => $request->input('nationality')
-        ];
+            'work_email' => 0,
+        ]);
 
-        $employee = Employee_profile::create($employeeData);
+        //username & email generated
+        $username = $request->input('firstName')[0] . $request->input('name')[0] . $employee->id;
+        $email = $request->input('firstName')[0] . $request->input('name')[0] . $employee->id . '@example.com';
+
+        $employee->work_email = $email;
+        $employee->save();
 
         //new Employee_contract
         Employee_contract::create([
@@ -53,21 +59,18 @@ class EmployeeController extends Controller
             'salary_per_month' => $request->input('salary')
         ]);
 
-        //username & email generated
-        $username = $request->input('firstName')[0] . $request->input('name')[0] . $employee->id;
-        $email = $request->input('firstName') . $request->input('name') . '@example.com';
-
         //new User
         $userData = [
             'username' => $username,
             'password' => 'default',    //mail to change  
-            'email' => $email,
+            'email' => $request->input('personalEmail'),
             'first_name' => $request->input('firstName'),
             'last_name' => $request->input('name'),
-            'employee_profile_id' => $request->input($employee->id),
+            'employee_profile_id' => $employee->id,
             'phone_nbr' => $request->input('phoneNbr'),
             'birth_date' => $request->input('birthDate'),
             'title' => $request->input('title'),
+            'nationality' => $request->input('nationality')
         ];
 
         $user = User::create($userData);
@@ -100,7 +103,6 @@ class EmployeeController extends Controller
             'city' => $request->input('city'),
             'province' => $request->input('province'),
             'country' => 'Belgium',
-            'type' => 'house', //bound to be removed
         ];
 
         $address = Address::create($addressData);
@@ -111,7 +113,7 @@ class EmployeeController extends Controller
             'start_date' => $request->input('startDate')
         ]);
 
-        return redirect()->route('employeeOverview');
+        return redirect()->route('employees');
     }
 
     public function editEmployee($eID) {
@@ -125,6 +127,7 @@ class EmployeeController extends Controller
         ->join('addresses as a', 'a.id', '=', 'ca.address_id')
         ->where('users.employee_profile_id', '=', $eID)
         ->where('ur.is_active', '=', 1)
+        ->where('tm.is_active', '=', 1)
         ->where('a.is_billing_address', '=', 1)
         ->where(function($query) {
             $query->where('ec.end_date', '>', now())
@@ -147,12 +150,8 @@ class EmployeeController extends Controller
         $user->title = $request->input('title');
         $user->phone_nbr = $request->input('phoneNbr');
         $user->birth_date = $request->input('birthDate');
-        $user->save();
-
-        $employee = Employee_Profile::find($eID);
-
-        $employee->nationality = $request->input('nationality');
-        $employee->save();
+        $user->nationality = $request->input('nationality');
+        $user->save();;
 
         return redirect()->route('employees.edit', ['eID' => $eID]);
     }
@@ -189,11 +188,19 @@ class EmployeeController extends Controller
         $employeeContract->salary_per_month = $request->input('salary');
         $employeeContract->save();
 
-        $team = Team::join('team_members as tm', 'tm.team_id', '=', 'teams.id')
+        $oldTeam = Team::join('team_members as tm', 'tm.team_id', '=', 'teams.id')
+        ->select('teams.id as tID', 'tm.id as tmID')
+        ->where('tm.is_active', '=', 1)
         ->where('tm.user_id', '=', $uID)
         ->first();
 
-        if($team->team_name !== $request->input('team')){
+        if($oldTeam->team_name !== $request->input('team')){
+            $oldTeamMember = TeamMember::where('id', '=', $oldTeam->tmID)
+            ->first();
+
+            $oldTeamMember->is_active = 0;
+            $oldTeamMember->save();
+
             $newTeam = Team::where('team_name', '=', $request->input('team'))
             ->first();
 
@@ -203,13 +210,13 @@ class EmployeeController extends Controller
             ]);
         }
 
-        $role = User_Role::where('user_id', '=', $uID)
+        $oldRole = User_Role::where('user_id', '=', $uID)
         ->where('is_active', '=', 1)
         ->first();
 
-        if($role->role_name !== $request->input('role')){
-            $role->is_active = 0;
-            $role->save();
+        if($oldRole->role_name !== $request->input('role')){
+            $oldRole->is_active = 0;
+            $oldRole->save();
 
             $newRole = Role::where('role_name', '=', $request->input('role'))
             ->first();

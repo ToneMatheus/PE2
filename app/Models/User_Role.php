@@ -18,6 +18,8 @@ class User_Role extends Model
         'is_active'
     ];
 
+    public $timestamps = false;
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
