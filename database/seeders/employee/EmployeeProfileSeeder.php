@@ -15,23 +15,17 @@ class EmployeeProfileSeeder extends Seeder
             [
                 'id' => 1,
                 'hire_date' => '2024-01-01',
-                'department' => 'Finance',
-                'nationality' => 'Belgian',
-                'sex' => 'Male'
+                'work_email' => 'bd1@example.com'
             ],
             [
                 'id' => 2,
                 'hire_date' => '2024-01-01',
-                'department' => null,
-                'nationality' => 'Belgian',
-                'sex' => 'Male'
+                'work_email' => 'jd2@example.com'
             ],
             [
                 'id' => 3,
                 'hire_date' => '2024-01-01',
-                'department' => 'Customer service',
-                'nationality' => 'Belgian',
-                'sex' => 'Female'
+                'work_email' => 'kd3@example.com'
             ],
         ]);
     }
