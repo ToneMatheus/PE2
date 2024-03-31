@@ -4,15 +4,59 @@
         <title>New Employee</title>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <link rel="stylesheet" href="{{ asset('css/newEmployee.css') }}"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="{{ asset('css/employeeOverview.css') }}"/>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            function newEmployee(toggle){
+                if(toggle){
+                    document.getElementById('newEmployee').style.display = 'block';
+                    document.getElementById('newEmployeeBttn').style.display = 'none';
+                } else {
+                    document.getElementById('newEmployee').style.display = 'none';
+                    document.getElementById('newEmployeeBttn').style.display = 'block';
+                }
+            }
+        </script>
     </head>
     <body>
-        <h1>New Employee</h1>
+        <h1>Employee Overview</h1>
+
+        <div class="container">
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" class="col-1">E_ID</th>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Team</th>
+                        <th scope="col" class="col-1">Edit</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach($employees as $employee)
+                        <tr>
+                            <th scope="row">{{$employee->employee_profile_id}}</th>
+                            <td>{{$employee->first_name}}</td>
+                            <td>{{$employee->last_name}}</td>
+                            <td>{{$employee->team_name}}</td>
+                            <td><a href="{{ route('employees.edit', ['eID' => $employee->employee_profile_id]) }}"><i class="bi bi-pencil-square"></i></a></td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <div>
+                {{ $employees->links('pagination::bootstrap-5') }}
+            </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="newEmployee(1)" id="newEmployeeBttn"><i class="bi bi-person-plus-fill"></i></button>
         
         <!-- Username generated like schoolID, email based of generated email & password default that they have to change (mail) -->
-        <form method="post" action="{{ route('Employees.add') }}">
+        <form method="post" action="{{ route('employees.add') }}" id="newEmployee">
             @csrf
             <h2>Personal info:</h2>
             <div class="row">
@@ -28,9 +72,9 @@
                     <p>
                         <label for="title">Honorific:</label>
                         <select name="title" id="title">
-                            <option value="Mr.">Mr.</option>
-                            <option value="Ms.">Ms.</option>
-                            <option value="Mx.">Mx.</option>
+                            <option value="Mr">Mr.</option>
+                            <option value="Ms">Ms.</option>
+                            <option value="X">Mx.</option>
                         </select>
                     </p>
                 </div>
@@ -75,8 +119,8 @@
                     </p>
                     <p>
                     <label for="province">Province:</label>
-                    <select name="provincie" id="provincie">
-                        <option value="Brussels Capital Region">Brussels Capital Region</option>
+                    <select name="province" id="province">
+                        <option value="Brussels">Brussels</option>
                         <option value="Flemish Brabant">Flemish Brabant</option>
                         <option value="Antwerp">Antwerp</option>
                         <option value="Limburg">Limburg</option>
@@ -143,6 +187,7 @@
             </div>
 
             <input type="submit" class="btn btn-primary"/>
+            <button type="button" onclick="newEmployee(0)" class="btn btn-danger">Cancel</button>
         </form>
     </body>
 </html>

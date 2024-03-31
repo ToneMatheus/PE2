@@ -101,9 +101,12 @@ Route::get('/tariff/delete/{pID}/{tID}', [TariffController::class, 'inactivateTa
 Route::post('/tariff/add', [TariffController::class, 'processTariff'])->name('tariff.add');
 Route::post('/tariff/edit/{pID}/{tID}', [TariffController::class, 'editTariff'])->name('tariff.edit');
 
-Route::get('/employeeOverview', [EmployeeController::class, 'showEmployees'])->name('Employees');
-Route::post('/employeeOverview/add', [EmployeeController::class, 'processEmployee'])->name('Employees.add');
-
+Route::get('/employeeOverview', [EmployeeController::class, 'showEmployees'])->name('employees');
+Route::post('/employeeOverview/add', [EmployeeController::class, 'processEmployee'])->name('employees.add');
+Route::get('/editEmployee/{eID}', [EmployeeController::class, 'editEmployee'])->name('employees.edit');
+Route::post('/editEmployee/{eID}/personal', [EmployeeController::class, 'editPersonalEmployee'])->name('employees.edit.personal');
+Route::post('/editEmployee/{eID}/{aID}/{uID}/address', [EmployeeController::class, 'editAddressEmployee'])->name('employees.edit.address');
+Route::post('/editEmployee/{eID}/{uID}/contract', [EmployeeController::class, 'editContractEmployee'])->name('employees.edit.contract');
 
 //invoice query routes
 Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
