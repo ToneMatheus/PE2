@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ticket extends Model
 {
@@ -36,6 +37,7 @@ class Ticket extends Model
         'description',
         'active',
         'user_id',
+        'status'
     ];
 
     public static function validate(array $input): bool
@@ -48,5 +50,10 @@ class Ticket extends Model
     public function ticket(): BelongsTo
     {
         return $this->belongsTo(Ticket::class);
+    }
+
+    public function employee_tickets(): HasMany
+    {
+        return $this->hasMany(Employee_Ticket::class);
     }
 }
