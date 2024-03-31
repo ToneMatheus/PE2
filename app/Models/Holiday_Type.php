@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Holiday_Type extends Model
 {
     use HasFactory;
+    protected $table = 'holiday_types';
 
     protected $fillable = [
         'type'

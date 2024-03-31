@@ -21,4 +21,17 @@ class Team extends Model
     {
         return $this->hasMany(teamMember::class);
     }
+
+    public function team_user_roles(): HasMany
+    {
+        return $this->hasMany(Team_User_Role::class);
+    }
+<<<<<<< HEAD
 }
+=======
+    public function team_user_roles(): HasMany
+    {
+        return $this->hasMany(Team_User_Role::class);
+    }
+}
+>>>>>>> fc66cd7f24f7876549dfeaf25946a4cdf276d6a9

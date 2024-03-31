@@ -6,24 +6,25 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Employee_contract extends Model
+class Employee_Ticket extends Model
 {
-    protected $table = 'employee_contracts';
+    use HasFactory;
+    protected $table = 'employee_tickets';
+
     protected $fillable = [
         'employee_profile_id',
-        'start_date',
-        'end_date',
-        'type',
-        'status',
-        'salary_per_month'
+        'ticket_id'
     ];
-
-    public $timestamps = false;
 
     use HasFactory;
 
     public function employee_profile(): BelongsTo
     {
         return $this->belongsTo(Employee_Profile::class);
+    }
+
+    public function ticket(): BelongsTo
+    {
+        return $this->belongsTo(Ticket::class);
     }
 }
