@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Employee_Ticket extends Model
 {
     use HasFactory;
+    protected $table = 'employee_tickets';
 
     protected $fillable = [
         'employee_profile_id',

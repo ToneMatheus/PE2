@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Team_User_Role extends Model
 {
     use HasFactory;
+    protected $table = 'team_user_roles';
 
     protected $fillable = [
         'team_id',

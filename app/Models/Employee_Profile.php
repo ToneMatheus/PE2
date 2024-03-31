@@ -25,7 +25,6 @@ class Employee_Profile extends Model
         'job',
         'hire_date',
         'notes',
-        'nationality',
         'work_email'
     ];
 

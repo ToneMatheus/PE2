@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('work_email', 50);
             $table->dropColumn('department');
             $table->dropColumn('sex');
+            $table->dropColumn('nationality');
         });
     }
 
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->dropColumn('work_email');
             $table->string('department', 50)->nullable();
             $table->string('sex', 20)->nullable();
+            $table->string('nationality', 50)->nullable();
         });
     }
 };

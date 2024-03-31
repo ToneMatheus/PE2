@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Index_Value extends Model
 {
     use HasFactory;
+    protected $table = 'index_values';
 
     protected $fillable = [
         'reading_date',
