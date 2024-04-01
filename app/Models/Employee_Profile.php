@@ -25,7 +25,8 @@ class Employee_Profile extends Model
         'job',
         'hire_date',
         'notes',
-        'work_email'
+        'work_email',
+        'password'
     ];
 
     public $timestamps = false;
