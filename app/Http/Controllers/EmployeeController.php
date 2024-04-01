@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewEmployeeRegistered;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\{
@@ -15,7 +16,7 @@ use App\Models\{
     User_Role,
     Customer_Address
 };
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
 
 
@@ -62,7 +63,7 @@ class EmployeeController extends Controller
         //new User
         $userData = [
             'username' => $username,
-            'password' => 'default',    //mail to change  
+            'password' => Hash::make('default'),    //mail to change  
             'email' => $request->input('personalEmail'),
             'first_name' => $request->input('firstName'),
             'last_name' => $request->input('name'),
@@ -113,6 +114,8 @@ class EmployeeController extends Controller
             'start_date' => $request->input('startDate')
         ]);
 
+        event(new NewEmployeeRegistered($employee, $user));
+
         return redirect()->route('employees');
     }
 
@@ -151,7 +154,7 @@ class EmployeeController extends Controller
         $user->phone_nbr = $request->input('phoneNbr');
         $user->birth_date = $request->input('birthDate');
         $user->nationality = $request->input('nationality');
-        $user->save();;
+        $user->save();
 
         return redirect()->route('employees.edit', ['eID' => $eID]);
     }
