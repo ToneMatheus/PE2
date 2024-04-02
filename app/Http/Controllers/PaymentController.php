@@ -8,12 +8,6 @@ use App\Models\Invoice_line;
 
 class PaymentController extends Controller
 {
-    public function index()
-    {
-        $msg = "Hello World!";
-        return view('Invoices.payment', compact('msg'));
-    }
-
     public function show($id)
     {
         $invoice = Invoice::findOrFail($id);
@@ -25,6 +19,6 @@ class PaymentController extends Controller
         $invoice = Invoice::findOrFail($id);
         $invoice->update(['status' => 'paid']);
 
-        return redirect()->back()->with('success', 'Invoice marked as paid successfully.');
+        return redirect()->back()->with('success', 'Invoice successfully paid.');
     }
 }
