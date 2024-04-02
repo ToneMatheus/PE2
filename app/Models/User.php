@@ -69,7 +69,8 @@ class User extends Authenticatable
         'birth_date',
         'is_active',
         'email',
-        'title'
+        'title',
+        'nationality'
     ];
 
     public static function validate(array $input): bool
