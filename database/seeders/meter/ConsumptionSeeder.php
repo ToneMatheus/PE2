@@ -1,5 +1,5 @@
 <?php
-namespace Database\Seeders;
+namespace Database\Seeders\Meter;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
