@@ -28,24 +28,8 @@ class AnnualInvoiceJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
-        //\Log::info('regular job executed successfully!');
 
         //Aquire the current month
         $now = Carbon::now();
@@ -148,8 +132,6 @@ class AnnualInvoiceJob implements ShouldQueue
             ->whereNull('cp.end_date')
             ->first();
 
-            //without discounts
-
             $discounts = DB::table('discounts as d')
             ->where('d.contract_product_id', '=', $contractProduct->cpID)
             ->whereYear('d.start_date', '=', $year)
@@ -163,7 +145,6 @@ class AnnualInvoiceJob implements ShouldQueue
             ->whereNull('pt.end_date')
             ->first();
 
-            //dd($discounts);
 
             $extraAmount = 0;
 
@@ -192,6 +173,8 @@ class AnnualInvoiceJob implements ShouldQueue
             } else {
                 $extraAmount = ($consumption->consumption_value) ? $consumption->consumption_value * $productTariff->rate : 0;
             }
+
+            $monthlyInvoices = AnnualInvoiceJob::getMonthlyInvoices($customer->ccID);
 
             if($extraAmount > 0){                   //Invoice
                 $invoiceData = [
@@ -246,12 +229,36 @@ class AnnualInvoiceJob implements ShouldQueue
             
             $newInvoiceLine = Invoice_line::where('invoice_id', '=', $lastInserted)->first();
            
-            AnnualInvoiceJob::sendMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts);
+            AnnualInvoiceJob::sendMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
             EstimationController::UpdateAllEstimation();  
         }
     }
 
-    public function sendMail(Invoice $invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts)
+    public function getMonthlyInvoices($cID) {
+        $currentYear = Carbon::now()->year;
+
+        // Query monthly invoices and their lines for the given customer and the current year
+        $monthlyInvoices = Invoice::join('customer_contracts as cc', 'invoices.customer_contract_id', '=', 'cc.id')
+            ->join('users as u', 'cc.user_id', '=', 'u.id')
+            ->join('invoice_lines as il', 'invoices.id', '=', 'il.invoice_id')
+            ->where('cc.id', $cID)
+            ->where('invoices.type', 'Monthly')
+            ->whereYear('invoices.invoice_date', $currentYear)
+            ->orderBy('invoices.invoice_date')
+            ->select('invoices.*', 'il.*')
+            ->get();
+
+        // Organize the data by grouping lines by invoice (month)
+        $monthlyInvoicesData = [];
+        foreach ($monthlyInvoices as $monthlyInvoice) {
+            $month = Carbon::createFromFormat('Y-m-d', $monthlyInvoice->invoice_date)->format('F');
+            $monthlyInvoicesData[$month][] = $monthlyInvoice;
+        }
+
+        return $monthlyInvoicesData;
+    }
+
+    public function sendMail(Invoice $invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices)
     {
         $user = DB::table('users as u')
         ->join('customer_addresses as ca', 'ca.user_id', '=', 'u.id')
@@ -268,13 +275,14 @@ class AnnualInvoiceJob implements ShouldQueue
             'estimation' => $estimation,
             'newInvoiceLine' => $newInvoiceLine,
             'meterReadings' => $meterReadings,
-            'discounts' => $discounts
+            'discounts' => $discounts,
+            'monthlyInvoices' => $monthlyInvoices
         ], [], 'utf-8');
         $pdfData = $pdf->output();
 
         //Send email with PDF attachment
-        Mail::to('yannick.strackx@gmail.com')->send(new AnnualInvoiceMail(
-            $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts
+        Mail::to('shaunypersy10@gmail.com')->send(new AnnualInvoiceMail(
+            $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices
         ));
 
     }
