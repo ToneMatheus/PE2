@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Contract_product extends Model
 {
+    protected $table = 'contract_products';
     protected $fillable = [
         'customer_contract_id',
         'product_id',
