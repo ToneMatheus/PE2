@@ -68,24 +68,24 @@ Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
 
 });
 
-Route::middleware(['checkUserRole:FINANCE_ANALYST'])->group(function() {
-
+Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(function() {
+    
 });
 
-Route::middleware(['checkUserRole:EXECUTIVE_MANAGER'])->group(function() {
-
+Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group(function() {
+    
 });
 
-Route::middleware(['checkUserRole:CUSTOMER_SERVICE'])->group(function() {
-
+Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(function() {
+    
 });
 
-Route::middleware(['checkUserRole:CUSTOMER'])->group(function() {
-
+Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function() {
+    
 });
 
-Route::middleware(['checkUserRole:FIELD_TECHNICIAN'])->group(function() {
-
+Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
+    
 });
 
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
