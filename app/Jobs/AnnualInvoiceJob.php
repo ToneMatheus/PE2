@@ -10,16 +10,13 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-use App\Mail\meter_reading_notice;
 use App\Models\Invoice;
 use App\Models\Invoice_line;
-use App\Models\Address;
+use App\Models\CreditNote;
 use App\Mail\AnnualInvoiceMail;
-use App\Models\User;
 use App\Http\Controllers\EstimationController;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -186,33 +183,10 @@ class AnnualInvoiceJob implements ShouldQueue
                     'type' => 'Annual'
                 ];
             } else{                                 //Credit note
-                $invoiceData = [
-                    'invoice_date' => $now->format('Y/m/d'),
-                    'due_date' => $now->copy()->addWeeks(2)->format('Y/m/d'),
-                    'total_amount' => $extraAmount,
-                    'status' => 'sent',
-                    'customer_contract_id' => $customer->ccID,
-                    'type' => 'Credit note'
-                ];
-
-                $stagedInvoiceData = [              //Staging next invoice with reduction
-                    'invoice_date' => $now->copy()->addWeeks(2)->format('Y/m/d'),
-                    'due_date' => $now->copy()->addWeeks(4)->format('Y/m/d'),
-                    'total_amount' => 0,
-                    'status' => 'pending',
-                    'customer_contract_id' => $customer->ccID,
-                    'type' => 'Monthly'
-                ];
-
-                $stagedInvoice = Invoice::create($stagedInvoiceData);
-                $lastInsertedStaged = $stagedInvoice->id;
-
-                Invoice_line::create([
-                    'type' => 'Credit Note',
-                    'unit_price' => null,
+                CreditNote::create([
+                    'type' => 'credit note',
                     'amount' => $extraAmount,
-                    'consumption_id' => null,
-                    'invoice_id' => $lastInsertedStaged
+                    'user_id' => $customer->uID
                 ]);
             }
 
