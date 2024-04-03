@@ -61,31 +61,31 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
-    
+
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
-    
+
 });
 
 Route::middleware(['checkUserRole:FINANCE_ANALYST'])->group(function() {
-    
+
 });
 
 Route::middleware(['checkUserRole:EXECUTIVE_MANAGER'])->group(function() {
-    
+
 });
 
 Route::middleware(['checkUserRole:CUSTOMER_SERVICE'])->group(function() {
-    
+
 });
 
 Route::middleware(['checkUserRole:CUSTOMER'])->group(function() {
-    
+
 });
 
 Route::middleware(['checkUserRole:FIELD_TECHNICIAN'])->group(function() {
-    
+
 });
 
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
@@ -125,6 +125,7 @@ Route::post('meters/add', [MeterController::class,'addMeters']);
 Route::get('/consumption', function () {
     return view('Meters/consumption');
 });
+
 
 Route::get('/Meter_History', [MeterController::class, 'showMeterHistory'])->name('Meter_History');
 
