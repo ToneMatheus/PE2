@@ -9,6 +9,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
 use App\Http\Controllers\InvoiceRemindersController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNoteController;
@@ -106,6 +107,10 @@ Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'un
 //view invoice reminder mails for testing
 Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
 Route::get('/reminders', [InvoiceRemindersController::class, 'index'])->name("invoice_reminder");
+
+//invoice payment
+Route::get('/pay/{id}', [PaymentController::class, 'show'])->name("payment.show");
+Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 // Meters branch
 
 
