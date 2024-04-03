@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="/css/all_meters_dashboard.css" rel="stylesheet" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <title>Document</title>
 </head>
 <body>
@@ -12,6 +13,9 @@
         <p class="companyName">Thomas More Energy Company</p>
     </nav>
     <h1>All meters</h1>
+    <form>
+        <input class="search" id="search">
+    </form>
     <table class="scheduleTable">
         <tr>
             <th>SN</th>
@@ -44,5 +48,30 @@
             </tr>
         @endforeach
     </table>
+    <script>
+        $(document).ready(function(){
+            fetch_customer_data();
+ 
+            function fetch_customer_data(query = '')
+            {
+                $.ajax({
+                    url:"{{ route('action') }}",
+                    method:'GET',
+                    data:{query:query},
+                    dataType:'json',
+                    success:function(data)
+                    {
+                        $('tbody').html(data.table_data);
+                        $('#total_records').text(data.total_data);
+                    }
+
+                    $(document).on('keyup', '#search', function(){
+                        var query = $(this).val();
+                        fetch_customer_data(query);
+                    });
+                })
+            }
+        });
+    </script>
 </body>
 </html>
