@@ -92,7 +92,7 @@ class MonthlyInvoiceJob implements ShouldQueue
 
             Log::info($oldCustomer);
 
-            // if($amountInvoices < 12) {
+            if($amountInvoices < 12) {
                 //Query last monthly invoice
                 $lastInvoice = Invoice::where('type', '=', 'Monthly')
                 ->whereYear('invoice_date', '=', $year)
@@ -108,7 +108,7 @@ class MonthlyInvoiceJob implements ShouldQueue
                 $formattedDueDate = $newInvoiceDueDate->toDateString();
 
                 $this->generateInvoice($oldCustomer, $formattedInvoiceDate, $formattedDueDate);
-            // }
+            }
         }
     }
 
