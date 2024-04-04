@@ -268,9 +268,13 @@ Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'
 
 Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
 
+
+
 //test route
 Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
 Route::post('/TestUserList', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('TestUserList');
+Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');
+
 
 //Customer Portal
 Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');

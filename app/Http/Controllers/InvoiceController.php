@@ -145,4 +145,8 @@ class InvoiceController extends Controller
         ->get();
         return view('Invoices.TestUserList', compact('users'));
     }
+    public function showTestEmployeeList()
+    {
+        return view('Invoices.CustomerInvoicesOverview');
+    }
 }
