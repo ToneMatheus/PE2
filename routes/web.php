@@ -64,6 +64,13 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
+    //cronjobs
+    Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+    Route::get('/cron-jobs/schedule/edit/{job}', [CronJobController::class, 'edit_schedule'])->name('edit-schedule-cron-job');
+    Route::post('/cron-jobs/schedule/store{job}', [CronJobController::class, 'store_schedule'])->name('store-schedule-cron-job');
+    Route::post('/cron-jobs/schedule/toggle{job}', [CronJobController::class, 'toggle_schedule'])->name('toggle-schedule-cron-job');
+    Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
+    Route::get('/cron-jobs/{job}/history/{page}', [CronJobController::class, 'showHistory']);
     
 });
 
@@ -177,14 +184,6 @@ Route::get('/welcome', function() {
 Route::get('/roles', function () {
     return view('roleOverview');
 });
-
-//cronjobs
-Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
-Route::get('/cron-jobs/schedule/edit/{job}', [CronJobController::class, 'edit_schedule'])->name('edit-schedule-cron-job');
-Route::post('/cron-jobs/schedule/store{job}', [CronJobController::class, 'store_schedule'])->name('store-schedule-cron-job');
-Route::post('/cron-jobs/schedule/toggle{job}', [CronJobController::class, 'toggle_schedule'])->name('toggle-schedule-cron-job');
-Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
-Route::get('/cron-jobs/{job}/history/{page}', [CronJobController::class, 'showHistory']);
 
 Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
 
