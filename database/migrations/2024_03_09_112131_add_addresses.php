@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('city', 50);
             $table->string('province', 50);
             $table->string('country', 50)->default('Belgium');
-            $table->enum('type', ['house', 'appartment', 'business']);
+            $table->enum('type', ['house', 'appartment', 'business'])->nullable();
             $table->unsignedTinyInteger('is_billing_address')->default(1);
         });
     }

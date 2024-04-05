@@ -9,6 +9,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
 use App\Http\Controllers\InvoiceRemindersController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNoteController;
@@ -31,6 +32,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\RelationsController;
+
 
 
 
@@ -61,34 +63,36 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
+Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
+    
+});
 
-//Role system
-//Customer
-Route::middleware(['auth', 'role:Customer'])->group(function (){
+Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
 
 });
 
-//Employee
-Route::middleware(['auth', 'notrole:Customer'])->group(function (){
-    //Only Finance
-    Route::middleware(['auth', 'role:Finance analyst'])->group(function () {
-
-    });
-
-    //Only Manager
-    Route::middleware(['auth', 'role:Manager'])->group(function (){
-
-    });
-
-    //Only Executive Manager
-    Route::middleware(['auth', 'role:Executive Manager'])->group(function (){
-
-    });
-
-    //Every Employee
-
-    //Route::get('/profile', [myController::class, 'profile'])->name('profile');
+Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(function() {
+    
 });
+
+Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group(function() {
+    
+});
+
+Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(function() {
+    
+});
+
+Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function() {
+    
+});
+
+Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
+    
+});
+
+// EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
+
 
 Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
 Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
@@ -103,11 +107,15 @@ Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'un
 //view invoice reminder mails for testing
 Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
 Route::get('/reminders', [InvoiceRemindersController::class, 'index'])->name("invoice_reminder");
+
+//invoice payment
+Route::get('/pay/{id}', [PaymentController::class, 'show'])->name("payment.show");
+Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 // Meters branch
 
 
 //Meters Group
-Route::get('/dashboard', [MeterController::class, 'viewScheduledMeters']);
+Route::get('/meters_dashboard', [MeterController::class, 'viewScheduledMeters']);
 Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters']);
 Route::put('/all_meters_dashboard', [MeterController::class, 'assignment'])->name("assignment_change");
 
@@ -257,4 +265,16 @@ Route::get('/EstimationGuestForm', [EstimationController::class, 'showGuestForm'
 Route::post('/EstimationGuestForm', [EstimationController::class, 'ShowGuestEnergyEstimate'])->name('EstimationGuestResult');
 
 Route::get('/CreateInvoice', [EstimationController::class, 'showButton'])->name('EstimationPage');
+Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
+
+Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
+
+//test route
+Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
+Route::post('/TestUserList', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('TestUserList');
+
+//Customer Portal
+Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
+Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
+Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');

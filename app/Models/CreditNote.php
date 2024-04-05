@@ -9,12 +9,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class CreditNote extends Model
 {
     use HasFactory;
+    protected $table = 'credit_notes';
 
     protected $fillable = [
         'type',
         'description',
         'amount',
         'customer_id',
+        'is_credit',
+        'is_active'
     ];
 
     public function user()

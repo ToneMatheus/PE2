@@ -115,5 +115,34 @@ class InvoiceController extends Controller
         $pdf = Pdf::loadView('Invoices.invoice_pdf', compact('invoice'));
         return $pdf->download('invoice.pdf');
     }
-
+    public function showAddInvoiceExtraForm(Request $request)
+    {
+        $user = $request->input('id');
+        return view('Invoices.AddInvoiceExtra', ['userID' => $user]);
+    }
+    public function AddInvoiceExtra(Request $request)
+    {
+        $type = $request->input('type');
+        $amount = $request->input('amount');
+        $userID = $request->input('userID');
+        $amount = floatval($amount);
+        DB::table('credit_notes')->insert(array(
+            'type' => $type,
+            'amount' => $amount,
+            'user_id' => $userID,
+            'is_credit' => 0,
+            'is_active' => 1));
+        $users = DB::table('users as u')
+        ->join('customer_contracts as cc', 'cc.user_id', '=', 'u.id')
+        ->get();
+        return view('Invoices.TestUserList', compact('users'));
+    }
+    //test
+    public function showTestUserList()
+    {
+        $users = DB::table('users as u')
+        ->join('customer_contracts as cc', 'cc.user_id', '=', 'u.id')
+        ->get();
+        return view('Invoices.TestUserList', compact('users'));
+    }
 }

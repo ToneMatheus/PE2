@@ -47,16 +47,10 @@
 
         @foreach($newInvoiceLines as $invoiceLine)
             <tr>
-                <td>{{$invoiceLine->type}}</td>
-                <td>{{$invoiceLine->unit_price}}</td>
-                
-                @if($invoiceLine->type == 'Electricity')
-                    <td>{{$estimation}}</td>
-                @else
-                    <td>1</td>
-                @endif
-
-                <td>{{$invoiceLine->amount}}</td>
+                <td>{{ $invoiceLine->type }}</td>
+                <td>{{ $invoiceLine->unit_price }}</td>
+                <td>{{ $invoiceLine->amount }}</td>
+                <td>{{ $invoiceLine->unit_price * $invoiceLine->amount }}</td>
             </tr>
         @endforeach
     </table>

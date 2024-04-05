@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Estimation;
+use App\Models\Meter;
+use Carbon\Carbon;
 
 class EstimationController extends Controller
 {
@@ -14,28 +16,6 @@ class EstimationController extends Controller
     {
         return view('Invoices.testingEstimation');
     }
-    public function generateOneInvoice(Request $request)
-    {
-        $request->validate([
-            'customerID' => 'required|integer|min:1|max:10',
-        ], [
-            'customerID.min' => 'This field must be at least 1.','customerID.max' => 'There are only 2 customers ATM, sorry!',
-        ]);
-        $customer = $request->input('customerID');
-        $estimationResult = DB::table('users as u')
-            ->join('customer_addresses as ca', 'ca.user_id', '=', 'u.id')
-            ->join('addresses as a', 'ca.address_id', '=', 'a.id')
-            ->join('meter_addresses as ma', 'a.id', '=', 'ma.address_id')
-            ->join('meters as m', 'ma.meter_id', '=', 'm.id')
-            ->join('estimations as e', 'e.meter_id', '=', 'm.id')
-            ->where('u.id', '=', $customer)
-            ->select('e.estimation_total')
-            ->first();
-        dd($estimationResult);
-        dd($this->CalculateMonthlyEnergyAmount($customerID));
-    }
-
-
     // Guest Public functions
     /**
      * @param \Illuminate\Http\Request $request
@@ -53,61 +33,44 @@ class EstimationController extends Controller
     {
         return view('Invoices.EstimationGuest');
     }
-    // Employee Public functions
     /**
-     * @param int $meterID
-     * @return float
+     * @return void
      */
-    public static function CalculateMonthlyDollarAmount(int $meterID): float
+    public static function UpdateAllEstimation(): void
     {
-        // $meterValue = DB::table('index_values')->orderby('reading_value','desc')->where('meter_id', $meterID)->take(2)->pluck('reading_value')->toArray();
-        // if (count($meterValue) >= 2)
-        // {
-        //     $difference = abs($meterValue[0] - $meterValue[1]);
-        //     if ($difference > 0)
-        //     {
-        //         $totalMeterEstimateYear = $difference;
-        //     }
-        //     else
-        //     {
-        //         $totalMeterEstimateYear = EstimationController::calculateMeterEnergyEstimate($meterID);
-        //     }
-        // }
-        // else
-        // {
-        //     $totalMeterEstimateYear = EstimationController::calculateMeterEnergyEstimate($meterID);
-        // }
-        $totalMeterEstimateYear = EstimationController::calculateMeterEnergyEstimate($meterID);
-        $EstimationMonthly = $totalMeterEstimateYear/12;
-        $moneyAmountMonthly = number_format($EstimationMonthly*0.25,2);
-        return $moneyAmountMonthly;
+        
+        $meters = Estimation::select('meter_id')->get()->toArray();
+        foreach ($meters as $meter) {
+            EstimationController::UpdateEstimation($meter['meter_id']);
+        }
     }
     /**
      * @param int $meterID
-     * @return int
+     * @return void
      */
-    public static function CalculateMonthlyEnergyAmount(int $meterID): int
+    private static function UpdateEstimation(int $meterID): void
     {
-        // $meterValue = DB::table('index_values')->orderby('reading_value','desc')->where('meter_id', $meterID)->take(2)->pluck('reading_value')->toArray();
-        // if (count($meterValue) >= 2)
-        // {
-        //     $difference = abs($meterValue[0] - $meterValue[1]);
-        //     if ($difference > 0)
-        //     {
-        //         $totalMeterEstimateYear = $difference;
-        //     }
-        //     else
-        //     {
-        //         $totalMeterEstimateYear = EstimationController::calculateMeterEnergyEstimate($meterID);
-        //     }
-        // }
-        // else
-        // {
-        //     $totalMeterEstimateYear = EstimationController::calculateMeterEnergyEstimate($meterID);
-        // }
-        $totalMeterEstimateYear = EstimationController::calculateMeterEnergyEstimate($meterID);
-        $EstimationMonthly = $totalMeterEstimateYear/12;
-        return $EstimationMonthly;
+        $now = Carbon::now();
+        $month = $now->format('m');
+        $year = $now->format('Y');
+        $meterReadings = DB::table('index_values')
+            ->where(function ($query) use ($year) {
+                $query->whereYear('reading_date', $year)
+                    ->orWhereYear('reading_date', $year - 1);
+            })
+            ->where('meter_id', '=', $meterID)
+            ->select('reading_value')
+            ->get()->toArray();
+        if (sizeof($meterReadings) == 2) {
+            $difference = abs($meterReadings[0]->reading_value - $meterReadings[1]->reading_value);
+            DB::table('estimations')->where('meter_id', $meterID)->update(array('estimation_total' => $difference));
+        }
+        else if (sizeof($meterReadings) == 1) {
+            DB::table('estimations')->where('meter_id', $meterID)->update(array('estimation_total' => $$meterReadings[0]->reading_value));
+        }
+        else {
+            EstimationController::calculateMeterEnergyEstimate($meterID);
+        }
     }
     // Guest Private functions
     /**
@@ -211,7 +174,6 @@ class EstimationController extends Controller
                              $estimateWashers + $estimateComputers + $estimateEntertainment +
                              $estimateDishwashers); // We always round up!
 
-        //$estimationTotal = DB::table('estimations')->where('meter_id', $meterID)->pluck('estimation_total');
         $estimationTotal = Estimation::where('meter_id', $meterID)->pluck('estimation_total')->first();
         $estimationTotal = collect($estimationTotal)->flatten()->all();
         if ($estimationTotal == $totalMeterEstimateYear)

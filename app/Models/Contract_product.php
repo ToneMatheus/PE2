@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Contract_product extends Model
 {
+    protected $table = 'contract_products';
     protected $fillable = [
         'customer_contract_id',
-        'tariff_id',
         'product_id',
         'start_date',
-        'end_date'
+        'end_date',
+        'meter_id'
     ];
 
     public function discounts(): HasMany
@@ -27,9 +28,14 @@ class Contract_product extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function tariff(): BelongsTo
+    /*public function tariff(): BelongsTo
     {
         return $this->belongsTo(Tariff::class);
+    }*/
+
+    public function meter(): BelongsTo
+    {
+        return $this->belongsTo(Meter::class);
     }
     
     public function customer_contract(): BelongsTo
