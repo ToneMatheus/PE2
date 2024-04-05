@@ -185,7 +185,7 @@ Route::post('/cron-jobs/schedule/store{job}', [CronJobController::class, 'store_
 Route::post('/cron-jobs/schedule/disable{job}', [CronJobController::class, 'disable_schedule'])->name('disable-schedule-cron-job');
 Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
 
-Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
+Route::get('/employee/invoices', [InvoiceController::class, 'showAllInvoices'])->name('invoices.show');;
 
 
 //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');

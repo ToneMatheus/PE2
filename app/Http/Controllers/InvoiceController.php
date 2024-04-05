@@ -150,14 +150,15 @@ class InvoiceController extends Controller
         return view('Invoices.CustomerInvoicesOverview');
     }
 
-    public function showInvoices(Request $request){
+    public function showAllInvoices(Request $request){
 
         // This fetch is dumb as it gets all invoices just to show a dynamic year filter
         // But i cant rely on the invoices that go through the query as that may have filters on there
         $invoices = Invoice::all();
+        // dd($invoices);
         $filterYears = [];
             foreach($invoices as $invoice){
-                $invoiceYear = date('Y', strtotime($invoice['InvoiceDate']));
+                $invoiceYear = date('Y', strtotime($invoice['invoice_date']));
                 if (!in_array($invoiceYear, $filterYears)){
                     array_push($filterYears, $invoiceYear);
                 }
@@ -170,11 +171,11 @@ class InvoiceController extends Controller
         if ($request->has('year') && $request->input('year') != '') {
             $selectedYear = $request->input('year');
             if ($selectedYear === 'last3Months') {
-                $invoicesQuery->whereDate('invoiceDate', '>=', now()->subMonths(3));
+                $invoicesQuery->whereDate('invoice_date', '>=', now()->subMonths(3));
             } elseif ($selectedYear === 'last6Months') {
-                $invoicesQuery->whereDate('invoiceDate', '>=', now()->subMonths(6));
+                $invoicesQuery->whereDate('invoice_date', '>=', now()->subMonths(6));
             } else {
-                $invoicesQuery->whereYear('invoiceDate', $selectedYear);
+                $invoicesQuery->whereYear('invoice_date', $selectedYear);
             }
         }
 
