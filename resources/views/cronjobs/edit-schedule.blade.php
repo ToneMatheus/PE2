@@ -1,70 +1,93 @@
-@extends('layouts/main_layout')
-<script src="{{ asset('js/cron-jobs.js') }}"></script>
+<x-app-layout>
+<x-slot name="header">
+    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        {{ __('Edit '. $cronjob->name.' schedule' ) }}
+    </h2>
+</x-slot>
 
-@section('content')
-    <div class="max-w-2xl mx-auto">
-    <a href="{{ route('index-cron-job')}}" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" style="margin-right: 10px;">back</a>
-        <h1 class="text-2xl font-bold mb-4">Edit Job</h1>
+<div class="py-8">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-        @if(session('success'))
-            <div class="bg-green-200 text-green-800 py-2 px-4 rounded mb-4">{{ session('success') }}</div>
-        @endif
+    @if (session('success'))
+        <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 5000)"
+            class="bg-green-200 text-green-800 py-2 px-4 rounded mb-4">
+            {{ __(session('success')) }}
+        </p>
+    @endif
 
-        <form action="{{ route('store-schedule-cron-job', ['job' => $cronjob->name]) }}" method="POST" class="space-y-4">
-            @csrf
-            <div>
-                <label for="name" class="block font-semibold">Name:</label>
-                <input readonly type="text" id="name" name="name" value="{{ $cronjob->name }}" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500">
-            </div>
+        <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+            <header>
+                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    Job Scheduler
+                </h2>
 
-            <div>
-                <label for="interval" class="block font-semibold">Interval:</label>
-                <select id="interval" name="interval" onchange="showFields()" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500">
-                @if($cronjob->interval == null)
-                    <option value="none">Choose an option:</option>
-                @endif  
-                    <option value="yearly" {{ $cronjob->interval == "yearly" ? 'selected' : '' }}>Yearly</option>
-                    <option value="monthly" {{ $cronjob->interval == "monthly" ? 'selected' : '' }}>Monthly</option>
-                    <option value="daily" {{ $cronjob->interval == "daily" ? 'selected' : '' }}>Daily</option>
-                </select>
-            </div>
-
-            <div id="scheduled_day_field" class="hidden">
-                <label for="scheduled_day" class="block font-semibold">Scheduled Day:</label>
-                <input type="number" id="scheduled_day" min="1" max="28" name="scheduled_day" value="{{ $cronjob->scheduled_day }}" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500">
-            </div>
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    Update the schedule of this job 
+                </p>
+            </header>
             
-            <div id="scheduled_month_field" class="hidden">
-                <label for="scheduled_month" class="block font-semibold">Scheduled Month:</label>
-                <select id="scheduled_month" name="scheduled_month" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500">
-                    <option value="1" {{ $cronjob->scheduled_month == 1 ? 'selected' : '' }}>January</option>
-                    <option value="2" {{ $cronjob->scheduled_month == 2 ? 'selected' : '' }}>February</option>
-                    <option value="3" {{ $cronjob->scheduled_month == 3 ? 'selected' : '' }}>March</option>
-                    <option value="4" {{ $cronjob->scheduled_month == 4 ? 'selected' : '' }}>April</option>
-                    <option value="5" {{ $cronjob->scheduled_month == 5 ? 'selected' : '' }}>May</option>
-                    <option value="6" {{ $cronjob->scheduled_month == 6 ? 'selected' : '' }}>June</option>
-                    <option value="7" {{ $cronjob->scheduled_month == 7 ? 'selected' : '' }}>July</option>
-                    <option value="8" {{ $cronjob->scheduled_month == 8 ? 'selected' : '' }}>August</option>
-                    <option value="9" {{ $cronjob->scheduled_month == 9 ? 'selected' : '' }}>September</option>
-                    <option value="10" {{ $cronjob->scheduled_month == 10 ? 'selected' : '' }}>October</option>
-                    <option value="11" {{ $cronjob->scheduled_month == 11 ? 'selected' : '' }}>November</option>
-                    <option value="12" {{ $cronjob->scheduled_month == 12 ? 'selected' : '' }}>December</option>
-                </select>
-            </div>
+            <form action="{{ route('store-schedule-cron-job', ['job' => $cronjob->name]) }}" method="POST" class="mt-6 space-y-6">
+                @csrf
 
-            <div id="scheduled_time_field" class="hidden">
-                <label for="scheduled_time" class="block font-semibold">Scheduled Time:</label>
-                <input type="time" id="scheduled_time" name="scheduled_time" value="{{ $cronjob->scheduled_time }}" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500">
-            </div>
+                <div class="max-w-xl">
+                    <x-input-label for="name" :value="__('Name:')" />
+                    <x-text-input readonly id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $cronjob->name)" autofocus autocomplete="name" />
+                    <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                </div>
 
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
-        </form>
+                <div class="max-w-xl">
+                    <x-input-label for="interval" :value="__('Interval:')" />
+                    <x-select id="interval" name="interval" onchange="showFields()">
+                        @if($cronjob->interval == null)
+                            <option value="none">Choose an option:</option>
+                        @endif  
+                        <option value="yearly" {{ $cronjob->interval == "yearly" ? 'selected' : '' }}>Yearly</option>
+                        <option value="monthly" {{ $cronjob->interval == "monthly" ? 'selected' : '' }}>Monthly</option>
+                        <option value="daily" {{ $cronjob->interval == "daily" ? 'selected' : '' }}>Daily</option>
+                    </x-select>
+                    <x-input-error class="mt-2" :messages="$errors->get('interval')" />
+                </div>
+
+                <div id="scheduled_day_field" class="max-w-xl hidden">
+                    <x-input-label for="scheduled_day" :value="__('Scheduled Day:')" />
+                    <x-text-input id="scheduled_day" name="scheduled_day" type="number" class="mt-1 block w-full" min="1" max="28" :value="$cronjob->scheduled_day" />
+                    <x-input-error class="mt-2" :messages="$errors->get('scheduled_day')" />
+                </div>
+                
+                <div id="scheduled_month_field" class="max-w-xl hidden">
+                    <x-input-label for="scheduled_month" :value="__('Scheduled Month:')" />
+                    <x-select id="scheduled_month" name="scheduled_month">
+                        @for($i = 1; $i <= 12; $i++)
+                            <option value="{{ $i }}" {{ $cronjob->scheduled_month == $i ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
+                        @endfor
+                    </x-select>
+                    <x-input-error class="mt-2" :messages="$errors->get('scheduled_month')" />
+                </div>
+
+                <div id="scheduled_time_field" class="max-w-xl hidden">
+                    <x-input-label for="scheduled_time" :value="__('Scheduled Time:')" />
+                    <x-text-input id="scheduled_time" name="scheduled_time" type="time" class="mt-1 block w-full" :value="$cronjob->scheduled_time" />
+                    <x-input-error class="mt-2" :messages="$errors->get('scheduled_time')" />
+                </div>
+                <x-primary-button class="ml-1">
+                    {{ __('Submit') }}
+                </x-primary-button>
+            </form>
+        </div>
     </div>
+</div>
 
-    <script>
-        // Function to run when the page loads
-        window.onload = function() {
-            showFields();
-        };
-    </script>
-@endsection
+
+<div class="max-w-2xl mx-auto">
+<a href="{{ route('index-cron-job')}}" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" style="margin-right: 10px;">back</a>
+        
+</div>
+
+<script src="{{ asset('js/cron-jobs.js') }}"></script>
+<script>
+    // Function to run when the page loads
+    window.onload = function() {
+        showFields();
+    };
+</script>
+</x-app-layout>
