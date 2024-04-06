@@ -6,25 +6,25 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Team_Member extends Model
+class Team_User_Role extends Model
 {
     use HasFactory;
-    protected $table = 'team_members';
+    protected $table = 'team_user_roles';
 
     protected $fillable = [
-        'user_id',
         'team_id',
-        'is_manager',
-        'is_active'
+        'user_role_id'
     ];
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
+    use HasFactory;
 
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function user_role(): BelongsTo
+    {
+        return $this->belongsTo(User_Role::class);
     }
 }
