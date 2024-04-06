@@ -21,6 +21,7 @@
 </style>
 </head>
 <body>
+    <x-app-layout>
 <h1>Meter History</h1>
 
 <form id="meterForm">
@@ -115,6 +116,6 @@
         document.getElementById('error-message').style.display = 'none';
     }
 </script>
-
+</x-app-layout>
 </body>
 </html>
