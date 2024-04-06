@@ -111,6 +111,12 @@ Route::get('/reminders', [InvoiceRemindersController::class, 'index'])->name("in
 //invoice payment
 Route::get('/pay/{id}', [PaymentController::class, 'show'])->name("payment.show");
 Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
+
+//QR code test
+Route::get('/code', function () {
+    return view('Invoices/QRcodeTest');
+});
+
 // Meters branch
 
 
@@ -269,7 +275,7 @@ Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'
 Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
 
 //test route
-Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
+Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList1');
 Route::post('/TestUserList', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('TestUserList');
 
 //Customer Portal
