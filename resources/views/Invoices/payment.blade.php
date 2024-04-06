@@ -6,6 +6,7 @@
 </head>
 
 <x-app-layout>
+    <div class="p-4 sm:p-8">
     <div class="max-w-xl">
         <h1 class="text-blue-400 text-3xl">Invoice Details</h1>
         <p>Invoice ID: {{ $invoice->id }}</p>
@@ -34,15 +35,20 @@
             Status: {{ $invoice->status }}
         </p>
     
+        @if ($invoice->status != 'paid')
         <form method="POST" action="{{ route('payment.pay', $invoice->id) }}">
             @csrf
             <p><button type="submit" class="bg-blue-400 hover:bg-blue-600 text-white font-bold py-1 px-4 rounded">Pay</button></p>
         </form>
+        @else
+        <p><b>Payment for this invoice has been settled.</b></p>
+        @endif
 
         @if(session('success'))
         <div class="bg-green-200 text-green-800 border border-green-600 px-4 py-2 rounded">
             {{ session('success') }}
         </div>
         @endif
+    </div>
     </div>
 </x-app-layout>
