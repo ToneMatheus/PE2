@@ -6,10 +6,10 @@
 </head>
 
 <x-app-layout>
-    <div class="container mx-auto">
+    <div class="max-w-xl">
         <h1 class="text-blue-400 text-3xl">Invoice Details</h1>
         <p>Invoice ID: {{ $invoice->id }}</p>
-        <table class="border-collapse border border-gray-200">
+        <table class="min-w-full table-auto border-collapse border border-gray-200">
             <tr class="border-collapse border border-gray-200 bg-gray-300">
                 <th class="border-collapse border border-gray-200 px-5">Type</th>
                 <th class="border-collapse border border-gray-200 px-5">Unit price</th>
