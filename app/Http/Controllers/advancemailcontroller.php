@@ -21,12 +21,14 @@ use Carbon\Carbon;
 
 use App\Services\InvoiceFineService;
 
+use App\Jobs\WeekAdvanceReminderJob;
+
 class advancemailcontroller extends Controller
 {
     public function index()
     {
             //Query which invoices have not been paid yet and are due in 1 week
-        $unpaidInvoices = Invoice::select('id')
+        /*$unpaidInvoices = Invoice::select('id')
         ->whereNotIn('status', ['paid', 'pending'])
         ->whereDate('due_date', '=', now()->addDays(7)->toDateString())
         ->get()
@@ -40,7 +42,9 @@ class advancemailcontroller extends Controller
             {
                 $this->sendMail($unpaidInvoice);
             }
-        }
+        }*/
+
+        WeekAdvanceReminderJob::dispatch();
     }
 
     public function sendMail(int $invoiceID)

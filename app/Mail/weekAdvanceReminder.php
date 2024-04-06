@@ -22,6 +22,7 @@ class weekAdvanceReminder extends Mailable
 
     //temporary: make global variables?
     public $companyname = "energy supply business";
+    public $domain = "http://127.0.0.1:8000";
 
     public function __construct(    
         public $invoice_info,
