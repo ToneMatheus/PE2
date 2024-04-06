@@ -25,6 +25,16 @@ class CustomerContractSeeder extends Seeder
             ];
         }
 
+        $contracts[] = [
+            'id' => 4,
+            'user_id' => 6,
+            'start_date' => '2025-01-01',
+            'end_date' => null,
+            'type' => 'Standard',
+            'price' => 1000,
+            'status' => 'Active'
+        ];
+
         DB::table('customer_contracts')->insert($contracts);
     }
 }
