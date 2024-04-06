@@ -20,6 +20,7 @@ class InvoiceSeeder extends Seeder
                 'total_amount' => 113.75,
                 'status' => 'paid',
                 'customer_contract_id' => 1,
+                'meter_id' => 1,
                 'type' => 'Monthly'
             ],
             [
@@ -29,6 +30,7 @@ class InvoiceSeeder extends Seeder
                 'total_amount' => 113.75,
                 'status' => 'paid',
                 'customer_contract_id' => 1,
+                'meter_id' => 1,
                 'type' => 'Monthly'
             ]
         ]);
@@ -41,6 +43,7 @@ class InvoiceSeeder extends Seeder
                 'total_amount' => 455.4,
                 'status' => 'paid',
                 'customer_contract_id' => 2,
+                'meter_id' => 2,
                 'type' => 'Monthly'
             ],
             [
@@ -50,6 +53,7 @@ class InvoiceSeeder extends Seeder
                 'total_amount' => 455.4,
                 'status' => 'paid',
                 'customer_contract_id' => 2,
+                'meter_id' => 2,
                 'type' => 'Monthly'
             ],
             [
@@ -59,6 +63,7 @@ class InvoiceSeeder extends Seeder
                 'total_amount' => 455.4,
                 'status' => 'sent',
                 'customer_contract_id' => 2,
+                'meter_id' => 2,
                 'type' => 'Monthly'
             ]
         ]);
@@ -71,6 +76,7 @@ class InvoiceSeeder extends Seeder
                 'total_amount' => 108.75,
                 'status' => 'paid',
                 'customer_contract_id' => 3,
+                'meter_id' => 3,
                 'type' => 'Monthly'
             ],
             [
@@ -80,6 +86,7 @@ class InvoiceSeeder extends Seeder
                 'total_amount' => 108.75,
                 'status' => 'paid',
                 'customer_contract_id' => 3,
+                'meter_id' => 3,
                 'type' => 'Monthly'
             ]
         ]);
@@ -92,6 +99,7 @@ class InvoiceSeeder extends Seeder
                 'total_amount' => 99.8,
                 'status' => 'paid',
                 'customer_contract_id' => 3,
+                'meter_id' => 4,
                 'type' => 'Monthly'
             ],
             [
@@ -101,6 +109,7 @@ class InvoiceSeeder extends Seeder
                 'total_amount' => 99.8,
                 'status' => 'paid',
                 'customer_contract_id' => 3,
+                'meter_id' => 4,
                 'type' => 'Monthly'
             ]
         ]); 
