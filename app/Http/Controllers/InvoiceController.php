@@ -5,6 +5,7 @@ use App\Mail\meter_reading_notice;
 use App\Models\Invoice;
 use App\Models\Invoice_line;
 use App\Mail\InvoiceMail;
+use App\Models\CreditNote;
 use App\Models\Meter_Reader_Schedule;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;

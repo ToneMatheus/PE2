@@ -245,6 +245,11 @@ Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credi
 Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
 Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
 
+Route::get('/customer/invoice/search', [CreditNoteController::class, 'show']);
+Route::post('/customer/invoice/search', [CreditNoteController::class, 'search'])->name('credit-notes.search');
+
+Route::post('/refund', [CreditNoteController::class, 'refund']);
+
 //Customer Portal
 Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
 Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
