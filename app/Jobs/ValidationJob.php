@@ -94,6 +94,9 @@ class ValidationJob implements ShouldQueue
                             if (sizeof($consumptions) == 0) {
                                 Log::error('Exception caught: ' . "Validation Error Code 2: No consumption found for meter with id: $meter.");
                             }
+                            else {
+                                Log::error("No validation error for meter with id: $meter.");
+                            }
                         }
                     }
                     

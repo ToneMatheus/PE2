@@ -192,6 +192,6 @@ class InvoiceController extends Controller
 
         $invoices = $invoicesQuery->get();
 
-        return view('Invoices/CustomerInvoicesOverview', compact('invoices', 'filterYears', 'selectedYear', 'selectedStatus'));
+        return view('Invoices/EmployeeInvoicesOverview', compact('invoices', 'filterYears', 'selectedYear', 'selectedStatus'));
     }
 }
