@@ -15,7 +15,8 @@ class Invoice extends Model
         'total_amount',
         'status',
         'customer_contract_id',
-        'type'
+        'type',
+        'meter_id'
     ];
 
     public $timestamps = false;
@@ -28,6 +29,11 @@ class Invoice extends Model
     public function customer_contract(): BelongsTo
     {
         return $this->belongsTo(Customer_contracts::class);
+    }
+
+    public function meter(): BelongsTo
+    {
+        return $this->belongsTo(Meter::class);
     }
 
     use HasFactory;

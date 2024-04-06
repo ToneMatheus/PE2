@@ -50,4 +50,9 @@ class Meter extends Model
      {
          return $this->hasMany(Meter_Addresses::class);
      } 
+
+     public function meters(): HasMany
+     {
+         return $this->hasMany(Meter::class);
+     } 
 }
