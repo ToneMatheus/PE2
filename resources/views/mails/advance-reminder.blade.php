@@ -49,18 +49,8 @@
     </table>
 
     <p>
-        Please log in to our website or scan the QR code to fill in payment.
+        Please log in to our website or scan the QR code in attachment to fill in payment.
     </p>
-
-<table cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#ffffff">
-    <tr>
-        <td align="center" style="padding: 20px;">
-            <?php 
-            echo DNS2D::getBarcodeHTML($domain . "/pay/" . $invoice_info[0]->invoice_id, 'QRCODE',5,5);
-            ?>
-        </td>
-    </tr>
-</table>
 
     <p>
         If your payment has already been settled when you recieve this e-mail, you can ignore this reminder.

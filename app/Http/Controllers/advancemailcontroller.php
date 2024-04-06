@@ -51,7 +51,7 @@ class advancemailcontroller extends Controller
     {
         //gather data of users: name, e-mail
         //gather data of lines of invoice
-        $invoice = new Invoice();
+        /*$invoice = new Invoice();
         $invoice = Invoice::find($invoiceID);
         $invoice_info = $invoice->invoice_lines;
 
@@ -63,7 +63,7 @@ class advancemailcontroller extends Controller
             ->where('invoices.id', $invoiceID)
             ->first();
 
-        Mail::to('niki.de.visscher@gmail.com')->send(new weekAdvanceReminder($invoice_info, $total_amount, $user_info));
+        Mail::to('niki.de.visscher@gmail.com')->send(new weekAdvanceReminder($invoice_info, $total_amount, $user_info));*/
     }
 
     /*public function index()
