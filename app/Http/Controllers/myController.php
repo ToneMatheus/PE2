@@ -3,12 +3,31 @@
     use Carbon\Carbon;
     use Illuminate\Support\Facades\DB;
     use Illuminate\Http\Request;
-    
+    use Illuminate\Support\Facades\Auth; 
 
     class myController extends Controller{
         public function profile(){
-            return view('profile');
-        }
+            $userID = Auth::id();
+    
+            $team = DB::select("select * from team_members inner join teams on team_members.team_id = teams.id where user_id = $userID");
+            $team_name = htmlspecialchars($team[0]->team_name);
+    
+            if (!empty($team_name)) {
+                if ($team_name == 'Invoice') {
+                    return view('profileInvoice');
+                } elseif ($team_name == 'HR') {
+                    return view('profileHR');
+                } elseif ($team_name == 'Customer service') {
+                    return view('profileCustomers');
+                } elseif ($team_name == 'Meters') {
+                    return view('profileMeters');
+                } else {
+                    // Handle the case where $team_name does not match any of the above conditions
+                    abort(404);
+                }
+            }
+            
+        }                
 
         public function payslip(Request $request){
             // Retrieve the value of the 'flag' parameter
@@ -169,6 +188,22 @@
 
         public function jobApply(){
             return view('HR_EmployeeJobs.jobApply');
+        }
+
+        public function profileHR(){
+            return view('profileHR');
+        }
+
+        public function profileInvoice(){
+            return view('profileInvoice');
+        }
+
+        public function profileCustomers(){
+            return view('profileCustomers');
+        }
+
+        public function profileMeters(){
+            return view('profileMeters');
         }
     }
 ?>

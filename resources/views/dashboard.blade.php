@@ -35,7 +35,7 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View a specific ticket</p>
                             </div>
                         </a>
-                    @endif
+                    @endif 
                 </div>
             </div>
         </div>
