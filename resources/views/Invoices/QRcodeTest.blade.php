@@ -8,6 +8,8 @@
 <body>
     <!--Page for testing purposes only-->
     <?php 
-        echo DNS2D::getBarcodeHTML('http://127.0.0.1:8000/pay/1', 'QRCODE');
+    $domain = "http://127.0.0.1:8000";
+    $userID = "1";
+    echo DNS2D::getBarcodeHTML($domain . "/pay/" . $userID, 'QRCODE');
     ?>
 </body>
