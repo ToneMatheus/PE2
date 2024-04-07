@@ -1,4 +1,4 @@
-{{-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,8 +7,7 @@
     <link href="/css/all_meters_dashboard.css" rel="stylesheet" type="text/css"/>
     <title>Document</title>
 </head>
-<body> --}}
-    <x-app-layout>
+<body>
     <nav>
         <p class="companyName">Thomas More Energy Company</p>
     </nav>
@@ -53,4 +52,5 @@
             });
         });
     </script>
-</x-app-layout>
+</body>
+</html>
