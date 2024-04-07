@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Customer_Address extends Model
 {
-    protected $table = 'customer_addresses';
-
     use HasFactory;
     protected $table = 'customer_addresses';
 
