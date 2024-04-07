@@ -108,9 +108,11 @@ Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_m
 
 //Meters Group
 Route::get('/dashboard', [MeterController::class, 'viewScheduledMeters']);
-Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters'])->name("viewAllMeters");
+// Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters'])->name("viewAllMeters");
+Route::get('/all_meters_dashboard', [MeterController::class, 'index']);
 Route::get('/search', [MeterController::class, 'searchAllMeters'])->name("searchAllMeters");
-Route::put('/all_meters_dashboard', [MeterController::class, 'assignment'])->name("assignment_change");
+Route::get('/all_meters_dashboard_search', [MeterController::class, 'search'])->name("search");
+Route::post('/assignment_change', [MeterController::class, 'assignment']);
 
 Route::get('/enterIndexEmployee', [MeterController::class, 'enterIndex']);
 Route::post('/enterIndexEmployee', [MeterController::class, 'submitIndex'])->name("submitIndex");
