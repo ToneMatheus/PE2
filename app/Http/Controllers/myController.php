@@ -7,25 +7,7 @@
 
     class myController extends Controller{
         public function profile(){
-            $userID = Auth::id();
-    
-            $team = DB::select("select * from team_members inner join teams on team_members.team_id = teams.id where user_id = $userID");
-            $team_name = htmlspecialchars($team[0]->team_name);
-    
-            if (!empty($team_name)) {
-                if ($team_name == 'Invoice') {
-                    return view('profileInvoice');
-                } elseif ($team_name == 'HR') {
-                    return view('profileHR');
-                } elseif ($team_name == 'Customer service') {
-                    return view('profileCustomers');
-                } elseif ($team_name == 'Meters') {
-                    return view('profileMeters');
-                } else {
-                    // Handle the case where $team_name does not match any of the above conditions
-                    abort(404);
-                }
-            }
+            return view('profile');
             
         }                
 
@@ -34,7 +16,7 @@
             $id = $request->input('id');
     
             // You can use $flag as needed
-            $userID = 3; //To be replaced by the real ID!
+            $userID = Auth::id();
         
             $payslipInfo = DB::select("select * from payslips where employee_profile_id = $userID");//fetching payslip plus contract information
         
@@ -204,6 +186,10 @@
 
         public function profileMeters(){
             return view('profileMeters');
+        }
+
+        public function portal(){
+            return view('HR_EmployeeProfile.portal');
         }
     }
 ?>

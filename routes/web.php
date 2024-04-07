@@ -164,11 +164,11 @@ Route::get('/hiringManger', [myController::class, 'hiringManager'])->name('hirin
 Route::get('/jobOffers', [myController::class, 'jobs'])->name('jobs');
 Route::get('/jobDescription', [myController::class, 'jobDescription'])->name('jobDescription');
 Route::get('/jobApply', [myController::class, 'jobApply'])->name('jobApply');
-
-Route::get('/profileHR', [myController::class, 'profileHR'])->name('profileHR');
-Route::get('/profileInvoice', [myController::class, 'profileInvoice'])->name('profileInvoice');
-Route::get('/profileCustomers', [myController::class, 'profileCustomers'])->name('profileCustomers');
-Route::get('/profileMeters', [myController::class, 'profileMeters'])->name('profileMeters');
+Route::get('/portal', [myController::class, 'portal'])->name('portal');
+// Route::get('/profileHR', [myController::class, 'profileHR'])->name('profileHR');
+// Route::get('/profileInvoice', [myController::class, 'profileInvoice'])->name('profileInvoice');
+// Route::get('/profileCustomers', [myController::class, 'profileCustomers'])->name('profileCustomers');
+// Route::get('/profileMeters', [myController::class, 'profileMeters'])->name('profileMeters');
 
 // routes for relations controlelr
 Route::get('/relations', [RelationsController::class, 'fetchRelations']);

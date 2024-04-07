@@ -1,7 +1,7 @@
 @php
 use Carbon\Carbon;
 
-$userID = 3;//To be replaced by the real ID!
+$userID = Auth::id();
 
 $contract = DB::select("select * from employee_contracts where employee_profile_id = $userID");
 $employee_profile = DB::select("select * from employee_profiles where id = $userID");
