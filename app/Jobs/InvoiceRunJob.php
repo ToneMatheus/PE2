@@ -98,8 +98,7 @@ class InvoiceRunJob implements ShouldQueue
                     $lastInvoiceDate = Carbon::parse($lastInvoice->invoice_date);
 
                     //Check if needs an invoice now
-                    if($lastInvoiceDate->addWeeks(2) == $now){
-                        dd('monthly');
+                    if($lastInvoiceDate->addMonth() == $now){
                         $invoiceDate = $now;
                         $dueDate = $invoiceDate->copy()->addWeeks(2);
         
@@ -121,7 +120,7 @@ class InvoiceRunJob implements ShouldQueue
                         $formattedInvoiceDate = $invoiceDate->toDateString();
                         $formattedDueDate = $dueDate->toDateString();
         
-                        $this->generateYearlyInvoice($customer, $formattedInvoiceDate, $formattedDueDate, $year);
+                        $this->generateYearlyInvoice($customer);
                     }
 
                 } else { //old Customer
@@ -135,7 +134,7 @@ class InvoiceRunJob implements ShouldQueue
                         $formattedInvoiceDate = $invoiceDate->toDateString();
                         $formattedDueDate = $dueDate->toDateString();
         
-                        $this->generateYearlyInvoice($customer, $formattedInvoiceDate, $formattedDueDate);
+                        $this->generateYearlyInvoice($customer);
                     }
                 }
             } 
@@ -144,18 +143,26 @@ class InvoiceRunJob implements ShouldQueue
 
     }
 
-    public function generateYearlyInvoice($customer, $formattedInvoiceDate, $formattedDueDate){
-        $now = Carbon::create(2024, 3, 15);
+    public function generateYearlyInvoice($customer){
+        $now = Carbon::create(2025, 1, 15);
         //$now = Carbon::now();
         $month = $now->format('m');
         $year = $now->format('Y');
 
-        $readings = Index_Value::where('meter_id', '=', $customer->mID)
-        ->whereYear('reading_date', '=', $year)
-        ->get();
+        $meterReadings = Index_Value::where('meter_id', $customer->mID)
+        ->where(function ($query) use ($year) {
+            $query->whereYear('reading_date', $year)
+                ->orWhere(function ($query) use ($year) {
+                    // Get readings from the last week of the previous year
+                    $query->whereYear('reading_date', $year - 1)
+                        ->where('reading_date', '>=', Carbon::create($year - 1, 12, 25))
+                        ->where('reading_date', '<', Carbon::create($year, 1, 1));
+                });
+        })
+        ->first();
 
         //Check if readings
-        if(!is_null($readings)){
+        if(!is_null($meterReadings)){
             $consumption = User::join('Customer_addresses', 'users.id', '=', 'Customer_addresses.user_id')
             ->join('Addresses', 'Customer_addresses.Address_id', '=', 'Addresses.id')
             ->join('Meter_addresses', 'Addresses.id', '=', 'Meter_addresses.Address_id')
@@ -166,14 +173,6 @@ class InvoiceRunJob implements ShouldQueue
             ->where('meters.id', '=', $customer->mID)
             ->select('Consumptions.*')
             ->first();
-
-            $meterReadings = Index_Value::where(function ($query) use ($year) {
-                $query->whereYear('reading_date', $year)
-                    ->orWhereYear('reading_date', $year - 1);
-            })
-            ->where('meter_id', '=', $customer->mID)
-            ->select('reading_value')
-            ->get();
 
             $estimationResult = Estimation::where('meter_id', '=', $customer->mID)
             ->first();
@@ -216,7 +215,7 @@ class InvoiceRunJob implements ShouldQueue
                         }
                     }
     
-                    $monthlyExtraAmount = ($consumption->consumption_value / 12) * $productTariff->rate;
+                    $monthlyExtraAmount = ($consumption->consumption_value) * $productTariff->rate;
     
                     if ($discountRate > 0) {
                         $monthlyExtraAmount -= ($monthlyExtraAmount * $discountRate);
@@ -228,7 +227,7 @@ class InvoiceRunJob implements ShouldQueue
                 $extraAmount = ($consumption->consumption_value) ? $consumption->consumption_value * $productTariff->rate : 0;
             }
 
-            $monthlyInvoices = $this->getMonthlyInvoices($customer->ccID);
+            $monthlyInvoices = $this->getMonthlyInvoices($customer->ccID, $customer->mID);
 
             if($extraAmount > 0){                   //Invoice
                 $invoiceData = [
@@ -272,13 +271,13 @@ class InvoiceRunJob implements ShouldQueue
             $newInvoiceLine = Invoice_line::where('invoice_id', '=', $lastInserted)->first();
            
             $this->sendAnnualMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
-            EstimationController::UpdateAllEstimation();  
+            EstimationController::UpdateEstimation($customer->mID);  
         } else {
             //Missing Meter readings
         }
     }
 
-    public function getMonthlyInvoices($cID) {
+    public function getMonthlyInvoices($cID, $mID) {
         $currentYear = Carbon::now()->year;
 
         // Query monthly invoices and their lines for the given customer and the current year
@@ -286,6 +285,7 @@ class InvoiceRunJob implements ShouldQueue
             ->join('users as u', 'cc.user_id', '=', 'u.id')
             ->join('invoice_lines as il', 'invoices.id', '=', 'il.invoice_id')
             ->where('cc.id', $cID)
+            ->where('invoices.meter_id', '=', $mID)
             ->where('invoices.type', 'Monthly')
             ->whereYear('invoices.invoice_date', $currentYear)
             ->orderBy('invoices.invoice_date')

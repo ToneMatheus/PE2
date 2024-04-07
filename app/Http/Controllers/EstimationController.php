@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Estimation;
 use App\Models\Meter;
+use App\Models\Consumption;
 use Carbon\Carbon;
 
 class EstimationController extends Controller
@@ -36,19 +37,11 @@ class EstimationController extends Controller
     /**
      * @return void
      */
-    public static function UpdateAllEstimation(): void
-    {
-        
-        $meters = Estimation::select('meter_id')->get()->toArray();
-        foreach ($meters as $meter) {
-            EstimationController::UpdateEstimation($meter['meter_id']);
-        }
-    }
     /**
      * @param int $meterID
      * @return void
      */
-    private static function UpdateEstimation(int $meterID): void
+    public static function UpdateEstimation(int $meterID): void
     {
         $now = Carbon::now();
         $month = $now->format('m');
@@ -61,12 +54,12 @@ class EstimationController extends Controller
             ->where('meter_id', '=', $meterID)
             ->select('reading_value')
             ->get()->toArray();
+
         if (sizeof($meterReadings) == 2) {
-            $difference = abs($meterReadings[0]->reading_value - $meterReadings[1]->reading_value);
-            DB::table('estimations')->where('meter_id', $meterID)->update(array('estimation_total' => $difference));
+            DB::table('estimations')->where('meter_id', $meterID)->update(array('estimation_total' => $meterReadings[1]->reading_value));
         }
         else if (sizeof($meterReadings) == 1) {
-            DB::table('estimations')->where('meter_id', $meterID)->update(array('estimation_total' => $$meterReadings[0]->reading_value));
+            DB::table('estimations')->where('meter_id', $meterID)->update(array('estimation_total' => $meterReadings[0]->reading_value));
         }
         else {
             EstimationController::calculateMeterEnergyEstimate($meterID);
