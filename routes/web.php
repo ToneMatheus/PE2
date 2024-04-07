@@ -108,7 +108,7 @@ Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_m
 
 
 //Meters Group
-Route::get('/meters_dashboard', [MeterController::class, 'viewScheduledMeters']);
+Route::get('/meters_dashboard/meters', [MeterController::class, 'viewScheduledMeters']);
 Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters']);
 Route::put('/all_meters_dashboard', [MeterController::class, 'assignment'])->name("assignment_change");
 

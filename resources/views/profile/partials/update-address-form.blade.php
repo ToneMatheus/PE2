@@ -1,4 +1,6 @@
 <!-- LOOK iManage page her zetten gedeelte van de addressen -->
+
+<!-- CH enkel billing address aan passen. en niet alles.-->
 <section>
     @foreach ($addresses as $key => $address)
     {{--@if($key == 1)
@@ -7,10 +9,11 @@
     <div class="{{ $key > 0 ? 'mt-20' : '' }}">
         <header>
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                {{ __('Address information') }}
+                {{$key + 1 }}) {{ __('Address information') }}
             </h2>
 
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                <!-- CH Pas de tekst aan -->
                 {{ __("Update your address information.") }}
             </p>
         </header>
@@ -25,8 +28,8 @@
             @method('patch')
 
             <div>
-                <x-input-label for="street" :value="__('Street')" />
-                <x-text-input id="street" name="street" type="text" class="block w-full mt-1" :value="old('street', $address->street)"
+                <x-input-label for="street$key" :value="__('Street')" />
+                <x-text-input id="street$key" name="street$key" type="text" class="block w-full mt-1" :value="old('street', $address->street)"
                     required autofocus autocomplete="street" />
                 <x-input-error class="mt-2" :messages="$errors->get('street')" />
             </div>
