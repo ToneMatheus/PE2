@@ -239,6 +239,7 @@ class InvoiceRunJob implements ShouldQueue
                     'meter_id' => $customer->mID,
                     'type' => 'Annual'
                 ];
+
             } else{                              //Credit note
                 $invoiceData = [
                     'invoice_date' => $now->format('Y/m/d'),
@@ -267,6 +268,9 @@ class InvoiceRunJob implements ShouldQueue
                 'consumption_id' => $consumption->id,
                 'invoice_id' => $lastInserted
             ]);
+
+            $fineService = new InvoiceFineService;
+            $fineService->unpaidInvoiceFine($lastInserted);
             
             $newInvoiceLine = Invoice_line::where('invoice_id', '=', $lastInserted)->first();
            
@@ -369,7 +373,7 @@ class InvoiceRunJob implements ShouldQueue
         ->select('cn.id', 'cn.type', 'cn.amount')
         ->get()->toArray();
 
-        //Add to totalamount
+        //Add to totalAmount
         if (sizeof($extraInvoiceLines) > 0){
             foreach ($extraInvoiceLines as $extraInvoiceLine) {
                 $totalAmount += $extraInvoiceLine->amount;
