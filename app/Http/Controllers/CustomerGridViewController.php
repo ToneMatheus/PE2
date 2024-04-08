@@ -79,12 +79,19 @@ class CustomerGridViewController extends Controller
         ->whereNull('end_date')
         ->get();
 
-        /*$discount = DB::table('discounts')
-        ->where('contract_product_id', '=', $contractProduct->cpID)
-        ->whereDate('end_date', '>', $date)
-        ->first();*/
+        $discounts = [];
 
-        return view('Customers/CustomerEdit', ['customer' => $customer, 'cps' => $contractProducts, 'types' => $types, 'products' => $products]); /*'discount' => $discount*/
+        foreach($contractProducts as $contractProduct){
+            $discountQuery = DB::table('discounts')
+            ->where('contract_product_id', '=', $contractProduct->cpID)
+            ->whereDate('end_date', '>', $date)
+            ->first();
+
+            if ($discountQuery) {
+                $discounts[] = $discountQuery;
+            }
+        }
+        return view('Customers/CustomerEdit', ['customer' => $customer, 'cps' => $contractProducts, 'types' => $types, 'products' => $products, 'discounts' => $discounts]); /*'discount' => $discount*/
     }
 
     public function update(Request $request, $id)
@@ -103,24 +110,54 @@ class CustomerGridViewController extends Controller
         return redirect('/customerGridView');
     }
 
-    public function updateContractProduct(Request $request, $oldCpID, $cID, $mID){
-        $date = Carbon::now()->toDateString();
+    public function updateContractProduct(Request $request, $id, $oldCpID, $cID, $mID){
+        if(!is_null($request->input('percentage'))){
+            $validator = Validator::make($request->all(), [
+                'percentage' => 'required|numeric|min:1.8',
+                'startDate' => 'required|date',
+                'endDate' => [
+                    'required',
+                    'date',
+                    function ($attribute, $value, $fail) use ($request) {
+                        $startDate = $request->input('startDate');
+                        if ($startDate >= $value) {
+                            $fail('The end date should be later than the start date');
+                        }
+                    }
+                ]
+            ]);
 
-        DB::update('UPDATE contract_products SET end_date = ? WHERE id = ?', [$date, $oldCpID]);
+            if($validator->fails()){
+                return redirect()->route('customer.edit', ['id' => $id])->withErrors($validator)->withInput();
+            }
+    
+            $date = Carbon::now()->toDateString();
+    
+            $tariffID = DB::table('discounts')->insertGetId([
+                'contract_product_id' => $oldCpID,
+                'rate' => $request->input('newRate'),
+                'start_date' => $request->input('startDate'),
+                'end_date' => $request->input('endDate')
+            ]);
+        } else {
+            $date = Carbon::now()->toDateString();
 
-        DB::table('contract_products')->insert([
-            'customer_contract_id' => $cID,
-            'product_id' => $request->input('product'),
-            'start_date' => $date,
-            'end_date' => null,
-            'meter_id' => $mID
-        ]);
-
-        //Remove discount that belongs to old contract_product
-        DB::table('discounts')
-        ->where('contract_product_id', $oldCpID)
-        ->whereDate('end_date', '>', $date)
-        ->update(['end_date' => $date]);
+            DB::update('UPDATE contract_products SET end_date = ? WHERE id = ?', [$date, $oldCpID]);
+    
+            DB::table('contract_products')->insert([
+                'customer_contract_id' => $cID,
+                'product_id' => $request->input('product'),
+                'start_date' => $date,
+                'end_date' => null,
+                'meter_id' => $mID
+            ]);
+    
+            //Remove discount that belongs to old contract_product
+            DB::table('discounts')
+            ->where('contract_product_id', $oldCpID)
+            ->whereDate('end_date', '>', $date)
+            ->update(['end_date' => $date]);
+        }
 
         return redirect('/customerGridView');
     }
