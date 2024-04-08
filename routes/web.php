@@ -210,7 +210,8 @@ Route::get('/roleOverview', function () {
 
 Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
 Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
-Route::put('/customer/{id}/{cpID}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+Route::put('/customer/{id}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+Route::post('/customer/{oldCpID}/{cID}/{mID}', [CustomerGridViewController::class, 'updateContractProduct'])->name('customer.contractProduct');
 Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
 
 Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
