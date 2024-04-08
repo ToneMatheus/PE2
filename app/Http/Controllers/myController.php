@@ -7,6 +7,66 @@
 
     class myController extends Controller{
         public function profile(){
+            $userID = Auth::id();
+
+            $users = DB::select("select * from users where id = $userID");//selecting employee information
+
+            if (!empty($users)) {
+                foreach ($users as $user) {
+                    $lastName = htmlspecialchars($user->last_name);
+                    $firstName = htmlspecialchars($user->first_name);
+                    $email = htmlspecialchars($user->email);
+                    $phone = htmlspecialchars($user->phone_nbr);
+                    $employeeProfileID = htmlspecialchars($user->employee_profile_id);
+                    $nationality = htmlspecialchars($user->nationality);
+                    $title = htmlspecialchars($user->title);
+                    
+                    //fetching user address from the db
+                    $employee_profile = DB::select("select * from employee_profiles where id = $userID");
+                    $emp_id = $employee_profile[0]->id;
+                    $user = DB::select("select * from users where employee_profile_id = $emp_id");
+                    //$user_id = $user[0]->id;
+                    $address = DB::select("select * from customer_addresses where user_id = $userID");
+                    $addressID = htmlspecialchars($address[0]->address_id);
+                    $emp_address = DB::select("select * from addresses where id = $addressID");
+
+                    $address = DB::select("select * from addresses where id = $addressID");
+                    foreach ($address as $add){
+                        $street = htmlspecialchars($add->street);
+                        $num = htmlspecialchars($add->number);
+                        $pC = htmlspecialchars($add->postal_code);
+                        $box = htmlspecialchars($add->box);
+                        $city = htmlspecialchars($add->city);
+                        $province = htmlspecialchars($add->province);
+
+                        $userAddress = "" . $street . " " . $num . " " . $box . ", " . $pC . " " . $city . ". " . $province . ".";//joining the address into one long address
+                    }
+
+                    $empDetails = DB::select("select * from employee_profiles where id = $employeeProfileID");
+                    foreach ($empDetails as $detail){
+                        $notes = htmlspecialchars($detail->notes);
+                        $job = htmlspecialchars($detail->job);
+                        $notes = explode(',', $detail->notes);
+                    }
+                }
+
+                $contract = DB::select("select * from employee_contracts where employee_profile_id = $employeeProfileID");//fetching payslip plus contract information
+                foreach($contract as $info){
+                    $start = htmlspecialchars($info->start_date);
+                    $end = htmlspecialchars($info->end_date);
+                }
+
+                //fetch holiday balance for this employee
+                $balance = DB::select("select * from balances where employee_profile_id = $employeeProfileID");
+
+                $team = DB::select("select * from team_members inner join teams on team_members.team_id = teams.id where user_id = $userID");
+                $team_name = htmlspecialchars($team[0]->team_name);
+
+                //the team leader
+                $team_leader = DB::select("SELECT * FROM team_members INNER JOIN teams ON team_members.team_id = teams.id WHERE teams.team_name = ? AND team_members.is_manager = 1", [$team_name]);
+                $team_leader_details = DB::select("select * from users where id = " . $team_leader[0]->user_id);
+            } 
+
             return view('profile');
             
         }                
@@ -91,6 +151,30 @@
         }
 
         public function contract(){
+            $userID = Auth::id();
+
+            $contract = DB::select("select * from employee_contracts where employee_profile_id = $userID");
+            $employee_profile = DB::select("select * from employee_profiles where id = $userID");
+            $emp_id = $employee_profile[0]->id;
+            $user = DB::select("select * from users where employee_profile_id = $emp_id");
+            $user_id = $user[0]->id;
+            $address = DB::select("select * from customer_addresses where user_id = $user_id");
+            $addressID = htmlspecialchars($address[0]->address_id);
+            $emp_address = DB::select("select * from addresses where id = $addressID");
+            $payslips = DB::select("select IBAN, amount_per_hour from payslips where employee_profile_id = $userID");
+
+            //making variables to hold the info that way i don't have to do much when its time to actually fetch the data from the database
+            //$contract_end_date = $contract[0]->;
+            $contract_start_date = $contract[0]->start_date;
+            $company_name = "Energy company";
+            $company_address = "Jan Pieter de Nayerlaan 5, 2860 Sint-Katelijne-Waver";
+            $employee_name = "" . $user[0]->first_name . " " . $user[0]->last_name . "";
+            $employee_address = "" . $emp_address[0]->street . " " . $emp_address[0]->number . " " . $emp_address[0]->box . ", " . $emp_address[0]->postal_code . " " . $emp_address[0]->city . ". " . $emp_address[0]->province . ".";
+            $job_title = $employee_profile[0]->job;
+
+            $amount_per_hour = $payslips[0]->amount_per_hour;
+            $account_number = $payslips[0]->IBAN;
+
             return view('contract');
         }
 
@@ -103,9 +187,85 @@
         }
 
         public function manager(Request $request){
-            $id = $request->input('manager_id');
+            // $id = $request->input('manager_id');
 
-            return view('managerPage', ['manager_id' => $id]);
+            // return view('managerPage', ['manager_id' => $id]);
+            $manager_id = Auth::id();
+
+            if(request('decline') == 1){
+                $id = request('id');
+                $request_id = request('req_id');
+                DB::update("update holidays set is_active = 0 where id = $request_id and employee_profile_id = $id");
+            }
+            if(request('accept') == 1){
+                $id = request('id');
+                $request_id = request('req_id');
+                DB::update("update holidays set manager_approval = 1, boss_approval = 1, is_active = 0 where id = $request_id and employee_profile_id = $id");
+            }
+        
+            // Selecting all holiday requests and sorting them by request date in descending order
+            //$requests = DB::select("select * from holidays where is_active = 1 order by request_date desc");
+            
+            
+            //selecting the holidays requests based on which employees that are under the manager
+            $manager_user = DB::select("select * from users where id = $manager_id");
+    
+            //$employee_manager_relation = DB::select("SELECT * FROM users INNER JOIN team_members ON team_members.user_id = users.id WHERE team_members.is_manager = 0");
+            $team_members = [];
+    
+            $manager_team = DB::select("select team_id from team_members where user_id = $manager_id");
+            $employee_manager_relation = DB::select("select * from team_members where team_id = " . $manager_team[0]->team_id. " and is_manager = 0");
+    
+            $all_requests = [];
+            $all_employees = [];
+            
+            foreach ($employee_manager_relation as $relation) {
+                $team_members = DB::select("select * from users where id = $relation->user_id");
+                $emp_profile_id = $team_members[0]->employee_profile_id;
+            
+                // Fetch holidays for the current employee
+                $requests = DB::select("SELECT * FROM holidays WHERE employee_profile_id = $emp_profile_id AND is_active = 1");
+                
+                // Append the requests for the current employee to the array
+                $all_requests = array_merge($all_requests, $requests);
+            
+                // Select the employee profiles under this manager
+                $employees = DB::select("select * from users where employee_profile_id = $emp_profile_id");
+                
+                // Output the employee names
+                if (!empty($employees)) {
+                    // Append the employees for the current manager to the array
+                    $all_employees = array_merge($all_employees, $employees);
+                } else {
+                    $error = "You do not have any employees under your management";
+                    break;
+                }
+            }
+            
+            // Pass the arrays to the view
+            $data['all_requests'] = $all_requests;
+            $data['all_employees'] = $all_employees;   
+            
+            
+            //for the holiday calendar
+            $all_requests2 = [];
+            foreach ($employee_manager_relation as $relation) {
+                foreach ($employee_manager_relation as $relation) {
+                    $team_members = DB::select("select * from users where id = $relation->user_id");
+    
+                    // Fetch holidays for the current employee
+                    $requests = DB::select("select * from holidays where employee_profile_id = " . $team_members[0]->employee_profile_id . " and is_active = 0 and manager_approval = 1 order by start_date");
+                    
+                    // Append the requests for the current employee to the array
+                    $all_requests2 = array_merge($all_requests2, $requests);
+    
+                    // Select the employee profiles under this manager
+                    $employees = DB::select("select * from users where employee_profile_id = " . $team_members[0]->employee_profile_id);
+                    
+                }
+            }
+
+            return view('managerPage', $data, compact('all_requests2'));
         }
 
         public function employeeList(){

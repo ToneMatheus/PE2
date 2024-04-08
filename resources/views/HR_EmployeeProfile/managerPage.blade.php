@@ -9,22 +9,20 @@
     <title>Manager page</title>
 
     <style>
-        .gantt-chart {
-            display: flex;
-            flex-direction: column;
+        .requests {
+            /* background-color: white; */
+            padding: 20px;
+            border-radius: 5px;
             margin-bottom: 20px;
         }
-        .holiday-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
+        .holiday-overview {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
         }
-        .employee-name {
+        .employee-table th {
             width: 120px;
-        }
-        .bar {
-            background-color: #007bff;
-            height: 20px;
         }
     </style>
 
@@ -55,7 +53,7 @@
         
         //selecting the holidays requests based on which employees that are under the manager
         $manager_user = DB::select("select * from users where id = $manager_id");
-        echo("<h4>Employees managed by " . $manager_user[0]->first_name . "</h4>");
+        echo("<div><h4>Employees managed by " . $manager_user[0]->first_name . "</h4>");
 
         //$employee_manager_relation = DB::select("SELECT * FROM users INNER JOIN team_members ON team_members.user_id = users.id WHERE team_members.is_manager = 0");
         $team_members = [];
@@ -65,8 +63,12 @@
 
         $all_requests = [];
 
+        echo("<div style=\"display: flex; justify-content: space-between; margin-bottom: 60px;\" class=\"c\">");
+        echo("<div class=\"col-4\">");
+        echo("<table class=\"employee-table\"><th>EmployeeID</th><th>Name</th>");
+
         foreach ($employee_manager_relation as $relation) {
-            $team_members = DB::select("select * from users where id = $relation->user_id");
+            $team_members = DB::select("select employee_profile_id from users where id = $relation->user_id");
             $emp_profile_id = $team_members[0]->employee_profile_id;
 
             // Fetch holidays for the current employee
@@ -79,29 +81,24 @@
             $employees = DB::select("select * from users where employee_profile_id = $emp_profile_id");
             
             // Output the employee names
-            if(!empty($employees)){
-                echo("<table style=\"width: 40%\">");
-                echo("<th>EmployeeID</th><th>Name</th>");
+            if (!empty($employees)) {
                 foreach ($employees as $employee) {
                     echo("<tr>");
-                        echo("<td>" . $employee->employee_profile_id . "</td>");
-                        echo("<td>" . $employee->first_name . " " . $employee->last_name . "</td>");
+                    echo("<td>" . $employee->employee_profile_id . "</td>");
+                    echo("<td>" . $employee->first_name . " " . $employee->last_name . "</td>");
                     echo("</tr>");
                 }
-            }
-            else{
+            } else {
                 echo("<h2>You do not have any employees under your management</h2>");
                 break;
             }
-            echo("</table>");
         }
 
-        echo("<h4>Chat</h4>");
-        echo("<textarea></textarea>");
-        echo("<button>Click me</button>");
-        echo("<br/><br/>");
+        echo("</table>");
+        echo("</div>");
 
         if(!empty($all_requests)){
+            echo("<div class=\"col-8\">");
             echo("<h3>Holiday requests</h3><br/>");
             echo("<table><th>Request date</th><th>Employee name</th><th>Start date</th><th>End date</th><th>Number of days</th><th>Holiday type</th><th>Actions</th>");
             foreach ($all_requests as $request) {
@@ -142,10 +139,10 @@
             else{
                 echo("<i>No pending requests at the moment</i>");
             }
-
+            echo("</div>");
+            echo("</div>");
 
             //Holiday overview in calendar view
-
 
 
             $previousMonth = null; // Variable to store the previous month
@@ -163,15 +160,11 @@
                 
                 // Append the requests for the current employee to the array
                 $all_requests2 = array_merge($all_requests2, $requests);
-
-                // Select the employee profiles under this manager
-                $employees = DB::select("select * from users where employee_profile_id = " . $team_members[0]->employee_profile_id);
-                
             }
 
 
             if (!empty($all_requests2)) {
-                echo("<div class=\"col-10\"><h2>Holiday overview</h2><br/>");
+                echo("<div class=\"holiday-overview c\" style=\"margin: auto\"><h2>Holiday overview</h2><br/>");
                 // Initialize variables
                 $previousMonth = null;
                 $legendDisplayed = false;
@@ -181,21 +174,22 @@
                 $holidaysByMonth = [];
                 foreach ($all_requests2 as $holiday) {
                     $startDate = Carbon::parse($holiday->start_date);
-                    $fullMonthName = $startDate->format('F');
-                    $year = $startDate->year;
+                    $fullMonthName = $startDate->format('F Y');
 
-                    $holidaysByMonth["$fullMonthName $year"][] = $holiday;
+                    $holidaysByMonth[$fullMonthName][] = $holiday;
                 }
 
-                // Display holidays by month
+                // Display holidays by month in chronological order
+                ksort($holidaysByMonth);
                 foreach ($holidaysByMonth as $monthYear => $holidays) {
-                    list($fullMonthName, $year) = explode(' ', $monthYear);
-                    echo("<h4>$fullMonthName $year</h4>");
+                    echo("<h3 style=\"margin-top: 30px; display: block\">$monthYear</h3>");
+                    
                     echo("<table style=\"float: left\">");
                     echo('<tr>');
                     echo("<td>Name</td>");
 
-                    $daysInMonth = Carbon::create($year, $startDate->month)->daysInMonth;
+                    $startDate = Carbon::parse($holidays[0]->start_date);
+                    $daysInMonth = $startDate->daysInMonth;
                     for ($i = 1; $i <= $daysInMonth; $i++) {
                         echo($i < 10 ? "<th>0$i</th>" : "<th>$i</th>");
                     }

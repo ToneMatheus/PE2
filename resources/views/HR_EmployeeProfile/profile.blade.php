@@ -1,69 +1,5 @@
 <!DOCTYPE html>
 <html>
-@php
-  $userID = Auth::id();
-
-  $users = DB::select("select * from users where id = $userID");//selecting employee information
-
-  if (!empty($users)) {
-      foreach ($users as $user) {
-          $lastName = htmlspecialchars($user->last_name);
-          $firstName = htmlspecialchars($user->first_name);
-          $email = htmlspecialchars($user->email);
-          $phone = htmlspecialchars($user->phone_nbr);
-          $employeeProfileID = htmlspecialchars($user->employee_profile_id);
-          $nationality = htmlspecialchars($user->nationality);
-          $title = htmlspecialchars($user->title);
-        
-          //fetching user address from the db
-          $employee_profile = DB::select("select * from employee_profiles where id = $userID");
-          $emp_id = $employee_profile[0]->id;
-          $user = DB::select("select * from users where employee_profile_id = $emp_id");
-          //$user_id = $user[0]->id;
-          $address = DB::select("select * from customer_addresses where user_id = $userID");
-          $addressID = htmlspecialchars($address[0]->address_id);
-          $emp_address = DB::select("select * from addresses where id = $addressID");
-
-          $address = DB::select("select * from addresses where id = $addressID");
-          foreach ($address as $add){
-            $street = htmlspecialchars($add->street);
-            $num = htmlspecialchars($add->number);
-            $pC = htmlspecialchars($add->postal_code);
-            $box = htmlspecialchars($add->box);
-            $city = htmlspecialchars($add->city);
-            $province = htmlspecialchars($add->province);
-
-            $userAddress = "" . $street . " " . $num . " " . $box . ", " . $pC . " " . $city . ". " . $province . ".";//joining the address into one long address
-          }
-
-          $empDetails = DB::select("select * from employee_profiles where id = $employeeProfileID");
-          foreach ($empDetails as $detail){
-            $notes = htmlspecialchars($detail->notes);
-            $job = htmlspecialchars($detail->job);
-            $notes = explode(',', $detail->notes);
-          }
-      }
-
-      $contract = DB::select("select * from employee_contracts where employee_profile_id = $employeeProfileID");//fetching payslip plus contract information
-      foreach($contract as $info){
-        $start = htmlspecialchars($info->start_date);
-        $end = htmlspecialchars($info->end_date);
-      }
-
-      //fetch holiday balance for this employee
-      $balance = DB::select("select * from balances where employee_profile_id = $employeeProfileID");
-
-      $team = DB::select("select * from team_members inner join teams on team_members.team_id = teams.id where user_id = $userID");
-      $team_name = htmlspecialchars($team[0]->team_name);
-
-      //the team leader
-      $team_leader = DB::select("SELECT * FROM team_members INNER JOIN teams ON team_members.team_id = teams.id WHERE teams.team_name = ? AND team_members.is_manager = 1", [$team_name]);
-      $team_leader_details = DB::select("select * from users where id = " . $team_leader[0]->user_id);
-  } 
-
-
-@endphp
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -104,7 +40,7 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Edit Profile"/>
+                    <a href="@php route('profile.edit'); @endphp"><input type="submit" class="profile-edit-btn" name="btnAddMore" value="Edit Profile"/></a>
                 </div>
             </div>
             <div class="row">
