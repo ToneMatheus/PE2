@@ -57,9 +57,8 @@ class CustomerGridViewController extends Controller
 
         $contractProduct = DB::table('contract_products as cp')
         ->select('cp.id as cpID', 'cp.start_date as cpStartDate', 'p.product_name as productName',
-        'p.id as pID', 't.id as tID')
+        'p.id as pID')
         ->join('products as p', 'p.id', '=', 'cp.product_id')
-        ->leftjoin('tariffs as t', 't.id', '=', 'cp.tariff_id')
         ->where('customer_contract_id', '=', $customerContract->id)
         ->whereNull('cp.end_date')
         ->first();
