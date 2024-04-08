@@ -47,7 +47,7 @@
                         <td>{{ $customer->is_company }}</td>
                         <td>{{ $customer->email }}</td>
                         <td>{{ $customer->birth_date }}</td>
-                        <td>{{ $customer->is_activate }}</td>
+                        <td>{{ $customer->is_active }}</td>
                         <td>{{ $customer->start_date }}</td>
                         <td>{{ $customer->end_date }}</td>
                         <td>{{ $customer->type }}</td>
