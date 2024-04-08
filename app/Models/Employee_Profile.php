@@ -15,18 +15,15 @@ class Employee_Profile extends Model
     //public const VALIDATION_RULE_DEPARTMENT = ['required'];
 
     public const VALIDATION_RULES = [
-        //'job',
-        'hire_date',
-        //'department'
+        'job',
+        'hire_date'
     ];
 
     protected $fillable = [
         'id',
         'job',
         'hire_date',
-        'notes',
-        'work_email',
-        'password'
+        'notes'
     ];
 
     public $timestamps = false;
