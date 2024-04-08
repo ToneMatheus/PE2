@@ -49,8 +49,12 @@
 
                                 <div class="col-3">
                                     <p>
-                                        <label for="personEmail">Email:</label>
-                                        <input type="email" id="personEmail" name="personalEmail" value="{{$employee->email}}" required/>
+                                        <label for="personEmail">Personal Email:</label>
+                                        <input type="email" id="personEmail" name="personalEmail" value="{{$employee->work_email}}" required/>
+                                    </p>
+                                    <p>
+                                        <label for="workEmail">Work Email:</label>
+                                        <input type="email" id="workEmail" name="workEmail" value="{{$employee->email}}" readonly required/>
                                     </p>
                                     <p>
                                         <label for="phoneNbr">Phone Number:</label>
