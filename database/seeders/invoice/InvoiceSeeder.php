@@ -44,5 +44,25 @@ class InvoiceSeeder extends Seeder
                 ]);
             }
         }
+
+        DB::table('invoices')->insert([
+            'invoice_date' => '2025-01-08',
+            'due_date' => '2025-01-22',
+            'total_amount' => '200',
+            'status' => 'sent',
+            'customer_contract_id' => 5,
+            'meter_id' => 6,
+            'type' => 'Monthly'
+        ]);
+
+        DB::table('invoices')->insert([
+            'invoice_date' => '2024-12-18',
+            'due_date' => '2025-01-01',
+            'total_amount' => '300',
+            'status' => 'sent',
+            'customer_contract_id' => 6,
+            'meter_id' => 7,
+            'type' => 'Monthly'
+        ]);
     }
 }

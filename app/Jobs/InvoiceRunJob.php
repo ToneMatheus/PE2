@@ -33,17 +33,20 @@ class InvoiceRunJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    protected $now;
+
     public function __construct()
     {
-        //
+        $this->now = config('app.now');
     }
 
     public function handle()
     {
-        $now = Carbon::create(2025, 1, 15);
-        //$now = Carbon::now();
-        $month = $now->format('m');
-        $year = $now->format('Y');
+        $month = $this->now->format('m');
+        $year = $this->now->format('Y');
+
+        dispatch(new WeekAdvanceReminderJob);
+        dispatch(new InvoiceFinalWarningJob);
 
         //Select all customers
         $customers = User::join('Customer_contracts as cc', 'users.id', '=', 'cc.user_id')
@@ -59,20 +62,20 @@ class InvoiceRunJob implements ShouldQueue
             $startContract = Carbon::parse($customer->startContract);
 
             //Check if annual last year
-            if($startContract->year == $year){ //New Customer
+            $lastYearlyInvoice = Invoice::where('type', '=', 'Annual')
+            ->where('meter_id', '=', $customer->mID)
+            ->orderBy('invoice_date', 'desc')
+            ->first();
+
+            if(is_null($lastYearlyInvoice)){
                 $invoiceCount = Invoice::where('meter_id', '=', $customer->mID)
                 ->where('invoice_date', '>=', $customer->startContract)
-                ->where('invoice_date', '<=', $now)
+                ->where('invoice_date', '<=', $this->now)
                 ->count();
-            } else { //Old Customer
-                $lastYearlyInvoice = Invoice::where('type', '=', 'Annual')
-                ->where('meter_id', '=', $customer->mID)
-                ->orderBy('invoice_date', 'desc')
-                ->first();
-
+            } else {
                 $invoiceCount = Invoice::where('meter_id', '=', $customer->mID)
                 ->where('invoice_date', '>', $lastYearlyInvoice->invoice_date)
-                ->where('invoice_date', '<=', $now)
+                ->where('invoice_date', '<=', $this->now)
                 ->count();
             }
 
@@ -81,8 +84,8 @@ class InvoiceRunJob implements ShouldQueue
                 //New Customer (this month)
                 if($startContract->year == $year && $startContract->month == $month){
                     //Check if needs an invoice now
-                    if($startContract->addWeeks(2) == $now){
-                        $invoiceDate = $now;
+                    if($startContract->addWeeks(2) == $this->now){
+                        $invoiceDate = $this->now;
                         $dueDate = $invoiceDate->copy()->addWeeks(2);
             
                         $formattedInvoiceDate = $invoiceDate->toDateString();
@@ -98,8 +101,8 @@ class InvoiceRunJob implements ShouldQueue
                     $lastInvoiceDate = Carbon::parse($lastInvoice->invoice_date);
 
                     //Check if needs an invoice now
-                    if($lastInvoiceDate->addMonth() == $now){
-                        $invoiceDate = $now;
+                    if($lastInvoiceDate->addMonth() == $this->now){
+                        $invoiceDate = $this->now;
                         $dueDate = $invoiceDate->copy()->addWeeks(2);
         
                         $formattedInvoiceDate = $invoiceDate->toDateString();
@@ -113,8 +116,8 @@ class InvoiceRunJob implements ShouldQueue
                 //New Customer
                 if($startContract->year == $year){
                     //Check if needs an invoice now
-                    if($startContract->addYear()->addWeeks(2) == $now){
-                        $invoiceDate = $now;
+                    if($startContract->addYear()->addWeeks(2) == $this->now){
+                        $invoiceDate = $this->now;
                         $dueDate = $invoiceDate->copy()->addWeeks(2);
         
                         $formattedInvoiceDate = $invoiceDate->toDateString();
@@ -127,8 +130,8 @@ class InvoiceRunJob implements ShouldQueue
                     $lastInvoiceDate = Carbon::parse($lastYearlyInvoice->invoice_date);
 
                     //Check if needs an invoice now
-                    if($lastInvoiceDate->addYear() == $now){
-                        $invoiceDate = $now;
+                    if($lastInvoiceDate->addYear() == $this->now){
+                        $invoiceDate = $this->now;
                         $dueDate = $invoiceDate->copy()->addWeeks(2);
         
                         $formattedInvoiceDate = $invoiceDate->toDateString();
@@ -144,10 +147,8 @@ class InvoiceRunJob implements ShouldQueue
     }
 
     public function generateYearlyInvoice($customer){
-        $now = Carbon::create(2025, 1, 15);
-        //$now = Carbon::now();
-        $month = $now->format('m');
-        $year = $now->format('Y');
+        $month = $this->now->format('m');
+        $year = $this->now->format('Y');
 
         $meterReadings = Index_Value::where('meter_id', $customer->mID)
         ->where(function ($query) use ($year) {
@@ -189,7 +190,7 @@ class InvoiceRunJob implements ShouldQueue
 
             $discounts = Discount::where('discounts.contract_product_id', '=', $contractProduct->cpID)
             ->whereYear('discounts.start_date', '=', $year)
-            ->whereDate('discounts.end_date', '>=', $now->format('Y/m/d'))
+            ->whereDate('discounts.end_date', '>=', $this->now->format('Y/m/d'))
             ->get();
 
             $productTariff = Product::join('product_tariffs as pt', 'pt.product_id', '=', 'products.id')
@@ -231,8 +232,8 @@ class InvoiceRunJob implements ShouldQueue
 
             if($extraAmount > 0){                   //Invoice
                 $invoiceData = [
-                    'invoice_date' => $now->format('Y/m/d'),
-                    'due_date' => $now->copy()->addWeeks(2)->format('Y/m/d'),
+                    'invoice_date' => $this->now->format('Y/m/d'),
+                    'due_date' => $this->now->copy()->addWeeks(2)->format('Y/m/d'),
                     'total_amount' => $extraAmount,
                     'status' => 'sent',
                     'customer_contract_id' => $customer->ccID,
@@ -242,8 +243,8 @@ class InvoiceRunJob implements ShouldQueue
 
             } else{                              //Credit note
                 $invoiceData = [
-                    'invoice_date' => $now->format('Y/m/d'),
-                    'due_date' => $now->copy()->addWeeks(2)->format('Y/m/d'),
+                    'invoice_date' => $this->now->format('Y/m/d'),
+                    'due_date' => $this->now->copy()->addWeeks(2)->format('Y/m/d'),
                     'total_amount' => $extraAmount,
                     'status' => 'paid',
                     'customer_contract_id' => $customer->ccID,
@@ -369,14 +370,19 @@ class InvoiceRunJob implements ShouldQueue
         $extraInvoiceLines = User::join('credit_notes as cn', 'cn.user_id', '=', 'users.id')
         ->where('users.id', '=', $customer->uID)
         ->where('cn.is_active', '=', 1)
-        ->where('cn.is_credit', '=', 0)
+        ->where('cn.is_credit', '=', 1)
         ->select('cn.id', 'cn.type', 'cn.amount')
         ->get()->toArray();
 
         //Add to totalAmount
         if (sizeof($extraInvoiceLines) > 0){
             foreach ($extraInvoiceLines as $extraInvoiceLine) {
-                $totalAmount += $extraInvoiceLine->amount;
+                $surplus = $extraInvoiceLine['amount'] + $totalAmount;
+                $totalAmount += $extraInvoiceLine['amount'];
+
+                if($totalAmount < 0){
+                    $totalAmount = 0;
+                }
             }
         }
 
@@ -396,7 +402,7 @@ class InvoiceRunJob implements ShouldQueue
         Invoice_line::create([
             'type' => 'Electricity',
             'unit_price' => $productTariff->rate,
-            'amount' => $estimation,
+            'amount' => $estimation / 12,
             'consumption_id' => null,
             'invoice_id' => $lastInserted
         ]);
@@ -420,14 +426,20 @@ class InvoiceRunJob implements ShouldQueue
         if (sizeof($extraInvoiceLines) > 0){
             foreach ($extraInvoiceLines as $extraInvoiceLine) {
                 Invoice_line::create([
-                    'type' => $extraInvoiceLine->type,
-                    'unit_price' => $extraInvoiceLine->amount,
+                    'type' => $extraInvoiceLine['type'],
+                    'unit_price' => $extraInvoiceLine['amount'],
                     'amount' => 1,
                     'consumption_id' => null,
                     'invoice_id' => $lastInserted
                 ]);
-                CreditNote::where('id', $extraInvoiceLine->id)
-                ->update(['is_active' => 0]);
+
+                if ($surplus < 0){
+                    CreditNote::where('id', $extraInvoiceLine['id'])
+                    ->update(['amount' => $surplus]);
+                } else {
+                    CreditNote::where('id', $extraInvoiceLine['id'])
+                    ->update(['is_active' => 0]);
+                }
             }
         }
 

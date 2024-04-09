@@ -80,7 +80,7 @@ class IndexValueSeeder extends Seeder
             [
                 'id' => 12,
                 'reading_date' => '2025-01-01',
-                'reading_value' => 3300,
+                'reading_value' => 3100,
                 'meter_id' => 4
             ],
         ]);
