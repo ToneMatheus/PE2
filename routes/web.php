@@ -107,7 +107,7 @@ Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_m
 
 
 //Meters Group
-Route::get('/dashboard', [MeterController::class, 'viewScheduledMeters']);
+Route::get('/employeedashboard', [MeterController::class, 'viewScheduledMeters']);
 // Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters'])->name("viewAllMeters");
 Route::get('/all_meters_dashboard', [MeterController::class, 'index']);
 Route::get('/search', [MeterController::class, 'searchAllMeters'])->name("searchAllMeters");

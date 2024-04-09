@@ -14,6 +14,8 @@
     <h1>All meters</h1>
     <form>
         <input class="searchBar" id="searchBar">
+        {{-- <x-input-label for="searchBar" :value="__('Username')" />
+        <x-text-input id="searchBar" class="block mt-1 w-full" type="text" name="searchBar" /> --}}
     </form>
     <table class="scheduleTable">
         <thead>
