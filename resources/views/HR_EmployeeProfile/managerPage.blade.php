@@ -7,8 +7,12 @@
     <link href="/css/manager.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>Manager page</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        #chart {
+            float: left;
+        }
         .requests {
             /* background-color: white; */
             padding: 20px;
@@ -63,9 +67,11 @@
 
         $all_requests = [];
 
-        echo("<div style=\"display: flex; justify-content: space-between; margin-bottom: 60px;\" class=\"c\">");
+        echo("<div style=\"margin-bottom: 60px;\" class=\"c\">");
         echo("<div class=\"col-4\">");
         echo("<table class=\"employee-table\"><th>EmployeeID</th><th>Name</th>");
+
+        $number_employees = 0;
 
         foreach ($employee_manager_relation as $relation) {
             $team_members = DB::select("select employee_profile_id from users where id = $relation->user_id");
@@ -80,9 +86,11 @@
             // Select the employee profiles under this manager
             $employees = DB::select("select * from users where employee_profile_id = $emp_profile_id");
             
+            
             // Output the employee names
             if (!empty($employees)) {
                 foreach ($employees as $employee) {
+                    $number_employees++;
                     echo("<tr>");
                     echo("<td>" . $employee->employee_profile_id . "</td>");
                     echo("<td>" . $employee->first_name . " " . $employee->last_name . "</td>");
@@ -117,6 +125,8 @@
                 $diffInDays = $endDate->diffInDays($startDate);
                 $diffInDays += 1;
 
+                
+
                 echo("
                     <tr>
                         <td>$request->request_date</td>
@@ -143,7 +153,6 @@
             echo("</div>");
 
             //Holiday overview in calendar view
-
 
             $previousMonth = null; // Variable to store the previous month
             $holidayTypeColors = [];
@@ -258,5 +267,78 @@
     </div> 
 
     </div>
+
+    @php
+    $employees_on_holidays = count($all_requests2);
+    $present_employees = $number_employees - count($all_requests2);
+    
+        $employee_data = [
+            ["name" => "Employees on holiday", "attendance" => $employees_on_holidays],
+            ["name" => "Present employees", "attendance" => $present_employees],
+        ];
+
+        // Convert the array to JSON format
+        $employee_json = json_encode($employee_data);
+    @endphp
+
+    <div id="chart">
+        <canvas id="employeePieChart" width="200" height="200"></canvas>
+    </div>
+
+    <script>
+        // Function to dynamically update the pie chart
+        function updatePieChart(employees) {
+            // Get attendance data from employees
+            var labels = [];
+            var data = [];
+            employees.forEach(function(employee) {
+                labels.push(employee.name);
+                data.push(employee.attendance);
+            });
+
+            // Get the canvas element
+            var ctx = document.getElementById('employeePieChart').getContext('2d');
+
+            // Create the pie chart
+            var employeePieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Number',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.5)',
+                            'rgba(54, 162, 235, 0.5)',
+                            'rgba(255, 206, 86, 0.5)',
+                            'rgba(75, 192, 192, 0.5)',
+                            // Add more colors as needed
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            // Add more colors as needed
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        animateRotate: false, // Stop rotation animation
+                        animateScale: false // Stop scale animation
+                    }
+                }
+            });
+        }
+
+        // Call the function to initially render the pie chart with PHP data
+        // Call the function to initially render the pie chart with PHP data
+        var phpEmployeeData = {!! json_encode($employee_data) !!};
+        updatePieChart(phpEmployeeData);
+        </script>
 </body>
 </html>
