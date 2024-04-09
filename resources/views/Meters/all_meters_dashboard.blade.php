@@ -13,7 +13,17 @@
     </nav>
     <h1>All meters</h1>
     <form>
-        <input class="searchBar" id="searchBar">
+        <p>Search by:</p>
+        <label for="searchBarName">First or last name:</label>
+        <input class="searchBarName" id="searchBarName">
+        <label for="searchBarAddress">Address:</label>
+        <input class="searchBarAddress" id="searchBarAddress">
+        <label for="searchAssigned">Assigned to:</label>
+        <select class="searchAssigned" id="searchAssigned">
+            @foreach($employees as $employee)
+                <option value={{$employee->first_name}}>{{ $employee->first_name }}</option>
+            @endforeach
+        </select>
         {{-- <x-input-label for="searchBar" :value="__('Username')" />
         <x-text-input id="searchBar" class="block mt-1 w-full" type="text" name="searchBar" /> --}}
     </form>
@@ -34,12 +44,12 @@
         $(document).ready(function(){
             fetch_customer_data();
  
-            function fetch_customer_data(query = '')
+            function fetch_customer_data(queryName = '', queryAddress = '', queryAssigned = '')
             {
                 $.ajax({
                     url:"{{ route('search') }}",
                     method:'GET',
-                    data:{query:query},
+                    data:{queryName:queryName, queryAddress:queryAddress, queryAssigned:queryAssigned},
                     dataType:'json',
                     success:function(data)
                     {
@@ -48,9 +58,13 @@
                 })
             }
 
-            $(document).on('keyup', '#searchBar', function(){
-                var query = $(this).val();
-                fetch_customer_data(query);
+            $(document).on('keyup change', '#searchBarName, #searchBarAddress, #searchAssigned', function(){
+                $queryName = $("#searchBarName").val();
+                $queryAddress = $("#searchBarAddress").val();
+                $queryAssigned = $("#searchAssigned").val();
+
+                console.log($queryAssigned);
+                fetch_customer_data($queryName, $queryAddress, $queryAssigned);
             });
         });
     </script>
