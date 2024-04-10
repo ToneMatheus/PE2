@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="/css/all_meters_dashboard.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>Document</title>
 </head>
 <body>
@@ -16,10 +17,15 @@
         <p>Search by:</p>
         <label for="searchBarName">First or last name:</label>
         <input class="searchBarName" id="searchBarName">
-        <label for="searchBarAddress">Address:</label>
-        <input class="searchBarAddress" id="searchBarAddress">
+        <label for="searchBarCity">City:</label>
+        <input class="searchBarCity" id="searchBarCity">
+        <label for="searchBarStreet">Street:</label>
+        <input class="searchBarStreet" id="searchBarStreet">
+        <label for="searchBarNumber">Number:</label>
+        <input class="searchBarNumber" id="searchBarNumber">
         <label for="searchAssigned">Assigned to:</label>
         <select class="searchAssigned" id="searchAssigned">
+            <option selected value="">Select</option>
             @foreach($employees as $employee)
                 <option value={{$employee->first_name}}>{{ $employee->first_name }}</option>
             @endforeach
@@ -44,12 +50,12 @@
         $(document).ready(function(){
             fetch_customer_data();
  
-            function fetch_customer_data(queryName = '', queryAddress = '', queryAssigned = '')
+            function fetch_customer_data(queryName = '', queryCity = '', queryStreet = '', queryNumber = '', queryAssigned = '')
             {
                 $.ajax({
                     url:"{{ route('search') }}",
                     method:'GET',
-                    data:{queryName:queryName, queryAddress:queryAddress, queryAssigned:queryAssigned},
+                    data:{queryName:queryName, queryCity:queryCity, queryStreet:queryStreet, queryNumber:queryNumber, queryAssigned:queryAssigned},
                     dataType:'json',
                     success:function(data)
                     {
@@ -58,13 +64,15 @@
                 })
             }
 
-            $(document).on('keyup change', '#searchBarName, #searchBarAddress, #searchAssigned', function(){
+            $(document).on('keyup change', '#searchBarName, #searchBarCity, #searchBarStreet, #searchBarNumber, #searchAssigned', function(){
                 $queryName = $("#searchBarName").val();
-                $queryAddress = $("#searchBarAddress").val();
+                $queryCity = $("#searchBarCity").val();
+                $queryStreet = $("#searchBarStreet").val();
+                $queryNumber = $("#searchBarNumber").val();
                 $queryAssigned = $("#searchAssigned").val();
 
                 console.log($queryAssigned);
-                fetch_customer_data($queryName, $queryAddress, $queryAssigned);
+                fetch_customer_data($queryName, $queryCity, $queryStreet, $queryNumber, $queryAssigned);
             });
         });
     </script>

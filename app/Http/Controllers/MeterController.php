@@ -110,10 +110,12 @@ class MeterController extends Controller
         {
             $output = '';
             $queryName = $request->get('queryName');
-            $queryAddress = $request->get('queryAddress');
+            $queryCity = $request->get('queryCity');
+            $queryStreet = $request->get('queryStreet');
+            $queryNumber = $request->get('queryNumber');
             $queryAssigned = $request->get('queryAssigned');
 
-            if($queryName != '' || $queryAddress != '' || $queryAssigned != '') { // getting all the required data for the table
+            if($queryName != '' || $queryCity != '' || $queryStreet != '' || $queryNumber != '' || $queryAssigned != '') { // getting all the required data for the table
                 $query = DB::table('users')
                             ->join('customer_addresses','users.id','=','customer_addresses.user_id')
                             ->join('addresses','customer_addresses.id','=','addresses.id')
@@ -131,9 +133,14 @@ class MeterController extends Controller
                     $query->where('users.first_name','like','%'.$queryName.'%')
                         ->orWhere('users.last_name','like','%'.$queryName.'%');
                     })
-                    ->where(function($query) use($queryAddress) {
-                        $query->where('addresses.street','like','%'.$queryAddress.'%')
-                            ->orWhere('addresses.city','like','%'.$queryAddress.'%');
+                    ->where(function($query) use($queryCity) {
+                        $query->where('addresses.city','like','%'.$queryCity.'%');
+                    })
+                    ->where(function($query) use($queryStreet) {
+                        $query->where('addresses.street','like','%'.$queryStreet.'%');
+                    })
+                    ->where(function($query) use($queryNumber) {
+                        $query->where('addresses.number','like','%'.$queryNumber.'%');
                     })
                     ->where(function($query) use($queryAssigned) {
                         $query->where('e.first_name','like','%'.$queryAssigned.'%')

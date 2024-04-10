@@ -120,6 +120,11 @@ Route::get('/dashboardEmployee', function () {
     return view('Meters/employeeDashboard');
 });
 
+Route::get('/modal', function () {
+    return view('Meters/modaltest');
+});
+
+
 Route::get('meters', [MeterController::class,'showMeters']);
 Route::get('/meters/add', function () {
     return view('Meters/addmeter');
