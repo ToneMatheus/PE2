@@ -155,12 +155,12 @@ Route::get('/downloadBenefits', [DomPDFController::class, 'getBenefitsPDF'])->na
 Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
 Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
-Route::get('/profileEmployee', [myController::class, 'profile'])->name('profile');
+Route::get('/profileEmployee/{id?}', [myController::class, 'profile'])->name('profile');
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
 Route::get('/managerList', [myController::class, 'managerList'])->name('managerList');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
 Route::get('/employeeBenefits', [myController::class, 'benefits'])->name('employeeBenefits');
-Route::post('/profileEmployee/{id}', [myController::class, 'store'])->name('storeTaskData');
+//Route::post('/profileEmployee/{id}', [myController::class, 'store'])->name('storeTaskData');
 Route::get('/hiringManger', [myController::class, 'hiringManager'])->name('hiringManager');
 Route::get('/jobOffers', [myController::class, 'jobs'])->name('jobs');
 Route::get('/jobDescription', [myController::class, 'jobDescription'])->name('jobDescription');

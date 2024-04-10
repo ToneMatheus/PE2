@@ -6,9 +6,13 @@
     use Illuminate\Support\Facades\Auth; 
 
     class myController extends Controller{
-        public function profile(){
-            $userID = Auth::id();
-
+        public function profile(Request $request){
+            if ($request->id) {
+                $userID = $request->id;
+            } else {
+                $userID = Auth::id();
+            }
+            
             $users = DB::select("select * from users where id = $userID");//selecting employee information
 
             if (!empty($users)) {
@@ -67,7 +71,7 @@
                 $team_leader_details = DB::select("select * from users where id = " . $team_leader[0]->user_id);
             } 
 
-            return view('profile');
+            return view('profile', compact('firstName', 'lastName', 'email', 'phone', 'employeeProfileID', 'nationality', 'team_name', 'team_leader_details', 'userID', 'userAddress', 'job'));
             
         }                
 
@@ -187,7 +191,61 @@
         }
 
         public function manager(Request $request){
-            return view('managerPage');
+            $manager_id = Auth::id();
+            $decision_date = 0;
+
+            if ($request->input('decline') == 1) {
+                $id = $request->input('id');
+                $request_id = $request->input('req_id');
+                DB::update("update holidays set  manager_approval = 0, boss_approval = 0, is_active = 0 where id = $request_id and employee_profile_id = $id");
+                $decision_date = Carbon::today();
+                $decision_date = $decision_date->format('Y-m-d');
+            }
+            if ($request->input('accept') == 1) {
+                $id = $request->input('id');
+                $request_id = $request->input('req_id');
+                DB::update("update holidays set manager_approval = 1, boss_approval = 1, is_active = 0 where id = $request_id and employee_profile_id = $id");
+                $decision_date = Carbon::today();
+                $decision_date = $decision_date->format('Y-m-d');
+            }
+    
+            $manager_user = DB::select("select * from users where id = $manager_id");
+    
+            $team_members = [];
+            $manager_team = DB::select("select team_id from team_members where user_id = $manager_id");
+            $employee_manager_relation = DB::select("select * from team_members where team_id = " . $manager_team[0]->team_id . " and is_manager = 0");
+    
+            $all_requests = [];
+            $all_data = [];//to select everything in the table
+    
+            foreach ($employee_manager_relation as $relation) {
+                $team_members = DB::select("select employee_profile_id from users where id = $relation->user_id");
+                $emp_profile_id = $team_members[0]->employee_profile_id;
+                $requests = DB::select("SELECT * FROM holidays WHERE employee_profile_id = $emp_profile_id AND is_active = 1");
+                $all_requests = array_merge($all_requests, $requests);
+
+                $table_data = DB::select("select * from holidays where employee_profile_id = $emp_profile_id");
+                $all_data = array_merge($all_data, $table_data);
+            }
+
+            $number_employees = 0;
+
+            $all_requests2 = [];
+
+            foreach ($employee_manager_relation as $relation) {
+                $team_members = DB::select("select * from users where id = $relation->user_id");
+
+                // Fetch holidays for the current employee
+                $requests = DB::select("select * from holidays where employee_profile_id = " . $team_members[0]->employee_profile_id . " and is_active = 0 and manager_approval = 1 order by start_date");
+                
+                // Append the requests for the current employee to the array
+                $all_requests2 = array_merge($all_requests2, $requests);
+
+                $number_employees++;
+            }
+
+            
+            return view('managerPage', compact('decision_date', 'all_data', 'number_employees', 'all_requests2', 'manager_id', 'manager_user', 'employee_manager_relation', 'all_requests'));
         }
 
         public function employeeList(){
