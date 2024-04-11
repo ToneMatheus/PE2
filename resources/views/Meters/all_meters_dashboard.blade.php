@@ -51,11 +51,11 @@
     <script>
         $(document).ready(function(){
             fetch_customer_data();
- 
+
             function fetch_customer_data(query = '')
             {
                 $.ajax({
-                    url:"{{ route('action') }}",
+                    url:"{{ route('searchAllMeters') }}",
                     method:'GET',
                     data:{query:query},
                     dataType:'json',

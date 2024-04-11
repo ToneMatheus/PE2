@@ -8,6 +8,10 @@ use App\Models\Meter_Reader_Schedule;
 use App\Models\MeterReading;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use app\http\Controllers\CustomerController;
+use illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Model;
+use \Illuminate\Http\Response;
 
 class MeterController extends Controller
 {
@@ -132,4 +136,37 @@ class MeterController extends Controller
         DB::insert('INSERT INTO index_values (reading_date, meter_id, reading_value) VALUES (?, ?, ?)', [$date, $meter_id, $index_value]);
         return redirect('enterIndexEmployee');
     }
+
+    public function GasElectricty(){
+
+        DB::insert('INSERT INTO consumptions (consumptions_value, prev_index_id, current_index_id) Values (?,?,?)');
+    }
+
+    public function customerId($customerId)
+        {
+            $customer = CustomerController::find($customerId);
+            $meters = $customer->meters()->get();
+
+            return view('meters', compact('customer', 'meters'));
+        }
+
+        public function storeIndexValue(Request $request, $meterId)
+        {
+            // Validate request data
+            $validatedData = $request->validate([
+                'index_value' => 'required|numeric',
+            ]);
+
+            // Find the meter
+            $meter = Meter::findOrFail($meterId);
+
+            // Store the index value
+            $meter->index_values()->create([
+                'value' => $validatedData['index_value'],
+            ]);
+
+            // Redirect back with success message
+            return redirect()->back()->with('success', 'Index value added successfully.');
+        }
+
 }

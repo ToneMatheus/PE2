@@ -16,7 +16,7 @@ class InvoiceController extends Controller
 {
     //
 
-   
+
     public function store(Request $request)
     {
         //Validate required paramters
@@ -47,7 +47,7 @@ class InvoiceController extends Controller
             ->whereYear('Index.ReadingDate', '=', $year)
             ->select('Customers.*')
             ->get();
-        // if we dont have their meter readings we have to aquire them by sending out a notice to the user to or by sending out an employee 
+        // if we dont have their meter readings we have to aquire them by sending out a notice to the user to or by sending out an employee
 
         // To aquire all customers that have a contract started in the current month but without meter readings we can just simply compare the 2 collections
         $customersNoReadings = $customers->diff($customersWithReadings);
@@ -92,7 +92,7 @@ class InvoiceController extends Controller
             foreach($consumptions as $consumption){
                 Invoice_line::create($consumption, $lastInserted);
             }
-            
+
         }
 
         return redirect()->route('invoice.index')
@@ -104,7 +104,7 @@ class InvoiceController extends Controller
         $user = User::where('id', $invoice->user_id)->first();
         if ($invoice != null) {
             //finnvc99@gmail.com is going to be replaced with: $user->email
-            Mail::to('finnvc99@gmail.com')->send(new InvoiceMail($invoice, $user->name));
+            Mail::to('anu01872@gmail.com')->send(new InvoiceMail($invoice, $user->name));
         }
         return redirect()->intended('dashboard');
     }

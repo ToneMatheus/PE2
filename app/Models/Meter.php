@@ -29,30 +29,35 @@ class Meter extends Model
      public function contract_products(): HasMany
      {
          return $this->hasMany(Contract_product::class);
-     } 
-     
+     }
+
      public function estimations(): HasMany
      {
          return $this->hasMany(Estimation::class);
-     } 
+     }
 
      public function index_values(): HasMany
      {
          return $this->hasMany(Index_Value::class);
-     } 
+     }
 
      public function meter_reader_schedules(): HasMany
      {
          return $this->hasMany(Meter_Reader_Schedule::class);
-     } 
+     }
 
      public function meter_addresses(): HasMany
      {
          return $this->hasMany(Meter_Addresses::class);
-     } 
+     }
 
      public function meters(): HasMany
      {
          return $this->hasMany(Meter::class);
-     } 
+     }
+
+     public function meterconsumption(): HasMany
+     {
+        return $this->hasMany(MeterReading::class);
+     }
 }
