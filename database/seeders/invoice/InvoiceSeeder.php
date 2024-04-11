@@ -49,6 +49,7 @@ class InvoiceSeeder extends Seeder
                     'total_amount' => $totalAmount,
                     'status' => 'paid',
                     'customer_contract_id' => $ccID,
+                    'meter_id' => $i,
                     'type' => 'Monthly'
                 ]);
                 

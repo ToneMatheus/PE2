@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="/css/all_meters_dashboard.css" rel="stylesheet" type="text/css"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>Document</title>
 </head>
 <body>
@@ -14,63 +14,71 @@
     </nav>
     <h1>All meters</h1>
     <form>
-        <input class="search" id="search">
+        <p>Search by:</p>
+        <label for="searchBarName">First or last name:</label>
+        <input class="searchBarName" id="searchBarName">
+        <label for="searchBarCity">City:</label>
+        <input class="searchBarCity" id="searchBarCity">
+        <label for="searchBarStreet">Street:</label>
+        <input class="searchBarStreet" id="searchBarStreet">
+        <label for="searchBarNumber">Number:</label>
+        <input class="searchBarNumber" id="searchBarNumber">
+        <label for="searchAssigned">Assigned to:</label>
+        <select class="searchAssigned" id="searchAssigned">
+            <option selected value="">Select</option>
+            @foreach($employees as $employee)
+                <option value={{$employee->first_name}}>{{ $employee->first_name }}</option>
+            @endforeach
+        </select>
+        {{-- <x-input-label for="searchBar" :value="__('Username')" />
+        <x-text-input id="searchBar" class="block mt-1 w-full" type="text" name="searchBar" /> --}}
     </form>
     <table class="scheduleTable">
+        <thead>
         <tr>
             <th>SN</th>
             <th>Name</th>
             <th>Address</th>
             <th>Assigned to</th>
             <th>Change assignment to</th>
-            <th>Save changes</th>
         </tr>
-
-        @foreach($results as $result)
-            <tr>
-                <td>{{ $loop->index + 1 }}</td>
-                <td>{{ $result->first_name.' '.$result->last_name }}</td>
-                <td>{{ $result->street.' '.$result->number.', '.$result->city  }}</td>
-                <td>{{ $result->assigned_to }}</td>
-                <form method="POST" action="{{ route('assignment_change') }}">
-                    @csrf
-                    @method('PUT')
-                <td>
-                    <input type='hidden' name='meter_id' class="meter_id" value={{$result->meter_id}}>
-                    <select name='assignment' class='assignment'>
-                        @foreach($employees as $employee)
-                            <option value={{$employee->employee_id}} {{$result->assigned_to == $employee->first_name ? 'selected' : ''}}>{{ $employee->first_name }}</option>
-                        @endforeach
-                    </select>
-                </td>
-                <td><button type="submit">Apply changes</button></td>
-                </form>
-            </tr>
-        @endforeach
+        </thead>
+        <tbody></tbody>
     </table>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
         $(document).ready(function(){
             fetch_customer_data();
 
-            function fetch_customer_data(query = '')
+            function fetch_customer_data(queryName = '', queryCity = '', queryStreet = '', queryNumber = '', queryAssigned = '')
             {
                 $.ajax({
                     url:"{{ route('searchAllMeters') }}",
+
+            function fetch_customer_data(queryName = '', queryCity = '', queryStreet = '', queryNumber = '', queryAssigned = '')
+            {
+                $.ajax({
+                    url:"{{ route('search') }}",
                     method:'GET',
-                    data:{query:query},
+                    data:{queryName:queryName, queryCity:queryCity, queryStreet:queryStreet, queryNumber:queryNumber, queryAssigned:queryAssigned},
                     dataType:'json',
                     success:function(data)
                     {
                         $('tbody').html(data.table_data);
-                        $('#total_records').text(data.total_data);
                     }
-
-                    $(document).on('keyup', '#search', function(){
-                        var query = $(this).val();
-                        fetch_customer_data(query);
-                    });
                 })
             }
+
+            $(document).on('keyup change', '#searchBarName, #searchBarCity, #searchBarStreet, #searchBarNumber, #searchAssigned', function(){
+                $queryName = $("#searchBarName").val();
+                $queryCity = $("#searchBarCity").val();
+                $queryStreet = $("#searchBarStreet").val();
+                $queryNumber = $("#searchBarNumber").val();
+                $queryAssigned = $("#searchAssigned").val();
+
+                console.log($queryAssigned);
+                fetch_customer_data($queryName, $queryCity, $queryStreet, $queryNumber, $queryAssigned);
+            });
         });
     </script>
 </body>

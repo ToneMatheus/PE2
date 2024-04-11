@@ -3,8 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Meter;
-use App\Models\Meter_Reader_Schedule;
+use App\Models\{
+    User,
+    Meter,
+    Meter_Reader_Schedule,
+    Customer_Address,
+    Address,
+    Meter_Addresses,
+};
 use App\Models\MeterReading;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -74,40 +80,151 @@ class MeterController extends Controller
         return view('Meters/Consumption_Reading');
     }
 
-    public function viewScheduledMeters(Request $request) {
-        $results = DB::select('SELECT users.first_name, users.last_name, addresses.street, addresses.number, addresses.postal_code, addresses.city, meters.EAN FROM users
-        JOIN customer_addresses on users.id = customer_addresses.user_id
-        JOIN addresses on customer_addresses.address_id = addresses.id
-        JOIN meter_addresses on addresses.id = meter_addresses.address_id
-        JOIN meters on meter_addresses.meter_id = meters.id
-        JOIN meter_reader_schedules on meters.id = meter_reader_schedules.meter_id
-        WHERE meter_reader_schedules.reading_date = \'2024-03-21\' AND meter_reader_schedules.employee_profile_id = 1
-        AND meter_reader_schedules.status = \'unread\';');
-
-        $employeeName = DB::select('SELECT users.first_name FROM users WHERE users.employee_profile_id = 1;');
-
+    public function viewScheduledMeters(Request $request) { // viewing meters for specific employee
+        $results = DB::table('users')
+                    ->join('customer_addresses','users.id','=','customer_addresses.user_id')
+                    ->join('addresses','customer_addresses.id','=','addresses.id')
+                    ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
+                    ->join('meters','meter_addresses.meter_id','=','meters.id')
+                    ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
+                    ->where('meter_reader_schedules.reading_date','=','2024-03-21')
+                    ->where('meter_reader_schedules.employee_profile_id','=',1)
+                    ->where('meter_reader_schedules.status','=','unread')
+                    ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN')
+                    ->get();
+                    
+        $employeeName = DB::table('users')
+                        ->where('users.employee_profile_id', '=', 1)
+                        ->select('users.first_name')
+                        ->get();
         return view("Meters/employeeDashboard",['results'=>$results, 'employeeName'=>$employeeName]);
     }
 
-    public function viewAllMeters(Request $request) {
-            $results = DB::select('SELECT u.id, u.first_name, u.last_name, addresses.street, addresses.number, addresses.postal_code, addresses.city, meters.EAN, meters.ID AS meter_id, meter_reader_schedules.id, e.first_name AS assigned_to FROM users as u
-                RIGHT JOIN customer_addresses on u.id = customer_addresses.user_id
-                RIGHT JOIN addresses on customer_addresses.address_id = addresses.id
-                RIGHT JOIN meter_addresses on addresses.id = meter_addresses.address_id
-                RIGHT JOIN meters on meter_addresses.meter_id = meters.id
-                RIGHT JOIN meter_reader_schedules on meters.id = meter_reader_schedules.meter_id
-                RIGHT JOIN users e on e.employee_profile_id = meter_reader_schedules.employee_profile_id
-                WHERE meter_reader_schedules.reading_date = \'2024-03-21\'
-                ORDER BY u.id;');
+    public function all_meters_index() {
+        $employees = DB::table('users as u')
+                        ->whereNotNull('u.employee_profile_id')
+                        ->select('u.first_name', 'u.employee_profile_id as employee_id')
+                        ->get();
 
-        $employees = DB::select('SELECT u.first_name, u.employee_profile_id AS employee_id FROM users as u
-        WHERE u.employee_profile_id IS NOT NULL;');
-
-        return view("Meters/all_meters_dashboard",['results'=>$results, 'employees'=>$employees]);
+        return view('Meters/all_meters_dashboard',['employees'=>$employees]);
     }
 
-    public function searchAllMeters(Request $request) {
-            return $request;
+    public function search(Request $request) {
+        if($request->ajax())
+        {
+            $output = '';
+            $queryName = $request->get('queryName');
+            $queryCity = $request->get('queryCity');
+            $queryStreet = $request->get('queryStreet');
+            $queryNumber = $request->get('queryNumber');
+            $queryAssigned = $request->get('queryAssigned');
+
+            if($queryName != '' || $queryCity != '' || $queryStreet != '' || $queryNumber != '' || $queryAssigned != '') { // getting all the required data for the table
+                $query = DB::table('users')
+                            ->join('customer_addresses','users.id','=','customer_addresses.user_id')
+                            ->join('addresses','customer_addresses.id','=','addresses.id')
+                            ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
+                            ->join('meters','meter_addresses.meter_id','=','meters.id')
+                            ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
+                            ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
+                            ->where('meter_reader_schedules.reading_date','=','2024-03-21')
+                            ->where('meter_reader_schedules.status','=','unread')
+                            ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'e.first_name as assigned_to')
+                            ->orderBy('users.id');
+
+                // searching with multiple parameters
+                $query->where(function($query) use($queryName) {
+                    $query->where('users.first_name','like','%'.$queryName.'%')
+                        ->orWhere('users.last_name','like','%'.$queryName.'%');
+                    })
+                    ->where(function($query) use($queryCity) {
+                        $query->where('addresses.city','like','%'.$queryCity.'%');
+                    })
+                    ->where(function($query) use($queryStreet) {
+                        $query->where('addresses.street','like','%'.$queryStreet.'%');
+                    })
+                    ->where(function($query) use($queryNumber) {
+                        $query->where('addresses.number','like','%'.$queryNumber.'%');
+                    })
+                    ->where(function($query) use($queryAssigned) {
+                        $query->where('e.first_name','like','%'.$queryAssigned.'%')
+                            ->orWhere('e.first_name','like','%'.$queryAssigned.'%');
+                    });
+            }
+            else {
+            $query = DB::table('users')
+                        ->join('customer_addresses','users.id','=','customer_addresses.user_id')
+                        ->join('addresses','customer_addresses.id','=','addresses.id')
+                        ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
+                        ->join('meters','meter_addresses.meter_id','=','meters.id')
+                        ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
+                        ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
+                        ->where('meter_reader_schedules.reading_date','=','2024-03-21')
+                        ->where('meter_reader_schedules.status','=','unread')
+                        ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'e.first_name as assigned_to')
+                        ->orderBy('users.id');
+            }
+
+            $employees = DB::table('users as u')
+                        ->whereNotNull('u.employee_profile_id')
+                        ->select('u.first_name', 'u.employee_profile_id as employee_id')
+                        ->get();
+
+            $data = $query->get();
+             
+            $total_row = $data->count();
+            if($total_row > 0){
+                $i = 1;
+                foreach($data as $row)
+                {
+                    $output .= '
+                    <tr>
+                    <td>'.$i.'</td>
+                    <td>'.$row->first_name.' '.$row->last_name.'</td>
+                    <td>'.$row->street.' '.$row->number.', '.$row->city.'</td>
+                    <td>'.$row->assigned_to.'</td>';
+
+                    $output .= '
+                    <td>
+                        <form method="POST" action="/assignment_change">
+                        <input type="hidden" name="_token" value="' . csrf_token() . '">
+                        <input type=\'hidden\' name=\'meter_id\' class="meter_id" value='.$row->meter_id.'>
+                        <select name=\'assignment\' class=\'assignment\'>';
+
+                    foreach($employees as $employee)
+                    {
+                        $output .= '<option value='.$employee->employee_id;
+                        if ($row->assigned_to == $employee->first_name) {
+                            $output .= ' selected';
+                        }
+                        else {
+                            $output .= '';
+                        }
+                        
+                        $output.= '>'.$employee->first_name.'</option>';
+                    }
+
+                    $output .= '</select>
+                    <button type="submit">Apply changes</button>
+                    </form>
+                    </td>
+                    ';
+
+                    $i++;
+                }
+            } else {
+                $output = '
+                <tr>
+                    <td align="center" colspan="5">No Data Found</td>
+                </tr>
+                ';
+            }
+            $data = array(
+                'table_data'  => $output,
+                'total_data'  => $total_row
+            );
+            echo json_encode($data);
+        }
     }
 
     public function assignment(Request $request) {
