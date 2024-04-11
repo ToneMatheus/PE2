@@ -9,9 +9,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 use App\Models\Invoice;
 
@@ -19,29 +21,22 @@ class WeekAdvanceReminderJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
+    protected $now;
+
     public function __construct()
     {
-        //
+        $this->now = config('app.now');
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
         //Query which invoices have not been paid yet and are due in 1 week
         try 
         {
+
             $unpaidInvoices = Invoice::select('id')
             ->whereNotIn('status', ['paid', 'pending'])
-            ->whereDate('due_date', '=', now()->addDays(7)->toDateString())
+            ->whereDate('due_date', '=',$this->now->addDays(7)->toDateString())
             ->get()
             ->pluck('id')
             ->toArray();
@@ -88,9 +83,9 @@ class WeekAdvanceReminderJob implements ShouldQueue
             Log::error("Unable to retrieve invoice information from invoice with ID ".$invoiceID.": " . $e);
         }
 
-        if (Mail::to('niki.de.visscher@gmail.com')->send(new weekAdvanceReminder($invoice_info, $total_amount, $user_info)) == null)
+        if (Mail::to('shaunypersy10@gmail.com')->send(new weekAdvanceReminder($invoice_info, $total_amount, $user_info)) == null)
         {
-            Log::error("Unable to send mail for invoice with ID ". $invoiceID);
+            Log::error("Unable to send advance invoice reminder mail for invoice with ID ". $invoiceID);
         }
     }
 }

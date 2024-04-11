@@ -1,3 +1,12 @@
+@php
+    $productsByType = [];
+    foreach ($products as $product) {
+        $productsByType[$product->type][] = $product;
+    }
+
+    $i = 1;
+@endphp
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -37,74 +46,92 @@
             background-color: #0f1b68;
         }
 
-        #addDiscount {
+        .discount {
             display: none;
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-                function fetchProductsByType(type){
-                    $.ajax({
-                        url: '/products/' + type,
-                        type: 'GET',
-                        success: function(data){
-                            $('#productSelect').empty();
-                            $.each(data, function(index, product){
-                                var option = $('<option>', {
-                                    value: product.id,
-                                    text: product.product_name
-                                });
-                                if (product.product_name == '{{ $productTariff->product_name }}' && product.type == '{{ $productTariff->type }}') {
-                                    option.prop('selected', true);
-                                }
-                                $('#productSelect').append(option);
-                            });
-                        }
-                    });
-                }
+        document.addEventListener('DOMContentLoaded', function() {
+            var productsByType = <?php echo json_encode($productsByType); ?>;
 
-                $('#typeSelect').change(function() {
+            // Update product options on type change
+            $('.edit-form').each(function() {
+                var form = this;
+                var productSelect = $(form).find('.productSelect');
+                var typeSelect = $(form).find('.typeSelect');
+
+                typeSelect.on('change', function() {
                     var selectedType = $(this).val();
-                    fetchProductsByType(selectedType);
+                    var products = productsByType[selectedType] || [];
+                    updateProductOptions(productSelect, products);
                 });
 
-                fetchProductsByType($('#typeSelect').val());
+                // Initialize product options based on the initial type
+                var initialType = typeSelect.val();
+                var initialProducts = productsByType[initialType] || [];
+                updateProductOptions(productSelect, initialProducts);
             });
 
-            function addDiscount(toggle){
-                switch(toggle){
-                    case 0:
-                        document.getElementById('addDiscount').style.display = 'none';
-                        document.getElementById('bttns').style.display = 'block';
-                        break;
-                    case 1:
-                        document.getElementById('addDiscount').style.display = 'block';
-                        document.getElementById('bttns').style.display = 'none';
-                        break;
-                }
+            function updateProductOptions(productSelect, products) {
+                productSelect.empty();
+                products.forEach(function(product) {
+                    productSelect.append($('<option>', {
+                        value: product.id,
+                        text: product.product_name
+                    }));
+                });
             }
+        });
 
-            function calculateDiscount(currentRate){
-                var val;
-                var input = document.getElementById('percentage').value;
-                var calculatedRate = document.getElementById('calculatedRate');
-                var output = document.getElementById('newRate');
+        function showDiscount(toggle, counter) {
+            var percentageInput = document.getElementById('percentage' + counter);
+            var startDateInput = document.getElementById('startDate' + counter);
+            var endDateInput = document.getElementById('endDate' + counter);
+            var product = document.getElementById('product' + counter);
+            var submit = document.getElementById('submit' + counter);
 
-                input /= 100;
-                val = currentRate * input;
-                val = currentRate - val;
+            if (toggle) {
+                document.getElementById('discount' + counter).style.display = 'block';
+                document.getElementById('showBttn' + counter).style.display = 'none';
+                percentageInput.required = true;
+                startDateInput.required = true;
+                endDateInput.required = true;
 
-                calculatedRate.innerHTML = '€' + val.toFixed(2) + ' Kw/h';
-                output.value = val;
-                
+                product.style.display = 'none';
+                submit.innerHTML = 'Update Discount'
+            } else {
+                document.getElementById('discount' + counter).style.display = 'none';
+                document.getElementById('showBttn' + counter).style.display = 'block';
+                percentageInput.required = false;
+                startDateInput.required = false;
+                endDateInput.required = false;
+
+                product.style.display = 'block';
+                submit.innerHTML = 'Update Product'
             }
+        }
+
+        function calculateDiscount(currentRate, counter){
+            var val;
+            var input = document.getElementById('percentage' + counter).value;
+            var calculatedRate = document.getElementById('calculatedRate' + counter);
+            var output = document.getElementById('newRate' + counter);
+
+            input /= 100;
+            val = currentRate * input;
+            val = currentRate - val;
+
+            calculatedRate.innerHTML = '€' + val.toFixed(2) + ' Kw/h';
+            output.value = val;
+            
+        }
     </script>
 </head>
 <body>
     <h1>Edit Customer</h1>
 
-    <form class="edit-form" action="{{ route('customer.update', ['id' => $customer->id, 'cpID' => $contractProduct->cpID]) }}" method="POST" onsubmit="return confirm('Are you sure you want to update this customer?');">
+    <form class="edit-form" action="{{ route('customer.update', ['id' => $customer->id]) }}" method="POST" onsubmit="return confirm('Are you sure you want to update this customer?');">
         @csrf
         @method('PUT')
 
@@ -120,38 +147,6 @@
         <label for="company_name">Company Name:</label>
         <input type="text" id="company_name" name="company_name" value="{{ $customer->company_name }}">
 
-        <label for="product">Product:</label>
-        <select name="product" id="productSelect">
-
-        </select>
-
-        <select name="type" id="typeSelect">
-            @foreach ($types as $type)
-                @if($productTariff->type == $type->type)
-                    <option value="{{$type->type}}" selected>{{$type->type}}</option>
-                @else
-                    <option value="{{$type->type}}">{{$type->type}}</option>
-                @endif
-            @endforeach
-        </select>
-        
-        @if(isset($discount))
-
-            @php
-                $oldRate = $productTariff->rate;
-                $newRate = $discount->rate;
-
-                $percentage = (($oldRate - $newRate) / $oldRate) * 100;
-                $roundedPercentage = round($percentage, 2);
-            @endphp
-
-            <div>
-                <h2>Discount</h2>
-                <p>New rate: {{$discount->rate}}</p>
-                <p>Percentage: {{$roundedPercentage}}%</p>
-            </div>
-        @endif
-
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
@@ -166,43 +161,97 @@
         <button type="button" onclick="window.location='{{ url('/customerGridView') }}'">Back</button>
     </form>
 
-    <p>Tariff: </p>
+    <h2>Meters</h2>
 
-    <ul>
-        <li>RangeMin: {{$productTariff->range_min}} Kw/h</li>
-        <li>RangeMax: {{$productTariff->range_max}} Kw/h</li>
-        <li>Rate: €{{$productTariff->rate}} Kw/h</li>
-    </ul>
+    @foreach ($cps as $cp)
+        @php 
+            $i++;
+        @endphp
+        <form class="edit-form" method="post" action="{{ route('customer.contractProduct', ['id' => $customer->id, 'oldCpID' => $cp->cpID, 'cID' => $cp->cID, 'mID' => $cp->mID]) }}">
+                @csrf
+                <p>{{$cp->street}} {{$cp->number}} {{$cp->box}}, {{$cp->city}} {{$cp->postal_code}}</p>
 
-    @if(!isset($discount))
-        <button onclick="addDiscount(1)">Add Discount</button>
-    @endif
+                <ul>
+                    <li>RangeMin: {{$cp->range_min}} Kw/h</li>
+                    <li>RangeMax: {{$cp->range_max}} Kw/h</li>
+                    <li>Rate: €{{$cp->rate}} Kw/h</li>
+                </ul>
 
-    <form id="addDiscount" method="post" action="{{ route('customer.discount', ['cpID' => $contractProduct->cpID, 'id' => $customer->id]) }}">
-            @csrf
-            <label for="percentage">Percentage: </label>
-            <input id="percentage" name="percentage" type="number"  onkeyup="calculateDiscount(<?php echo $productTariff->rate; ?>)" min='2' max='98' required/>
+                <div id="product{{$i}}">
+                    <label for="product">Product:</label>
+                    <select name="product" class="productSelect">
+                        @foreach ($products as $product)
+                            @if($cp->product_name == $product->product_name)
+                                <option value="{{ $product->id }}" selected>{{ $product->product_name }}</option>
+                            @else
+                                <option value="{{ $product->id }}">{{ $product->product_name }}</option>
+                            @endif
+                        @endforeach
+                    </select>
 
-            @php
-                $currentDateTime = new DateTime('now');
-                $currentDate = $currentDateTime->format('Y-m-d');
+                    <select name="type" class="typeSelect">
+                        @foreach ($types as $type)
+                            @if($cp->type == $type->type)
+                                <option value="{{$type->type}}" selected>{{$type->type}}</option>
+                            @else
+                                <option value="{{$type->type}}">{{$type->type}}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                </div>
 
-                $maxDateTime = $currentDateTime->modify('+3 month');
-                $maxDate = $maxDateTime->format('Y-m-d');
-            @endphp
+                @if(sizeof($discounts) > 0)
+                    @foreach($discounts as $discount)
+                        @if($discount->contract_product_id == $cp->cpID)
+                            @php
+                                $oldRate = $cp->rate;
+                                $newRate = $discount->rate;
 
-            <label for="startDate">Start Date: </label>
-            <input id="startDate" name="startDate" type="date" min="{{$currentDate}}" max="{{$maxDate}}" data-date-format="YYYY MM DD" value="{{$currentDate}}" required/>
+                                $percentage = (($oldRate - $newRate) / $oldRate) * 100;
+                                $roundedPercentage = round($percentage, 2);
+                            @endphp
 
-            <label for="endDate">End Date: </label>
-            <input id="endDate" name="endDate" type="date" min="{{$currentDate}}" max="{{$maxDate}}" data-date-format="YYYY MM DD" required/>
-                
-            <p id="calculatedRate"></p>
-            <input type="hidden" id="newRate" name="newRate"/>
+                            <div>
+                                <h2>Discount</h2>
+                                <p>New rate: {{$discount->rate}}</p>
+                                <p>Percentage: {{$roundedPercentage}}%</p>
+                            </div>
+                        @endif
+                    @endforeach
+                @else
+                    <button type="button" id="showBttn{{$i}}" onclick="showDiscount(1, '{{$i}}')">Add Discount</button>
 
-            <input type="submit" name="submitDiscount"/>
-            <button type="button" onclick="addDiscount(0)">Cancel</button>
+                    <div id="discount{{$i}}" class="discount" style="display: none;">
+                        <label for="percentage{{$i}}">Percentage: </label>
+                        <input id="percentage{{$i}}" name="percentage" type="number"  onkeyup="calculateDiscount(<?php echo $cp->rate; ?>, '{{$i}}')" min='2' max='98'/>
+
+                        @php
+                            $currentDateTime = new DateTime('now');
+                            $currentDate = $currentDateTime->format('Y-m-d');
+
+                            $maxDateTime = $currentDateTime->modify('+3 month');
+                            $maxDate = $maxDateTime->format('Y-m-d');
+                        @endphp
+
+                        <label for="startDate{{$i}}">Start Date: </label>
+                        <input id="startDate{{$i}}" name="startDate" type="date" min="{{$currentDate}}" max="{{$maxDate}}" data-date-format="YYYY MM DD" value="{{$currentDate}}"/>
+
+                        <label for="endDate{{$i}}">End Date: </label>
+                        <input id="endDate{{$i}}" name="endDate" type="date" min="{{$currentDate}}" max="{{$maxDate}}" data-date-format="YYYY MM DD"/>
+                            
+                        <p id="calculatedRate{{$i}}"></p>
+                        <input type="hidden" id="newRate{{$i}}" name="newRate"/>
+
+                        <button type="button" onclick="showDiscount(0, '{{$i}}')">Cancel Discount</button>
+                    </div>
+                @endif
+
+                <p></p>
+
+                <button type="submit" id="submit{{$i}}">Update Product</button>
+                <button type="button" onclick="window.location='{{ url('/customerGridView') }}'">Back</button>
         </form>
+        @endforeach
     </body>
 </body>
 </html>

@@ -96,18 +96,14 @@
                 <td>{{ round(($newInvoiceLine->amount / 12) - ($newInvoiceLine->amount / 12) * $discountRate, 2) }}</td>
             </tr>
 
-            @php
-                $mInvoices = collect($monthlyInvoices[$month] ?? [])->flatten();
-            @endphp
-
-            @foreach ($mInvoices as $mInvoiceLine)
+            @foreach($monthlyInvoices[$month] ?? [] as $mInvoiceLine)
                 <tr>
                     <td>&nbsp;</td>
                     <td colspan="3">{{ $mInvoiceLine->type }}</td>
                     <td>{{ $mInvoiceLine->amount }}</td>
                     
                     @if ($mInvoiceLine->type == 'Electricity')
-                        <td>{{ $mInvoiceLine->amount - $paid }}</td>
+                        <td>{{ round($mInvoiceLine->amount - $paid, 2) }}</td>
                     @else
                         <td>&nbsp;</td> 
                     @endif
@@ -130,7 +126,7 @@
         <tr>
                 <td></td>
                 <td>{{$estimation}}</td>
-                <td>{{$meterReadings[1]->reading_value}}</td>
+                <td>{{$meterReadings->reading_value}}</td>
                 <td>{{round($totalAmount, 2)}}</td>
                 <td>{{round($newInvoiceLine->amount, 2)}}</td>
             </tr>

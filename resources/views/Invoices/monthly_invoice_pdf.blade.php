@@ -49,12 +49,12 @@
             <tr>
                 <td>{{ $invoiceLine->type }}</td>
                 <td>{{ $invoiceLine->unit_price }}</td>
-                <td>{{ $invoiceLine->amount }}</td>
-                <td>{{ $invoiceLine->unit_price * $invoiceLine->amount }}</td>
+                <td>{{ round($invoiceLine->amount,2) }}</td>
+                <td>{{ round($invoiceLine->unit_price * $invoiceLine->amount, 2) }}</td>
             </tr>
         @endforeach
     </table>
 
-    <h2>Total Amount: {{$invoice->total_amount}}</h2> 
+    <h2>Total Amount: {{ round($invoice->total_amount, 2) }}</h2> 
 </body>
 </html>

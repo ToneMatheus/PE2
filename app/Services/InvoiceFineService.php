@@ -4,9 +4,17 @@ namespace App\Services;
 
 use App\Models\Invoice_line;
 use App\Models\Invoice;
+use Illuminate\Support\Carbon;
 
 class InvoiceFineService
 {
+    protected $now;
+
+    public function __construct()
+    {
+        $this->now = config('app.now');
+    }
+
     public function unpaidInvoiceFine($invoiceID)
     {
         //check if the customercontract has a previously unpaid invoice, 2 weeks after due_date
@@ -19,7 +27,7 @@ class InvoiceFineService
         $ccID = Invoice::where('id', $invoiceID)->value('customer_contract_id');
         $status = Invoice::select('status')
             ->where('customer_contract_id', $ccID)
-            ->where('due_date', '<=', now()->subDays(14))
+            ->where('due_date', '<=', $this->now->subDays(14))
             ->orderBy('invoice_date', 'desc')
             ->limit(1)
             ->value('status');

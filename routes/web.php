@@ -111,6 +111,12 @@ Route::get('/reminders', [InvoiceRemindersController::class, 'index'])->name("in
 //invoice payment
 Route::get('/pay/{id}', [PaymentController::class, 'show'])->name("payment.show");
 Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
+
+//QR code test
+Route::get('/code', function () {
+    return view('Invoices/QRcodeTest');
+});
+
 // Meters branch
 
 
@@ -204,7 +210,8 @@ Route::get('/roleOverview', function () {
 
 Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
 Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
-Route::put('/customer/{id}/{cpID}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+Route::put('/customer/{id}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+Route::post('/customer/{id}/{oldCpID}/{cID}/{mID}', [CustomerGridViewController::class, 'updateContractProduct'])->name('customer.contractProduct');
 Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
 
 Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
@@ -271,7 +278,7 @@ Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'
 
 
 //test route
-Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
+Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList1');
 Route::post('/TestUserList', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('TestUserList');
 Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');
 

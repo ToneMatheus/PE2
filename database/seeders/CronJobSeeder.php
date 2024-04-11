@@ -24,6 +24,13 @@ class CronJobSeeder extends Seeder
                 'scheduled_day' => 15,
                 'scheduled_month' => null,
                 'scheduled_time' => '22:30:00'
+            ],
+            [
+                'name' => 'InvoicerunJob',
+                'interval' => 'daily',
+                'scheduled_day' => 15,
+                'scheduled_month' => null,
+                'scheduled_time' => '22:30:00'
             ]
         ]);
     }
