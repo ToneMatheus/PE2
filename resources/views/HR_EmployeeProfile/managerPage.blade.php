@@ -10,13 +10,16 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
+@php use Carbon\Carbon; @endphp
+
+<x-app-layout>
 <body style="background-color: #D6D5C9">
-    @php use Carbon\Carbon; @endphp
-    <h1 style="text-align: center">Welcome {{ $manager_user[0]->first_name }}</h1><br/>
+    
+    <h1 style="text-align: center; margin-top: 20px" class="h1">Team management</h1><br/>
 
     <div class="requests" style="margin: auto">
         <div>
-        <h4 style="margin-left: 20px">My team</h4>
+        <h4 style="margin-left: 20px" class="h4">My team</h4>
         </div>
 
         <div style="margin-bottom: 60px;" class="c">
@@ -81,7 +84,7 @@
             @if (!empty($all_requests))
             @php $i = 1; @endphp
                 <div class="col-8">
-                    <h3>Holiday requests</h3>
+                    <h3 class="h4">Holiday requests</h3>
                     <table>
                         <th>#</th>
                         <th>Request date</th>
@@ -133,7 +136,7 @@
 
         <div style="margin: auto">
             @if(!empty($all_data))
-            <h2 style="text-align: center; margin-bottom: 20px">Request history</h2>
+            <h2 style="text-align: center; margin-bottom: 20px" class="h4">Request history</h2>
 
             <table>
                 <th>#</th>
@@ -259,3 +262,4 @@
         </script>
 </body>
 </html>
+</x-app-layout>

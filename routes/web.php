@@ -66,7 +66,7 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
-    
+
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
