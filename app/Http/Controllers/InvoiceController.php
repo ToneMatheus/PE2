@@ -154,44 +154,47 @@ class InvoiceController extends Controller
 
         // This fetch is dumb as it gets all invoices just to show a dynamic year filter
         // But i cant rely on the invoices that go through the query as that may have filters on there
-        $invoices = Invoice::all();
+        // $invoices = Invoice::all();
+        $invoices = Invoice::select('invoice_date')
+                   ->groupBy('invoice_date')
+                   ->get()->toArray();
         // dd($invoices);
         $filterYears = [];
             foreach($invoices as $invoice){
-                $invoiceYear = date('Y', strtotime($invoice['invoice_date']));
-                if (!in_array($invoiceYear, $filterYears)){
-                    array_push($filterYears, $invoiceYear);
+                $invoiceYearMonth = date('Y-M', strtotime($invoice['invoice_date']));
+                if (!in_array($invoiceYearMonth, $filterYears)){
+                    array_push($filterYears, $invoiceYearMonth);
                 }
             }        
 
         $invoicesQuery = Invoice::query();
 
+
         // Filter by time range
         $selectedYear = "";
         if ($request->has('year') && $request->input('year') != '') {
             $selectedYear = $request->input('year');
-            if ($selectedYear === 'last3Months') {
-                $invoicesQuery->whereDate('invoice_date', '>=', now()->subMonths(3));
-            } elseif ($selectedYear === 'last6Months') {
-                $invoicesQuery->whereDate('invoice_date', '>=', now()->subMonths(6));
-            } else {
-                $invoicesQuery->whereYear('invoice_date', $selectedYear);
-            }
+            list($selectedYear, $selectedMonth) = explode('-', $selectedYear);
+            $selectedMonth = (int)date('m', strtotime($selectedMonth));
+            $invoicesQuery->whereYear('invoice_date', $selectedYear);
+            $invoicesQuery->whereMonth('invoice_date', $selectedMonth);
         }
 
         // Filter by payment status
         $selectedStatus = "";
         if ($request->has('status') && $request->input('status') != '') {
             $selectedStatus = $request->input('status');
-            if ($selectedStatus === 'Paid') {
-                $invoicesQuery->where('status', 'Paid');
-            } elseif ($selectedStatus === 'Unpaid') {
-                $invoicesQuery->where('status', 'Unpaid');
+            if ($selectedStatus === 'paid') {
+                $invoicesQuery->where('status', 'paid');
+            } elseif ($selectedStatus === 'unpaid') {
+                $invoicesQuery->where('status', 'unpaid');
+            } elseif ($selectedStatus === 'sent') {
+                $invoicesQuery->where('status', 'sent');
             }
         }
 
         $invoices = $invoicesQuery->get();
-
+        // dd($invoices);
         return view('Invoices/EmployeeInvoicesOverview', compact('invoices', 'filterYears', 'selectedYear', 'selectedStatus'));
     }
 }
