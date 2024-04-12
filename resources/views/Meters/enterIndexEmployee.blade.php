@@ -15,6 +15,8 @@
         <p>Search by:</p>
         <label for="searchBarName">First or last name:</label>
         <input class="searchBarName" id="searchBarName">
+        <label for="searchBarEAN">EAN:</label>
+        <input class="searchBarEAN" id="searchBarEAN">
         <label for="searchBarCity">City:</label>
         <input class="searchBarCity" id="searchBarCity">
         <label for="searchBarStreet">Street:</label>
@@ -31,12 +33,12 @@
         $(document).ready(function(){
             fetch_customer_data();
  
-            function fetch_customer_data(queryName = '', queryCity = '', queryStreet = '', queryNumber = '')
+            function fetch_customer_data(queryName = '', queryEAN = '', queryCity = '', queryStreet = '', queryNumber = '')
             {
                 $.ajax({
                     url:"{{ route('searchIndex') }}",
                     method:'GET',
-                    data:{queryName:queryName, queryCity:queryCity, queryStreet:queryStreet, queryNumber:queryNumber},
+                    data:{queryName:queryName, queryEAN:queryEAN, queryCity:queryCity, queryStreet:queryStreet, queryNumber:queryNumber},
                     dataType:'json',
                     success:function(data)
                     {
@@ -45,13 +47,14 @@
                 })
             }
 
-            $(document).on('keyup change', '#searchBarName, #searchBarCity, #searchBarStreet, #searchBarNumber', function(){
+            $(document).on('keyup change', '#searchBarName, #searchBarEAN, #searchBarCity, #searchBarStreet, #searchBarNumber', function(){
                 $queryName = $("#searchBarName").val();
+                $queryEAN = $("#searchBarEAN").val();
                 $queryCity = $("#searchBarCity").val();
                 $queryStreet = $("#searchBarStreet").val();
                 $queryNumber = $("#searchBarNumber").val();
 
-                fetch_customer_data($queryName, $queryCity, $queryStreet, $queryNumber);
+                fetch_customer_data($queryName, $queryEAN, $queryCity, $queryStreet, $queryNumber);
             });
         });
     </script>

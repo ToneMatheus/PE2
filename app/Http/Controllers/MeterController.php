@@ -249,11 +249,12 @@ class MeterController extends Controller
         {
             $output = '';
             $queryName = $request->get('queryName');
+            $queryEAN = $request->get('queryEAN');
             $queryCity = $request->get('queryCity');
             $queryStreet = $request->get('queryStreet');
             $queryNumber = $request->get('queryNumber');
 
-            if($queryName != '' || $queryCity != '' || $queryStreet != '' || $queryNumber != '') { // getting all the required data for the table
+            if($queryName != '' || $queryEAN != '' || $queryCity != '' || $queryStreet != '' || $queryNumber != '') { // getting all the required data for the table
                 $query = DB::table('users')
                             ->join('customer_addresses','users.id','=','customer_addresses.user_id')
                             ->join('addresses','customer_addresses.id','=','addresses.id')
@@ -270,6 +271,9 @@ class MeterController extends Controller
                 $query->where(function($query) use($queryName) {
                     $query->where('users.first_name','like','%'.$queryName.'%')
                         ->orWhere('users.last_name','like','%'.$queryName.'%');
+                    })
+                    ->where(function($query) use($queryEAN) {
+                        $query->where('meters.EAN','like','%'.$queryEAN.'%');
                     })
                     ->where(function($query) use($queryCity) {
                         $query->where('addresses.city','like','%'.$queryCity.'%');
@@ -369,7 +373,7 @@ class MeterController extends Controller
 
     public function customerId($customerId)
         {
-            $customer = CustomerController::find($customerId);
+            $customer = User::find($customerId);
             $meters = $customer->meters()->get();
 
             return view('meters', compact('customer', 'meters'));
