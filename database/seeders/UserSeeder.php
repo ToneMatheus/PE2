@@ -161,7 +161,7 @@ class UserSeeder extends Seeder
                 'first_name' => 'Joseph',
                 'last_name' => 'Doe',
                 'password' => Hash::make('joseph'),
-                'employee_profile_id' => 4,
+                'employee_profile_id' => null,
                 'is_company' => 0,
                 'company_name' => null,
                 'email' => 'joseph@gmail',

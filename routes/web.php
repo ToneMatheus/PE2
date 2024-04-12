@@ -32,6 +32,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\NewEmployeeController;
+use App\Http\Controllers\holidayRequest;
 
 
 /*
@@ -66,7 +67,7 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
-    
+
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
@@ -155,12 +156,12 @@ Route::get('/downloadBenefits', [DomPDFController::class, 'getBenefitsPDF'])->na
 Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
 Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
-Route::get('/profileEmployee', [myController::class, 'profile'])->name('profile');
+Route::get('/profileEmployee/{id?}', [myController::class, 'profile'])->name('profile');
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
 Route::get('/managerList', [myController::class, 'managerList'])->name('managerList');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
 Route::get('/employeeBenefits', [myController::class, 'benefits'])->name('employeeBenefits');
-Route::post('/profileEmployee/{id}', [myController::class, 'store'])->name('storeTaskData');
+//Route::post('/profileEmployee/{id}', [myController::class, 'store'])->name('storeTaskData');
 Route::get('/hiringManger', [myController::class, 'hiringManager'])->name('hiringManager');
 Route::get('/jobOffers', [myController::class, 'jobs'])->name('jobs');
 Route::get('/jobDescription', [myController::class, 'jobDescription'])->name('jobDescription');
@@ -183,9 +184,11 @@ Route::post('/relations/update', [RelationsController::class, 'updateRelation'])
 
 //Route::get('/holidayRequest', function() {  return view('holidayRequest');  })->name('request');
 
-Route::get('/holidayRequest', function(){
-    return view('holidayRequestPage');
-})->name('request');
+Route::get('/holidayRequest', [holidayRequest::class, 'index'])->name('request');
+
+// Route::get('/holidayRequest', function(){
+//     return view('holidayRequestPage');
+// })->name('request');
 
 Route::get('/welcome', function() {
     return view('welcome');

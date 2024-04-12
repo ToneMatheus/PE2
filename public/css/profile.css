@@ -95,8 +95,9 @@
 }
  */
 .body{
-    background-color: grey;
+    background-color: rgb(189, 189, 189);
 }
+
 .emp-profile{
     padding: 3%;
     margin-top: 3%;
