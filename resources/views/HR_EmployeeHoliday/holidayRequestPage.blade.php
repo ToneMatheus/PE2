@@ -1,6 +1,9 @@
 <?php
     session_start();
 
+    $user_id = auth()->id();
+    //echo $user_id;
+
     $host = '127.0.0.1';
     $user = 'root';
     $password = '';
@@ -9,14 +12,23 @@
     $link = mysqli_connect($host, $user, $password, $database) or die("Error: no connection can be made to the host");
     mysqli_select_db($link, $database) or die("Error: the database could not be opened");
 
-    
-    $query = "SELECT * FROM `balances` WHERE `id` = 1";
+    // check balance of the user.
+    $query = "SELECT * FROM `balances` WHERE `id` = $user_id";
     $result = $link->query($query) or die("Error: an error has occurred while executing the query.");
-
    
     while ($row = mysqli_fetch_array($result))
     {
         $credit = $row['yearly_holiday_credit'];
+        
+    }
+
+    $query2 = "SELECT * FROM `balances` WHERE `id` = 3";
+    $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query.");
+
+    while ($row = mysqli_fetch_array($result2))
+    {
+        $strtDate = $row['start_date']; //end_date
+        $ndDate = $row['end_date']; 
         
     }
 
@@ -52,6 +64,9 @@
         
     </header>
     <h1>Calendar</h1>
+    <h2>
+        welcome user: {{ $user_name}} id: {{$user_id}}
+    </h2>
 
     <div class="table-container">
         <?php
