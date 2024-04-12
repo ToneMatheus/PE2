@@ -93,6 +93,10 @@ Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(
     
 });
 
+Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function() {
+    
+});
+
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
 
 

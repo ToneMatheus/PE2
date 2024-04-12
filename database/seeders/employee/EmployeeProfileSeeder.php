@@ -49,6 +49,30 @@ class EmployeeProfileSeeder extends Seeder
                 'id' => 9,
                 'hire_date' => '2024-01-01',
             ],
+            [   
+                'id' => 10,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 11,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 12,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 13,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 14,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 15,
+                'hire_date' => '2024-01-01',
+            ],
         ]);
     }
 }

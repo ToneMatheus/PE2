@@ -221,11 +221,15 @@
             foreach ($employee_manager_relation as $relation) {
                 $team_members = DB::select("select employee_profile_id from users where id = $relation->user_id");
                 $emp_profile_id = $team_members[0]->employee_profile_id;
-                $requests = DB::select("SELECT * FROM holidays WHERE employee_profile_id = $emp_profile_id AND is_active = 1");
-                $all_requests = array_merge($all_requests, $requests);
+                
+                if(!empty($emp_profile_id)){
+                    $requests = DB::select("SELECT * FROM holidays WHERE employee_profile_id = $emp_profile_id AND is_active = 1");
+                    $all_requests = array_merge($all_requests, $requests);
 
-                $table_data = DB::select("select * from holidays where employee_profile_id = $emp_profile_id");
-                $all_data = array_merge($all_data, $table_data);
+                    $table_data = DB::select("select * from holidays where employee_profile_id = $emp_profile_id");
+                    $all_data = array_merge($all_data, $table_data);
+                }
+                
             }
 
             $number_employees = 0;
@@ -235,15 +239,17 @@
             foreach ($employee_manager_relation as $relation) {
                 $team_members = DB::select("select * from users where id = $relation->user_id");
 
-                // Fetch holidays for the current employee
-                $requests = DB::select("select * from holidays where employee_profile_id = " . $team_members[0]->employee_profile_id . " and is_active = 0 and manager_approval = 1 order by start_date");
-                
-                // Append the requests for the current employee to the array
-                $all_requests2 = array_merge($all_requests2, $requests);
+                if(!empty($team_members[0]->employee_profile_id)){
+                    // Fetch holidays for the current employee
+                    $requests = DB::select("select * from holidays where employee_profile_id = " . $team_members[0]->employee_profile_id . " and is_active = 0 and manager_approval = 1 order by start_date");
+                    
+                    // Append the requests for the current employee to the array
+                    $all_requests2 = array_merge($all_requests2, $requests);
 
-                $number_employees++;
+                    $number_employees++;
+                }
+
             }
-
             
             return view('managerPage', compact('decision_date', 'all_data', 'number_employees', 'all_requests2', 'manager_id', 'manager_user', 'employee_manager_relation', 'all_requests'));
         }
