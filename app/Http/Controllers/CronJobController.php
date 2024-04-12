@@ -106,39 +106,9 @@ class CronJobController extends Controller
         return redirect()->back()->with('regularJobStatus', 'Regular job has been run.');
     }
     
-    public function showHistory($job, $page)
+    public function show_history($job)
     {
-        $histories = CronJobHistory::where('job_name', $job)
-            ->orderBy('created_at', 'desc')
-            ->paginate(10, ['*'], 'page', $page);
 
-        $groupedHistories = [];
-
-        $currentGroup = [];
-        $lastStatus = null;
-
-        foreach ($histories as $history) {
-            if ($history->status == 'Started') {
-                // If the current status is 'Started' and it's a new group, create a new group
-                if ($lastStatus != 'Started') {
-                    if (!empty($currentGroup)) {
-                        $groupedHistories[] = $currentGroup;
-                        $currentGroup = [];
-                    }
-                }
-            }
-            $currentGroup[] = $history;
-            $lastStatus = $history->status;
-        }
-
-        // Add the last group if it's not empty
-        if (!empty($currentGroup)) {
-            $groupedHistories[] = $currentGroup;
-        }
-
-        $currentPage = $histories->currentPage();
-        $totalPages = $histories->lastPage();
-
-        return view('cronjobs/history', compact('job', 'groupedHistories', 'currentPage', 'totalPages'));
+        return view('cronjobs/history', compact('job'));
     }
 }

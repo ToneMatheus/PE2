@@ -70,7 +70,7 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::post('/cron-jobs/schedule/store{job}', [CronJobController::class, 'store_schedule'])->name('store-schedule-cron-job');
     Route::post('/cron-jobs/schedule/toggle{job}', [CronJobController::class, 'toggle_schedule'])->name('toggle-schedule-cron-job');
     Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
-    Route::get('/cron-jobs/{job}/history/{page}', [CronJobController::class, 'showHistory']);
+    Route::get('/cron-jobs/{job}/history', [CronJobController::class, 'show_history'])->name('job-history');
     
 });
 

@@ -42,9 +42,9 @@
                                 <td class="px-4 py-2 border dark:border-gray-700">{{ $job->is_enabled ? 'Yes' : 'No' }}</td>
                                 <td class="px-4 py-2 border dark:border-gray-700">
                                     <div class="flex gap-2">
-                                        <x-primary-button onclick="showHistory('{{ $job->name }}')" class="ml-1">
+                                        <x-primary-anchor-button href="{{ route('job-history', ['job' => $job->name]) }}" class="ml-1">
                                             {{ __('View History') }}
-                                        </x-primary-button>
+                                        </x-primary-anchor-button>
                                         <form method="POST" action="{{ route('run-cron-job', ['job' => $job->name]) }}">
                                             @csrf
                                             <x-primary-button class="ml-2">
@@ -98,9 +98,9 @@
                                 <td class="px-4 py-2 border dark:border-gray-700">
                                     <div class="flex gap-2">
                                         
-                                    <x-primary-button onclick="showHistory('{{ $job }}')" class="ml-1">
+                                    <x-primary-anchor-button href="{{ route('job-history', ['job' => $job]) }}" class="ml-1">
                                         {{ __('View History') }}
-                                    </x-primary-button>
+                                    </x-primary-anchor-button>
                                         
                                     <form method="POST" action="{{ route('run-cron-job', ['job' => $job]) }}">
                                         @csrf

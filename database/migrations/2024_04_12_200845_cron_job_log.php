@@ -13,14 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cron_jobs', function (Blueprint $table) {
+        Schema::create('cron_job_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('interval')->nullable();
-            $table->integer('scheduled_day')->nullable();
-            $table->integer('scheduled_month')->nullable();
-            $table->time('scheduled_time');
-            $table->boolean('is_enabled')->default(true);
+            $table->foreignId('cron_job_run_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('invoice_id')->nullable();
+            $table->string('log_level');
+            $table->text('message');
             $table->timestamps();
         });
     }
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cron_jobs');
+        Schema::dropIfExists('cron_job_logs');
     }
 };
