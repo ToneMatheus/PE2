@@ -6,14 +6,12 @@
     <title>Document</title>
 </head>
 <body>
-    <div>
-        <h1>Welcome to the Consumption page!</h1><br>
-        <p>To view your consumption history</p>
-        <a href="{{ route('Meter_History') }}"><button>Meter History</button></a>
-    </div>
-    <div>
-        <h3>If you would like to enter the meter readings</h3>
-        <a href="{{ route('Consumption_Reading') }}"><button>Consumption Reading</button></a>
-    </div>
+        <p>Enter previous consumption Value: </p>
+        <input type="text" name='consumption_value'>
+        <p>Enter current consmption value: </p>
+        <input type='text' name='prev_index_id' value={{$prev_index_id}}>
+        <p>Enter present Value: </p>
+        <input type='text' name='prev_index_id' value={{$current_index_id}}>
+
 </body>
 </html>

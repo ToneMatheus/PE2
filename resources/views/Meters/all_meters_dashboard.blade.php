@@ -52,7 +52,12 @@
     <script>
         $(document).ready(function(){
             fetch_customer_data();
- 
+
+            function fetch_customer_data(queryName = '', queryCity = '', queryStreet = '', queryNumber = '', queryAssigned = '')
+            {
+                $.ajax({
+                    url:"{{ route('searchAllMeters') }}",
+
             function fetch_customer_data(queryName = '', queryCity = '', queryStreet = '', queryNumber = '', queryAssigned = '')
             {
                 $.ajax({

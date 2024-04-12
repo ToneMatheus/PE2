@@ -28,10 +28,10 @@ use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\GasElectricityController;
 use App\Http\Controllers\RelationsController;
-
-
-
+use App\Models\ElectricityConnection;
+use App\Http\Controllers\IndexValueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,9 +107,8 @@ Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_m
 
 
 //Meters Group
-Route::get('/employeedashboard', [MeterController::class, 'viewScheduledMeters']);
-// Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters'])->name("viewAllMeters");
-Route::get('/all_meters_dashboard', [MeterController::class, 'all_meters_index']);
+Route::get('/dashboard', [MeterController::class, 'viewScheduledMeters']);
+Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters'])->name("viewAllMeters");
 Route::get('/search', [MeterController::class, 'searchAllMeters'])->name("searchAllMeters");
 Route::get('/all_meters_dashboard_search', [MeterController::class, 'search'])->name("search");
 Route::post('/assignment_change', [MeterController::class, 'assignment']);
@@ -135,9 +134,11 @@ Route::get('/consumption', function () {
 });
 
 
-Route::get('/Meter_History', [MeterController::class, 'showMeterHistory'])->name('Meter_History');
+Route::get('/Meter_History', [MeterController::class, 'GasElectricity'])->name('Meter_History');
 
 Route::get('/Consumption_Readings', [MeterController::class, 'showConsumptionReading'])->name('Consumption_Reading');
+
+Route::post('/index-values', [IndexValueController::class, 'store'])->name('index_values.store');
 
 
 // Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
