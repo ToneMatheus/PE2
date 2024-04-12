@@ -32,6 +32,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\NewEmployeeController;
+use App\Http\Controllers\holidayRequest;
 
 
 /*
@@ -187,9 +188,11 @@ Route::post('/relations/update', [RelationsController::class, 'updateRelation'])
 
 //Route::get('/holidayRequest', function() {  return view('holidayRequest');  })->name('request');
 
-Route::get('/holidayRequest', function(){
-    return view('holidayRequestPage');
-})->name('request');
+Route::get('/holidayRequest', [holidayRequest::class, 'index'])->name('request');
+
+// Route::get('/holidayRequest', function(){
+//     return view('holidayRequestPage');
+// })->name('request');
 
 Route::get('/welcome', function() {
     return view('welcome');
