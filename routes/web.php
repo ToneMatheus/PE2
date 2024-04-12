@@ -114,7 +114,8 @@ Route::get('/search', [MeterController::class, 'searchAllMeters'])->name("search
 Route::get('/all_meters_dashboard_search', [MeterController::class, 'search'])->name("search");
 Route::post('/assignment_change', [MeterController::class, 'assignment']);
 
-Route::get('/enterIndexEmployee', [MeterController::class, 'enterIndex']);
+Route::get('/enter_index_employee', [MeterController::class, 'enterIndex']);
+Route::get('/enter_index_employee_search', [MeterController::class, 'searchIndex'])->name("searchIndex");
 Route::post('/enterIndexEmployee', [MeterController::class, 'submitIndex'])->name("submitIndex");
 Route::get('/dashboardEmployee', function () {
     return view('Meters/employeeDashboard');
@@ -123,7 +124,6 @@ Route::get('/dashboardEmployee', function () {
 Route::get('/modal', function () {
     return view('Meters/modaltest');
 });
-
 
 Route::get('meters', [MeterController::class,'showMeters']);
 Route::get('/meters/add', function () {

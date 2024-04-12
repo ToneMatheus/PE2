@@ -236,6 +236,114 @@ class MeterController extends Controller
         return redirect('/all_meters_dashboard');
     }
 
+    public function enter_index_pageload() {
+        return view('Meters/enterIndexEmployee');
+    }
+
+    public function searchIndex(Request $request)  {
+        if($request->ajax())
+        {
+            $output = '';
+            $queryName = $request->get('queryName');
+            $queryCity = $request->get('queryCity');
+            $queryStreet = $request->get('queryStreet');
+            $queryNumber = $request->get('queryNumber');
+
+            if($queryName != '' || $queryCity != '' || $queryStreet != '' || $queryNumber != '') { // getting all the required data for the table
+                $query = DB::table('users')
+                            ->join('customer_addresses','users.id','=','customer_addresses.user_id')
+                            ->join('addresses','customer_addresses.id','=','addresses.id')
+                            ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
+                            ->join('meters','meter_addresses.meter_id','=','meters.id')
+                            ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
+                            ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
+                            ->where('meter_reader_schedules.reading_date','=','2024-03-21')
+                            ->where('meter_reader_schedules.employee_profile_id','=',1)
+                            ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
+                            ->orderBy('users.id');
+
+                // searching with multiple parameters
+                $query->where(function($query) use($queryName) {
+                    $query->where('users.first_name','like','%'.$queryName.'%')
+                        ->orWhere('users.last_name','like','%'.$queryName.'%');
+                    })
+                    ->where(function($query) use($queryCity) {
+                        $query->where('addresses.city','like','%'.$queryCity.'%');
+                    })
+                    ->where(function($query) use($queryStreet) {
+                        $query->where('addresses.street','like','%'.$queryStreet.'%');
+                    })
+                    ->where(function($query) use($queryNumber) {
+                        $query->where('addresses.number','like','%'.$queryNumber.'%');
+                    });
+            }
+            else {
+            $query = DB::table('users')
+                        ->join('customer_addresses','users.id','=','customer_addresses.user_id')
+                        ->join('addresses','customer_addresses.id','=','addresses.id')
+                        ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
+                        ->join('meters','meter_addresses.meter_id','=','meters.id')
+                        ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
+                        ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
+                        ->where('meter_reader_schedules.reading_date','=','2024-03-21')
+                        ->where('meter_reader_schedules.employee_profile_id','=',1)
+                        ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
+                        ->orderBy('users.id');
+            }
+
+            $data = $query->get();
+            $total_row = $data->count();
+            if($total_row > 0){
+                foreach($data as $row)
+                {
+                    $output .= '<div class="searchResult';
+                    
+                    if ($row->status == "read") {
+                        $output .= ' readMeter">';
+                    }
+
+                    if ($row->status == "unread") {
+                        $output .= '">';
+                    }
+                    $output .= '<div class="searchResultLeft">
+                                <p>Name: <span class="highlighted">'.$row->first_name.' '.$row->last_name.'</span></p>
+                                <p>EAN code: <span class="highlighted">'.$row->EAN.'</span></p>
+                                <p>Type: <span class="highlighted">'.$row->type.'</span></p>
+                                <p>Address: '.$row->street.' '.$row->number.', '.$row->city.'</span></p>
+                            </div>
+                            <div class="searchResultRight">
+                                <p>Status:<br>
+                                    <span style="font-size:30px;color:';
+                                    if ($row->status == "unread") {
+                                        $output .= 'red;font-weight:bold;">'.ucfirst($row->status).'</span></p>
+                                        <p>
+                                            <button type="button" value='.$row->meter_id.'>Add index value</button>
+                                        </p>';
+                                    }
+                                    else {
+                                        $output .= 'white;font-weight:bold;">'.ucfirst($row->status).'</span></p>';
+                                    }
+                                
+                        $output .= '
+                                </p>
+                            </div>
+                        </div>';
+                }
+            } else {
+                $output = '
+                <tr>
+                    <td align="center" colspan="5">No Data Found</td>
+                </tr>
+                ';
+            }
+            $data = array(
+                'table_data'  => $output,
+                'total_data'  => $total_row
+            );
+            echo json_encode($data);
+        }
+    }
+
     public function enterIndex(Request $request) {
         $results = DB::select('SELECT id FROM meters;');
         return view("Meters/enterIndexEmployee",['results'=>$results]);
