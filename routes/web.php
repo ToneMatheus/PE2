@@ -170,7 +170,9 @@ Route::get('/hiringManger', [myController::class, 'hiringManager'])->name('hirin
 Route::get('/jobOffers', [myController::class, 'jobs'])->name('jobs');
 Route::get('/jobDescription', [myController::class, 'jobDescription'])->name('jobDescription');
 Route::get('/jobApply', [myController::class, 'jobApply'])->name('jobApply');
-Route::get('/portal', [myController::class, 'portal'])->name('portal');
+// Route::get('/documents', [myController::class, 'documents'])->name('documents');
+Route::get('/documents', function () {     
+    return view('documents'); })->name('documents');
 // Route::get('/profileHR', [myController::class, 'profileHR'])->name('profileHR');
 // Route::get('/profileInvoice', [myController::class, 'profileInvoice'])->name('profileInvoice');
 // Route::get('/profileCustomers', [myController::class, 'profileCustomers'])->name('profileCustomers');

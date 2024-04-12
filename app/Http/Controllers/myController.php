@@ -302,40 +302,24 @@
             return view('profile');
         }
 
-        public function jobs(){
-            return view('HR_EmployeeJobs.jobOffers');
+        public function documents(){
+            return view('documents');
         }
 
-        public function hiringManager(){
-            return view('HR_EmployeeJobs.hiringManager');
-        }
+        // public function jobs(){
+        //     return view('HR_EmployeeJobs.jobOffers');
+        // }
 
-        public function jobDescription(){
-            return view('HR_EmployeeJobs.jobDescription');
-        }
+        // public function hiringManager(){
+        //     return view('HR_EmployeeJobs.hiringManager');
+        // }
 
-        public function jobApply(){
-            return view('HR_EmployeeJobs.jobApply');
-        }
+        // public function jobDescription(){
+        //     return view('HR_EmployeeJobs.jobDescription');
+        // }
 
-        public function profileHR(){
-            return view('profileHR');
-        }
-
-        public function profileInvoice(){
-            return view('profileInvoice');
-        }
-
-        public function profileCustomers(){
-            return view('profileCustomers');
-        }
-
-        public function profileMeters(){
-            return view('profileMeters');
-        }
-
-        public function portal(){
-            return view('HR_EmployeeProfile.portal');
-        }
+        // public function jobApply(){
+        //     return view('HR_EmployeeJobs.jobApply');
+        // }
     }
 ?>
