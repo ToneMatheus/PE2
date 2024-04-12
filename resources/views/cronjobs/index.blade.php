@@ -9,17 +9,19 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
         <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
             <div class="max-w-xl">
-                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Scheduled Jobs</h2>
-                <table class="min-w-full table-auto border-collapse">
-                    <thead>
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                        Scheduled Jobs
+                    </caption>
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th class="px-4 py-2 bg-gray-200 dark:bg-gray-700 border-b">Name</th>
-                            <th class="px-4 py-2 bg-gray-200 dark:bg-gray-700 border-b">Time Interval</th>
-                            <th class="px-4 py-2 bg-gray-200 dark:bg-gray-700 border-b">Scheduled Day</th>
-                            <th class="px-4 py-2 bg-gray-200 dark:bg-gray-700 border-b">Scheduled Month</th>
-                            <th class="px-4 py-2 bg-gray-200 dark:bg-gray-700 border-b">Scheduled Time</th>
-                            <th class="px-4 py-2 bg-gray-200 dark:bg-gray-700 border-b">Is Enabled</th>
-                            <th class="px-4 py-2 bg-gray-200 dark:bg-gray-700 border-b">Actions</th>
+                            <th scope="col" class="px-6 py-3">Name:</th>
+                            <th scope="col" class="px-6 py-3">Time Interval</th>
+                            <th scope="col" class="px-6 py-3">Scheduled Day</th>
+                            <th scope="col" class="px-6 py-3">Scheduled Month</th>
+                            <th scope="col" class="px-6 py-3">Scheduled Time</th>
+                            <th scope="col" class="px-6 py-3">Is Enabled</th>
+                            <th scope="col" class="px-6 py-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -78,12 +80,14 @@
 
         <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
             <div class="max-w-xl">
-                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Unscheduled Jobs</h2>
-                <table class="min-w-full table-auto border-collapse">
-                    <thead>
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                        Unscheduled Jobs
+                    </caption>
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th class="px-4 py-2 bg-gray-200 dark:bg-gray-700 border-b">Name</th>
-                            <th class="px-4 py-2 bg-gray-200 dark:bg-gray-700 border-b">Actions</th>
+                            <th scope="col" class="px-6 py-3">Name:</th>
+                            <th scope="col" class="px-6 py-3">Actions:</th>
                         </tr>
                     </thead>
                     <tbody>
