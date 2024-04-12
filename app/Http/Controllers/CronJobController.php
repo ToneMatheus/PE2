@@ -106,9 +106,22 @@ class CronJobController extends Controller
         return redirect()->back()->with('regularJobStatus', 'Regular job has been run.');
     }
     
-    public function show_history($job)
+    public function show_history()
     {
+        $ParamJob = request('job');
+        // Fetch job files in the app/Jobs directory
+        $Jobs = [];
+        $jobPath = app_path('Jobs');
+        if (File::exists($jobPath) && File::isDirectory($jobPath)) {
+            $files = File::files($jobPath);
+            foreach ($files as $file) {
+                $filename = pathinfo($file, PATHINFO_FILENAME);
+                if (Str::endsWith($file, '.php') && !Str::startsWith($filename, '.')) {
+                    $Jobs[] = $filename;
+                }
+            }
+        }
 
-        return view('cronjobs/history', compact('job'));
+        return view('cronjobs/history', compact('Jobs', 'ParamJob'));
     }
 }
