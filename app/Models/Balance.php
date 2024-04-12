@@ -19,6 +19,8 @@ class Balance extends Model
         'end_date'
     ];
 
+    public $timestamps = false;
+
     public function employee_profile(): BelongsTo
     {
         return $this->belongsTo(Employee_Profile::class);

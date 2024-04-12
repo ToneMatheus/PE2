@@ -14,7 +14,8 @@ use App\Models\{
     TeamMember,
     Role,
     User_Role,
-    Customer_Address
+    Customer_Address,
+    Balance
 };
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
@@ -108,6 +109,14 @@ class EmployeeController extends Controller
         Customer_Address::create([
             'user_id' => $user->id,
             'address_id' => $address->id,
+            'start_date' => $request->input('startDate')
+        ]);
+
+        Balance::create([
+            'employee_profile_id' => $employee->id,
+            'holiday_type_id' => 1,
+            'yearly_holiday_credit' => 20,
+            'used_holiday_credit' => 0,
             'start_date' => $request->input('startDate')
         ]);
 
