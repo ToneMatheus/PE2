@@ -163,7 +163,7 @@ class CronJobController extends Controller
         $query = CronJobRunLog::query()
             ->where('cron_job_run_id', $jobRunId);
         
-        if ($logLevel !== 'all') {
+        if ($logLevel !== 'All') {
             $query->where('log_level', $logLevel);
         }
         
