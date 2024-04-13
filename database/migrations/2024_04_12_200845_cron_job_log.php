@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cron_job_logs', function (Blueprint $table) {
+        Schema::create('cron_job_run_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cron_job_run_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('invoice_id')->nullable();
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cron_job_logs');
+        Schema::dropIfExists('cron_job_run_logs');
     }
 };

@@ -13,43 +13,51 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-5 ">
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                     <div class="max-w-xl">
-                        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Filter</h2>
-                        <form class="mt-6 space-y-6">
-                        @csrf
+                        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100 pb-2">Filter</h2>
 
-                        <div class="max-w-xl">
+                        <div class="max-w-xl py-2">
                             <x-input-label for="Job" :value="__('Job:')" />
-                            <x-select id="Job" name="Job"> 
-                                @foreach ($Jobs as $Job)
-                                    @if ($Job == $ParamJob)
-                                        <option selected value="{{ $Job}}">{{ $Job}}</option>
+                            <x-select id="Job" name="Job" onchange="OnchangeJob()"> 
+                                @foreach ($jobs as $job)
+                                    @if ($job == $paramJob)
+                                        <option selected value="{{ $job}}">{{ $job}}</option>
                                     @else
-                                        <option value="{{ $Job}}">{{ $Job}}</option>
+                                        <option value="{{ $job}}">{{ $job}}</option>
                                     @endif
                                 @endforeach
                             </x-select>
                         </div>
 
-                        <div class="max-w-xl">
+                        <div class="max-w-xl py-2">
                             <x-input-label for="JobRun" :value="__('Run:')" />
-                            <x-select id="JobRun" name="JobRun"> 
-                                <option value=""></option>
-                            </x-select>
+                            @if ($jobRuns->count() > 0)
+                                <x-select id="JobRun" name="JobRun"> 
+                                    @foreach ($jobRuns->reverse() as $index => $jobRun)
+                                        <option value="{{ $jobRun->id }}">Run: {{ $index + 1 }} - {{ $jobRun->started_at }}</option>
+                                    @endforeach
+                                </x-select>
+                            @else
+                                <x-select disabled id="JobRun" name="JobRun"> 
+                                    <option selected>No runs available</option>
+                                </x-select>
+                            @endif
                         </div>
 
-                        <div class="max-w-xl">
+                        <div class="max-w-xl py-2">
                             <x-input-label for="LogLevel" :value="__('Log Level:')" />
                             <x-select id="LogLevel" name="LogLevel"> 
-                                <option value="Normal">Normal</option>
+                                <option value="All">All</option>
+                                <option value="Info">Information</option>
                                 <option value="Warning">Warning</option>
+                                <option value="Critical">Critical</option>
                                 <option value="Error">Error</option>
                             </x-select>
                         </div>
                
-                        <x-primary-button class="ml-1">
-                            {{ __('Submit') }}
+                        <x-primary-button class="ml-1 py-2" onclick="onApplyFilters()">
+                            {{ __('Apply') }}
                         </x-primary-button>
-                    </form>
+
                     </div>
                 </div>
             </div>
@@ -60,41 +68,7 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-5">
                 <div class="p-2 sm:p-4 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                     <div class="relative overflow-x-auto sm:rounded-lg">
-                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                            <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
-                                Scheduled Logs
-                                <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">Lorem Ipsum</p>
-                            </caption>
-                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3">Customer:</th>
-                                    <th scope="col" class="px-6 py-3">
-                                        <div class="flex items-center">
-                                            Log Level:
-                                            <a href="#">
-                                                <svg class="w-3 h-3 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
-                                                </svg>
-                                            </a>
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">Message:</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        Jeff
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        Warning
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        Laptop
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        @include('cronjobs.parts.logs', ['jobLogs' => $jobLogs])
                     </div>
                 </div>
             </div>

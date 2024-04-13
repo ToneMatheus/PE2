@@ -10,7 +10,7 @@
         <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
             <div class="max-w-xl">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                    <caption class="p-2 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
                         Scheduled Jobs
                     </caption>
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -44,7 +44,7 @@
                                 <td class="px-4 py-2 border dark:border-gray-700">{{ $job->is_enabled ? 'Yes' : 'No' }}</td>
                                 <td class="px-4 py-2 border dark:border-gray-700">
                                     <div class="flex gap-2">
-                                        <x-primary-anchor-button href="{{ route('job-history') }}" class="ml-1">
+                                        <x-primary-anchor-button href="{{ route('job.history', ['job' => $job->name]) }}" class="ml-1">
                                             {{ __('View History') }}
                                         </x-primary-anchor-button>
                                         <form method="POST" action="{{ route('run-cron-job', ['job' => $job->name]) }}">
@@ -81,7 +81,7 @@
         <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
             <div class="max-w-xl">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                    <caption class="p-2 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
                         Unscheduled Jobs
                     </caption>
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -102,7 +102,7 @@
                                 <td class="px-4 py-2 border dark:border-gray-700">
                                     <div class="flex gap-2">
                                         
-                                    <x-primary-anchor-button href="{{ route('job-history') }}" class="ml-1">
+                                    <x-primary-anchor-button href="{{ route('job.history', ['job' => $job]) }}" class="ml-1">
                                         {{ __('View History') }}
                                     </x-primary-anchor-button>
                                         

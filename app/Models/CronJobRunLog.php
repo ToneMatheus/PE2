@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CronJobLog extends Model
+class CronJobRunLog extends Model
 {
     protected $fillable = [
         'cron_job_run_id',

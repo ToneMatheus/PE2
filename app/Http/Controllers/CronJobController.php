@@ -8,7 +8,8 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use App\Models\CronJob;
-use App\Models\CronJobHistory;
+use App\Models\CronJobRun;
+use App\Models\CronJobRunLog;
 
 class CronJobController extends Controller
 {
@@ -106,22 +107,68 @@ class CronJobController extends Controller
         return redirect()->back()->with('regularJobStatus', 'Regular job has been run.');
     }
     
-    public function show_history()
+    public function showHistory()
     {
-        $ParamJob = request('job');
+        $paramJob = request('job');
+        
         // Fetch job files in the app/Jobs directory
-        $Jobs = [];
+        $jobs = [];
         $jobPath = app_path('Jobs');
         if (File::exists($jobPath) && File::isDirectory($jobPath)) {
             $files = File::files($jobPath);
             foreach ($files as $file) {
                 $filename = pathinfo($file, PATHINFO_FILENAME);
                 if (Str::endsWith($file, '.php') && !Str::startsWith($filename, '.')) {
-                    $Jobs[] = $filename;
+                    $jobs[] = $filename;
                 }
             }
         }
 
-        return view('cronjobs/history', compact('Jobs', 'ParamJob'));
+        $jobRuns = CronJobRun::query()
+            ->where('name', $paramJob)
+            ->orderBy('started_at', 'asc')
+            ->get();
+
+        $jobLogs = [];
+        if ($jobRuns->count() > 0){
+            $jobLogs = CronJobRunLog::query()
+                ->where('cron_job_run_id', $jobRuns->last()->id)
+                ->get();
+        }
+
+        return view('cronjobs/history', compact('jobs', 'jobRuns', 'jobLogs', 'paramJob'));
+    }
+
+    public function getJobRuns(Request $request){
+        $job = $request->input('job');
+
+        $jobRuns = CronJobRun::where('name', $job)
+            ->orderBy('started_at', 'asc')
+            ->get();
+
+        $formattedJobRuns = $jobRuns->map(function ($jobRun) {
+            return [
+                'id' => $jobRun->id,
+                'started_at' => $jobRun->started_at
+            ];
+        });
+
+        return response()->json($formattedJobRuns);
+    }
+
+    public function getJobRunLogs(){
+        $jobRunId = request('jobRunId');
+        $logLevel = request('LogLevel');
+        
+        $query = CronJobRunLog::query()
+            ->where('cron_job_run_id', $jobRunId);
+        
+        if ($logLevel !== 'all') {
+            $query->where('log_level', $logLevel);
+        }
+        
+        $jobLogs = $query->get();
+        
+        return view('cronjobs/parts/logs', compact('jobLogs'));
     }
 }
