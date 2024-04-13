@@ -19,10 +19,11 @@ class CustomerController extends Controller
 {
     public function Manage(){
         //LOOK verander dit als login gemaakt is.
-        $user = DB::table('users')->where('id', 39)->first();
+    //    $user = DB::table('users')->where('id', 39)->first(); //TODO niet hardcoded zetten
+        $user = DB::table('users')->where('id',3)->first();
         // $adres = DB::table('addresses')->where('id', 18)->first();
         $customerAdresses = DB::table('customer_addresses')->where('user_id', $user->id)->get();
-
+        //('user_id', '=', $id)
         $adresses = [];
 
         foreach($customerAdresses as $cusadr){

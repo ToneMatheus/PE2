@@ -171,7 +171,6 @@
                             </td>
                         </tr>
                     </table>
-
                     <table class="boxTable" id="box1_table_2">
                         <tr>
                             <td>
