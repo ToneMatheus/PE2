@@ -8,13 +8,15 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Models\CronJobHistory;
-use App\Models\CronJob;
+use App\Models\CronJobRun;
+use App\Models\CronJobRunLog;
 use Carbon\Carbon;
 
 class TemplateJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    protected $JobRunId;
 
     /**
      * Create a new job instance.
@@ -35,58 +37,85 @@ class TemplateJob implements ShouldQueue
     {
         try {
             // Log that the job execution has started
-            $this->logStart();
-
-            /**
-             * job logic goes here
-             *
-             *
-             */
-
-            // Log that the job execution has completed
-            $this->logComplete();
-        } catch (\Exception $e) {
-            // Log any errors that occur during job execution
-            $this->logError($e->getMessage());
+            $this->Start();
+            $this->jobLogic();
+            $this->Complete();
+        } catch (\Throwable $e) {
+            // Catch any throwable errors, including errors and exceptions
+            $this->logException($e->getMessage());
         }
     }
 
-    private function logStart()
-    {
+    private function Start(){
         // Log that the job execution has started
         \Log::info('Job execution started.');
 
-        // You can also log to the database if needed
-        CronJobHistory::create([
-            'job_name' => class_basename($this),
-            'status' => 'Started',
-            'completed_at' => Carbon::now(),
+        // Create new JobRun in the database
+        $jobRun = CronJobRun::create([
+            'name' => class_basename($this),
+            'started_at' => Carbon::now(), 
+            'ended_at' => null, 
+            'status' => 'Started', 
         ]);
+
+        $this->JobRunId = $jobRun->id;
     }
 
-    private function logComplete()
-    {
+    private function Complete(){
         // Log that the job execution has completed
         \Log::info('Job execution completed.');
 
-        // You can also log to the database if needed
-        CronJobHistory::create([
-            'job_name' => class_basename($this),
-            'status' => 'Completed',
-            'completed_at' => Carbon::now(),
+        $job = CronJobRun::find($this->JobRunId);
+        $job->ended_at = now();
+
+        if (empty($job->error_message)) {
+            $job->status = 'completed';
+        } else {
+            $job->status = 'failed';
+        }
+
+        $job->save();
+    }
+
+    private function Log($logLevel, $message) {
+        $logLevelMap = [
+            1 => "Info",
+            2 => "Warning",
+            3 => "Critical",
+            4 => "Error",
+        ];
+    
+        $logLevelString = $logLevelMap[$logLevel] ?? "Unknown";
+    
+        CronJobRunLog::create([
+            'cron_job_run_id' => $this->JobRunId,
+            'customer_id' => 1,
+            'log_level' => $logLevelString,
+            'message' => $message,
         ]);
     }
 
-    private function logError($errorMessage)
-    {
-        // Log any errors that occur during job execution
-        \Log::error('Job execution failed: ' . $errorMessage);
+    private function logException($errorMessage){
+        // Log the crash that happened
+        \Log::info('Job had an exception');
 
-        // You can also log to the database if needed
-        CronJobHistory::create([
-            'job_name' => class_basename($this),
-            'status' => 'Error: ' . $errorMessage,
-            'completed_at' => Carbon::now(),
-        ]);
+        $job = CronJobRun::find($this->JobRunId);
+        $job->ended_at = now();
+        $job->status = 'failed';
+        $job->error_message = $errorMessage;
+
+        $job->save();
+    }
+
+    private function jobLogic(){
+        /*
+        *   your job logic goes here
+        *   
+        *
+        */
+        $this->Log(1, "this is an info message");
+        $this->Log(2, "this is a warning");
+        $this->Log(3, "this is a critical error");
+        $this->Log(4, "oh no i shit my pants mommy");
     }
 }
