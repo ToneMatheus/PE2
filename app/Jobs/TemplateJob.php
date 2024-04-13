@@ -116,6 +116,6 @@ class TemplateJob implements ShouldQueue
         $this->Log(1, "this is an info message");
         $this->Log(2, "this is a warning");
         $this->Log(3, "this is a critical error");
-        $this->Log(4, "oh no i shit my pants mommy");
+        $this->Log(4, "oh no i did big oopsie");
     }
 }
