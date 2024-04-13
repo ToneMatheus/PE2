@@ -16,17 +16,14 @@ class Employee_Profile extends Model
 
     public const VALIDATION_RULES = [
         'job',
-        'hire_date',
-        'department'
+        'hire_date'
     ];
 
     protected $fillable = [
         'id',
         'job',
         'hire_date',
-        'notes',
-        'work_email',
-        'password'
+        'notes'
     ];
 
     protected $table = 'employee_profiles';

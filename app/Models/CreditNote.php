@@ -15,7 +15,7 @@ class CreditNote extends Model
         'type',
         'description',
         'amount',
-        'customer_id',
+        'user_id',
         'is_credit',
         'is_active'
     ];

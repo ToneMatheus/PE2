@@ -49,7 +49,7 @@
     </table>
 
     <p>
-        Please log in to our website to fill in payment.
+        Please log in to our website or scan the QR code in attachment to fill in payment.
     </p>
 
     <p>

@@ -40,6 +40,27 @@ class ContractProductSeeder extends Seeder
                 'product_id' => 2,
                 'meter_id' => 4,
             ],
+            [
+                'id' => 5,
+                'start_date' => '2025-01-01',
+                'customer_contract_id' => 4,
+                'product_id' => 1,
+                'meter_id' => 5,
+            ],
+            [
+                'id' => 6,
+                'start_date' => '2024-12-25',
+                'customer_contract_id' => 5,
+                'product_id' => 1,
+                'meter_id' => 6,
+            ],
+            [
+                'id' => 7,
+                'start_date' => '2024-12-04',
+                'customer_contract_id' => 6,
+                'product_id' => 1,
+                'meter_id' => 7,
+            ],
             ]);
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
@@ -18,30 +19,22 @@ use App\Models\Invoice;
 class InvoiceFinalWarningJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    protected $now;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
-        //
+        $this->now = config('app.now');
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
         //Query which invoices have not been paid yet and were due 1 week ago
         try
         {
+
             $unpaidInvoices = Invoice::select('id')
                 ->whereNotIn('status', ['paid', 'pending'])
-                ->whereDate('due_date', '=', now()->subDays(7)->toDateString())
+                ->whereDate('due_date', '=',  $this->now->subDays(7)->toDateString())
                 ->get()
                 ->pluck('id')
                 ->toArray();
@@ -88,7 +81,7 @@ class InvoiceFinalWarningJob implements ShouldQueue
             Log::error("Unable to retrieve invoice information from invoice with ID ".$invoiceID.": " . $e);
         }
 
-        if (Mail::to('niki.de.visscher@gmail.com')->send(new InvoiceFinalWarning($invoice_info, $total_amount, $user_info)) == null)
+        if (Mail::to('shaunypersy10@gmail.com')->send(new InvoiceFinalWarning($invoice_info, $total_amount, $user_info)) == null)
         {
             Log::error("Unable to send unpaid invoice final warning mail for invoice with ID ". $invoiceID);
         }
