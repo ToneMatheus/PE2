@@ -325,7 +325,7 @@ class MeterController extends Controller
                                     if ($row->status == "unread") {
                                         $output .= 'red;font-weight:bold;">'.ucfirst($row->status).'</span></p>
                                         <p>
-                                            <button type="button" value='.$row->meter_id.'>Add index value</button>
+                                            <button type="button" class="modalOpener" value='.$row->meter_id.'>Add index value</button>
                                         </p>';
                                     }
                                     else {
