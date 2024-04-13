@@ -167,8 +167,11 @@ class InvoiceController extends Controller
                 }
             }        
 
-        $invoicesQuery = Invoice::query();
-
+        $invoicesQuery = Invoice::query()
+            ->join('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
+            ->join('users', 'customer_contracts.user_id', '=', 'users.id')
+            ->select('invoices.id', 'invoices.meter_id', 'users.first_name', 'users.last_name', 'invoices.invoice_date', 'invoices.due_date', 'invoices.status')->orderby('invoices.id');
+        
 
         // Filter by time range
         $selectedYear = "";

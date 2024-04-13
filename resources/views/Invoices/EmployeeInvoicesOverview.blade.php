@@ -36,7 +36,9 @@
                 <table class="table-auto  w-full">
                     <thead>
                         <tr>
-                            <th class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200">ID</th>
+                            <th class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200">Invoice ID</th>
+                            <th class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200">Meter ID</th>
+                            <th class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200">Customer</th>
                             <th class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200 cursor-pointer" onclick="sortTable('InvoiceDate')">Invoice Date <i class="fas fa-sort"></i></th>
                             <th class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200 cursor-pointer" onclick="sortTable('DueDate')">Due Date <i class="fas fa-sort"></i></th>
                             <th class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200 cursor-pointer" onclick="sortTable('Status')">Invoice Status <i class="fas fa-sort"></i></th>
@@ -51,6 +53,8 @@
                             @foreach($invoices as $invoice)
                                 <tr>
                                     <td class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200 text-center">{{ $invoice->id }}</td>
+                                    <td class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200 text-center">{{ $invoice->meter_id }}</td>
+                                    <td class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200 text-center">{{ $invoice->first_name }} {{ $invoice->last_name }}</td>
                                     <td class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200 text-center">{{ $invoice->invoice_date }}</td>
                                     <td class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200 text-center">{{ $invoice->due_date }}</td>
                                     <td class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200 text-center">{{ $invoice->status }}</td>
