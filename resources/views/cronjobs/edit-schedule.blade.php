@@ -5,6 +5,15 @@
     </h2>
 </x-slot>
 
+<x-slot name="backButton">
+    <x-primary-anchor-button href="{{ route('index-cron-job')}}">
+        <svg class="w-5 h-5 rtl:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
+        </svg>
+        <span>Go back</span>
+    </x-primary-anchor-button>
+</x-slot>
+
 <div class="py-8">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
@@ -78,10 +87,7 @@
 </div>
 
 
-<div class="max-w-2xl mx-auto">
-<a href="{{ route('index-cron-job')}}" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" style="margin-right: 10px;">back</a>
-        
-</div>
+
 
 <script src="{{ asset('js/cron-jobs.js') }}"></script>
 <script>
