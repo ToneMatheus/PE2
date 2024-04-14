@@ -231,6 +231,7 @@ Route::post('/user/Create/validate', [CustomerController::class, 'profileValidat
 
 // Set active user when email confirm
 Route::get('/confirm-email/{token}', [ProfileController::class, 'confirmEmail'])->name('email-confirmation');
+Route::get('/confirm-email/{token}', [RegisteredUserController::class, 'confirmEmail'])->name('email-confirmation-registration');
 
 
 

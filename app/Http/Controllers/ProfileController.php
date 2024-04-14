@@ -51,14 +51,11 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        //TEST test dit of dit werkt. want krijg nu deze error "Trying to access array offset on value of type null" maar denk dat het komt omdat de mailserver zijn max limiet bereikt heeft
-        // $user->saveWithoutEmail();
-
         $email = $user->email;
         $user->email = $user->getOriginal('email');
         $user->save();
         $user->email = $email;
-        //TEST tot hier
+
             if ($user->isDirty('email')) 
             {
                 Mail::to($user->email)->send(new ConfirmationMailRegistration($user));
@@ -112,7 +109,8 @@ class ProfileController extends Controller
             $user->email = $email;
             $user->phone_nbr = $phone_nbr;
             $user->birth_date = $birth_date;
-            $user->is_activate = $is_activate;
+            //CH pas dit aan aan de database
+            // $user->is_activate = $is_activate;
 
             $user->save();
         }

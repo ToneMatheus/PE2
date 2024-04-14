@@ -17,7 +17,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    public $timestamps = false;
+    // public $timestamps = false;
 
     public const VALIDATION_RULE_USERNAME = ['string', 'max:255', 'required'];
     public const VALIDATION_RULE_FIRST_NAME = ['required'];
@@ -101,11 +101,6 @@ class User extends Authenticatable
     //TEST tot hier
 
 
-    //! de onderstaande functie zou moeten toe gevoegd worden. afhenkelijk van wat er gedaan wordt met het role systeem. voor creation van een nieuwe employee
-    // public function hasRole($role)
-    // {
-    //     return $this->role === $role;
-    // }
 
     public function team_members(): HasMany
     {

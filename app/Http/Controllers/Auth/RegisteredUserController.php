@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Requests\Auth\RegistrationRequest;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Illuminate\Support\Carbon;
 
 class RegisteredUserController extends Controller
 {
@@ -39,22 +41,39 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(RegistrationRequest $request): RedirectResponse
     {
-        $request->validate(self::VALIDATION_RULES);
+        // dd($request);
 
-        $user = User::create([
+        $userdata = [
             'username' => $request->username,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'phone_nbr' => $request->phone_nbr,
-        ]);
+            'birth_date' => $request->birth_date,
+            'title' => $request->title,
+            'is_active' => 0,
+        ];
+
+        if ($request->has('is_company')) {
+            $userdata['is_company'] = 1;
+            $userdata['company_name'] = $request->company_name;
+        };
+
+        $user = User::create($userdata);
         event(new Registered($user));
+
+        dd($user);
+
 
         Auth::login($user);
 
         return redirect(RouteServiceProvider::HOME);
+    }
+
+    public function confirmEmail(){
+
     }
 }
