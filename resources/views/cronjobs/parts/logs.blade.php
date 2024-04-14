@@ -5,7 +5,7 @@
     </caption>
     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
         <tr>
-            <th scope="col" class="px-6 py-3">Customer:</th>
+            <th scope="col" class="px-6 py-3">Invoice ID:</th>
             <th scope="col" class="px-6 py-3">
                 <div class="flex items-center">
                     Log Level:
@@ -20,11 +20,16 @@
         </tr>
     </thead>
     <tbody>
+        @if (!$jobLogs->isEmpty())
         @foreach ($jobLogs as $jobLog)
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                test
-            </th>
+            <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                @if ($jobLog->invoice_id != null)
+                    {{ $jobLog->invoice_id }}
+                @else
+                    N/A
+                @endif    
+            </td>
             <td class="px-6 py-4">
                 {{ $jobLog->log_level }}
             </td>
@@ -33,5 +38,12 @@
             </td>
         </tr>
         @endforeach
+        @else
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td rowspan="3" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                There are no logs for this run.
+            </td>
+        </tr>
+        @endif
     </tbody>
 </table>
