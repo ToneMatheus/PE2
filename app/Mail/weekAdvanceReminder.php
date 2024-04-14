@@ -10,7 +10,6 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Attachment;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\QRCodeService;
 
 class weekAdvanceReminder extends Mailable
@@ -47,18 +46,6 @@ class weekAdvanceReminder extends Mailable
             subject: 'Open Invoice: Advance Reminder',
         );
     }
-
-    /**
-     * Get the message content definition.
-     *
-     * @return \Illuminate\Mail\Mailables\Content
-     */
-    /*public function content()
-    {
-        return new Content(
-            view: 'mails\advance-reminder',
-        );
-    }*/
 
     /**
      * Get the attachments for the message.

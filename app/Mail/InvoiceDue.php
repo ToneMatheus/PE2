@@ -8,6 +8,8 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Address;
+use App\Services\QRCodeService;
 
 class InvoiceDue extends Mailable
 {
@@ -20,7 +22,7 @@ class InvoiceDue extends Mailable
      */    
 
      public $companyname = "energy supply business";
-     public $fee = 50;
+     public $fine = 50;
     
      public function __construct(    
         public $invoice_info,
@@ -37,7 +39,7 @@ class InvoiceDue extends Mailable
     public function envelope()
     {
         return new Envelope(
-            from: 'energy-company@example.com',
+            from: new Address('energysupplier@gmail.com', 'Energy Supplier'),
             subject: 'Invoice Due',
         );
     }
@@ -47,12 +49,12 @@ class InvoiceDue extends Mailable
      *
      * @return \Illuminate\Mail\Mailables\Content
      */
-    public function content()
+    /*public function content()
     {
         return new Content(
             view: 'mails\invoice_due_mail',
         );
-    }
+    }*/
 
     /**
      * Get the attachments for the message.
@@ -62,5 +64,21 @@ class InvoiceDue extends Mailable
     public function attachments()
     {
         return [];
+    }
+
+    public function build()
+    {
+        $QRCodeService = new QRCodeService();
+        $pdfData = $QRCodeService->PaymentQRCodePdf($this->invoice_info[0]->invoice_id);
+
+        return $this->view('mails.invoice_due_mail')
+                    ->with([
+                        'user_info' => $this->user_info,
+                        'invoice_info' => $this->invoice_info,
+                        'total_amount' => $this->total_amount
+                    ])
+                    ->attachData($pdfData, 'QRcode.pdf', [
+                        'mime' => 'application/pdf',
+                    ]);
     }
 }
