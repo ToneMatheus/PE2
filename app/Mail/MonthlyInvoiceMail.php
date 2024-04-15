@@ -16,6 +16,7 @@ class MonthlyInvoiceMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected $domain = "http://127.0.0.1:8000"; //change later
     protected $invoice;
     protected $user;
     protected $estimation;
@@ -46,7 +47,7 @@ class MonthlyInvoiceMail extends Mailable
                     ->with([
                         'user' => $this->user,
                         'invoice' => $this->invoice,
-                        'newInvoiceLines' => $this->newInvoiceLines
+                        'newInvoiceLines' => $this->newInvoiceLines,
                     ])
                     ->attachData($pdfData, 'invoice.pdf', [
                         'mime' => 'application/pdf',
@@ -59,6 +60,7 @@ class MonthlyInvoiceMail extends Mailable
             'invoice' => $this->invoice,
             'user' => $this->user,
             'newInvoiceLines' => $this->newInvoiceLines,
+            'domain' => $this->domain
         ], [], 'utf-8');
         
              

@@ -56,5 +56,13 @@
     </table>
 
     <h2>Total Amount: {{ round($invoice->total_amount, 2) }}</h2> 
+
+    <p>
+        <?php 
+        echo DNS2D::getBarcodeHTML($domain . "/pay/" . $invoice->id, 'QRCODE',5,5);
+        ?>
+    </p>
+
+    <p><br/>Scanning this QR code will bring you directly to a page where you can handle the payment of your invoice.</p>
 </body>
 </html>

@@ -34,6 +34,7 @@ class InvoiceRunJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    protected $domain = "http://127.0.0.1:8000"; //change later
     protected $now;
     protected $year;
     protected $month;
@@ -304,7 +305,8 @@ class InvoiceRunJob implements ShouldQueue
             'newInvoiceLine' => $newInvoiceLine,
             'meterReadings' => $meterReadings,
             'discounts' => $discounts,
-            'monthlyInvoices' => $monthlyInvoices
+            'monthlyInvoices' => $monthlyInvoices,
+            'domain' => $this->domain
         ], [], 'utf-8');
         $pdfData = $pdf->output();
 
@@ -528,6 +530,7 @@ class InvoiceRunJob implements ShouldQueue
             'invoice' => $invoice,
             'user' => $user,
             'newInvoiceLines' => $newInvoiceLines,
+            'domain' => $this->domain
         ], [], 'utf-8');
         $pdfData = $pdf->output();
 

@@ -16,6 +16,7 @@ class AnnualInvoiceMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected $domain = "http://127.0.0.1:8000"; //change later
     protected $invoice;
     protected $user;
     protected $consumption;
@@ -77,7 +78,8 @@ class AnnualInvoiceMail extends Mailable
             'newInvoiceLine' => $this->newInvoiceLine,
             'meterReadings' => $this->meterReadings,
             'discounts' => $this->discounts,
-            'monthlyInvoices' => $this->monthlyInvoices
+            'monthlyInvoices' => $this->monthlyInvoices,
+            'domain' => $this->domain
         ], [], 'utf-8');
         
              
