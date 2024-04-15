@@ -352,11 +352,6 @@ class MeterController extends Controller
         }
     }
 
-    public function enterIndex(Request $request) {
-        $results = DB::select('SELECT id FROM meters;');
-        return view("Meters/enterIndexEmployee",['results'=>$results]);
-    }
-
     public function submitIndex(Request $request) {
         $date = Carbon::now()->toDateString();
         $meter_id = $request->input('meter_id');

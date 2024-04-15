@@ -56,11 +56,6 @@
             function fetch_customer_data(queryName = '', queryCity = '', queryStreet = '', queryNumber = '', queryAssigned = '')
             {
                 $.ajax({
-                    url:"{{ route('searchAllMeters') }}",
-
-            function fetch_customer_data(queryName = '', queryCity = '', queryStreet = '', queryNumber = '', queryAssigned = '')
-            {
-                $.ajax({
                     url:"{{ route('search') }}",
                     method:'GET',
                     data:{queryName:queryName, queryCity:queryCity, queryStreet:queryStreet, queryNumber:queryNumber, queryAssigned:queryAssigned},
