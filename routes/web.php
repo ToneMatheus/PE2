@@ -189,6 +189,10 @@ Route::get('/roles', function () {
 });
 Route::get('/teamOverview', [TeamController::class, 'index']);
 Route::post('/add-team', [TeamController::class, 'addTeam'])->name('add.team');
+Route::get('/teams', [TeamController::class, 'showTeams'])->name('teams.show');
+Route::get('/teams/members/{teamId}', [App\Http\Controllers\TeamController::class, 'getTeamMembers'])->name('team.members');
+Route::get('/users/not-in-team', [TeamController::class, 'getUsersNotInTeam'])->name('users.not-in-team');
+Route::post('/teams/add-member', [TeamController::class, 'addMemberToTeam'])->name('teams.add-member');
 
 //cronjobs
 Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
