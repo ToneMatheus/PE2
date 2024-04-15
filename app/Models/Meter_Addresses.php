@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Meter_Addresses extends Model
 {
+    protected $table = 'meter_addresses';
     protected $fillable = [
         'start_date',
         'end_date',
