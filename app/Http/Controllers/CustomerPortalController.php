@@ -13,7 +13,7 @@ class CustomerPortalController extends Controller
 {
     public function invoiceView(Request $request)
     {
-        Auth::loginUsingId(1);
+        Auth::loginUsingId(1); // TO BE DELETED!!!
 
         $search = $request->get('search');
         $status = $request->get('status');
