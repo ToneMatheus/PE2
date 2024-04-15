@@ -32,6 +32,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\NewEmployeeController;
+use App\Http\Controllers\holidayRequest;
 
 
 /*
@@ -66,7 +67,7 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
-    
+
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
@@ -93,6 +94,10 @@ Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(
     
 });
 
+Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function() {
+    
+});
+
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
 
 
@@ -101,6 +106,7 @@ Route::get('/tariff/delete/{pID}/{tID}', [TariffController::class, 'inactivateTa
 Route::post('/tariff/add', [TariffController::class, 'processTariff'])->name('tariff.add');
 Route::post('/tariff/edit/{pID}/{tID}', [TariffController::class, 'editTariff'])->name('tariff.edit');
 
+//
 Route::get('/employeeOverview', [EmployeeController::class, 'showEmployees'])->name('employees');
 Route::post('/employeeOverview/add', [EmployeeController::class, 'processEmployee'])->name('employees.add');
 Route::get('/editEmployee/{eID}', [EmployeeController::class, 'editEmployee'])->name('employees.edit');
@@ -154,16 +160,23 @@ Route::get('/downloadBenefits', [DomPDFController::class, 'getBenefitsPDF'])->na
 Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
 Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
-Route::get('/profileEmployee', [myController::class, 'profile'])->name('profile');
+Route::get('/profileEmployee/{id?}', [myController::class, 'profile'])->name('profile');
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
 Route::get('/managerList', [myController::class, 'managerList'])->name('managerList');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
 Route::get('/employeeBenefits', [myController::class, 'benefits'])->name('employeeBenefits');
-Route::post('/profileEmployee/{id}', [myController::class, 'store'])->name('storeTaskData');
+//Route::post('/profileEmployee/{id}', [myController::class, 'store'])->name('storeTaskData');
 Route::get('/hiringManger', [myController::class, 'hiringManager'])->name('hiringManager');
 Route::get('/jobOffers', [myController::class, 'jobs'])->name('jobs');
 Route::get('/jobDescription', [myController::class, 'jobDescription'])->name('jobDescription');
 Route::get('/jobApply', [myController::class, 'jobApply'])->name('jobApply');
+// Route::get('/documents', [myController::class, 'documents'])->name('documents');
+Route::get('/documents', function () {     
+    return view('documents'); })->name('documents');
+// Route::get('/profileHR', [myController::class, 'profileHR'])->name('profileHR');
+// Route::get('/profileInvoice', [myController::class, 'profileInvoice'])->name('profileInvoice');
+// Route::get('/profileCustomers', [myController::class, 'profileCustomers'])->name('profileCustomers');
+// Route::get('/profileMeters', [myController::class, 'profileMeters'])->name('profileMeters');
 
 // routes for relations controlelr
 Route::get('/relations', [RelationsController::class, 'fetchRelations']);
@@ -177,9 +190,11 @@ Route::post('/relations/update', [RelationsController::class, 'updateRelation'])
 
 //Route::get('/holidayRequest', function() {  return view('holidayRequest');  })->name('request');
 
-Route::get('/holidayRequest', function(){
-    return view('holidayRequestPage');
-})->name('request');
+Route::get('/holidayRequest', [holidayRequest::class, 'index'])->name('request');
+
+// Route::get('/holidayRequest', function(){
+//     return view('holidayRequestPage');
+// })->name('request');
 
 Route::get('/welcome', function() {
     return view('welcome');

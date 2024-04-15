@@ -11,7 +11,7 @@ class PayslipController extends Controller
 {
     public function payslips()
     {
-        $userID = 3; //To be replaced by the real ID!
+        $userID = Auth::id();
         $id = request()->input('id');
     
         $payslipInfo = DB::select("select * from payslips where employee_profile_id = $userID");//fetching payslip plus contract information

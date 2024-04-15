@@ -16,7 +16,7 @@
             <div>
                 <h1><u>Your payslips</u></h1>
                 @php
-                    $userID = 1;//To be replaced by the real ID!
+                   $userID = Auth::id();
 
                     $payslipInfo = DB::select("select * from payslips where employee_profile_id = $userID");//fetching payslip plus contract information
                     $numRows = count($payslipInfo);

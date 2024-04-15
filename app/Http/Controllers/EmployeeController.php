@@ -14,7 +14,8 @@ use App\Models\{
     TeamMember,
     Role,
     User_Role,
-    Customer_Address
+    Customer_Address,
+    Balance
 };
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
@@ -40,15 +41,11 @@ class EmployeeController extends Controller
         //new Employee_profile
         $employee = Employee_profile::create([
             'hire_date' => $request->input('startDate'),
-            'work_email' => 0,
         ]);
 
         //username & email generated
         $username = $request->input('firstName')[0] . $request->input('name')[0] . $employee->id;
         $email = $request->input('firstName')[0] . $request->input('name')[0] . $employee->id . '@example.com';
-
-        $employee->work_email = $email;
-        $employee->save();
 
         //new Employee_contract
         Employee_contract::create([
@@ -64,7 +61,8 @@ class EmployeeController extends Controller
         $userData = [
             'username' => $username,
             'password' => Hash::make('default'),    //mail to change  
-            'email' => $request->input('personalEmail'),
+            'email' => $email,
+            'work_email' => $request->input('personalEmail'), //bound that change
             'first_name' => $request->input('firstName'),
             'last_name' => $request->input('name'),
             'employee_profile_id' => $employee->id,
@@ -114,6 +112,14 @@ class EmployeeController extends Controller
             'start_date' => $request->input('startDate')
         ]);
 
+        Balance::create([
+            'employee_profile_id' => $employee->id,
+            'holiday_type_id' => 1,
+            'yearly_holiday_credit' => 20,
+            'used_holiday_credit' => 0,
+            'start_date' => $request->input('startDate')
+        ]);
+
         event(new NewEmployeeRegistered($employee, $user));
 
         return redirect()->route('employees');
@@ -154,6 +160,7 @@ class EmployeeController extends Controller
         $user->phone_nbr = $request->input('phoneNbr');
         $user->birth_date = $request->input('birthDate');
         $user->nationality = $request->input('nationality');
+        $user->work_email = $request->input('personalEmail');
         $user->save();
 
         return redirect()->route('employees.edit', ['eID' => $eID]);

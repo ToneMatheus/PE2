@@ -12,9 +12,10 @@ class TeamsSeeder extends Seeder
     public function run()
     {
         DB::table('teams')->insert([
-            ['team_name' => 'Team blue'],
-            ['team_name' => 'Team red'],
-            ['team_name' => 'Team green'],
+            ['team_name' => 'HR'],
+            ['team_name' => 'Invoice'],
+            ['team_name' => 'Meters'],
+            ['team_name' => 'Customer service']
         ]);
     }
 }
