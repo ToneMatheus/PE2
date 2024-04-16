@@ -116,7 +116,7 @@ Route::get('/enter_index_employee', function() {
     return view('Meters/enterIndexEmployee');
 });
 Route::get('/enter_index_employee_search', [MeterController::class, 'searchIndex'])->name("searchIndex");
-Route::get('/modal_view/{id}', [MeterController::class, 'modalView'])->name("modalView");
+Route::get('/fetchEAN/{meterID}', [MeterController::class, 'fetchEAN']);
 Route::post('/enterIndexEmployee', [MeterController::class, 'submitIndex'])->name("submitIndex");
 Route::get('/dashboardEmployee', function () {
     return view('Meters/employeeDashboard');

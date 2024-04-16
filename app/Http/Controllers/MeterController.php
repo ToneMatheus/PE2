@@ -352,6 +352,17 @@ class MeterController extends Controller
         }
     }
 
+    public function fetchEAN($meterID) {
+        $query = Meter::find($meterID);
+
+        if($query) {
+            return response()->json([
+                'status'=>200,
+                'result'=> $query,
+            ]);
+        }
+    }
+
     public function submitIndex(Request $request) {
         $date = Carbon::now()->toDateString();
         $meter_id = $request->input('meter_id');

@@ -14,6 +14,7 @@
         <p class="companyName">Thomas More Energy Company</p>
     </nav>
     <div class="pageContainer">
+    <div id="message"></div>
     <div class="modal fade" id="indexModal" tabindex="-1" aria-labelledby="indexModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -23,7 +24,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group mb-3">
-                        <label for="">Enter index value for <span class="modalEAN"></span></label>
+                        <label for="">Enter index value for meter <span id="modalEAN" class="modalEAN"></span></label>
                         <input type="text" required class="name form-control">
                     </div>
                 </div>
@@ -83,7 +84,23 @@
 
             $(document).on('click', '.modalOpener', function (e) {
                 $('#indexModal').modal('show');
-                $userId = $(this).val()
+                var meterID = $(this).val()
+
+                $.ajax({
+                    url: "/fetchEAN/" + meterID,
+                    method:'GET',
+                    success:function(response)
+                    {
+                        if (response.status == 404) {
+                            $('#message').addClass('alert alert-success');
+                            $('#message').text(response.message);
+                            $('#indexModal').modal('hide');
+                        }
+                        else {
+                            $('#modalEAN').html(response.result.EAN);
+                        }
+                    }
+                })
             })
         });
     </script>
