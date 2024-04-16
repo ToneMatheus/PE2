@@ -8,6 +8,8 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Address;
+use App\Services\QRCodeService;
 
 class InvoiceFinalWarning extends Mailable
 {
@@ -37,7 +39,7 @@ class InvoiceFinalWarning extends Mailable
     public function envelope()
     {
         return new Envelope(
-            from: 'energy-company@example.com',
+            from: new Address('energysupplier@gmail.com', 'Energy Supplier'),
             subject: 'Final Warning: Open Invoice',
         );
     }
@@ -47,12 +49,12 @@ class InvoiceFinalWarning extends Mailable
      *
      * @return \Illuminate\Mail\Mailables\Content
      */
-    public function content()
+    /*public function content()
     {
         return new Content(
             view: 'mails\invoice_final_warning',
         );
-    }
+    }*/
 
     /**
      * Get the attachments for the message.
@@ -62,5 +64,21 @@ class InvoiceFinalWarning extends Mailable
     public function attachments()
     {
         return [];
+    }
+
+    public function build()
+    {
+        $QRCodeService = new QRCodeService();
+        $pdfData = $QRCodeService->PaymentQRCodePdf($this->invoice_info[0]->invoice_id);
+
+        return $this->view('mails.invoice_final_warning')
+                    ->with([
+                        'user_info' => $this->user_info,
+                        'invoice_info' => $this->invoice_info,
+                        'total_amount' => $this->total_amount
+                    ])
+                    ->attachData($pdfData, 'QRcode.pdf', [
+                        'mime' => 'application/pdf',
+                    ]);
     }
 }

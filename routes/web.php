@@ -107,6 +107,7 @@ Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'un
 //view invoice reminder mails for testing
 Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
 Route::get('/reminders', [InvoiceRemindersController::class, 'index'])->name("invoice_reminder");
+Route::get('/test-qr-monthly', [InvoiceRemindersController::class, 'monthly'])->name("qr-monthly");
 
 //invoice payment
 Route::get('/pay/{id}', [PaymentController::class, 'show'])->name("payment.show");
