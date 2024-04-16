@@ -61,8 +61,8 @@ class ValidationJob implements ShouldQueue
                     throw new \Exception("Validation Error Code 0: No active customers found.");
                 }
                 foreach($customers as $customer){
-                    $invoices = Invoice::join('customer_contracts as cc', 'cc.user_id', "=", 'invoices.customer_contract_id')
-                    ->select('invoices.id as invoice_id', 'invoices.invoice_date', 'invoices.due_date', 'invoices.total_amount', 'invoices.status', 'invoices.customer_contract_id', 'invoices.type', 'invoices.meter_id')
+                    $invoices = Invoice::join('customer_contracts as cc', 'cc.id', "=", 'invoices.customer_contract_id')
+                    ->select('invoices.id as invoice_id', 'invoices.invoice_date', 'invoices.due_date', 'invoices.total_amount', 'invoices.status', 'invoices.customer_contract_id', 'invoices.type', 'invoices.meter_id', 'cc.user_id')
                     ->where('cc.user_id', '=', $customer)
                     ->whereYear('invoices.invoice_date', '=', $year)
                     ->whereMonth('invoices.invoice_date', '=', $month)
