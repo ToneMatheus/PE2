@@ -61,8 +61,32 @@ class ValidationJob implements ShouldQueue
                     throw new \Exception("Validation Error Code 0: No active customers found.");
                 }
                 foreach($customers as $customer){
-                    // dd($customer);
+                    $invoices = Invoice::join('customer_contracts as cc', 'cc.user_id', "=", 'invoices.customer_contract_id')
+                    ->select('invoices.id as invoice_id', 'invoices.invoice_date', 'invoices.due_date', 'invoices.total_amount', 'invoices.status', 'invoices.customer_contract_id', 'invoices.type', 'invoices.meter_id')
+                    ->where('cc.user_id', '=', $customer)
+                    ->whereYear('invoices.invoice_date', '=', $year)
+                    ->whereMonth('invoices.invoice_date', '=', $month)
+                    ->get()->toArray();
+                    // dd($invoices);
+                    foreach($invoices as $invoice){
+                        // dd($invoice['type']);
+                        if ($invoice['type'] == "Monthly" || $invoice['type'] == "monthly"){
+                            // Estimation validation
+                            // Can i find the estimation
+                            if(sizeof(Estimation::get()->where('meter_id', '=', $invoice['meter_id'])->toArray()) == 0){
+                                $meter_id = $invoice['meter_id'];
+                                $invoice_id = $invoice['invoice_id'];
+                                Log::error('Exception caught: ' . "Validation Error Code 3: No monthly estimation found for meter with id: $meter_id");
+                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error']);
+                            }elseif(Estimation::select('estimation_total')->where('meter_id', '=', $invoice['meter_id'])->pluck('estimation_total')->toArray() <= 0){
+                                $id = $invoice['meter_id'];
+                                Log::error('Exception caught: ' . "Validation Error Code 4: Monthly estimation found to be 0 or lower for meter with id: $id");
+                            }else{
 
+                            }
+
+                        }
+                    }
                     // Make new invoices
                     // $invoiceData = [
                     //     'invoice_date' => Carbon::now()->toDateString(), //temporary
