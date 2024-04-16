@@ -74,17 +74,41 @@ class ValidationJob implements ShouldQueue
                             // Estimation validation
                             // Can i find the estimation
                             if(sizeof(Estimation::get()->where('meter_id', '=', $invoice['meter_id'])->toArray()) == 0){
+                                // did not find the estimation
                                 $meter_id = $invoice['meter_id'];
                                 $invoice_id = $invoice['invoice_id'];
-                                Log::error('Exception caught: ' . "Validation Error Code 3: No monthly estimation found for meter with id: $meter_id");
+                                Log::error('Exception caught: ' . "Validation Error Code 1: No monthly estimation found for meter with id: $meter_id");
                                 Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error']);
                             }elseif(Estimation::select('estimation_total')->where('meter_id', '=', $invoice['meter_id'])->pluck('estimation_total')->toArray() <= 0){
-                                $id = $invoice['meter_id'];
-                                Log::error('Exception caught: ' . "Validation Error Code 4: Monthly estimation found to be 0 or lower for meter with id: $id");
+                                // estimation is 0 of lager
+                                $meter_id = $invoice['meter_id'];
+                                $invoice_id = $invoice['invoice_id'];
+                                Log::error('Exception caught: ' . "Validation Error Code 2: Monthly estimation found to be 0 or lower for meter with id: $meter_id");
+                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error']);
                             }else{
-
+                                $meter_id = $invoice['meter_id'];
+                                $invoice_id = $invoice['invoice_id'];
+                                // estimation gevonden en hoger dan 0
+                                Log::error("No validation error for meter with id: $meter_id.");
+                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
                             }
-
+                        }elseif($invoice['type'] == "Yearly" || $invoice['type'] == "yearly" || $invoice['type'] == "Annual" || $invoice['type'] == "annual"){
+                            // Consumption validation
+                            $meter_id = $invoice['meter_id'];
+                            $invoice_id = $invoice['invoice_id'];
+                            $consumptions = Index_Value::where('meter_id', '=', $meter_id)
+                            ->whereyear('reading_date', '=', $year)
+                            ->get()->toArray();
+                            if (sizeof($consumptions) == 0) {
+                                // no consumption found
+                                Log::error('Exception caught: ' . "Validation Error Code 3: No consumption found for meter with id: $meter_id.");
+                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error']);
+                            }
+                            else {
+                                // consumption found
+                                Log::error("No validation error for meter with id: $meter_id.");
+                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
+                            }
                         }
                     }
                     // Make new invoices
@@ -98,32 +122,6 @@ class ValidationJob implements ShouldQueue
                     // ];
                     // $invoice = Invoice::create($invoiceData);
                     // dd($invoice);
-
-                    // Find meter to check for index_values
-                    $meters = Meter::join('meter_addresses as ma', 'ma.meter_id', '=', 'meters.id')
-                    ->join('customer_addresses as ca', 'ca.address_id', '=', 'ma.address_id')
-                    ->select('meters.id as meter_id')
-                    ->where('ca.user_id', '=', $customer)
-                    ->get()
-                    ->pluck('meter_id')
-                    ->toArray();
-
-                    if (sizeof($meters) == 0) {
-                        Log::error('Exception caught: ' . "Validation Error Code 1: No meter found for customer with id: $customer.");
-                    } else {
-                        foreach($meters as $meter) {
-                            $consumptions = Index_Value::where('meter_id', '=', $meter)
-                            ->whereyear('reading_date', '=', $year)
-                            ->get()->toArray();
-                            if (sizeof($consumptions) == 0) {
-                                Log::error('Exception caught: ' . "Validation Error Code 2: No consumption found for meter with id: $meter.");
-                            }
-                            else {
-                                Log::error("No validation error for meter with id: $meter.");
-                            }
-                        }
-                    }
-                    
                 }
             }
         } catch (\Exception $code) {
