@@ -12,12 +12,25 @@
     <div class="flex flex-col items-center w-full">
         <h1 class="text-2xl mt-5">{{ __('messages.Invoices') }}</h1>
         <div class="w-full p-10">
-            <div class="mt-5 border-2 border-blue-700 bg-blue-100 p-3 rounded">
-                @if ($sentInvoicesSum > 0)
-                    <h2>{{ __('messages.Total Amount to be paid') }}: {{ $sentInvoicesSum }}</h2>
-                @else
-                    <h2>{{ __('messages.No Invoices') }}</h2>
-                @endif
+            <div class="grid grid-cols-3 gap-4">
+                <div class="col-span-1 mt-5 border-2 border-blue-700 bg-blue-100 p-3 rounded">
+                    @if ($sentInvoicesSum > 0)
+                        <h2>{{ __('messages.Total Amount to be paid') }}: {{ $sentInvoicesSum }}</h2>
+                    @else
+                        <h2>{{ __('messages.No Invoices') }}</h2>
+                    @endif
+                </div>
+                <div class="col-span-1"></div>
+                <form method="GET" action="{{ route('customer.invoiceStatus') }}" class="col-span-1 mt-5 border-2 border-blue-700 bg-blue-100 p-3 rounded">
+                    <select name="address" onchange="this.form.submit()" class="w-full">
+                        <option value="">{{ __('messages.show_all_addresses') }}</option>
+                        @foreach($addresses as $address)
+                            <option value="{{ $address->address }}" {{ request('address') == $address->address ? 'selected' : '' }}>
+                                {{ $address->address }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
             </div>
             <div class="flex justify-between mt-5 items-center">
                 <div class="flex space-x-4">
@@ -40,7 +53,9 @@
                         <th class="p-2 bg-blue-700 text-left">{{ __('messages.Due Date') }}</th>
                         <th class="p-2 bg-blue-700 text-left">{{ __('messages.Status') }}</th>
                         <th class="p-2 bg-blue-700 text-left">{{ __('messages.Type') }}</th>
+                        <th class="p-2 bg-blue-700 text-left">{{ __('messages.Address') }}</th>
                         <th class="p-2 bg-blue-700 text-left">{{ __('messages.Download') }}</th>
+                        <th class="p-2 bg-blue-700 text-left">{{ __('messages.Pay') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,7 +66,9 @@
                             <td class="p-2">{{ $invoice->due_date }}</td>
                             <td class="p-2" style="background-color: {{ $invoice->status == 'paid' ? 'green' : ($invoice->status == 'pending' ? 'yellow' : ($invoice->status == 'sent' ? 'red' : 'white')) }}">{{ __('messages.' . $invoice->status) }}</td>
                             <td class="p-2">{{ __('messages.' . $invoice->type) }}</td>
+                            <td class="p-2">{{ $invoice->address }}</td>
                             <td class="p-2"><a href="{{ route('invoice.download', ['id' => $invoice->id]) }}" class="bg-blue-700 text-white rounded-lg px-2 py-1">{{ __('messages.download') }}</a></td>
+                            <td class="p-2"><a href="{{ route('invoice.download', ['id' => $invoice->id]) }}" class="{{ $invoice->status == 'paid' ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-700' }} text-white rounded-lg px-2 py-1"  {{ $invoice->status == 'paid' ? 'disabled' : '' }}> {{ __('messages.Pay') }} </a></td>
                         </tr>
                     @endforeach
                 </tbody>

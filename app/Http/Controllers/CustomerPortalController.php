@@ -17,22 +17,32 @@ class CustomerPortalController extends Controller
 
         $search = $request->get('search');
         $status = $request->get('status');
+        $selectedAddress = $request->get('address');
         $query = Invoice::query();
 
         $user = auth()->user();
-    
+
+        $query->join('meters', 'invoices.meter_id', '=', 'meters.id')
+              ->join('meter_addresses', 'meters.id', '=', 'meter_addresses.meter_id')
+              ->join('addresses', 'meter_addresses.address_id', '=', 'addresses.id')
+              ->select('invoices.*', 'meters.id', DB::raw("CONCAT(addresses.street, ' ', addresses.number, ', ', addresses.city) AS address"));
+
+        if ($selectedAddress) {
+            $query->where(DB::raw("CONCAT(addresses.street, ' ', addresses.number, ', ', addresses.city)"), $selectedAddress);
+        }
+
         if ($search) {
-            $query->where('customer_contract_id', $user->id)
+            $query->where('invoices.customer_contract_id', $user->id)
                   ->where(function ($query) use ($search) {
-                      $query->where('id', $search)
-                            ->orWhere('total_amount', $search)
-                            ->orWhere('invoice_date', $search)
-                            ->orWhere('due_date', $search)
-                            ->orWhere('status', $search)
-                            ->orWhere('type', $search);
+                      $query->where('invoices.id', $search)
+                            ->orWhere('invoices.total_amount', $search)
+                            ->orWhere('invoices.invoice_date', $search)
+                            ->orWhere('invoices.due_date', $search)
+                            ->orWhere('invoices.status', $search)
+                            ->orWhere('invoices.type', $search);
                   });
         } else {
-            $query->where('customer_contract_id', $user->id);
+            $query->where('invoices.customer_contract_id', $user->id);
         }
 
         $sentInvoicesSum = Invoice::where('customer_contract_id', $user->id)
@@ -40,12 +50,22 @@ class CustomerPortalController extends Controller
                           ->sum('total_amount');
 
         if ($status) {
-            $query->where('status', $status);
+            $query->where('invoices.status', $status);
         }
 
-        $query->orderBy('invoice_date', 'desc');
+        $query->orderBy('invoices.invoice_date', 'desc');
         $invoices = $query->paginate(10);
-        return view('Customers/CustomerInvoiceView', compact('invoices', 'sentInvoicesSum'));
+
+        $addresses = DB::table('addresses')
+               ->join('meter_addresses', 'addresses.id', '=', 'meter_addresses.address_id')
+               ->join('meters', 'meter_addresses.meter_id', '=', 'meters.id')
+               ->join('invoices', 'meters.id', '=', 'invoices.meter_id')
+               ->where('invoices.customer_contract_id', $user->id)
+               ->select(DB::raw("CONCAT(addresses.street, ' ', addresses.number, ', ', addresses.city) AS address"))
+               ->distinct()
+               ->get();
+
+        return view('Customers/CustomerInvoiceView', compact('invoices', 'sentInvoicesSum', 'addresses'));
     }
 
     public function showConsumptionHistory($timeframe = 'month')

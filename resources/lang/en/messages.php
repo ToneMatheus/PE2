@@ -18,5 +18,9 @@ return [
     'download' => 'Download as PDF',
     'all' => 'All',
     'No Invoices' => 'There are no invoices to be paid at the moment.',
+    'Address' => 'Address',
+    'show_all_addresses' => 'Show all addresses',
+    'Pay' => 'Pay',
+
     
 ];

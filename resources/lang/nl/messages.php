@@ -18,4 +18,8 @@ return [
     'download' => 'Downloaden as PDF',
     'all' => 'Alles',
     'No Invoices' => 'Er zijn momenteel geen facturen te betalen.',
+    'Address' => 'Adres',
+    'show_all_addresses' => 'Toon alle adressen',
+    'Pay' => 'Betalen',
+
 ];
