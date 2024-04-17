@@ -77,7 +77,7 @@ class TemplateJob implements ShouldQueue
         $job->save();
     }
 
-    private function Log($logLevel, $message) {
+    private function Log($logLevel, $invoiceId, $message) {
         $logLevelMap = [
             1 => "Info",
             2 => "Warning",
@@ -89,7 +89,7 @@ class TemplateJob implements ShouldQueue
     
         CronJobRunLog::create([
             'cron_job_run_id' => $this->JobRunId,
-            'customer_id' => 1,
+            'invoice_id' => $invoiceId,
             'log_level' => $logLevelString,
             'message' => $message,
         ]);
@@ -113,9 +113,17 @@ class TemplateJob implements ShouldQueue
         *   
         *
         */
-        $this->Log(1, "this is an info message");
-        $this->Log(2, "this is a warning");
-        $this->Log(3, "this is a critical error");
-        $this->Log(4, "oh no i did big oopsie");
+        $messages = [
+            "this is an info message",
+            "this is a warning",
+            "this is a critical error",
+            "oh no i did big oopsie"
+        ];
+        
+        for ($i = 0; $i < 1000; $i++) {
+            $logLevel = rand(1, 4); 
+            $message = $messages[array_rand($messages)];
+            $this->Log($logLevel, rand(1,5000) ,$message);
+        }
     }
 }

@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use App\Models\CronJob;
@@ -129,14 +128,21 @@ class CronJobController extends Controller
             ->orderBy('started_at', 'asc')
             ->get();
 
-        $jobLogs = [];
+        $logCounts= collect([]);
+        $jobLogs = collect([]);
         if ($jobRuns->count() > 0){
             $jobLogs = CronJobRunLog::query()
                 ->where('cron_job_run_id', $jobRuns->last()->id)
                 ->get();
-        }
+        
+            $logCounts = CronJobRunLog::query()
+                ->select('log_level', DB::raw('count(*) as count'))
+                ->where('cron_job_run_id', $jobRuns->last()->id)
+                ->groupBy('log_level')
+                ->get();
+            }
 
-        return view('cronjobs/history', compact('jobs', 'jobRuns', 'jobLogs', 'paramJob'));
+        return view('cronjobs/history', compact('jobs', 'jobRuns', 'jobLogs', 'logCounts', 'paramJob'));
     }
 
     public function getJobRuns(Request $request){
@@ -168,7 +174,13 @@ class CronJobController extends Controller
         }
         
         $jobLogs = $query->get();
+
+        $logCounts = CronJobRunLog::query()
+        ->select('log_level', DB::raw('count(*) as count'))
+        ->where('cron_job_run_id', $jobRunId)
+        ->groupBy('log_level')
+        ->get();
         
-        return view('cronjobs/parts/logs', compact('jobLogs'));
+        return view('cronjobs/parts/logs', compact('jobLogs', 'logCounts'));
     }
 }
