@@ -19,7 +19,7 @@ return new class extends Migration
         });
 
         Schema::table('users', function (Blueprint $table) {
-            $table->string('work_email', 50)->nullable();
+            $table->string('personal_email', 50)->nullable();
         });
     }
 
@@ -36,7 +36,7 @@ return new class extends Migration
         });
 
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('work_email');
+            $table->dropColumn('personal_email');
         });
     }
 };
