@@ -90,6 +90,7 @@ else if(isset($_POST['pink']) && isset($_POST['dayNum']))
 }
 else if(isset($_POST['button']))
 {
+    $monthTest = $_SESSION['currentM'];
     // TODO: send the month (and maybe year) to the request
     if(isset($_SESSION['user']['green']))
     {
@@ -111,13 +112,13 @@ else if(isset($_POST['button']))
             echo "\nmax: " . $maxValue;
             echo "\nmin: " . $minValue . "\n";
 
-            $thsDay = "2024/03/$minValue";
-            $scdDay = "2024/03/$maxValue";
+            $thsDay = "2024/$monthTest/$minValue";
+            $scdDay = "2024/$monthTest/$maxValue";
             $todayRequest = date("Y/m/d");
             $type = "Vacation";
 
             $date_now = new DateTime();
-            $date2    = new DateTime("03/$minValue/2024");
+            $date2    = new DateTime("$monthTest/$minValue/2024");
             // check if date is in the past
             if ($date_now > $date2) 
             {
@@ -187,14 +188,15 @@ else if(isset($_POST['button']))
                                 $minValue = min($temp);
                                 echo "\nmax: " . $maxValue;
                                 echo "\nmin: " . $minValue . "\n";
+                               
 
-                                $thsDay = "2024/03/$minValue";
-                                $scdDay = "2024/03/$maxValue";
+                                $thsDay = "2024/$monthTest/$minValue";
+                                $scdDay = "2024/$monthTest/$maxValue";
                                 $todayRequest = date("Y/m/d");
                                 $type = "Vacation";
 
                                 $date_now = new DateTime();
-                                $date2    = new DateTime("03/$minValue/2024");
+                                $date2    = new DateTime("$monthTest/$minValue/2024");
                                 // check if date is in the past
                                 if ($date_now > $date2) 
                                 {
@@ -240,13 +242,13 @@ else if(isset($_POST['button']))
                                 echo "\nmax: " . $maxValue;
                                 echo "\nmin: " . $minValue . "\n";
 
-                                $thsDay = "2024/03/$minValue";
-                                $scdDay = "2024/03/$maxValue";
+                                $thsDay = "2024/$monthTest/$minValue";
+                                $scdDay = "2024/$monthTest/$maxValue";
                                 $todayRequest = date("Y/m/d");
                                 $type = "Vacation";
 
                                 $date_now = new DateTime();
-                                $date2    = new DateTime("03/$minValue/2024");
+                                $date2    = new DateTime("$monthTest/$minValue/2024");
                                 // check if date is in the past
                                 if ($date_now > $date2) 
                                 {

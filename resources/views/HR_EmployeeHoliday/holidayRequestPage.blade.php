@@ -76,6 +76,8 @@
             $currentYear1 = date('Y');
             if(isset($_GET['Mf']))
             {
+                unset($_SESSION['numCal']);
+
                 echo $_SESSION['currentM'];
                 $t = $_SESSION['currentM'];
 
@@ -113,6 +115,8 @@
             }
             else if(isset($_GET['Mb']))
             {
+                unset($_SESSION['numCal']);
+
                 echo $_SESSION['currentM'];
                 if(!$_GET['Mb'] == "12" && $_SESSION['currentM'] == 0)
                 {
