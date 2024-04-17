@@ -21,6 +21,10 @@ return new class extends Migration
             $table->text('message');
             $table->timestamps();
         });
+
+        Schema::table('cron_job_run_logs', function (Blueprint $table) {
+            $table->foreign('invoice_id')->references('id')->on('invoices');
+        });
     }
 
     /**
