@@ -10,7 +10,7 @@
             <svg class="w-5 h-5 rtl:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
             </svg>
-            <span>Go back</span>
+            <span class="p-1">Go back</span>
         </x-primary-anchor-button>
     </x-slot>
 
@@ -65,7 +65,7 @@
             </div>
             <div class="w-full sm:w-3/4 px-2">
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                    <div class="relative overflow-x-auto sm:rounded-lg">
+                    <div id="Logs" class="relative overflow-x-auto sm:rounded-lg">
                         @include('cronjobs.parts.logs')
                     </div>
                 </div>

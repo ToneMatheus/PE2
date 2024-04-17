@@ -63,18 +63,19 @@ function OnchangeJob(){
     xhr.send();
 }
 
-function onApplyFilters(){
+function onApplyFilters(page = 1){
     var JobRunId = document.getElementById('JobRun').value;
     var LogLevel = document.getElementById('LogLevel').value;
+    var Entries = document.getElementById('entries').value;
 
     // Send AJAX request to the server
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/cron-jobs/get-job-run-logs?jobRunId=' + JobRunId + "&LogLevel=" + LogLevel, true);
+    xhr.open('GET', '/cron-jobs/get-job-run-logs?jobRunId=' + JobRunId + "&LogLevel=" + LogLevel + "&page=" + page + "&entries=" + Entries, true);
     xhr.onload = function () {
         if (xhr.status === 200) {
             var newTableHTML = xhr.responseText;
 
-            var existingTable = document.getElementById('LogsTable');
+            var existingTable = document.getElementById('Logs');
             existingTable.innerHTML = newTableHTML;
         } else {
             console.error('Request failed. Status: ' + xhr.status);

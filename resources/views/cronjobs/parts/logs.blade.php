@@ -1,4 +1,4 @@
-<table id="LogsTable" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
     <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
         Scheduled Logs
         <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
@@ -13,11 +13,6 @@
             <th scope="col" class="px-6 py-3">
                 <div class="flex items-center">
                     Log Level:
-                    <a href="#">
-                        <svg class="w-3 h-3 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
-                        </svg>
-                    </a>
                 </div>
             </th>
             <th scope="col" class="px-6 py-3">Message:</th>
@@ -51,3 +46,50 @@
         @endif
     </tbody>
 </table>
+
+<div class="flex justify-between">
+    @if (!$jobLogs->isEmpty())
+    <nav class="mt-4">
+    <ul class="flex items-center -space-x-px h-10 text-base">
+        <li>
+            <a onclick="onApplyFilters({{ $jobLogs->currentPage() - 1 }})" class="flex items-center justify-center px-4 h-10 ms-0 hover:cursor-pointer leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+            <span class="sr-only">Previous</span>
+            <svg class="w-3 h-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+            </svg>
+            </a>
+        </li>
+        @php
+            $start = max(1, $jobLogs->currentPage() - 2);
+            $end = min($start + 4, $jobLogs->lastPage());
+        @endphp
+        @for ($i = $start; $i <= $end; $i++)
+            @if ($i == $jobLogs->currentPage())
+            <li>
+                <a aria-current="page" class="z-10 flex items-center justify-center px-4 h-10 leading-tight text-blue-600 border border-blue-300 bg-blue-50 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{{ $i }}</a>
+            </li>
+            @else
+                <li>
+                    <a onclick="onApplyFilters({{ $i }})" class="flex items-center justify-center px-4 h-10 leading-tight hover:cursor-pointer text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">{{ $i }}</a>
+                </li>
+            @endif
+        @endfor
+        <li>
+            <a onclick="onApplyFilters({{ $jobLogs->currentPage() + 1 }})" class="flex items-center justify-center px-4 h-10 hover:cursor-pointer leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                <span class="sr-only">Next</span>
+                <svg class="w-3 h-3 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                </svg>
+            </a>
+        </li>
+    </ul>
+    </nav>
+    @endif
+    <div class="mt-4">
+        <select id="entries" name="entries" class="text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white rounded-lg" onchange="onApplyFilters(1)">
+            @foreach ([5, 10, 25, 50, 100] as $entries)
+                <option @if ($jobLogs->isNotEmpty() && $jobLogs->count() >= $entries && $jobLogs->count() <= $entries * 2) selected @endif value="{{ $entries }}">{{ $entries }}</option>
+            @endforeach
+        </select>
+    </div>
+</div>

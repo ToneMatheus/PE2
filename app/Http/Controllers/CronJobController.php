@@ -131,9 +131,11 @@ class CronJobController extends Controller
         $logCounts= collect([]);
         $jobLogs = collect([]);
         if ($jobRuns->count() > 0){
-            $jobLogs = CronJobRunLog::query()
+            $jobLogsQuery = CronJobRunLog::query()
                 ->where('cron_job_run_id', $jobRuns->last()->id)
-                ->get();
+                ->orderBy('created_at', 'desc');
+
+            $jobLogs = $jobLogsQuery->paginate(10);
         
             $logCounts = CronJobRunLog::query()
                 ->select('log_level', DB::raw('count(*) as count'))
@@ -165,15 +167,16 @@ class CronJobController extends Controller
     public function getJobRunLogs(){
         $jobRunId = request('jobRunId');
         $logLevel = request('LogLevel');
-        
-        $query = CronJobRunLog::query()
+        $entries = request('entries');
+
+        $jobLogsQuery = CronJobRunLog::query()
             ->where('cron_job_run_id', $jobRunId);
         
         if ($logLevel !== 'All') {
-            $query->where('log_level', $logLevel);
+            $jobLogsQuery->where('log_level', $logLevel);
         }
         
-        $jobLogs = $query->get();
+        $jobLogs = $jobLogsQuery->paginate($entries);
 
         $logCounts = CronJobRunLog::query()
         ->select('log_level', DB::raw('count(*) as count'))
