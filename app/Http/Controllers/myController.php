@@ -179,7 +179,7 @@
             $amount_per_hour = $payslips[0]->amount_per_hour;
             $account_number = $payslips[0]->IBAN;
 
-            return view('contract');
+            return view('contract', compact('contract_start_date', 'company_name', 'company_address', 'employee_name', 'employee_address', 'job_title', 'amount_per_hour', 'account_number'));
         }
 
         public function tariff(){
