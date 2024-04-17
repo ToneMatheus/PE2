@@ -22,16 +22,21 @@
                     <h5 class="modal-title" id="indexModalLabel">Modal title</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
                 </div>
+                <form method="POST" action="{{ route('submitIndex') }}">
                 <div class="modal-body">
                     <div class="form-group mb-3">
-                        <label for="">Enter index value for meter <span id="modalEAN" class="modalEAN"></span></label>
-                        <input type="text" required class="name form-control">
+                        @csrf
+                        @method('POST')
+                        <input id="meter_id" name="meter_id" type="hidden">
+                        <label for="index_value">Enter index value for meter <span id="modalEAN" class="modalEAN"></span></label>
+                        <input id="index_value" name="index_value" type="text" required class="name form-control">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="submit" class="btn btn-primary" id="enter">Save</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
@@ -83,11 +88,12 @@
             });
 
             $(document).on('click', '.modalOpener', function (e) {
+                $('#indexValue').val('');
                 $('#indexModal').modal('show');
-                var meterID = $(this).val()
+                $meterID = $(this).val()
 
                 $.ajax({
-                    url: "/fetchEAN/" + meterID,
+                    url: "/fetchEAN/" + $meterID,
                     method:'GET',
                     success:function(response)
                     {
@@ -97,10 +103,18 @@
                             $('#indexModal').modal('hide');
                         }
                         else {
+                            $('#meter_id').val($meterID);
                             $('#modalEAN').html(response.result.EAN);
                         }
                     }
                 })
+            })
+
+            $(document).on('click', '#enter', function (e) {
+                $meterID = $("#meter_id").val();
+                $indexValue = $("#index_value").val();
+                console.log($meterID);
+                console.log($indexValue);
             })
         });
     </script>

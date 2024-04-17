@@ -117,7 +117,7 @@ Route::get('/enter_index_employee', function() {
 });
 Route::get('/enter_index_employee_search', [MeterController::class, 'searchIndex'])->name("searchIndex");
 Route::get('/fetchEAN/{meterID}', [MeterController::class, 'fetchEAN']);
-Route::post('/enterIndexEmployee', [MeterController::class, 'submitIndex'])->name("submitIndex");
+Route::post('/index_value_entered', [MeterController::class, 'submitIndex'])->name("submitIndex");
 Route::get('/dashboardEmployee', function () {
     return view('Meters/employeeDashboard');
 });

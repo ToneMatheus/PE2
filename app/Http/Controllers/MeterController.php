@@ -369,7 +369,10 @@ class MeterController extends Controller
         $index_value = $request->input('index_value');
 
         DB::insert('INSERT INTO index_values (reading_date, meter_id, reading_value) VALUES (?, ?, ?)', [$date, $meter_id, $index_value]);
-        return redirect('enterIndexEmployee');
+        DB::table('meter_reader_schedules')
+            ->where('meter_id', '=', $meter_id)
+            ->update(['status' => 'read']);
+        return redirect('enter_index_employee');
     }
 
     public function GasElectricty(){
