@@ -52,6 +52,7 @@ trait jobLoggerTrait
 
         if (empty($job->error_message)) {
             $job->status = 'completed';
+            $job->error_message = $message;
         } else {
             $job->status = 'failed';
         }
