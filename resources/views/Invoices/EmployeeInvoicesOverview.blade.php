@@ -24,9 +24,11 @@
                             <option value="paid" {{ $selectedStatus === 'paid' ? 'selected' : '' }}>Paid</option>
                             <option value="unpaid" {{ $selectedStatus === 'unpaid' ? 'selected' : '' }}>Unpaid</option>
                             <option value="sent" {{ $selectedStatus === 'sent' ? 'selected' : '' }}>Sent</option>
+                            <option value="validation ok" {{ $selectedStatus === 'validation ok' ? 'selected' : '' }}>Validation ok</option>
+                            <option value="validation error" {{ $selectedStatus === 'validation error' ? 'selected' : '' }}>Validation error</option>
                         </select>
                         
-                        <button type="submit" id="apply_filters" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">Apply Filters</button>
+                        <button type="submit" id="apply_filters" class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">Apply Filters</button>
                     </form>
                 </div>
             </div>
@@ -43,6 +45,7 @@
                             <th class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200">Due Date</th>
                             <th class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200">Invoice Type</th>
                             <th class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200">Invoice Status</th>
+                            <th class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200">Rerun validation</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -60,6 +63,21 @@
                                     <td class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200 text-center">{{ $invoice->due_date }}</td>
                                     <td class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200 text-center">{{ $invoice->type }}</td>
                                     <td class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200 text-center">{{ $invoice->status }}</td>
+                                    <td class="px-4 py-2 bg-gray-800 dark:bg-gray-800 text-white dark:text-gray-200 text-center">
+                                    @if ($invoice->status == 'validation error')
+                                        <form action="{{ route('invoices.rerunValidation') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="invoice_id" value="{{ $invoice->id }}">
+                                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">Rerun validation</button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('invoices.rerunValidation') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="invoice_id" value="{{ $invoice->id }}">
+                                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-500 dark:bg-gray-400 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150" disabled>Rerun validation</button>
+                                        </form>
+                                    </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         @endif
