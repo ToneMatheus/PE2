@@ -12,14 +12,14 @@ use Illuminate\Queue\SerializesModels;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use App\Traits\jobLoggerTrait;
 use Carbon\Carbon;
 
 use App\Models\Invoice;
 
 class InvoiceDueJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, jobLoggerTrait;
     /**
      * Create a new job instance.
      *
@@ -40,6 +40,8 @@ class InvoiceDueJob implements ShouldQueue
         //Query which invoices are due today
         try
         {
+            $this->jobStart();
+
             $unpaidInvoices = Invoice::select('id')
             ->whereNotIn('status', ['paid', 'pending'])
             ->whereDate('due_date', '=', now()->toDateString())
@@ -50,6 +52,7 @@ class InvoiceDueJob implements ShouldQueue
         catch(\Exception $e)
         {
             Log::error("Unable to execute query to find due invoices today ".Carbon::now() . " :" . $e);
+            $this->jobException($e->getMessage());
         }
 
         //For each ID, send mail
@@ -63,6 +66,7 @@ class InvoiceDueJob implements ShouldQueue
         else
         {
             Log::info("No unpaid invoices due today ".Carbon::now()." found: no reminders were sent.");
+            $this->jobCompletion("No unpaid invoices due today ".Carbon::now()." found: no reminders were sent.");
         }
     }
 
@@ -87,11 +91,13 @@ class InvoiceDueJob implements ShouldQueue
         catch(\Exception $e)
         {
             Log::error("Unable to retrieve invoice information from invoice with ID ".$invoiceID.": " . $e);
+            $this->logCritical($invoiceID, "Unable to retrieve invoice information: " . $e);
         }
 
         if (Mail::to('niki.de.visscher@gmail.com')->send(new InvoiceDue($invoice_info, $total_amount, $user_info)) == null)
         {
             Log::error("Unable to send invoice due mail for invoice with ID ". $invoiceID);
+            $this->logWarning($invoiceID , "Unable to send invoice due mail");
         }
     }
 }
