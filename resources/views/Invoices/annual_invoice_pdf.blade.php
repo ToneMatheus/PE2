@@ -139,7 +139,7 @@
 
         <p>
         @php
-        echo DNS2D::getBarcodeHTML($domain . "/pay/" . $invoice->id, 'QRCODE',5,5);
+        echo DNS2D::getBarcodeHTML($domain . "/pay/" . $invoice->id . "/" . $hash, 'QRCODE',5,5);
         @endphp
     </p>
 

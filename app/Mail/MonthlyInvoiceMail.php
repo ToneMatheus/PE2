@@ -56,11 +56,13 @@ class MonthlyInvoiceMail extends Mailable
 
     private function generatePdf()
     {
+        $hash = md5($this->invoice->id . $this->invoice->customer_contract_id . $this->invoice->meter_id);
         $pdf = Pdf::loadView('Invoices.monthly_invoice_pdf', [
             'invoice' => $this->invoice,
             'user' => $this->user,
             'newInvoiceLines' => $this->newInvoiceLines,
-            'domain' => $this->domain
+            'domain' => $this->domain,
+            'hash' => $hash
         ], [], 'utf-8');
         
              

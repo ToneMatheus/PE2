@@ -113,7 +113,7 @@ class InvoiceRemindersController extends Controller
         $pdfData = $pdf->output();
 
         //Send email with PDF attachment
-        Mail::to('niki.de.visscher@gmail.com')->send(new MonthlyInvoiceMail(
+        Mail::to('shaunypersy10@gmail.com')->send(new MonthlyInvoiceMail(
             $invoice, $user, $pdfData, $newInvoiceLines
         ));
     }

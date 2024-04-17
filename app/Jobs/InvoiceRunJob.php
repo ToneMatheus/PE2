@@ -297,6 +297,8 @@ class InvoiceRunJob implements ShouldQueue
         ->first();
 
         // Generate PDF
+        $hash = md5($invoice->id . $invoice->customer_contract_id . $invoice->meter_id);
+
         $pdf = Pdf::loadView('Invoices.annual_invoice_pdf', [
             'invoice' => $invoice,
             'user' => $user,
@@ -306,9 +308,12 @@ class InvoiceRunJob implements ShouldQueue
             'meterReadings' => $meterReadings,
             'discounts' => $discounts,
             'monthlyInvoices' => $monthlyInvoices,
-            'domain' => $this->domain
+            'domain' => $this->domain,
+            'hash' => $hash
         ], [], 'utf-8');
         $pdfData = $pdf->output();
+
+        Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
         //Send email with PDF attachment
         Mail::to('shaunypersy10@gmail.com')->send(new AnnualInvoiceMail(
@@ -526,13 +531,18 @@ class InvoiceRunJob implements ShouldQueue
         ->first();
         
         // Generate PDF
+        $hash = md5($invoice->id . $invoice->customer_contract_id . $invoice->meter_id);
+
         $pdf = Pdf::loadView('Invoices.monthly_invoice_pdf', [
             'invoice' => $invoice,
             'user' => $user,
             'newInvoiceLines' => $newInvoiceLines,
-            'domain' => $this->domain
+            'domain' => $this->domain,
+            'hash' => $hash
         ], [], 'utf-8');
         $pdfData = $pdf->output();
+
+        Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
         //Send email with PDF attachment
         Mail::to('shaunypersy10@gmail.com')->send(new MonthlyInvoiceMail(
