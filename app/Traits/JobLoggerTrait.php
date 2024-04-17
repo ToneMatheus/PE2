@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Log;
 
 trait jobLoggerTrait
 {
-    private function __Log($jobRunId, $logLevel, $invoiceId, $message) {
+    private $JobRunId;
+
+    private function __Log($logLevel, $invoiceId, $message) {
         $logLevelMap = [
             1 => "Info",
             2 => "Warning",
@@ -19,7 +21,7 @@ trait jobLoggerTrait
         $logLevelString = $logLevelMap[$logLevel] ?? "Unknown";
     
         CronJobRunLog::create([
-            'cron_job_run_id' => $jobRunId,
+            'cron_job_run_id' => $this->JobRunId,
             'invoice_id' => $invoiceId,
             'log_level' => $logLevelString,
             'message' => $message,
@@ -38,14 +40,14 @@ trait jobLoggerTrait
             'status' => 'Started', 
         ]);
 
-        return $jobRun->id;
+        $this->JobRunId = $jobRun->id;
     }
 
-    private function jobCompletion($jobRunId){
+    private function jobCompletion($message){
         // Log that the job execution has completed
         Log::info('Job execution completed.');
 
-        $job = CronJobRun::find($jobRunId);
+        $job = CronJobRun::find($this->JobRunId);
         $job->ended_at = now();
 
         if (empty($job->error_message)) {
@@ -57,11 +59,11 @@ trait jobLoggerTrait
         $job->save();
     }
 
-    private function jobException($jobRunId, $errorMessage){
+    private function jobException($errorMessage){
         // Log the crash that happened
         Log::info('Job had an exception');
 
-        $job = CronJobRun::find($jobRunId);
+        $job = CronJobRun::find($this->JobRunId);
         $job->ended_at = now();
         $job->status = 'failed';
         $job->error_message = $errorMessage;
@@ -69,20 +71,20 @@ trait jobLoggerTrait
         $job->save();
     }
 
-    public function logInfo($jobRunId, $invoiceId, $message){
-        $this->__Log($jobRunId, 1, $invoiceId, $message);
+    public function logInfo($invoiceId, $message){
+        $this->__Log(1, $invoiceId, $message);
     }
 
-    public function logWarning($jobRunId, $invoiceId, $message){
-        $this->__Log($jobRunId, 2, $invoiceId, $message);
+    public function logWarning($invoiceId, $message){
+        $this->__Log(2, $invoiceId, $message);
     }
 
-    public function logCritical($jobRunId, $invoiceId, $message){
-        $this->__Log($jobRunId, 3, $invoiceId, $message);
+    public function logCritical($invoiceId, $message){
+        $this->__Log(3, $invoiceId, $message);
     }
 
-    public function logError($jobRunId, $invoiceId, $message){
-        $this->__Log($jobRunId, 4, $invoiceId, $message);
+    public function logError($invoiceId, $message){
+        $this->__Log(4, $invoiceId, $message);
     }
 
 }

@@ -8,16 +8,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Models\CronJobRun;
-use App\Models\CronJobRunLog;
 use App\Traits\jobLoggerTrait;
-use Carbon\Carbon;
 
 class TemplateJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, jobLoggerTrait;
-
-    protected $JobRunId;
 
     /**
      * Create a new job instance.
@@ -38,7 +33,7 @@ class TemplateJob implements ShouldQueue
     {
         try {
             // Log that the job execution has started
-            $JobRunId = $this->jobStart();
+            $this->jobStart();
 
             $messages = [
                 "this is an info message",
@@ -49,13 +44,13 @@ class TemplateJob implements ShouldQueue
             
             for ($i = 0; $i < 1000; $i++) {
                 $message = $messages[array_rand($messages)];
-                $this->logInfo($JobRunId, rand(1, 1000), $message);
+                $this->logInfo(rand(1, 1000), $message);
             }
 
-            $this->jobCompletion($JobRunId);
+            $this->jobCompletion("Succesfully completed this job");
         } catch (\Throwable $e) {
             // Catch any throwable errors, including errors and exceptions
-            $this->jobException($JobRunId, $e->getMessage());
+            $this->jobException($e->getMessage());
         }
     }
 }
