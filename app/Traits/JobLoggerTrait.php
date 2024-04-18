@@ -20,56 +20,72 @@ trait jobLoggerTrait
     
         $logLevelString = $logLevelMap[$logLevel] ?? "Unknown";
     
-        CronJobRunLog::create([
-            'cron_job_run_id' => $this->JobRunId,
-            'invoice_id' => $invoiceId,
-            'log_level' => $logLevelString,
-            'message' => $message,
-        ]);
+        try {
+            CronJobRunLog::create([
+                'cron_job_run_id' => $this->JobRunId,
+                'invoice_id' => $invoiceId,
+                'log_level' => $logLevelString,
+                'message' => $message,
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error occurred while logging: " . $e->getMessage());
+        }
     }
 
     private function jobStart(){
         // Log that the job execution has started
-        Log::info('Job execution started.');
-
-        // Create new JobRun in the database
-        $jobRun = CronJobRun::create([
-            'name' => class_basename($this),
-            'started_at' => Carbon::now(), 
-            'ended_at' => null, 
-            'status' => 'Running', 
-        ]);
-
-        $this->JobRunId = $jobRun->id;
+        try {
+            Log::info('Job execution started.');
+    
+            // Create new JobRun in the database
+            $jobRun = CronJobRun::create([
+                'name' => class_basename($this),
+                'started_at' => Carbon::now(), 
+                'ended_at' => null, 
+                'status' => 'Running', 
+            ]);
+    
+            $this->JobRunId = $jobRun->id;
+        } catch (\Exception $e) {
+            Log::error("Error occurred while starting the job: " . $e->getMessage());
+        }
     }
 
     private function jobCompletion($message){
         // Log that the job execution has completed
-        Log::info('Job execution completed.');
-
-        $job = CronJobRun::find($this->JobRunId);
-        $job->ended_at = now();
-
-        if (empty($job->error_message)) {
-            $job->status = 'Completed';
-            $job->error_message = $message;
-        } else {
-            $job->status = 'Failed';
+        try {
+            Log::info('Job execution completed.');
+    
+            $job = CronJobRun::find($this->JobRunId);
+            $job->ended_at = now();
+    
+            if (empty($job->error_message)) {
+                $job->status = 'Completed';
+                $job->error_message = $message;
+            } else {
+                $job->status = 'Failed';
+            }
+    
+            $job->save();
+        } catch (\Exception $e) {
+            Log::error("Error occurred while completing the job: " . $e->getMessage());
         }
-
-        $job->save();
     }
 
     private function jobException($errorMessage){
         // Log the crash that happened
-        Log::info('Job had an exception');
-
-        $job = CronJobRun::find($this->JobRunId);
-        $job->ended_at = now();
-        $job->status = 'Failed';
-        $job->error_message = $errorMessage;
-
-        $job->save();
+        try {
+            Log::info('Job had an exception');
+    
+            $job = CronJobRun::find($this->JobRunId);
+            $job->ended_at = now();
+            $job->status = 'Failed';
+            $job->error_message = $errorMessage;
+    
+            $job->save();
+        } catch (\Exception $e) {
+            Log::error("Error occurred while handling logging job exception: " . $e->getMessage());
+        }
     }
 
     public function logInfo($invoiceId, $message){
