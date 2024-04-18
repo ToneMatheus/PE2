@@ -14,7 +14,16 @@
         <p class="companyName">Thomas More Energy Company</p>
     </nav>
     <div class="pageContainer">
-    <div id="message"></div>
+        @if (count($errors) > 0)
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+    
     <div class="modal fade" id="indexModal" tabindex="-1" aria-labelledby="indexModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\{
     User,
@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use app\http\Controllers\CustomerController;
 use illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\MessageBag;
 use \Illuminate\Http\Response;
 
 
@@ -366,6 +367,17 @@ class MeterController extends Controller
     }
 
     public function submitIndex(Request $request) {
+        $errors = new MessageBag();
+        $request->validate([
+            'meter_id' => 'required',
+            'index_value' => 'required|integer'
+        ],
+        [
+            'meter_id.required' => 'Meter ID inclusion failed for unknown reasons.',
+            'index_value.required' => 'Please enter an index value!',
+            'index_value.integer' => 'You have to type in a number for the index value.'
+        ]);
+
         $date = Carbon::now()->toDateString();
         $meter_id = $request->input('meter_id');
         $index_value = $request->input('index_value');
@@ -381,11 +393,14 @@ class MeterController extends Controller
         ->orderBy('consumptions.id', 'desc')
         ->get()
         ->first();
-
+        
         $prev_index_id = $prev_index->id;
         $prev_index_value = $prev_index->reading_value;
         $start_date = $prev_index->reading_date;
 
+        if ($index_value < $prev_index_value) {
+            return redirect()->to('/enter_index_employee')->withErrors(['index_value_error'=>'Please enter an index number higher than previous value']);
+        }
         $consumption_value = $index_value - $prev_index_value;
 
         DB::table('consumptions')->insert(
