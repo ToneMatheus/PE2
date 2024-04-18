@@ -53,6 +53,10 @@
     {
         $_SESSION['idUser'] = $user_id;
     }
+    else if($user_id !=  $_SESSION['idUser'])
+    {
+        $_SESSION['idUser'] = $user_id;
+    }
 ?>
 
 <!DOCTYPE html>
