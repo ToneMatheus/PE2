@@ -137,39 +137,33 @@
         </ul>
     </nav>
     <main>
-        <h1 class="h1">Edit Tickets</h1>
+        <h1 class="h1">Escalate Tickets</h1>
         <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Issue</th>
-                <th>Description</th>
-                <th>Submit</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($tickets as $ticket)
-                <tr>
-                <form method="POST" action="{{ route('customertickets.update', ['id' => $ticket->id]) }}">
-    @csrf
-    @method('PUT')
-
-    <input type="hidden" name="id" value="{{ $ticket->id }}">
-    
-    <td>{{ $ticket->ID }}</td>
-    <td><input type="text" name="name" value="{{ $ticket->name }}"></td>
-    <td><input type="text" name="email" value="{{ $ticket->email }}"></td>
-    <td><input type="text" name="issue" value="{{ $ticket->issue }}"></td>
-    <td><input type="text" name="description" value="{{ $ticket->description }}"></td>
-    <td><button type="submit" class="submit-btn">Submit</button></td>
-</form>
-
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Issue</th>
+                        <th>Description</th>
+                        <th>Employee assigned</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($tickets as $ticket)
+                    <tr>
+                        <td>{{ $ticket->ID }}</td>
+                        <td>{{ $ticket->name }}</td>
+                        <td>{{ $ticket->email }}</td>
+                        <td>{{ $ticket->issue }}</td>
+                        <td>{{ $ticket->description }}</td>
+                        <td>{{-- $ticket->employee-id --}}</td>
+                        <td>{{-- $ticket->status --}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
     </main>
     <footer>
         <p>&copy; 2024 Energy Company. All rights reserved.</p>

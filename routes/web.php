@@ -5,7 +5,8 @@ use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\EditController;
-use App\Http\Controllers\TicketController;
+use App\Http\Controllers\CustomerTicketController;
+use App\Http\Controllers\escalateTicketController;
 
 
 use App\Http\Controllers\cont;
@@ -139,13 +140,15 @@ Route::get('/', function () {
     return view('test');
 })->name('test');
 
-use App\Http\Controllers\CustomerTicketController;
-
 Route::get('/customertickets', [CustomerTicketController::class, 'index'])->name('customertickets.index');
 
 Route::get('/history', [HistoryController::class, 'index'])->name('customertickets.history');
 
 Route::get('/EditTickets', [EditController::class, 'index'])->name('customertickets.Edit');
+
+Route::put('/tickets/{id}', [EditController::class, 'update'])->name('customertickets.update');
+
+Route::get('/escalateTickets', [escalateTicketController::class, 'index'])->name('customertickets.escalateTickets');
 
 Route::get('/tarrifs', function () {
     return view('tarrifs');
