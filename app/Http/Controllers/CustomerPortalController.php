@@ -112,26 +112,24 @@ class CustomerPortalController extends Controller
     public function chatbot(Request $request)
     {
         $userMessage = strtolower($request->get('message'));
+        $user = auth()->user();
 
-        if (strpos($userMessage, 'conntacts') !== false) {
-        $botMessage = 'You can find more information about Contacts on our contacts page.';
+        $firstName = $user->first_name; 
+        $email = $user->email;
+
+        if (strpos($userMessage, 'contacts') !== false) {
+            $botMessage = 'You can find more information about Contacts on our contacts page.';
         } 
         elseif (strpos($userMessage, 'support') !== false) {
-        $botMessage = 'You can find more information about Support on our support page.';
+            $botMessage = 'You can find more information about Support on our support page.';
         }
-        elseif (strpos($userMessage, 'tarrifs') !== false) {
-        $botMessage = 'You can find more information about Tarrifs on our tarrifs page.';
+        elseif (strpos($userMessage, 'tariffs') !== false) {
+            $botMessage = 'You can find more information about Tariffs on our tariffs page.';
         }
         else {
-        $botMessage = 'I\'m sorry, I didn\'t understand that.';
+            $botMessage = 'I\'m sorry, I didn\'t understand that.';
         }
 
-    return response()->json(['message' => $botMessage]);
-    }
-
-    public function bypass()
-    {
-        Auth::loginUsingId(6);
-        return view('welcome');
+        return view('Customers/CustomerInvoiceView', compact('invoices', 'sentInvoicesSum', 'addresses', 'firstName', 'email'));
     }
 }

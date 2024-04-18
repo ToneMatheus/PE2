@@ -230,5 +230,3 @@ Route::get('/invoices/{id}/download', [InvoiceController::class, 'download'])->n
 Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
 Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
 Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
-
-Route::get('/customer/bypass', [CustomerPortalController::class, 'bypass'])->name('customer.bypass');
