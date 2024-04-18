@@ -62,7 +62,7 @@ class EmployeeController extends Controller
             'username' => $username,
             'password' => Hash::make('default'),    //mail to change  
             'email' => $email,
-            'work_email' => $request->input('personalEmail'), //bound that change
+            'personal_email' => $request->input('personalEmail'), //bound that change
             'first_name' => $request->input('firstName'),
             'last_name' => $request->input('name'),
             'employee_profile_id' => $employee->id,
@@ -160,7 +160,7 @@ class EmployeeController extends Controller
         $user->phone_nbr = $request->input('phoneNbr');
         $user->birth_date = $request->input('birthDate');
         $user->nationality = $request->input('nationality');
-        $user->work_email = $request->input('personalEmail');
+        $user->personal_email = $request->input('personalEmail');
         $user->save();
 
         return redirect()->route('employees.edit', ['eID' => $eID]);
