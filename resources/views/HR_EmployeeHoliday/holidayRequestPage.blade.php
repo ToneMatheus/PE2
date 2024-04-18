@@ -313,8 +313,15 @@
         else
             echo 0;
         ?>;
+
+        var userID = <?php 
+        if(isset($_SESSION['idUser']))
+            echo "$user_id";
+        else
+            echo 0;
+        ?>;
         //M--;
-        console.log("M: " + M + "\n" + "Y: " + Y);
+        console.log("M: " + M + "\n" + "Y: " + Y + "\n" + "userID: " + userID);
         var noDay = new Date(Y+"-"+M+"-"+"1")
         console.log("cal: " +noDay);
 

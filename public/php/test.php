@@ -93,6 +93,7 @@ else if(isset($_POST['pink']) && isset($_POST['dayNum']))
 else if(isset($_POST['button']))
 {
     $monthTest = $_SESSION['currentM'];
+    
     // TODO: send the month (and maybe year) to the request
     if(isset($_SESSION['user']['green']))
     {
@@ -139,12 +140,12 @@ else if(isset($_POST['button']))
                 $boss_approval = mysqli_real_escape_string($link, 0);
                 $is_active = mysqli_real_escape_string($link, 1);
     
-                $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
-                $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
-                $check = mysqli_fetch_array($check_table_result) or die("Error: an error has occurred while executing the query.");
+                // $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
+                // $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
+                // $check = mysqli_fetch_array($check_table_result) or die("Error: an error has occurred while executing the query.");
     
                 $query2 = "INSERT INTO holidays (employee_profile_id, request_date, start_date, end_date, holiday_type_id, reason, fileLocation, manager_approval, boss_approval, is_active) VALUES ('$employee_profile_id', '$request_date', '$start_date', '$end_date', '$holiday_type_id', '$reason', '$fileLoc', '$manager_approval', '$boss_approval', '$is_active')";
-                $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query.");
+                $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query. id: $user_id");
     
                 if($result2)
                 {
@@ -217,12 +218,12 @@ else if(isset($_POST['button']))
                                     $boss_approval = mysqli_real_escape_string($link, 0);
                                     $is_active = mysqli_real_escape_string($link, 1);
 
-                                    $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
-                                    $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
-                                    $check = mysqli_fetch_array($check_table_result) or die("Error: an error has occurred while executing the query.");
+                                    // $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
+                                    // $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
+                                    // $check = mysqli_fetch_array($check_table_result) or die("Error: an error has occurred while executing the query.");
 
                                     $query2 = "INSERT INTO holidays (employee_profile_id, request_date, start_date, end_date, holiday_type_id, reason, fileLocation, manager_approval, boss_approval, is_active) VALUES ('$employee_profile_id', '$request_date', '$start_date', '$end_date', '$holiday_type_id', '$reason', '$fileLoc', '$manager_approval', '$boss_approval', '$is_active')";
-                                    $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query.");
+                                    $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query. id: $user_id");
 
                                     if($result2)
                                     {
@@ -269,12 +270,12 @@ else if(isset($_POST['button']))
                                     $boss_approval = mysqli_real_escape_string($link, 0);
                                     $is_active = mysqli_real_escape_string($link, 1);
 
-                                    $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
-                                    $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
-                                    $check = mysqli_fetch_array($check_table_result) or die("Error: an error has occurred while executing the query.");
+                                    // $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
+                                    // $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
+                                    // $check = mysqli_fetch_array($check_table_result) or die("Error: an error has occurred while executing the query.");
 
                                     $query2 = "INSERT INTO holidays (employee_profile_id, request_date, start_date, end_date, holiday_type_id, reason, fileLocation, manager_approval, boss_approval, is_active) VALUES ('$employee_profile_id', '$request_date', '$start_date', '$end_date', '$holiday_type_id', '$reason', '$fileLoc', '$manager_approval', '$boss_approval', '$is_active')";
-                                    $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query.");
+                                    $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query. id: $user_id");
 
                                     if($result2)
                                     {
