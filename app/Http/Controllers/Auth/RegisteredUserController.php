@@ -81,6 +81,13 @@ class RegisteredUserController extends Controller
             $userdata['company_name'] = $request->company_name;
         };
 
+        $email = $request->input('email');
+
+        if(!$this->isEmailUnique($email))
+        {
+        return Redirect::back()->with('top_message', 'Your email is already registerd in our system');
+        }
+
         $user = User::create($userdata);
         event(new Registered($user));
 
@@ -120,7 +127,7 @@ class RegisteredUserController extends Controller
 
         Mail::to($user->email)->send(new ConfirmationMailRegistration($id, $emailEncrypt, $origin));
 
-        return Redirect::back()->with('verify_email_message', 'Please verify your email address.');
+        return Redirect::back()->with('top_message', 'Please verify your email address.');
 
     }
 
@@ -137,4 +144,11 @@ class RegisteredUserController extends Controller
 
         return redirect(RouteServiceProvider::HOME);
     }
+
+    private function isEmailUnique($email)
+{
+    $user = User::where('email', $email)->first();
+
+    return $user ? false : true;
+}
 }

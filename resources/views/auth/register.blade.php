@@ -1,4 +1,3 @@
-<!-- LOOK de REGISTRATION page hier zetten. -->
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
 
@@ -34,9 +33,9 @@
     </script>
 
 <!-- CH een extra pagina maken om een mail opnieuw te sturen en op gestuurd te worden als dit moet -->
-    @if (session('verify_email_message'))
+    @if (session('top_message'))
         <div class="alert alert-info" style="color: red;">
-            {{ session('verify_email_message') }}
+            {{ session('top_message') }}
         </div>
     @endif 
 
@@ -74,7 +73,6 @@
         <!-- Calling -->
         <div class="mt-4">
             <x-input-label for="title" :value="__('Title')" />
-                <!-- CH pas de colom van de database aan voor de calling -->
             <lable for='Mr'>Mr</label>
             <input type="radio" name="title" id="mr" value="Mr"  @if(old('title') == 'Mr') checked @else checked @endif>
             <lable for='Ms'>Ms</label>
@@ -90,6 +88,7 @@
             <x-text-input id="phone_nbr" class="block mt-1 w-full" type="text" name="phone_nbr" :value="old('phone_nbr')" required autocomplete="username" 
             placeholder=" 0123 453 210" pattern="0[0-9]{3} [0-9]{3} [0-9]{3}"/>
             <x-input-error :messages="$errors->get('phone_nbr')" class="mt-2" />
+            <!-- TODO zetten hoe je een gsm nummer moet zetten 0*** *** *** -->
         </div>
 
         <!--birth date -->
@@ -109,10 +108,24 @@
                             name="password"
                             :value="old('password')"
                             required autocomplete="new-password" />
-            <!-- TODO zet de vereisten zichtbaar -->
+            <ul style="list-style-type: disc;" class="ml-4">
+                <li>
+                    at least 8 characters long
+                </li>
+                <li>
+                    needs to have at leats 1 lowercase letter
+                </li>
+                <li>
+                    needs to have at leats 1 capital letter
+                </li>
+                <li>
+                    needs to have at leats 1 number
+                </li>
+            </ul>
 
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
+
 
         <!-- Confirm Password -->
         <div class="mt-4">
@@ -125,6 +138,8 @@
 
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
+
+        <!-- TODO nationality bij zetten -->
 
         <!--for company -->
         <div class="mt-4">
@@ -184,7 +199,6 @@
         </div>
 
         <!--Country -->
-        <!-- CH veranderen naar nationality -->
         <div class="mt-4">
             <x-input-label for="country" :value="__('Country')" />
             <x-text-input id="country" name="country" type="text" class="block w-full mt-1" :value="old('country')"
