@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Team extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'team_name'
+    ];
+
+    public function team_members(): HasMany
+    {
+        return $this->hasMany(Team_Member::class);
+    }
+
+    public function team_user_roles(): HasMany
+    {
+        return $this->hasMany(Team_User_Role::class);
+    }
+}

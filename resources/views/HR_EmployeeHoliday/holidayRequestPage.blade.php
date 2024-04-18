@@ -81,35 +81,42 @@
             <tr>
                 <td id='selection'>
                     <p>Vacation</p>
-                    <button onclick="addDate()"><div class="square"></div>
+                    <button id="btn" onclick="addDate()"><div class="square"></div>
                 </td>
             </tr>
             <tr>
                 <td id='selection'>
                     <p>Parental Leave</p>
-                    <button onclick="addDate2()"><div class="square2"></div>
+                    <button id="btn" onclick="addDate2()"><div class="square2"></div>
                 </td>
             </tr>
             <tr>
                 <td id='selection'>
                     <p>Sick Leave</p>
-                    <button onclick="addDate3()"><div class="square3"></div>
+                    <button id="btn" onclick="addDate3()"><div class="square3"></div>
                 </td>
             </tr>
-        </table>    
-    </div>
-
-    
-
-    <div class="sidebar">
-        <label id="label">This label is currently empty</label>
-        <button id="button">Click Me</button>
+        </table>   
+        <div id="errorMsg">
+            <p>The date that you are asking is in the past.</p>
+        </div>
+        <div id="scsMsg">
+            <p>The request has been send.</p>
+        </div>
+        <div class="sidebar">
+            <label id="label">This label is currently empty</label>
+            <button id="cancel" name="cancel" onclick="cnlButton()">Cancel</button>
+            <button id="button" name="button" onclick="btnClicked()">Submit</button>
+        </div>
+        
     </div>
 
     <script>
+        var visBool = false;
         let numGr = 0;
         let numPur = 0;
         let numPink = 0;
+
         function addDate() 
         {
             const selected = document.querySelector(".selected");
@@ -127,15 +134,31 @@
                 }
                 else
                 {
-                    selected.classList.add("added");
+                    
                     //$idNum = document.getElementById("label").textContent;
                    <?php if(isset($_POST['idNum'])){$idNum = $_POST['idNum'];}?>
                     if(typeof $idNum !== 'undefined')
                     {
-                        $color = 'green';
-                        //console.log($color  + " " +$idNum);
-                        numGr++;
-                        countColor('green=', numGr)
+                       var dayNum = $idNum;
+                        var date_now = new Date();
+                        var idnum = <?php if(isset($_POST['idNum'])){echo $_POST['idNum'];}else{ echo 0;} ?>;
+                        var date2    = new Date("2024-03-" + dayNum);
+                        var div2 = document.getElementById('errorMsg');
+                        // check if date is in the past
+                        if (date_now > date2) 
+                        {
+                            div2.style.visibility='visible'
+                        }
+                        else
+                        {
+                            div2.style.visibility='hidden'
+                            selected.classList.add("added");
+                            $color = 'green';
+                            //console.log($color  + " " +$idNum);
+                            numGr++;
+                            countColor('green=', numGr)
+                        }
+                       
 
                     }
                     
@@ -266,7 +289,10 @@
             else 
             {
                 var url = "{{ asset('php/test.php') }}";
-                var params = $color + $num; // Send $idNum value as a POST parameter
+                var idNum = $idNum;
+                //var color = $color;
+                var color = $num;
+                var params = "dayNum=" + encodeURIComponent(idNum) + "&" + $color + encodeURIComponent(color);
                 //params += "color=" + $color;
                 xhr.open("POST", url, true);
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -281,12 +307,72 @@
             }
         }
 
+        function btnClicked()
+        {
+            if(visBool)
+            {
+                cnlButton();
+            }
+            else
+            {
+                var div3 = document.getElementById('scsMsg');
+                div3.style.visibility='visible';
+                visBool = true;
+
+                var xhr = new XMLHttpRequest();
+                if (xhr == null) 
+                {
+                    alert("Browser does not support HTTP Request");
+                } 
+                else 
+                {
+                    var url = "{{ asset('php/test.php') }}";
+                    var params = "button"; // Send $idNum value as a POST parameter
+                    //params += "color=" + $color;
+                    xhr.open("POST", url, true);
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) 
+                        {
+                            // Handle the response from the server if needed
+                            console.log(xhr.responseText);
+                        }
+                    };
+                    xhr.send(params);
+                }
+            }
+        }
+
+        function cnlButton()
+        {
+            var xhr = new XMLHttpRequest();
+            if (xhr == null) 
+            {
+                alert("Browser does not support HTTP Request");
+            } 
+            else 
+            {
+                var url = "{{ asset('php/test.php') }}";
+                var params = "cancel"; // Send $idNum value as a POST parameter
+                //params += "color=" + $color;
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) 
+                    {
+                        // Handle the response from the server if needed
+                        console.log(xhr.responseText);
+                    }
+                };
+                xhr.send(params);
+            }
+
+            window.location.href = "{{route('request')}}";
+        }
 
     </script>
 
-    <?php
-  
-    ?>
+
 
 </body>
 </html>

@@ -1,0 +1,61 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.header-class {
+    text-align: center;
+    padding: 20px;
+    background-color: #003366; 
+    border-bottom: 1px solid #000033;
+}
+
+.header-title {
+    color: #ffffff;
+}
+
+.nav-class {
+    background-color: #003366; 
+}
+
+.nav-list-class {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-around;
+    height: 50px;
+}
+
+.nav-list-class li {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-list-class li a {
+    color: #ffffff;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.nav-list-class li a:hover {
+    background-color: #005599;
+}
+
+.invoice-footer {
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+    background-color: #003366;
+    color: white;
+    position: absolute;
+    bottom: 0;
+}

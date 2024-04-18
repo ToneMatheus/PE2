@@ -12,7 +12,7 @@ class MeterReaderScheduleSeeder extends Seeder
     {
         $adds = [];
 
-        for($i=1; $i <= 4; $i++){
+        for($i=3; $i <= 5; $i++){
             $adds[] = [
                 'employee_profile_id' => 1,
                 'reading_date' => '2024-03-21',
@@ -21,7 +21,7 @@ class MeterReaderScheduleSeeder extends Seeder
             ];
         }
 
-        for($i=5; $i <= 7; $i++){
+        for($i=6; $i <= 8; $i++){
             $adds[] = [
                 'employee_profile_id' => 2,
                 'reading_date' => '2024-03-21',

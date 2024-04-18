@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Invoice_line extends Model
 {
+    protected $table = 'invoice_lines';
     protected $fillable = [
         'type',
         'unit_price',
@@ -21,10 +22,10 @@ class Invoice_line extends Model
         return $this->belongsTo(Invoice::class);
     }
 
-    /*public function consumption(): BelongsTo
+    public function consumption(): BelongsTo
     {
         return $this->belongsTo(Consumption::class);
-    }*/
+    }
 
     use HasFactory;
 }
