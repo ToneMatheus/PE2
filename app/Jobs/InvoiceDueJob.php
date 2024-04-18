@@ -100,5 +100,8 @@ class InvoiceDueJob implements ShouldQueue
             Log::error("Unable to send invoice due mail for invoice with ID ". $invoiceID);
             $this->logWarning($invoiceID , "Unable to send invoice due mail");
         }
+        else{
+            $this->logInfo($invoiceID , "Succesfully sent mail.");
+        }
     }
 }

@@ -92,5 +92,8 @@ class InvoiceFinalWarningJob implements ShouldQueue
             Log::error("Unable to send unpaid invoice final warning mail for invoice with ID ". $invoiceID);
             $this->logWarning($invoiceID, "Unable to send unpaid invoice final warning mail");
         }
+        else{
+            $this->logInfo($invoiceID , "Succesfully sent mail.");
+        }
     }
 }

@@ -94,5 +94,8 @@ class WeekAdvanceReminderJob implements ShouldQueue
             Log::error("Unable to send advance invoice reminder mail for invoice with ID ". $invoiceID);
             $this->logError($invoiceID, "Unable to send advance invoice reminder mail");
         }
+        else{
+            $this->logInfo($invoiceID , "Succesfully sent mail.");
+        }
     }
 }
