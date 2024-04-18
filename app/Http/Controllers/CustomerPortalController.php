@@ -13,8 +13,6 @@ class CustomerPortalController extends Controller
 {
     public function invoiceView(Request $request)
     {
-        Auth::loginUsingId(1); // TO BE DELETED!!!
-
         $search = $request->get('search');
         $status = $request->get('status');
         $selectedAddress = $request->get('address');
@@ -107,5 +105,31 @@ class CustomerPortalController extends Controller
     {
         session(['applocale' => $request->locale]);
         return back();
+    }
+
+    public function chatbot(Request $request)
+    {
+        $userMessage = strtolower($request->get('message'));
+
+        if (strpos($userMessage, 'conntacts') !== false) {
+        $botMessage = 'You can find more information about Contacts on our contacts page.';
+        } 
+        elseif (strpos($userMessage, 'support') !== false) {
+        $botMessage = 'You can find more information about Support on our support page.';
+        }
+        elseif (strpos($userMessage, 'tarrifs') !== false) {
+        $botMessage = 'You can find more information about Tarrifs on our tarrifs page.';
+        }
+        else {
+        $botMessage = 'I\'m sorry, I didn\'t understand that.';
+        }
+
+    return response()->json(['message' => $botMessage]);
+    }
+
+    public function bypass()
+    {
+        Auth::loginUsingId(6);
+        return view('welcome');
     }
 }

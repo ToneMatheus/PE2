@@ -2,7 +2,7 @@
 
 return [
     'Customer Invoices' => 'Customer Invoices',
-    'Invoices' => 'Invoices',
+    'Invoices' => 'Invoice overview Page',
     'Total Amount to be paid' => 'Total Amount to be paid',
     'Amount' => 'Amount',
     'Invoice Date' => 'Invoice Date',

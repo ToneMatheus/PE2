@@ -2,7 +2,7 @@
 
 return [
     'Customer Invoices' => 'facturen',
-    'Invoices' => 'Facturen',
+    'Invoices' => 'Facturen overzichtspagina',
     'Total Amount to be paid' => 'Totaal te betalen bedrag',
     'Amount' => 'Bedrag',
     'Invoice Date' => 'Factuurdatum',

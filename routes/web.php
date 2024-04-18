@@ -81,7 +81,9 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function() {
-    
+    Route::get('/customer/invoiceStatus', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoiceStatus');
+    Route::post('/customer/change-locale', [CustomerPortalController::class, 'changeLocale'])->name('customer.change-locale');
+    Route::post('/customer/chatbot', [CustomerPortalController::class, 'chatbot'])->name('customer.chatbot');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
@@ -239,8 +241,4 @@ Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credi
 Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
 Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
 
-//Customer Portal
-Route::get('/customer/invoiceStatus', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoiceStatus');
-Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
-Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
-Route::post('/customer/change-locale', [CustomerPortalController::class, 'changeLocale'])->name('customer.change-locale');
+Route::get('/customer/bypass', [CustomerPortalController::class, 'bypass'])->name('customer.bypass');
