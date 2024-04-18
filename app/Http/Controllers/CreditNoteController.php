@@ -65,6 +65,7 @@ class CreditNoteController extends Controller
             'type' => 'Refund',
             'status' => 1,
             'description' => 'This is a credit note for invoice INV'.$invoiceId,
+            'invoice_id' => $invoiceId,
             'user_id' => $user->id,
         ]);
 
