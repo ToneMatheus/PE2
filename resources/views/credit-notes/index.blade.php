@@ -16,6 +16,7 @@
             <thead>
                 <tr>
                     <th class="border border-black-2">Type</th>
+                    <th class="border border-black-2">Status</th>
                     <th class="border border-black-2">Description</th>
                     <th class="border border-black-2">Created At</th>
                     <th class="border border-black-2">User</th>
@@ -25,6 +26,12 @@
                 @foreach ($creditNotes as $creditNote)
                     <tr>
                         <td class="border border-black-2 text-center">{{ $creditNote->type }}</td>
+                        <td class="border border-black-2 text-center">
+                        @if ($creditNote->status==1)
+                            Not used
+                        @elseif ($creditNote->status==0)
+                            Used
+                        @endif</td>
                         <td class="border border-black-2 text-center">{{ $creditNote->description }}</td>
                         <td class="border border-black-2 text-center">{{ $creditNote->created_at }}</td>
                         <td class="border border-black-2 text-center">{{ $creditNote->user->username }}</td>

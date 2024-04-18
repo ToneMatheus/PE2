@@ -62,7 +62,7 @@ class CreditNoteController extends Controller
         ->first();
 
         $creditNote = CreditNote::create([
-            'type' => 'Refund credit note',
+            'type' => 'Refund',
             'status' => 1,
             'description' => 'This is a credit note for invoice INV'.$invoiceId,
             'user_id' => $user->id,
@@ -72,14 +72,14 @@ class CreditNoteController extends Controller
         //Store a total of all prices so we can add it later to the Credit Note entity
         $sum = 0;
         foreach ($lineItems as $item) {
-            $sum += $item->amount;
+            $sum += $item->amount*$item->unit_price;
             CreditNoteLine::create([
                 'credit_note_id' => $creditNote->id,
                 'product' => $item->type,
-                'quantity' => 1,
+                'quantity' => $item->amount,
                 'price' => $item->unit_price,
                 //Calculate the amount per line by multiplying the price per unit with the quantity of the product
-                'amount' => $item->amount,
+                'amount' => $item->amount*$item->unit_price,
             ]);
         }
         //Save the sum of all prices on the credit note Entity

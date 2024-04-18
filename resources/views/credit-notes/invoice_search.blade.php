@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="flex justify-center align-center">
+<div class="flex justify-center align-center h-screen">
     <form method="post" action="/customer/invoice/search">
         @csrf
         <input type="text" name="invoice_number" placeholder="Enter invoice number" class="p-2">
