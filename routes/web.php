@@ -110,7 +110,7 @@ Route::get('/reminders', [InvoiceRemindersController::class, 'index'])->name("in
 Route::get('/test-qr-monthly', [InvoiceRemindersController::class, 'monthly'])->name("qr-monthly");
 
 //invoice payment
-Route::get('/pay/{id}', [PaymentController::class, 'show'])->name("payment.show");
+Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
 Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 
 //QR code test

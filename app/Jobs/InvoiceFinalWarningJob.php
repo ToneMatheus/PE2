@@ -34,7 +34,7 @@ class InvoiceFinalWarningJob implements ShouldQueue
 
             $unpaidInvoices = Invoice::select('id')
                 ->whereNotIn('status', ['paid', 'pending'])
-                ->whereDate('due_date', '=',  $this->now->subDays(7)->toDateString())
+                ->whereDate('due_date', '=',  $this->now->subDays(14)->toDateString())
                 ->get()
                 ->pluck('id')
                 ->toArray();

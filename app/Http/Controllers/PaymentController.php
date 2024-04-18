@@ -4,14 +4,29 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Invoice;
-use App\Models\Invoice_line;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
-    public function show($id)
+    public function show($id, $hash)
     {
-        $invoice = Invoice::findOrFail($id);
-        return view('Invoices.payment', compact('invoice'));
+        try
+        {
+            $invoice = Invoice::findOrFail($id);
+            if ($hash == md5($invoice->id . $invoice->customer_contract_id . $invoice->meter_id))
+            {
+                return view('Invoices.payment', compact('invoice'));
+            }
+            else
+            {
+                return redirect()->route('dashboard');
+            }
+        }
+        catch(Exception $e)
+        {
+            Log::info("Attempt to access illegal page for invoice payment.");
+        }
     }
 
     public function pay($id)
