@@ -107,23 +107,23 @@ Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_m
 
 
 //Meters Group
+
+//employee-specific dashboard
 Route::get('/meter_dashboard', [MeterController::class, 'viewScheduledMeters']);
-Route::get('/all_meters_dashboard', [MeterController::class, 'all_meters_index'])->name("viewAllMeters");
-Route::get('/all_meters_dashboard_search', [MeterController::class, 'search'])->name("search");
-Route::post('/assignment_change', [MeterController::class, 'assignment']);
 
-Route::get('/enter_index_employee', function() {
-    return view('Meters/enterIndexEmployee');
-});
-Route::get('/enter_index_employee_search', [MeterController::class, 'searchIndex'])->name("searchIndex");
-Route::get('/fetchEAN/{meterID}', [MeterController::class, 'fetchEAN']);
-Route::post('/index_value_entered', [MeterController::class, 'submitIndex'])->name("submitIndex");
-Route::get('/dashboardEmployee', function () {
-    return view('Meters/employeeDashboard');
+//all meters dashboard
+Route::controller(MeterController::class)->group(function () {
+    Route::get('/all_meters_dashboard', 'all_meters_index')->name("viewAllMeters");
+    Route::get('/all_meters_dashboard_search', 'search')->name("search");
+    Route::post('/assignment_change', 'assignment');
 });
 
-Route::get('/modal', function () {
-    return view('Meters/modaltest');
+//page for employees to enter index values
+Route::controller(MeterController::class)->group(function () {
+    Route::get('/enter_index_employee', function() {return view('Meters/enterIndexEmployee');});
+    Route::get('/enter_index_employee_search', 'searchIndex')->name("searchIndex");
+    Route::get('/fetchEAN/{meterID}', 'fetchEAN');
+    Route::post('/index_value_entered','submitIndex')->name("submitIndex");
 });
 
 Route::get('meters', [MeterController::class,'showMeters']);
