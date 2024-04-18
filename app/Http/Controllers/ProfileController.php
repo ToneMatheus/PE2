@@ -5,18 +5,24 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\AddressUpdateRequest;
+
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ConfirmationMailRegistration;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Session;
+
+use Illuminate\View\View;
+
+use App\Mail\ConfirmationMailRegistration;
+
 use App\Models\User;
 use App\Models\Address;
 use App\Models\Customer_Address;
-use Illuminate\Support\Facades\Session;
+
 
 class ProfileController extends Controller
 {
@@ -33,7 +39,6 @@ class ProfileController extends Controller
 
         foreach($customerAddresses as $cusadr){
             $addresses[] = Address::where('id', $cusadr->address_id)->first();
-            // $addresses[] = DB::table('addresses')->where('id', $cusadr->address_id)->first();
         }
 
         return view('profile.edit', [
@@ -75,7 +80,6 @@ class ProfileController extends Controller
     
     public function confirmEmail($token, $email, Request $request)
     {
-        dd("niet");
         $id = Crypt::decrypt($token);
         $email = Crypt::decrypt($email);
 
@@ -93,6 +97,7 @@ class ProfileController extends Controller
 
     }
 
+    // ! van hier
     /**
      * Update the user address
      */
@@ -100,6 +105,32 @@ class ProfileController extends Controller
     {
         dd($request->Address());
 
+    }
+    // ! tot hier mag weg
+
+    /**
+     * Update the user billing address
+     */
+    public function updateBillingAddress(Request $request): RedirectResponse
+    {    
+        $billingAddress = $request->input('is_billing_address');
+        $billingAddressObject = json_decode($billingAddress);
+        $userId = Auth::id();
+        $customerAddressesId = Customer_Address::where('user_id', $userId)->pluck('address_id');
+
+        foreach ($customerAddressesId as $AddressId) {
+            $adres = Address::find($AddressId);
+            if($AddressId == $billingAddressObject->id)
+            {
+                $adres->is_billing_address = 1;
+            }else{
+                $adres->is_billing_address = 0;
+            }
+
+            $adres->save();
+        }
+
+        return redirect()->route('profile.edit')->with('status', 'billing address is updated.');
     }
 
     /**
