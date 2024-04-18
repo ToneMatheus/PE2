@@ -4,7 +4,7 @@ use Illuminate\Support\Arr;
 
 session_start();
 
-$user_id = auth()->id();
+$user_id = $_SESSION['idUser'];
 
 $host = '127.0.0.1';
 $user = 'root';

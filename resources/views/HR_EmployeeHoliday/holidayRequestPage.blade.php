@@ -48,6 +48,11 @@
     {
         $_SESSION['currentY'] = date('Y');
     }
+
+    if(!isset($_SESSION['idUser']))
+    {
+        $_SESSION['idUser'] = $user_id;
+    }
 ?>
 
 <!DOCTYPE html>
