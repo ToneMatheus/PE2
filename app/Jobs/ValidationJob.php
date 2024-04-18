@@ -78,13 +78,13 @@ class ValidationJob implements ShouldQueue
                                 $meter_id = $invoice['meter_id'];
                                 $invoice_id = $invoice['invoice_id'];
                                 Log::error('Exception caught: ' . "Validation Error Code 1: No monthly estimation found for meter with id: $meter_id");
-                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error']);
+                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 1']);
                             }elseif(Estimation::select('estimation_total')->where('meter_id', '=', $invoice['meter_id'])->pluck('estimation_total')->toArray() <= 0){
                                 // estimation is 0 of lager
                                 $meter_id = $invoice['meter_id'];
                                 $invoice_id = $invoice['invoice_id'];
                                 Log::error('Exception caught: ' . "Validation Error Code 2: Monthly estimation found to be 0 or lower for meter with id: $meter_id");
-                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error']);
+                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 2']);
                             }else{
                                 $meter_id = $invoice['meter_id'];
                                 $invoice_id = $invoice['invoice_id'];
@@ -101,8 +101,8 @@ class ValidationJob implements ShouldQueue
                             ->get()->toArray();
                             if (sizeof($consumptions) == 0) {
                                 // no consumption found
-                                Log::error('Exception caught: ' . "Validation Error Code 3: No consumption found for meter with id: $meter_id.");
-                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error']);
+                                Log::error('Exception caught: ' . "Validation Error Code 3: No consumption data found for meter with id: $meter_id.");
+                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 3']);
                             }
                             else {
                                 // consumption found

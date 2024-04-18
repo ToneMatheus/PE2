@@ -6,6 +6,7 @@ use App\Models\Invoice;
 use App\Models\Invoice_line;
 use App\Mail\InvoiceMail;
 use App\Models\User;
+use App\Models\Estimation;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -198,7 +199,9 @@ class InvoiceController extends Controller
             } elseif ($selectedStatus === 'validation ok') {
                 $invoicesQuery->where('invoices.status', 'validation ok');
             } elseif ($selectedStatus === 'validation error') {
-                $invoicesQuery->where('invoices.status', 'validation error');
+                $invoicesQuery->where('invoices.status', 'validation error 1')
+                ->orWhere('invoices.status', 'validation error 2')
+                ->orWhere('invoices.status', 'validation error 3');
             }
         }
 
@@ -229,13 +232,13 @@ class InvoiceController extends Controller
                     $meter_id = $invoice['meter_id'];
                     $invoice_id = $invoice['invoice_id'];
                     Log::error('Exception caught: ' . "Validation Error Code 1: No monthly estimation found for meter with id: $meter_id");
-                    Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error']);
+                    Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 1']);
                 }elseif(Estimation::select('estimation_total')->where('meter_id', '=', $invoice['meter_id'])->pluck('estimation_total')->toArray() <= 0){
                     // estimation is 0 of lager
                     $meter_id = $invoice['meter_id'];
                     $invoice_id = $invoice['invoice_id'];
                     Log::error('Exception caught: ' . "Validation Error Code 2: Monthly estimation found to be 0 or lower for meter with id: $meter_id");
-                    Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error']);
+                    Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 2']);
                 }else{
                     $meter_id = $invoice['meter_id'];
                     $invoice_id = $invoice['invoice_id'];
@@ -253,7 +256,7 @@ class InvoiceController extends Controller
                 if (sizeof($consumptions) == 0) {
                     // no consumption found
                     Log::error('Exception caught: ' . "Validation Error Code 3: No consumption found for meter with id: $meter_id.");
-                    Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error']);
+                    Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 3']);
                 }
                 else {
                     // consumption found
