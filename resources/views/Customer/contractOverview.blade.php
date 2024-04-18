@@ -5,7 +5,6 @@
         </h2>
     </x-slot> 
 <div class="container mx-auto px-4 sm:px-8 w-full p-10 flex-grow">
-    <div class="col-span-1 mt-5 border-2 border-gray-800 bg-gray-700 p-3 rounded text-white">
         <table class="w-full mt-5 border-collapse bg-gray-700 text-white">
             <thead>
                 <tr>
@@ -40,7 +39,6 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
 </div>
 @include('chatbot.chatbot')
 </x-app-layout>
