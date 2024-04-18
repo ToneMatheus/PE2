@@ -1,7 +1,11 @@
 
 <x-app-layout>
     <div class="flex flex-col items-center w-full min-h-screen bg-gray-100 dark:bg-gray-900 text-white">
-        <h1 class="text-2xl mt-5">{{ __('messages.Invoices') }}</h1>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('messages.Invoices') }}
+        </h2>
+    </x-slot>    
         <div class="w-full p-10 flex-grow">
             <div class="grid grid-cols-3 gap-4">
                 <div class="col-span-1 mt-5 border-2 border-gray-800 bg-gray-700 p-3 rounded text-white">
