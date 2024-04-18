@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Meter_Addresses extends Model
 {
+    protected $table = 'meter_addresses';
     protected $fillable = [
-        'id',
         'start_date',
         'end_date',
         'address_id',
@@ -17,4 +17,14 @@ class Meter_Addresses extends Model
     ];
 
     use HasFactory;
+
+    public function meter(): BelongsTo
+    {
+        return $this->belongsTo(Meter::class);
+    }
+
+    public function address(): BelongsTo
+    {
+        return $this->belongsTo(Address::class);
+    }
 }

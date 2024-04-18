@@ -8,13 +8,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Meter_Reader_Schedule extends Model
 {
+    protected $table = 'meter_reader_schedules';
     protected $fillable = [
-        'id',
-        'start_date',
-        'end_date',
-        'address_id',
-        'meter_id'
+        'employee_profile_id',
+        'reading_date',
+        'meter_id',
+        'status'
     ];
 
     use HasFactory;
+
+    public function meter(): BelongsTo
+    {
+        return $this->belongsTo(Meter::class);
+    }
+
+    public function employee_profile(): BelongsTo
+    {
+        return $this->belongsTo(Employee_Profile::class);
+    }
 }

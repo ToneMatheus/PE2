@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Models\CronJob;
 
 class Kernel extends ConsoleKernel
 {
@@ -12,7 +13,20 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+
+        // Fetch job schedules from the database
+        $cronjobs = CronJob::all();
+        foreach ($cronjobs as $cronjob) {
+            $jobClass = 'App\Jobs\\' .  $cronjob->name;
+
+            // Extract hour and minutes from the scheduled_time string
+            $timeParts = explode(':', $cronjob->scheduled_time);
+            $hour = $timeParts[0];
+            $minute = $timeParts[1];
+
+            $schedule->job(new $jobClass())->monthlyOn($cronjob->scheduled_day, $hour . ':' . $minute);
+        }
+
     }
 
     /**
