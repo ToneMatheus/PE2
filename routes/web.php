@@ -87,6 +87,9 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function
     Route::get('/customer/invoiceStatus', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoiceStatus');
     Route::post('/customer/change-locale', [CustomerPortalController::class, 'changeLocale'])->name('customer.change-locale');
     Route::post('/customer/chatbot', [CustomerPortalController::class, 'chatbot'])->name('customer.chatbot');
+    Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
+    Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
+    //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
@@ -183,9 +186,6 @@ Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('ru
 Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
 
 
-//Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
-Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
-Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
 
 
 Route::get('/test', function () {
