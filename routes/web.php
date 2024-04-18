@@ -24,6 +24,7 @@ use App\Http\Controllers\CronJobController;
 use App\Http\Controllers\meterreading;
 use App\Models\MeterReading as ModelsMeterReading;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
@@ -212,26 +213,9 @@ Route::get('/faq', [FAQController::class, 'showFAQ'])->name('faq');
 Route::get('/customer/overview', [SimpleUserOverViewController::class, 'overview'])->name('overview');
 
 /*JOREN*/
-//CH mag weg
-//routes for custmer data for customer
-Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
-Route::get('/user/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
-
-Route::post('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');})->name('ChangeUser');
-Route::get('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');});
-
-// Validation route's to change customer info by customer
-Route::post('/Customer/Manage/Change/User/post/email', [CustomerController::class, 'emailValidationChangeUserInfo']) ->name('postEmail');
-Route::post('/Customer/Manage/Change/User/post/profile', [CustomerController::class, 'profileValidationChangeUserInfo']) ->name('postProfile');
-Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::class, 'passwdValidationChangeUserInfo']) ->name('postPasswd');
-
-// Validation route's to create a customer account by customer
-Route::post('/user/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
-//CH tot hier
-
 // Set active user when email confirm
-Route::get('/confirm-email/{token}', [ProfileController::class, 'confirmEmail'])->name('email-confirmation');
-Route::get('/confirm-email/{token}', [RegisteredUserController::class, 'confirmEmail'])->name('email-confirmation-registration');
+Route::get('/confirm-email/{encryptedUserID}/{email}', [ProfileController::class, 'confirmEmail'])->name('activate.account');
+Route::get('/confirm-emailTEST/{token}/{email}', [RegisteredUserController::class, 'confirmEmail'])->name('email-confirmation-registration');
 
 
 

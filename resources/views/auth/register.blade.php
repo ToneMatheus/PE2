@@ -33,6 +33,13 @@
         });
     </script>
 
+<!-- CH een extra pagina maken om een mail opnieuw te sturen en op gestuurd te worden als dit moet -->
+    @if (session('verify_email_message'))
+        <div class="alert alert-info" style="color: red;">
+            {{ session('verify_email_message') }}
+        </div>
+    @endif 
+
 
         @csrf
 
@@ -69,11 +76,11 @@
             <x-input-label for="title" :value="__('Title')" />
                 <!-- CH pas de colom van de database aan voor de calling -->
             <lable for='Mr'>Mr</label>
-            <input type="radio" name="title" id="mr" value="Mr"  @if(old('Calling') == 'Mr') checked @else checked @endif>
+            <input type="radio" name="title" id="mr" value="Mr"  @if(old('title') == 'Mr') checked @else checked @endif>
             <lable for='Ms'>Ms</label>
-            <input type="radio" name="title" id="Ms" value="Ms" @if(old('Calling') == 'Ms') checked @endif>
+            <input type="radio" name="title" id="Ms" value="Ms" @if(old('title') == 'Ms') checked @endif>
             <lable for='X'>X</label>
-            <input type="radio" name="title" id="X" value="X"@if(old('Calling') == 'X') checked @endif>
+            <input type="radio" name="title" id="X" value="X"@if(old('title') == 'X') checked @endif>
             <x-input-error class="mt-2" :messages="$errors->get('title')" />
         </div>
 
@@ -102,6 +109,7 @@
                             name="password"
                             :value="old('password')"
                             required autocomplete="new-password" />
+            <!-- TODO zet de vereisten zichtbaar -->
 
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
@@ -176,6 +184,7 @@
         </div>
 
         <!--Country -->
+        <!-- CH veranderen naar nationality -->
         <div class="mt-4">
             <x-input-label for="country" :value="__('Country')" />
             <x-text-input id="country" name="country" type="text" class="block w-full mt-1" :value="old('country')"

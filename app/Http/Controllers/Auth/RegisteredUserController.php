@@ -3,17 +3,36 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\Auth\RegistrationRequest;
+
 use App\Http\Controllers\Controller;
+
 use App\Models\User;
+use App\Models\User_Role;
+use App\Models\Role;
+use App\Models\Address;
+use App\Models\Customer_Address;
+
 use App\Providers\RouteServiceProvider;
+
 use Illuminate\Auth\Events\Registered;
+
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Validation\Rules;
+
 use Illuminate\View\View;
+
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redirect;
+
+use App\Mail\ConfirmationMailRegistration;
+
 
 class RegisteredUserController extends Controller
 {
@@ -54,7 +73,7 @@ class RegisteredUserController extends Controller
             'phone_nbr' => $request->phone_nbr,
             'birth_date' => $request->birth_date,
             'title' => $request->title,
-            'is_active' => 0,
+            'is_active' => 1,
         ];
 
         if ($request->has('is_company')) {
@@ -65,15 +84,57 @@ class RegisteredUserController extends Controller
         $user = User::create($userdata);
         event(new Registered($user));
 
-        dd($user);
+        $role = Role::where('role_name', 'Customer')->first();
 
+        $userRoleDate = [
+            'user_id' => $user->id,
+            'role_id' => $role->id,
+        ];
+
+        $userRole = User_Role::create($userRoleDate);
+
+        $id = Crypt::encrypt($user->id);
+        $emailEncrypt = Crypt::encrypt($user->email);
+        $origin = 'register';
+
+        $addressDate = [
+            'street' => $request->street,
+            'number' => $request->number,
+            'box' => $request->box,
+            'postal_code' => $request->postal_code,
+            'city' => $request->city,
+            'province' => $request->province,
+            'country' => $request->country,
+            'type' => $request->type
+        ];
+
+        $address = Address::create($addressDate);
+
+        $customerAddressData = [
+            'start_date' => now(),
+            'user_id' => $user->id,
+            'address_id' => $address->id,
+        ];
+
+        Customer_Address::create($customerAddressData);
+
+        Mail::to($user->email)->send(new ConfirmationMailRegistration($id, $emailEncrypt, $origin));
+
+        return Redirect::back()->with('verify_email_message', 'Please verify your email address.');
+
+    }
+
+    public function confirmEmail($token, Request $request){
+        $id = Crypt::decrypt($token);
+
+        $user = User::find($id);
+
+        $user->email_verified_at = now();
+
+        $user->save();
 
         Auth::login($user);
 
         return redirect(RouteServiceProvider::HOME);
-    }
-
-    public function confirmEmail(){
-
     }
 }

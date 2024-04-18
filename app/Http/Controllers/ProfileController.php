@@ -1,4 +1,5 @@
 <?php
+/* profile */
 
 namespace App\Http\Controllers;
 
@@ -48,72 +49,45 @@ class ProfileController extends Controller
     public function updateProfile(ProfileUpdateRequest $request): RedirectResponse
     {
         $request->user()->fill($request->validated());
-
-        $user = $request->user();
+        $user = $request->user(); 
 
         $email = $user->email;
         $user->email = $user->getOriginal('email');
         $user->save();
         $user->email = $email;
 
-            if ($user->isDirty('email')) 
-            {
-                Mail::to($user->email)->send(new ConfirmationMailRegistration($user));
-    
-                return redirect()->back()->with('status', 'Please confirm your new email address by clicking the link sent to your email.');
-            }
+        //TODO start mail server ga naar C:\Users\HEYVA\Downloads\mailpit-windows-amd64 (1) en voer mailpit.exe uit
+        if ($request->user()->isDirty('email')) {
+            $request->user()->email_verified_at = null;
+
+            $id = Crypt::encrypt($user->id);
+            $emailEncrypt = Crypt::encrypt($user->email);
+            $to = Crypt::encrypt("profile");
+
+            Mail::to($user->email)->send(new ConfirmationMailRegistration($id, $emailEncrypt, $to));
+
+            return Redirect::route('profile.edit')->with('verify_email_message', 'Please verify your email address.');
+        }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
     
-    public function confirmEmail($token, Request $request)
+    public function confirmEmail($token, $email, Request $request)
     {
-        $id = Crypt::decrypt(Session::get('id'));
-        $username = Crypt::decrypt(Session::get('username'));
-        $first_name = Crypt::decrypt(Session::get('first_name'));
-        $last_name = Crypt::decrypt(Session::get('last_name'));
-        $password = Crypt::decrypt(Session::get('password'));
-        $employee_profile_id = Crypt::decrypt(Session::get('employee_profile_id'));
-        $is_company = Crypt::decrypt(Session::get('is_company'));
-        $company_name = Crypt::decrypt(Session::get('company_name'));
-        $email = Crypt::decrypt(Session::get('email'));
-        $phone_nbr = Crypt::decrypt(Session::get('phone_nbr'));
-        $birth_date = Crypt::decrypt(Session::get('birth_date'));
-        $is_activate = Crypt::decrypt(Session::get('is_activate'));
-
-        Session::forget('id');
-        Session::forget('username');
-        Session::forget('first_name');
-        Session::forget('last_name');
-        Session::forget('password');
-        Session::forget('employee_profile_id');
-        Session::forget('is_company');
-        Session::forget('company_name');
-        Session::forget('email');
-        Session::forget('phone_nbr');
-        Session::forget('birth_date');
-        Session::forget('is_activate');
+        dd("niet");
+        $id = Crypt::decrypt($token);
+        $email = Crypt::decrypt($email);
 
         $user = User::find($id);
 
-        if ($user) {
-            $user->id = $id;
-            $user->username = $username;
-            $user->first_name = $first_name;
-            $user->last_name = $last_name;
-            $user->password = $password;
-            $user->employee_profile_id = $employee_profile_id;
-            $user->is_company = $is_company;
-            $user->company_name = $company_name;
-            $user->email = $email;
-            $user->phone_nbr = $phone_nbr;
-            $user->birth_date = $birth_date;
-            //CH pas dit aan aan de database
-            // $user->is_activate = $is_activate;
+        $user->email_verified_at = now();
+        $user->updated_at = now();
+        $user->email = $email;
 
-            $user->save();
-        }
+        $user->save();
+
+        $request->session()->forget('verify_email_message');
 
     return redirect()->route('profile.edit')->with('status', 'Profile updated.');
 

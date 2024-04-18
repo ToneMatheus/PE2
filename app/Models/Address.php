@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Address extends Model
 {
+    public $timestamps = false;
+    
     use HasFactory;
 
     public const VALIDATION_RULE_STREET = ['required', 'string', 'max:50'];

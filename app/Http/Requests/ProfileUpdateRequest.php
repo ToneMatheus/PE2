@@ -35,7 +35,8 @@ class ProfileUpdateRequest extends FormRequest
             'phone_nbr' => [User::VALIDATION_RULE_PHONE_NBR],
             'birth_date' => array_merge(User::VALIDATION_RULE_BIRTHDATE, ['date']),
             'company_name' => $companyNameRules,
-            // LOOK regel voor Calling
+            'title' => User::VALIDATION_RULE_TITLE,
+
         ];
     }
 

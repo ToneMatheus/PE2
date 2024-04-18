@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use App\Mail\ConfirmationMailRegistration;
 use Illuminate\Support\Facades\Mail;
 
+// class User extends Authenticatable implements MustVerifyEmail
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -26,6 +27,7 @@ class User extends Authenticatable
     public const VALIDATION_RULE_EMAIL = ['required', 'email'];
     public const VALIDATION_RULE_PHONE_NBR = ['required'];
     public const VALIDATION_RULE_BIRTHDATE = ['required', 'date', 'before:-18 years', 'after:-150 years'];
+    public const VALIDATION_RULE_TITLE = ['required'];
 
     public const VALIDATION_MESSAGES = [
         'username.required' => 'Username is required',
@@ -42,6 +44,7 @@ class User extends Authenticatable
         'birth_date.date' => 'Invalid date format',
         'birth_date.before' => 'You need to be older. At least 18 years old',
         'birth_date.after' => 'Birth date is too old',
+        'title.required' => 'Title is required',
     ];
 
     public const VALIDATION_RULES = [
@@ -52,6 +55,7 @@ class User extends Authenticatable
             'email' => self::VALIDATION_RULE_EMAIL,
             'phone_nbr' => self::VALIDATION_RULE_PHONE_NBR,
             'birth_date' => self::VALIDATION_RULE_BIRTHDATE,
+            'title' => self::VALIDATION_RULE_TITLE,
     ];
 
     protected $table = 'users';
@@ -86,23 +90,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(CreditNote::class);
     }
-
-    //TEST dit mag weg als van ProfileController lijn 53 - 60 werkt.
-    // public function saveWithoutEmail()
-    // {
-    //     $email = $this->email;
-
-    //     // dd($this->getOriginal('email'));
-    //     $this->email = $this->getOriginal('email');
-
-    //     $this->save();
-
-    //     $this->email = $email;
-    // }
-    //TEST tot hier
-
-
-
+    
     public function team_members(): HasMany
     {
         return $this->hasMany(Team_Member::class);
