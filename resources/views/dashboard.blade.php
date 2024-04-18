@@ -43,6 +43,7 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View your invoice status</p>
                             </div>
                         </a>
+                        @include('chatbot.chatbot')
                     @endif
                 </div>
             </div>

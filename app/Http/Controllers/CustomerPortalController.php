@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 
+
 class CustomerPortalController extends Controller
 {
     public function invoiceView(Request $request)
@@ -23,15 +24,16 @@ class CustomerPortalController extends Controller
         $query->join('meters', 'invoices.meter_id', '=', 'meters.id')
               ->join('meter_addresses', 'meters.id', '=', 'meter_addresses.meter_id')
               ->join('addresses', 'meter_addresses.address_id', '=', 'addresses.id')
-              ->select('invoices.*', 'meters.id', DB::raw("CONCAT(addresses.street, ' ', addresses.number, ', ', addresses.city) AS address"));
+              ->join('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
+              ->select('invoices.*', 'meters.id', DB::raw("CONCAT(addresses.street, ' ', addresses.number, ', ', addresses.city) AS address"))
+              ->where('customer_contracts.user_id', $user->id);
 
         if ($selectedAddress) {
             $query->where(DB::raw("CONCAT(addresses.street, ' ', addresses.number, ', ', addresses.city)"), $selectedAddress);
         }
 
         if ($search) {
-            $query->where('invoices.customer_contract_id', $user->id)
-                  ->where(function ($query) use ($search) {
+            $query->where(function ($query) use ($search) {
                       $query->where('invoices.id', $search)
                             ->orWhere('invoices.total_amount', $search)
                             ->orWhere('invoices.invoice_date', $search)
@@ -39,8 +41,6 @@ class CustomerPortalController extends Controller
                             ->orWhere('invoices.status', $search)
                             ->orWhere('invoices.type', $search);
                   });
-        } else {
-            $query->where('invoices.customer_contract_id', $user->id);
         }
 
         $sentInvoicesSum = Invoice::where('customer_contract_id', $user->id)
@@ -58,13 +58,15 @@ class CustomerPortalController extends Controller
                ->join('meter_addresses', 'addresses.id', '=', 'meter_addresses.address_id')
                ->join('meters', 'meter_addresses.meter_id', '=', 'meters.id')
                ->join('invoices', 'meters.id', '=', 'invoices.meter_id')
-               ->where('invoices.customer_contract_id', $user->id)
+               ->join('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
+               ->where('customer_contracts.user_id', $user->id)
                ->select(DB::raw("CONCAT(addresses.street, ' ', addresses.number, ', ', addresses.city) AS address"))
                ->distinct()
                ->get();
 
         return view('Customers/CustomerInvoiceView', compact('invoices', 'sentInvoicesSum', 'addresses'));
     }
+
 
     public function showConsumptionHistory($timeframe = 'month')
     {
