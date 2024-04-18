@@ -15,7 +15,6 @@ return new class extends Migration
             $table->string('type', 50)->nullable();
             $table->date('installation_date')->nullable();
             $table->string('status', 50)->nullable();
-            $table->smallInteger('is_smart')->unsigned();
         });
     }
 

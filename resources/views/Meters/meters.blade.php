@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Meters</title>
+    <title>Document</title>
     @livewireStyles
 </head>
 <body>
@@ -14,7 +14,24 @@
 
     @livewireScripts
 
-    <a href="./meters/add" style="background-color: #c2c2c2">Add Meter</a>
 
+    <h1>EAN Number Test:</h1>
+<?php
+//https://stackoverflow.com/a/19890444
+function generateEAN($number)
+{
+  $code = '54' . str_pad($number, 15, '0', STR_PAD_LEFT);
+  $weightflag = true;
+  $sum = 0;
+  for ($i = strlen($code) - 1; $i >= 0; $i--)
+  {
+    $sum += (int)$code[$i] * ($weightflag?3:1);
+    $weightflag = !$weightflag;
+  }
+  $code .= (10 - ($sum % 10)) % 10;
+  return $code;
+}
+?>
+<h3>{{generateEAN(10)}}</h3>
 </body>
 </html>

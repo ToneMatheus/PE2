@@ -1,7 +1,5 @@
 @php
-    use Carbon\Carbon;
-
-    $userID = 3;//To be replaced by the real ID!
+    $userID = 1;//To be replaced by the real ID!
     $id = request()->input('id');
 
     $payslipInfo = DB::select("select * from payslips where employee_profile_id = $userID");//fetching payslip plus contract information
@@ -27,14 +25,9 @@
     foreach ($users as $user) {
         $lastName = htmlspecialchars($user->last_name);
         $firstName = htmlspecialchars($user->first_name);
+        $addressID = htmlspecialchars($user->address_id);
       
         //fetching user address from the db
-        $users_id = $users[0]->id;
-        $cust_add = DB::select("select address_id from customer_addresses where user_id = $users_id");
-        $add_id = $cust_add[0]->address_id;
-        $addressID = DB::select("select * from addresses where id = $add_id");
-        $addressID = $addressID[0]->id;
-
         $address = DB::select("select * from addresses where id = $addressID");
         foreach ($address as $add){
           $street = htmlspecialchars($add->street);
@@ -54,8 +47,8 @@
     $numRows = count($holidays);
 
     if(!empty($numRows)){
-        $holidayStart = Carbon::parse(htmlspecialchars($holidays[0]->start_date));
-        $holidayEnd = Carbon::parse(htmlspecialchars($holidays[0]->end_date));
+        $holidayStart = Carbon::parse(htmlspecialchars($holidays->start_date));
+        $holidayEnd = Carbon::parse(htmlspecialchars($holidays->end_date));
 
         $differenceInDays = $holidayEnd->diffInDays($holidayStart);
     }

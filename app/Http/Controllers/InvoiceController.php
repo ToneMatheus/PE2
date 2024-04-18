@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Mail\meter_reading_notice;
 use App\Models\Invoice;
 use App\Models\Invoice_line;
 use App\Mail\InvoiceMail;
+use App\Models\Invoice;
+use App\Models\Invoice_line;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -16,7 +19,9 @@ class InvoiceController extends Controller
 {
     //
 
-   
+    public function sendMail(Request $request)
+    {
+        $invoice = Invoice::where('id', $request->id)->first();
     public function store(Request $request)
     {
         //Validate required paramters

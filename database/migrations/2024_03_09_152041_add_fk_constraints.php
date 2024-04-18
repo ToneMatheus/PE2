@@ -13,6 +13,7 @@ return new class extends Migration
         });
 
         Schema::table('users', function (Blueprint $table) {
+            $table->foreign('address_id')->references('id')->on('addresses');
             $table->foreign('employee_profile_id')->references('id')->on('employee_profiles');
         });
 
@@ -28,8 +29,8 @@ return new class extends Migration
 
         Schema::table('contract_products', function (Blueprint $table) {
             $table->foreign('customer_contract_id')->references('id')->on('customer_contracts');
+            $table->foreign('tariff_id')->references('id')->on('tariffs');
             $table->foreign('product_id')->references('id')->on('products');
-            $table->foreign('meter_id')->references('id')->on('meters');
         });
 
         Schema::table('discounts', function (Blueprint $table) {
@@ -62,6 +63,11 @@ return new class extends Migration
 
         Schema::table('customer_contracts', function (Blueprint $table) {
             $table->foreign('user_id')->references('id')->on('users');
+        });
+
+        Schema::table('product_tariffs', function (Blueprint $table) {
+            $table->foreign('product_id')->references('id')->on('products');
+            $table->foreign('tariff_id')->references('id')->on('tariffs');
         });
 
         Schema::table('index_values', function (Blueprint $table) {

@@ -23,8 +23,7 @@ class Product extends Model
 
     public function contract_products(): HasMany
     {
-        //return $this->hasMany(Contract_product::class);
-        return $this->hasMany(Contract_product::class, 'product_id');
+        return $this->hasMany(Contract_product::class);
     }    
 
     use HasFactory;

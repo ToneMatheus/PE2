@@ -1,17 +1,16 @@
 {{-- -*-html-*- --}}
-{{-- <x-app-layout> --}}
-  <title>Submitted Ticket</title>
-    <div>
 
-      <h1>Ticket submitted successfully</h1>
+  <div>
 
-      <p>Thank you for submitting your ticket! We will try and resolve it as
-        quickly as possible.</p>
+    <h1>Ticket submitted successfully</h1>
 
-      <ul>
-        <li><strong>{{ $ticket->issue }}</strong></li>
-        <li><strong>{{ $ticket->description }}</strong></li>
-      </ul>
+    <p>Thank you for submitting your ticket! We will try and resolve it as
+      quickly as possible.</p>
 
-    </div>
-{{-- </x-app-layout> --}}
+    <ul>
+      <li><strong>{{ $ticket->issue }}</strong></li>
+      <li><strong>{{ $ticket->description }}</strong></li>
+    </ul>
+
+  </div>
+

@@ -10,16 +10,6 @@ class ConsumptionSeeder extends Seeder
     public function run()
     {
         for($i = 1; $i <= 4; $i++){
-            DB::table('consumptions')->insert([
-                'start_date' => '2022-01-01',
-                'end_date' => '2023-01-01',
-                'consumption_value' => 0,
-                'prev_index_id' => null,
-                'current_index_id' => $i
-            ]);
-        }
-        
-        for($i = 1; $i <= 4; $i++){
             $indexValues = DB::table('index_values')->where('meter_id', '=', $i)->get();
 
             foreach($indexValues as $key => $indexValue){

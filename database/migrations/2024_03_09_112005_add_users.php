@@ -15,14 +15,14 @@ return new class extends Migration
             $table->string('first_name', 50);
             $table->string('last_name', 50);
             $table->string('password', 100);
+            $table->bigInteger('address_id')->unsigned()->nullable();
             $table->bigInteger('employee_profile_id')->unsigned()->nullable();
             $table->unsignedTinyInteger('is_company')->default(0);
             $table->string('company_name', 50)->nullable();
             $table->string('email', 50);
             $table->string('phone_nbr', 15);
             $table->date('birth_date')->nullable();
-            $table->unsignedTinyInteger('is_active')->default(1);
-            $table->enum('title', ['Mr', 'Ms', 'X'])->nullable();
+            $table->unsignedTinyInteger('is_activate')->default(1);
         });
     }
 

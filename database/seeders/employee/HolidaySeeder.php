@@ -14,7 +14,6 @@ class HolidaySeeder extends Seeder
         DB::table('holidays')->insert([
             [
                 'employee_profile_id' => 1,
-                'request_date' => '2023-12-12',
                 'start_date' => '2024-01-01',
                 'end_date' => '2024-01-02',
                 'holiday_type_id' => 1,
@@ -26,7 +25,6 @@ class HolidaySeeder extends Seeder
             ],
             [
                 'employee_profile_id' => 2,
-                'request_date' => '2023-11-11',
                 'start_date' => '2024-02-15',
                 'end_date' => '2024-02-16',
                 'holiday_type_id' => 2,

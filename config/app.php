@@ -1,6 +1,6 @@
 <?php
 
-//use Barryvdh\DomPDF\Facade\Pdf;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 
@@ -19,7 +19,6 @@ return [
 
     'providers' => [
         LaravelProfane\ProfaneServiceProvider::class,
-        Barryvdh\DomPDF\ServiceProvider::class,
     ],
 
     /*
@@ -87,7 +86,7 @@ return [
     |
     */
 
-    'timezone' => 'CET',
+    'timezone' => 'UTC',
 
     /*
     |--------------------------------------------------------------------------
@@ -198,15 +197,7 @@ return [
     |
     */
 
-    
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
-    
-    /*
-    'aliases' => [
-        // Andere aliassen hier ...
-        //'PDF' => Barryvdh\DomPDF\Facade::class,
-    ],*/
-
 ];

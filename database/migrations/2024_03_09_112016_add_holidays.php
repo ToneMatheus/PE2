@@ -12,7 +12,6 @@ return new class extends Migration
         Schema::create('holidays', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('employee_profile_id')->unsigned();
-            $table->date('request_date')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->bigInteger('holiday_type_id')->unsigned();

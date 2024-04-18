@@ -17,14 +17,14 @@ class BalanceSeeder extends Seeder
                 'holiday_type_id' => 1,
                 'yearly_holiday_credit' => 20,
                 'used_holiday_credit' => 0,
-                'start_date' => '2024-01-01'
+                'previous_holiday_credit' => 0,
             ],
             [
                 'employee_profile_id' => 2,
                 'holiday_type_id' => 2,
                 'yearly_holiday_credit' => 25,
                 'used_holiday_credit' => 5,
-                'start_date' => '2024-01-01'
+                'previous_holiday_credit' => 10,
             ],
         ]);
     }

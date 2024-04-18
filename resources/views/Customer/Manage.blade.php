@@ -25,7 +25,7 @@
                 <li><a href="{{ route('createUser') }}">Create account</a></li>
             </ul>
         </nav>
-<!-- TODO: daadwerkelijke data weergeven. -->
+
         <div class="box">
             <h1 class="boxHeader" id="test">Your personal info</h1>
             <!-- Password -->
@@ -39,7 +39,7 @@
                         <p>:</p>
                     </td>
                     <td>
-                        <p>?? vragen voor opslaan??</p>
+                        <p>MR</p>
                     </td>
                 </tr>
 
@@ -51,7 +51,7 @@
                         <p>:</p>
                     </td>
                     <td>
-                        <p>{{$user->first_name}}</p>
+                        <p>testname</p>
                     </td>
                 </tr>
 
@@ -63,19 +63,7 @@
                         <p>:</p>
                     </td>
                     <td>
-                        <p>{{$user->last_name}}</p>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <p>Birth Date</p>
-                    </td>
-                    <td>
-                        <p>:</p>
-                    </td>
-                    <td>
-                        <p>{{$user->birth_date}}</p>
+                        <p>Testing</p>
                     </td>
                 </tr>
 
@@ -91,7 +79,7 @@
                         <p>:</p>
                     </td>
                     <td>
-                        <p>{{$user->email}}</p>
+                        <p>test@tester.com</p>
                     </td>
                 </tr>
 
@@ -103,11 +91,10 @@
                         <p>:</p>
                     </td>
                     <td>
-                        <p>{{$user->phone_nbr}}</p>
+                        <p>0032 458 32 56 89</p>
                     </td>
                 </tr>
 
-                @if($user->is_company == 1)
                 <tr>
                     <td>
                         <p>Company name</p>
@@ -116,10 +103,9 @@
                         <p>:</p>
                     </td>
                     <td>
-                        <p>{{$user->company_name}}</p>
+                        <p>test Company</p>
                     </td>
                 </tr>
-                @endif
 
             </table>
 
@@ -131,93 +117,91 @@
 
         </div>
 
-        <!-- TODO: een 2de adres toe voegen of meerdere addressen. -->
-        @foreach($adresses as $adres)
-            <div class="box">
-                <h1 class="boxHeader">Your house info</h1>
-                    <table class="boxTable" id="box1_table_1">
-                        <tr>
-                            <td>
-                                <p>Province</p>
-                            </td>
-                            <td>
-                                <p>:</p>
-                            </td>
-                            <td>
-                                <p>{{$adres->province}}</p>
-                            </td>
-                        </tr>
+        <div class="box">
+            <h1 class="boxHeader">Your house info</h1>
+            <table class="boxTable" id="box1_table_1">
+                <tr>
+                    <td>
+                        <p>region</p>
+                    </td>
+                    <td>
+                        <p>:</p>
+                    </td>
+                    <td>
+                        <p>Antwerpen</p>
+                    </td>
+                </tr>
 
-                        <tr>
-                            <td>
-                                <p>City</p>
-                            </td>
-                            <td>
-                                <p>:</p>
-                            </td>
-                            <td>
-                                <p>{{$adres->city}}</p>
-                            </td>
-                        </tr>
+                <tr>
+                    <td>
+                        <p>City</p>
+                    </td>
+                    <td>
+                        <p>:</p>
+                    </td>
+                    <td>
+                        <p>Sint-Katelijne-Waver</p>
+                    </td>
+                </tr>
 
-                        <tr>
-                            <td>
-                                <p>postalCode</p>
-                            </td>
-                            <td>
-                                <p>:</p>
-                            </td>
-                            <td>
-                                <p>{{$adres->postal_code}}</p>
-                            </td>
-                        </tr>
-                    </table>
+                <tr>
+                    <td>
+                        <p>postalCode</p>
+                    </td>
+                    <td>
+                        <p>:</p>
+                    </td>
+                    <td>
+                        <p>2860</p>
+                    </td>
+                </tr>
+            </table>
 
-                    <table class="boxTable" id="box1_table_2">
-                        <tr>
-                            <td>
-                                <p>street</p>
-                            </td>
-                            <td>
-                                <p>:</p>
-                            </td>
-                            <td>
-                                <p>{{$adres->street}}</p>
-                            </td>
-                        </tr>
+            <table class="boxTable" id="box1_table_2">
+                <tr>
+                    <td>
+                        <p>street</p>
+                    </td>
+                    <td>
+                        <p>:</p>
+                    </td>
+                    <td>
+                        <p>Jan Pieter de Nayerlaan</p>
+                    </td>
+                </tr>
 
-                        <tr>
-                            <td>
-                                <p>number</p>
-                            </td>
-                            <td>
-                                <p>:</p>
-                            </td>
-                            <td>
-                                <p>{{$adres->number}}</p>
-                            </td>
-                        </tr>
+                <tr>
+                    <td>
+                        <p>number</p>
+                    </td>
+                    <td>
+                        <p>:</p>
+                    </td>
+                    <td>
+                        <p>5</p>
+                    </td>
+                </tr>
 
-                        <!-- Bus moet nog in de in de database kunnen geplaatst worden -->
-                        <tr>
-                            <td>
-                                <p>bus</p>
-                            </td>
-                            <td>
-                                <p>:</p>
-                            </td>
-                            <td>
-                                <p>{{$adres->box}}</p>
-                            </td>
-                        </tr>
-                    </table>
+                <!-- Bus moet nog in de in de database kunnen geplaatst worden -->
+                <tr>
+                    <td>
+                        <p>bus</p>
+                    </td>
+                    <td>
+                        <p>:</p>
+                    </td>
+                    <td>
+                        <p>A</p>
+                    </td>
+                </tr>
+            </table>
 
-                <p>Je kan mss een change Request doen. dat je het kan aan passen maar niet direct wordt aangepast. tot het is goed gekeurd is.</p>
-                <form>
-                    <input type="button" value="change" class="change">
-                </form>
-            </div>
-        @endforeach
+            <p>Je kan mss een change Request doen. dat je het kan aan passen maar niet direct wordt aangepast. tot het is goed gekeurd is.</p>
+            <form>
+                <input type="button" value="change" class="change">
+            </form>
+        </div>
+
     </div>
 </body>
 </html>

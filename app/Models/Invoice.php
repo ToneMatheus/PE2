@@ -15,8 +15,7 @@ class Invoice extends Model
         'total_amount',
         'status',
         'customer_contract_id',
-        'type',
-        'meter_id'
+        'type'
     ];
 
     public function invoice_lines(): HasMany
@@ -24,20 +23,10 @@ class Invoice extends Model
         return $this->hasMany(Invoice_line::class);
     } 
 
-    public function cron_job_run_logs(): HasMany
+    /*public function customer_contract(): BelongsTo
     {
-        return $this->hasMany(CronJobRunLog::class);
-    } 
-
-    public function customer_contract(): BelongsTo
-    {
-        return $this->belongsTo(Customer_contracts::class);
-    }
-
-    public function meter(): BelongsTo
-    {
-        return $this->belongsTo(Meter::class);
-    }
+        return $this->belongsTo(Customer_contract::class);
+    }*/
 
     use HasFactory;
 }

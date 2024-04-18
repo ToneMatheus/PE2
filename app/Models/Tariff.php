@@ -20,10 +20,10 @@ class Tariff extends Model
         return $this->hasMany(Product_tariff::class);
     }
 
-    /*public function contract_products(): HasMany
+    public function contract_products(): HasMany
     {
         return $this->hasMany(Contract_product::class);
-    }*/
+    }  
 
     use HasFactory;
 }

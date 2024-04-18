@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
@@ -9,28 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Event\Code\Test;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\ConfirmationMailRegistration;
-use League\CommonMark\Extension\Table\Table;
+use App\Http\Controllers\Hash;
+
 
 class CustomerController extends Controller
 {
     public function Manage(){
-        //LOOK verander dit als login gemaakt is.
-        $user = DB::table('users')->where('id', 39)->first();
-        // $adres = DB::table('addresses')->where('id', 18)->first();
-        $customerAdresses = DB::table('customer_addresses')->where('user_id', $user->id)->get();
-
-        $adresses = [];
-
-        foreach($customerAdresses as $cusadr){
-            $adresses[] = DB::table('addresses')->where('id', $cusadr->address_id)->first();
-        }
-        // return view('Customer.Manage', compact('user', 'adres'));
-        // return view('Customer.Manage', compact('user', 'customerAdresses', 'adres'));
-        return view('Customer.Manage', compact('user', 'adresses'));
+        return view('Customer.Manage');
     }
 
     public function emailValidationChangeUserInfo(Request $request)
@@ -101,18 +85,10 @@ class CustomerController extends Controller
 
     public function profileValidationCreateAccount(Request $request)
     {
-        //CH de database module gebruiken als validation.
-
-        //CHange database addres link tabel wordt aangepast.
-
-        //TODO: email verification
-        //REF:https://www.youtube.com/watch?v=KiHzbVsErNo
-        
     //     This is an own implemented service provider for swear words
     //     validation. By arandilopez from github
     //     https://github.com/arandilopez/laravel-profane
 
-    /* FIX: dat het addres moet kloppen.
     //     Get postal code en city name out of xml file 
         $xmlPathFlanders = storage_path('app/PostalCodes/FlandersPostalInfo20240301L72.xml');
         $xmlStringFlanders = File::get($xmlPathFlanders);
@@ -153,154 +129,105 @@ class CustomerController extends Controller
             $postalcodeWallonia = (string) $postalInfoWallonia->children('com', true)->code->objectIdentifier;
             $cityWallonia = (string)$postalInfoWallonia->children('com', true)->name->spelling;
             $validPostcodesWallonia[$postalcodeWallonia] = $cityWallonia;
-        }*/
-
-        $isCompany = $request->get('isCompany') ? 1 : 0;
-        $companyNameRules = $isCompany ? 'required' : '';
-
+        }
 
         $validator = Validator::make($request->all(), [
             'FirstName' => 'required',
             'LastName' => 'required',
-            'Email' => 'required | email', // | unique:users,email',
-            'Username' => 'required | profane', // | unique:users,username',
+            'Email' => 'required | email',
+            'Username' => 'required | profane',
             'Calling' => 'required',
-            'PhoneNummer' => 'required', //vragen of het required moet zijn.
+            'PhoneNummer' => 'nullable',
             'PaswdNew1' => 'required | min:8 | regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
             'PaswdNew2' => 'required | same:PaswdNew1',
-            'isCompany' => 'nullable',
-            'CompanyName' => $companyNameRules,
+            'isCompany' => 'nullable | boolean',
+            'CompanyName' => $request->get('isCompany') ? 'required' : '',
             'Street' => 'required',
-            'Number' => 'required | regex:/^\d+$/',
-            'Province' => 'required',
-            'Bus' => 'required', //vragen of het required moet zijn.
-            'PostalCode' => ['required', 'regex:/^(?:\d{4})$/i'],
-            'City' => ['required'],
-            'birthday' => 'required | date | before:-18 years | after:-150 years',
+            'Number' => 'required | regex:/^[0-9]$/',
+            'Region' => 'required',
+            'Bus' => 'nullable',
+            'PostalCode' => ['required', 'regex:/^(?:\d{4})$/i' , 
+                // function ($attribute, $value, $fail) use ($validPostcodesFlanders, $postcodeFlanders, $validPostcodesBrussels, $postcodeBrussels, $validPostcodesWallonia) {
+                    // if (!in_array($value, $validPostcodesFlanders) && !in_array($value, $validPostcodesBrussels) && !in_array($value, $validPostcodesWallonia))
+                    // {
+                    //     $fail($attribute.' is not a valid postal code.');
+                    // }
+                    // if ($value !== $validPostcodesFlanders[$postcodeFlanders] && $value !== $validPostcodesBrussels[$postcodeBrussels] 
+                    // && $value !== $validPostcodesWallonia)
+                    // {
+                    //     $fail($attribute.' and city do not match.');
+                    // }
+                    // },
+            ],
+            'City' => ['required' , 
+            // function($attribute, $value, $fail) use ($validPostcodesFlanders, $postcodeFlanders, $validPostcodesBrussels, $postcodeBrussels, $validPostcodesWallonia, ) {
+            //     if ($value !== $validPostcodesFlanders[$postcodeFlanders] && $value !== $validPostcodesBrussels[$postcodeBrussels] 
+            //     && $value !== $validPostcodesWallonia)
+            //     {
+            //         $fail($attribute.' and postal code do not match.');
+            //     }
+            // },
+            ],
             ], [
             'FirstName.required' => 'FirstName is required',
-
             'LastName.required' => 'LastName is required',
-
             'Email.required' => 'Email is required',
-            'Email.unique' => 'Email needs to be unique',
-
             'Username.required' => 'Username is required',
             'Username.profane' => 'can\'t use bad words as Username',
-            'Username.unique' => 'Username needs to be unique',
-
             'Calling.required' => 'Calling is required',
-
-            'PhoneNummer.required' => 'Phone nummer is required',
-
             'PaswdNew1.required' => 'PaswdNew1 is required',
             'PaswdNew1.min' => 'Password need to be at least 8 characters long',
             'PaswdNew1.regex' => 'Password need to have at least 1 uppercase letter, 1 lowercase letter and 1 number',
             'PaswdNew2.required' => 'PaswdNew2 is required',
-
-            'CompanyName.required' => 'CompanyName is required because \'For company\' is checked',
-
+            'isCompany.boolean' => '',
+            'CompanyName.required' => 'CompanyName is because \'For company\' is checked',
             'Street.required' => 'Street is required',
-
             'Number.required' => 'Number is required',
-            'Number.regex' =>'Number regex',
-
-            'Province.required' => 'Region is required',
-
-            'Bus.required' => 'Bus is required',
-
+            'Region.required' => 'Region is required',
             'PostalCode.required' => 'PostalCode is required',
-            'PostalCode.regex' =>'PostalCode regex',
-
             'City.required' => 'City is required',
-
-            'birthday.required' => 'Birthdate is required',
-            'birthday.before' => 'You need to be older. At least 18 years old'
             ]);
 
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-
+        
         // Als validatie slaagt, verwerk de gegevens
+        $Email = $request->input('Email');
         $Username = $request->input('Username');
+        $Paswd = $request->input('PaswdNew1');
+        
+        // Insert gebruiker en krijg de ID van de zojuist ingevoegde gebruiker
+        $userID = DB::table('user')->insertGetId(['email' => $Email, 'password' => $Paswd, 'username' => $Username]);
+       
+        
         $FirstName = $request->input('FirstName');
         $LastName = $request->input('LastName');
-        $Paswd = Hash::make($request->input('PaswdNew1'));
-        $Email = $request->input('Email');
-        $BD = $request->input('birthday');
-        $BD = Carbon::createFromFormat('Y-m-d', $BD);
-        $BD = $BD->format('Y-m-d');
-        $phoneNumber = $request->input('PhoneNummer');
-
-        // Insert gebruiker en krijg de ID van de zojuist ingevoegde gebruiker
-        // ? moeten we de calling ook niet opslaan (MS of MR)
-        $userID = DB::table('users')->insertGetId(['username' => $Username, 'first_name' => $FirstName, 'last_name' => $LastName, 'password' => $Paswd,
-            'is_company' => $isCompany, 'email' => $Email, 'birth_date' => $BD, 'phone_nbr' => $phoneNumber, 'is_activate' => 0]);
         
+        if ($request->has('isCompany')){
+            $isCompany = 0;
+        }else{
+            $isCompany = 1;
+        }
+        
+        // Insert klantgegevens met de gebruikers-ID
+        DB::table('customer')->insert(['FirstName' => $FirstName, 'userID' => $userID, 'LastName' => $LastName, 'isCompany' => $isCompany]);
         
         $CompanyName = $request->input('CompanyName');
-
+        $phoneNumber = $request->input('phoneNumber');
+        
         // Update klantgegevens met bedrijfsnaam en telefoonnummer als deze zijn ingevuld
         if ($CompanyName !=='' && $isCompany == 1){
-            DB::table('users')->where('id', $userID)->update(['company_name' => $CompanyName]);
+            DB::table('customer')->where('userID', $userID)->update(['companyName' => $CompanyName]);
         }
-
-
-// REVIEW: bus kan ook optioneel zijn.
-
-        $Street = $request->input('Street');
-        $Number = $request->input('Number');
-        $Province = $request->input('Province');
-        $Bus = $request->input('Bus');
-        $PostalCode = $request->input('PostalCode');
-        $City = $request->input('City');
-        $typeHouse = $request->input('typeHouse');
-
-        $addresID = DB::table('addresses')->select('id')->where('street', $Street)->where('number', $Number)->where('box', $Bus)->where('postal_code', $PostalCode)
-        ->where('city', $City)->where('province', $Province)->where('type', $typeHouse)->first();
-
-        if($addresID ==null){
-            $addresID = DB::table('addresses')->insertGetId(['street' => $Street, 'number' => $Number, 'box' => $Bus, 'postal_code' => $PostalCode,
-            'city' => $City, 'province' => $Province, 'type' => $typeHouse]);
+        
+        if ($phoneNumber !==''){
+            DB::table('customer')->where('userID', $userID)->update(['phoneNumber' => $phoneNumber]);
         }
-        else{
-            $addresID = $addresID->id;
-        }
-
-        //DB::table('users')->where('id', $userID)->update(['address_id' => $addresID]);
-
-
-// ?: Hoe worden de rollen bepaald. enkel manager kan account aan maken met aangepaste rol. anders altijd customer.
-// ?:hetzelfde voor is_billing_addres norm altijd 1. manager enkel op 0 zetten.
         
-//?: vragen of dit goed is. dat customer_addresses auto moet gevuld worden bij aanmaken.
-
-        $mytime = Carbon::now()->format('Y-m-d');
-
-        DB::table('customer_addresses')->insert(['user_id' => $userID, 'address_id' => $addresID, 'start_date' => $mytime]);
-
-        $roleID = $request->input('userRole');
-
+        return redirect()->back()->with('success', 'Account created');
         
-        DB::table('user_roles')->insert(['user_id' => $userID, 'role_id' => $roleID]);
-
-        // send confirmation mail
-        Mail::to($Email)->send(new ConfirmationMailRegistration($userID));
-
-        //doe dit hier onder vanaf op de knop uit de mail geduuwt werd 
-
-        // return redirect()->back()->with('success', 'Account created');
-        return redirect()->route('createUser')->with('wait', 'Confurm account in mail to go further');
-    }
-
-    public function activateAccount($userID)
-    {
-        DB::table('users')->where('id', $userID)->update(['is_activate' => 1]);
-        
-        // return view('createUser')->with('success', 'Account created');
-        return redirect()->route('createUser')->with('success', 'Account created');
 
     }
 }

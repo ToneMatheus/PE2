@@ -23,8 +23,4 @@ Practice Enterprise ICT 2
 <hr>
 
 **[SPRINT 2 FLOW](https://github.com/users/ToneMatheus/projects/2)**
-<br>
-<hr>
-
-**[SPRINT 3 FLOW](https://github.com/users/ToneMatheus/projects/3)**
 
