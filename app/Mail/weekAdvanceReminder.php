@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Attachment;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\QRCodeService;
 
 class weekAdvanceReminder extends Mailable
 {
@@ -24,7 +24,6 @@ class weekAdvanceReminder extends Mailable
 
     //temporary: make global variables?
     public $companyname = "energy supply business";
-    public $domain = "http://127.0.0.1:8000";
 
     public $pdfData;
 
@@ -49,18 +48,6 @@ class weekAdvanceReminder extends Mailable
     }
 
     /**
-     * Get the message content definition.
-     *
-     * @return \Illuminate\Mail\Mailables\Content
-     */
-    /*public function content()
-    {
-        return new Content(
-            view: 'mails\advance-reminder',
-        );
-    }*/
-
-    /**
      * Get the attachments for the message.
      *
      * @return array
@@ -72,7 +59,8 @@ class weekAdvanceReminder extends Mailable
 
     public function build()
     {
-        $pdfData = $this->generatePdf();
+        $QRCodeService = new QRCodeService();
+        $pdfData = $QRCodeService->PaymentQRCodePdf($this->invoice_info[0]->invoice_id);
 
         return $this->view('mails.advance-reminder')
                     ->with([
@@ -83,14 +71,5 @@ class weekAdvanceReminder extends Mailable
                     ->attachData($pdfData, 'QRcode.pdf', [
                         'mime' => 'application/pdf',
                     ]);
-    }
-
-    private function generatePdf()
-    {
-        $pdf = Pdf::loadView('Invoices.QRCode_pdf', [
-            'domain' => $this->domain,
-            'invoiceID' => $this->invoice_info[0]->invoice_id
-        ], [], 'utf-8');
-        return $pdf->output();
     }
 }

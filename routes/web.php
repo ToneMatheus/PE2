@@ -52,7 +52,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('dashboard');$invoicesQuery->whereYear('invoice_date', $selectedYear);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -116,9 +116,10 @@ Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'un
 //view invoice reminder mails for testing
 Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
 Route::get('/reminders', [InvoiceRemindersController::class, 'index'])->name("invoice_reminder");
+Route::get('/test-qr-monthly', [InvoiceRemindersController::class, 'monthly'])->name("qr-monthly");
 
 //invoice payment
-Route::get('/pay/{id}', [PaymentController::class, 'show'])->name("payment.show");
+Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
 Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 
 //QR code test
@@ -193,8 +194,8 @@ Route::get('/roles', function () {
     return view('roleOverview');
 });
 
-Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
-
+Route::get('/employee/invoices', [InvoiceController::class, 'showAllInvoices'])->name('invoices.show');;
+Route::post('/employee/invoices', [InvoiceController::class, 'rerunValidation'])->name('invoices.rerunValidation');;
 
 //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
 Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
@@ -277,9 +278,13 @@ Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'
 
 Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
 
+
+
 //test route
 Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList1');
 Route::post('/TestUserList', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('TestUserList');
+Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');
+
 
 //Customer Portal
 Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
