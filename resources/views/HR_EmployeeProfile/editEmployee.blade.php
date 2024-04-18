@@ -6,11 +6,24 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <link rel="stylesheet" href="{{ asset('css/editEmployee.css') }}"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-        <script></script>
+        <script>
+            function setMinEndDate() {
+                var startDateInput = document.getElementById('startDate');
+                var endDateInput = document.getElementById('endDate');
+
+                endDateInput.min = startDateInput.value;
+            }
+        </script>
     </head>
     <body>
         <h1>{{$employee->first_name}} {{$employee->last_name}} Profile</h1>
         <p>E_ID: {{$employee->employee_profile_id}}</p>
+
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        @endif
 
         <div class="accordion" id="accordionExample">
             <div class="accordion-item">
@@ -50,7 +63,7 @@
                                 <div class="col-3">
                                     <p>
                                         <label for="personEmail">Personal Email:</label>
-                                        <input type="email" id="personEmail" name="personalEmail" value="{{$employee->work_email}}" required/>
+                                        <input type="email" id="personEmail" name="personalEmail" value="{{$employee->personal_email}}" required/>
                                     </p>
                                     <p>
                                         <label for="workEmail">Work Email:</label>
@@ -152,11 +165,11 @@
                                     </p>
                                     <p>
                                         <label for="startDate">Start Date:</label>
-                                        <input type="date" id="startDate" name="startDate" min="<?php echo date('Y-m-d'); ?>" value="{{$employee->start_date}}" readonly/>
+                                        <input type="date" id="startDate" name="startDate" min="<?php echo date('Y-m-d'); ?>" value="{{$employee->start_date}}" onchange="setMinEndDate()" readonly/>
                                     </p>
                                     <p>
                                         <label for="endDate">End Date:</label>
-                                        <input type="date" id="endDate" name="endDate" value="{{$employee->end_date}}"/>
+                                        <input type="date" id="endDate" name="endDate" min="<?php echo date('Y-m-d'); ?>" value="{{$employee->end_date}}"/>
                                     </p>
                                 </div>
                                 

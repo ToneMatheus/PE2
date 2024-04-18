@@ -172,7 +172,7 @@
                         <input type="date" id="startDate" name="startDate" min="<?php echo date('Y-m-d'); ?>" value="{{ old('startDate') }}" required onchange="setMinEndDate()"/>                    </p>
                     <p>
                         <label for="endDate">End Date:</label>
-                        <input type="date" id="endDate" name="endDate" min="<?php echo date('Y-m-d'); ?>" value="{{ old('endDate') }}" required/>
+                        <input type="date" id="endDate" name="endDate" min="<?php echo date('Y-m-d'); ?>" value="{{ old('endDate') }}"/>
                     </p>
                 </div>
                 
