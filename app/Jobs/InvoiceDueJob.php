@@ -62,6 +62,7 @@ class InvoiceDueJob implements ShouldQueue
             {
                 $this->sendMail($unpaidInvoice);
             }
+            $this->jobCompletion("All mails were sent.");
         }
         else
         {

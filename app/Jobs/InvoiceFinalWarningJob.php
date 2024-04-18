@@ -54,6 +54,7 @@ class InvoiceFinalWarningJob implements ShouldQueue
             {
                 $this->sendMail($unpaidInvoice);
             }
+            $this->jobCompletion("All mails were sent.");
         }
         else
         {

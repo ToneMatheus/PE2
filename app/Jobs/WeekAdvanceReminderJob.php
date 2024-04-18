@@ -56,6 +56,7 @@ class WeekAdvanceReminderJob implements ShouldQueue
             {
                 $this->sendMail($unpaidInvoice);
             }
+            $this->jobCompletion("All mails were sent.");
         }
         else
         {
