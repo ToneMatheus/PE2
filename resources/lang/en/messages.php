@@ -21,6 +21,7 @@ return [
     'Address' => 'Address',
     'show_all_addresses' => 'Show all addresses',
     'Pay' => 'Pay',
+    'Contracts' => 'Contracts',
 
     
 ];

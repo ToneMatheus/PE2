@@ -1,52 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/css/contractOverview.css" rel="stylesheet" />
-    <title>Document</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-</head>
-
-<body>
-
-<div class="container">
-    <div class="row heading">
-        <div class="col_1">nr</div>
-        <div class="col_2">contract name</div>
-        <div class="col_3">description</div>
-        <div class="col_4">start date</div>
-        <div class="col_5">tarrif</div>
-        <div class="col_6">price</div>
-        <div class="col_7">type</div>
-        <div class="col_8">contract type</div>
-        <div class="col_9"></div>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('messages.Contracts') }}
+        </h2>
+    </x-slot> 
+<div class="container mx-auto px-4 sm:px-8 w-full p-10 flex-grow">
+    <div class="col-span-1 mt-5 border-2 border-gray-800 bg-gray-700 p-3 rounded text-white">
+        <table class="w-full mt-5 border-collapse bg-gray-700 text-white">
+            <thead>
+                <tr>
+                    <th class="p-2 bg-gray-800 text-left">Nr</th>
+                    <th class="p-2 bg-gray-800 text-left">Product Name</th>
+                    <th class="p-2 bg-gray-800 text-left">Description</th>
+                    <th class="p-2 bg-gray-800 text-left">Start Date</th>
+                    <th class="p-2 bg-gray-800 text-left">Tariff ID</th>
+                    <th class="p-2 bg-gray-800 text-left">Price</th>
+                    <th class="p-2 bg-gray-800 text-left">Product Type</th>
+                    <th class="p-2 bg-gray-800 text-left">Contract Type</th>
+                    <th class="p-2 bg-gray-800 text-left">Download</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($contracts as $contract)
+                <tr class="bg-gray-600">
+                    <td class="p-2">{{ $loop->index + 1 }}</td>
+                    <td class="p-2">{{ $contract->product->product_name}}</td>
+                    <td class="p-2">{{ $contract->product->description}}</td>
+                    <td class="p-2">{{ $contract->start_date }}</td>
+                    <td class="p-2">{{ $contract->tarrif_id }}</td>
+                    <td class="p-2">{{ $contract->customer_contract->price}}</td>
+                    <td class="p-2">{{ $contract->product->type}}</td>
+                    <td class="p-2">{{ $contract->customer_contract->type }}</td>
+                    <td class="p-2">
+                        <a href="/contract_overview/{{ $contract->id }}/download" class="border border-indigo-600 rounded px-2 py-1 text-indigo-600 hover:text-indigo-900">
+                            <i class="fa fa-download"></i> Download
+                        </a>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
-    
-    <!-- 
-    //contract => contract_products;
-     -->
-    @foreach($contracts as $contract)
-    <div class="row">
-        <!-- <div class="col_1">{{ $contract->id }}</div> -->
-        <div class="col_1">{{ $loop->index + 1 }}</div>
-        
-        <div class="col_2">{{ $contract->product->product_name}}</div>
-        <div class="col_3">{{ $contract->product->description}}</div>
-        
-        <div class="col_4">{{ $contract->start_date }}</div>
-        <div class="col_5">{{ $contract->tarrif_id }}</div>
-        <div class="col_6">{{ $contract->customer_contract->price}}</div>
-
-        <div class="col_7">{{ $contract->product->type}}</div>
-        
-        <div class="col_8">{{ $contract->customer_contract->type }}</div>
-        <!-- <div class="col_9"><button class="btn" style="width:100%"><i class="fa fa-download"></i> Download</button></div> -->
-        <div class="col_9"><a href="/contract_overview/{{ $contract->id }}/download"><button class="btn" style="width:100%"><i class="fa fa-download"></i> Download</button></a></div>
-    </div>
-    @endforeach
-
 </div>
-</body>
-</html>
+@include('chatbot.chatbot')
+</x-app-layout>
