@@ -1,12 +1,10 @@
 
-@extends('layouts/main_layout')
-
-@section('content')
-    <div class="flex flex-col items-center w-full min-h-screen bg-gray-700 text-white">
+<x-app-layout>
+    <div class="flex flex-col items-center w-full min-h-screen bg-gray-100 dark:bg-gray-900 text-white">
         <h1 class="text-2xl mt-5">{{ __('messages.Invoices') }}</h1>
         <div class="w-full p-10 flex-grow">
             <div class="grid grid-cols-3 gap-4">
-                <div class="col-span-1 mt-5 border-2 border-gray-800 bg-gray-600 p-3 rounded text-white">
+                <div class="col-span-1 mt-5 border-2 border-gray-800 bg-gray-700 p-3 rounded text-white">
                     @if ($sentInvoicesSum > 0)
                         <h2>{{ __('messages.Total Amount to be paid') }}: {{ $sentInvoicesSum }}</h2>
                     @else
@@ -15,7 +13,7 @@
                 </div>
                 <div class="col-span-1"></div>
                 <form method="GET" action="{{ route('customer.invoiceStatus') }}" class="col-span-1 mt-5 border-2 border-gray-800 bg-gray-600 p-3 rounded text-white">
-                    <select name="address" onchange="this.form.submit()" class="w-full bg-gray-600 text-white border border-gray-800 rounded py-2 px-4">
+                    <select name="address" onchange="this.form.submit()" class="w-full bg-gray-700 text-white border border-gray-800 rounded py-2 px-4">
                         <option value="">{{ __('messages.show_all_addresses') }}</option>
                         @foreach($addresses as $address)
                             <option value="{{ $address->address }}" {{ request('address') == $address->address ? 'selected' : '' }}>
@@ -117,4 +115,4 @@
             </nav>
         @endif
         @include('chatbot.chatbot')
-    @endsection
+</x-app-layout>
