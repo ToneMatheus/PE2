@@ -4,6 +4,8 @@ use Illuminate\Support\Arr;
 
 session_start();
 
+$user_id = auth()->id();
+
 $host = '127.0.0.1';
 $user = 'root';
 $password = '';
@@ -126,7 +128,7 @@ else if(isset($_POST['button']))
             }
             else
             {
-                $employee_profile_id = mysqli_real_escape_string($link, 1);
+                $employee_profile_id = mysqli_real_escape_string($link, $user_id);
                 $request_date = mysqli_real_escape_string($link, $todayRequest);
                 $start_date = mysqli_real_escape_string($link, $thsDay);
                 $end_date = mysqli_real_escape_string($link, $scdDay);
@@ -204,7 +206,7 @@ else if(isset($_POST['button']))
                                 }
                                 else
                                 {
-                                    $employee_profile_id = mysqli_real_escape_string($link, 1);
+                                    $employee_profile_id = mysqli_real_escape_string($link, $user_id);
                                     $request_date = mysqli_real_escape_string($link, $todayRequest);
                                     $start_date = mysqli_real_escape_string($link, $thsDay);
                                     $end_date = mysqli_real_escape_string($link, $scdDay);
@@ -256,7 +258,7 @@ else if(isset($_POST['button']))
                                 }
                                 else
                                 {
-                                    $employee_profile_id = mysqli_real_escape_string($link, 1);
+                                    $employee_profile_id = mysqli_real_escape_string($link, $user_id);
                                     $request_date = mysqli_real_escape_string($link, $todayRequest);
                                     $start_date = mysqli_real_escape_string($link, $thsDay);
                                     $end_date = mysqli_real_escape_string($link, $scdDay);
