@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use app\Models\Connection;
 
 class Meter extends Model
 {
@@ -56,8 +57,10 @@ class Meter extends Model
          return $this->hasMany(Meter::class);
      }
 
-     public function meterconsumption(): HasMany
+     public function gaselectricity(): HasMany
      {
         return $this->hasMany(MeterReading::class);
      }
+
+
 }

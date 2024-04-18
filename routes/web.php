@@ -107,7 +107,7 @@ Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_m
 
 
 //Meters Group
-Route::get('/dashboard', [MeterController::class, 'viewScheduledMeters']);
+Route::get('/meter_dashboard', [MeterController::class, 'viewScheduledMeters']);
 Route::get('/all_meters_dashboard', [MeterController::class, 'all_meters_index'])->name("viewAllMeters");
 Route::get('/all_meters_dashboard_search', [MeterController::class, 'search'])->name("search");
 Route::post('/assignment_change', [MeterController::class, 'assignment']);
@@ -134,13 +134,11 @@ Route::post('meters/add', [MeterController::class,'addMeters']);
 Route::get('/consumption', function () {
     return view('Meters/consumption');
 });
-
-
-Route::get('/Meter_History', [MeterController::class, 'GasElectricity'])->name('Meter_History');
-
-Route::get('/Consumption_Readings', [MeterController::class, 'showConsumptionReading'])->name('Consumption_Reading');
-
-Route::post('/index-values', [IndexValueController::class, 'store'])->name('index_values.store');
+//aryan
+Route::controller(MeterController::class)->group(function () {
+    Route::get('/Consumption_Dashboard', 'showConsumptionDashboard');
+    Route::post('/Meter_History', 'GasElectricity');
+});
 
 
 // Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');

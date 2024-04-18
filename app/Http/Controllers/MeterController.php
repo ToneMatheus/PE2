@@ -9,6 +9,7 @@ use App\Models\{
     Meter_Reader_Schedule,
     Customer_Address,
     Address,
+    Consumption,
     Meter_Addresses,
 };
 use App\Models\MeterReading;
@@ -18,6 +19,7 @@ use app\http\Controllers\CustomerController;
 use illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Http\Response;
+
 
 class MeterController extends Controller
 {
@@ -75,9 +77,9 @@ class MeterController extends Controller
 
     }
 
-    public function showConsumptionReading()
+    public function showConsumptionDashboard()
     {
-        return view('Meters/Consumption_Reading');
+        return view('Meters/Consumption_Dashboard');
     }
 
     public function viewScheduledMeters(Request $request) { // viewing meters for specific employee
@@ -92,7 +94,7 @@ class MeterController extends Controller
                     ->where('meter_reader_schedules.status','=','unread')
                     ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN')
                     ->get();
-                    
+
         $employeeName = DB::table('users')
                         ->where('users.employee_profile_id', '=', 1)
                         ->select('users.first_name')
@@ -171,7 +173,7 @@ class MeterController extends Controller
                         ->get();
 
             $data = $query->get();
-             
+
             $total_row = $data->count();
             if($total_row > 0){
                 $i = 1;
@@ -200,7 +202,7 @@ class MeterController extends Controller
                         else {
                             $output .= '';
                         }
-                        
+
                         $output.= '>'.$employee->first_name.'</option>';
                     }
 
@@ -305,7 +307,7 @@ class MeterController extends Controller
                 foreach($data as $row)
                 {
                     $output .= '<div class="searchResult';
-                    
+
                     if ($row->status == "read") {
                         $output .= ' readMeter">';
                     }
@@ -331,7 +333,7 @@ class MeterController extends Controller
                                     else {
                                         $output .= 'white;font-weight:bold;">'.ucfirst($row->status).'</span></p>';
                                     }
-                                
+
                         $output .= '
                                 </p>
                             </div>
@@ -375,11 +377,6 @@ class MeterController extends Controller
         return redirect('enter_index_employee');
     }
 
-    public function GasElectricty(){
-
-        DB::insert('INSERT INTO consumptions (consumptions_value, prev_index_id, current_index_id) Values (?,?,?)');
-    }
-
     public function customerId($customerId)
         {
             $customer = User::find($customerId);
@@ -406,5 +403,11 @@ class MeterController extends Controller
             // Redirect back with success message
             return redirect()->back()->with('success', 'Index value added successfully.');
         }
+
+        public function GasElectricity()
+        {
+            return view('Meters/Meter_History');
+        }
+
 
 }
