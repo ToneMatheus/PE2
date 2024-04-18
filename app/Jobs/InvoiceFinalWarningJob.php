@@ -13,12 +13,13 @@ use Illuminate\Support\Carbon;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use App\Traits\jobLoggerTrait;
 
 use App\Models\Invoice;
 
 class InvoiceFinalWarningJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, jobLoggerTrait;
     protected $now;
 
     public function __construct()
@@ -31,6 +32,7 @@ class InvoiceFinalWarningJob implements ShouldQueue
         //Query which invoices have not been paid yet and were due 1 week ago
         try
         {
+            $this->jobStart();
 
             $unpaidInvoices = Invoice::select('id')
                 ->whereNotIn('status', ['paid', 'pending'])
@@ -42,6 +44,7 @@ class InvoiceFinalWarningJob implements ShouldQueue
         catch(\Exception $e)
         {
             Log::error("Unable to execute query to find unpaid invoices: " . $e);
+            $this->jobException("Unable to execute query to find unpaid invoices: " . $e->getMessage());
         }
 
         //For each ID, send mail
@@ -55,6 +58,7 @@ class InvoiceFinalWarningJob implements ShouldQueue
         else
         {
             Log::info("No unpaid invoices found: no reminders were sent.");
+            $this->jobCompletion("No unpaid invoices found: no reminders were sent.");
         }
     }
 
@@ -79,11 +83,13 @@ class InvoiceFinalWarningJob implements ShouldQueue
         catch(\Exception $e)
         {
             Log::error("Unable to retrieve invoice information from invoice with ID ".$invoiceID.": " . $e);
+            $this->logCritical($invoiceID, "Unable to retrieve invoice information: " . $e->getMessage());
         }
 
         if (Mail::to('shaunypersy10@gmail.com')->send(new InvoiceFinalWarning($invoice_info, $total_amount, $user_info)) == null)
         {
             Log::error("Unable to send unpaid invoice final warning mail for invoice with ID ". $invoiceID);
+            $this->logWarning($invoiceID, "Unable to send unpaid invoice final warning mail");
         }
     }
 }
