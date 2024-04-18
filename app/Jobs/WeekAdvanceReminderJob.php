@@ -13,13 +13,14 @@ use Illuminate\Support\Carbon;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use App\Traits\jobLoggerTrait;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 use App\Models\Invoice;
 
 class WeekAdvanceReminderJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, jobLoggerTrait;
 
     protected $now;
 
@@ -33,6 +34,7 @@ class WeekAdvanceReminderJob implements ShouldQueue
         //Query which invoices have not been paid yet and are due in 1 week
         try 
         {
+            $this->jobStart();
 
             $unpaidInvoices = Invoice::select('id')
             ->whereNotIn('status', ['paid', 'pending'])
@@ -44,6 +46,7 @@ class WeekAdvanceReminderJob implements ShouldQueue
         catch(\Exception $e)
         {
             Log::error("Unable to execute query to find unpaid invoices: " . $e);
+            $this->jobException("Unable to execute query to find unpaid invoices: " . $e->getMessage());
         }
 
         //For each ID, send mail
@@ -57,6 +60,7 @@ class WeekAdvanceReminderJob implements ShouldQueue
         else
         {
             Log::info("No unpaid invoices found: no reminders were sent.");
+            $this->jobCompletion("No unpaid invoices found: no reminders were sent.");
         }
     }
 
@@ -81,11 +85,13 @@ class WeekAdvanceReminderJob implements ShouldQueue
         catch(\Exception $e)
         {
             Log::error("Unable to retrieve invoice information from invoice with ID ".$invoiceID.": " . $e);
+            $this->logCritical($invoiceID, "Unable to retrieve invoice information: " . $e->getMessage());
         }
 
         if (Mail::to('shaunypersy10@gmail.com')->send(new weekAdvanceReminder($invoice_info, $total_amount, $user_info)) == null)
         {
             Log::error("Unable to send advance invoice reminder mail for invoice with ID ". $invoiceID);
+            $this->logError($invoiceID, "Unable to send advance invoice reminder mail");
         }
     }
 }
