@@ -52,8 +52,8 @@ class InvoiceRunJob implements ShouldQueue
         $month = $this->month;
         $year = $this->year;
 
-        //dispatch(new WeekAdvanceReminderJob);
-        //dispatch(new InvoiceFinalWarningJob);
+        dispatch(new WeekAdvanceReminderJob);
+        dispatch(new InvoiceFinalWarningJob);
 
         //Select all customers
         $customers = User::join('Customer_contracts as cc', 'users.id', '=', 'cc.user_id')
@@ -62,7 +62,6 @@ class InvoiceRunJob implements ShouldQueue
         ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
         ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
         ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
-        ->where('users.id', '=', 3)
         ->get();
 
         //Check if monthly or annual
@@ -214,7 +213,7 @@ class InvoiceRunJob implements ShouldQueue
             if($extraAmount > 0){                   //Invoice
                 $invoiceData = [
                     'invoice_date' => $now->format('Y-m-d'),
-                    'due_date' => $now->addWeeks(2)->format('Y-m-d'),
+                    'due_date' => $now->endOfMonth()->format('Y-m-d'),
                     'total_amount' => $extraAmount,
                     'status' => 'sent',
                     'customer_contract_id' => $customer->ccID,
@@ -225,7 +224,7 @@ class InvoiceRunJob implements ShouldQueue
             } else{                              //Credit note
                 $invoiceData = [
                     'invoice_date' => $now->format('Y-m-d'),
-                    'due_date' => $now->addWeeks(2)->format('Y-m-d'),
+                    'due_date' => $now->endOfMonth()->format('Y-m-d'),
                     'total_amount' => $extraAmount,
                     'status' => 'paid',
                     'customer_contract_id' => $customer->ccID,

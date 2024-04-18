@@ -83,7 +83,7 @@ class WeekAdvanceReminderJob implements ShouldQueue
             Log::error("Unable to retrieve invoice information from invoice with ID ".$invoiceID.": " . $e);
         }
 
-        if (Mail::to('niki.de.visscher@gmail.com')->send(new weekAdvanceReminder($invoice_info, $total_amount, $user_info)) == null)
+        if (Mail::to('shaunypersy10@gmail.com')->send(new weekAdvanceReminder($invoice_info, $total_amount, $user_info)) == null)
         {
             Log::error("Unable to send advance invoice reminder mail for invoice with ID ". $invoiceID);
         }
