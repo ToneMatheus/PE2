@@ -1,7 +1,8 @@
 <?php
     session_start();
 
-    $user_id = auth()->id();
+    $user_id = auth()->user()->employee_profile_id;
+    //$user_userName = auth()->
     //echo $user_id;
 
     $host = '127.0.0.1';
@@ -13,7 +14,8 @@
     mysqli_select_db($link, $database) or die("Error: the database could not be opened");
 
     // check balance of the user.
-    $query = "SELECT * FROM `balances` WHERE `id` = $user_id";
+    // $queryGetEmpId = "SELECT `employee_profile_id` FROM `users` WHERE `` "
+    $query = "SELECT * FROM `balances` WHERE `employee_profile_id` = $user_id";
     $result = $link->query($query) or die("Error: an error has occurred while executing the query.");
    
     while ($row = mysqli_fetch_array($result))
@@ -22,14 +24,63 @@
         
     }
 
-    $query2 = "SELECT * FROM `balances` WHERE `id` = 3";
+    $query2 = "SELECT * FROM `holidays` WHERE `employee_profile_id` = $user_id AND `manager_approval` != 1";
     $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query.");
+
+    $query3 = "SELECT * FROM `holidays` WHERE `employee_profile_id` = $user_id AND `manager_approval` = 1";
+    $result3 = $link->query($query3) or die("Error: an error has occurred while executing the query.");
+
+    $reqDays = [];
+    $reqAcptDays = [];
 
     while ($row = mysqli_fetch_array($result2))
     {
         $strtDate = $row['start_date']; //end_date
         $ndDate = $row['end_date']; 
         
+        $monthReq = date('m', strtotime($strtDate));
+        $dayReq = date('d', strtotime($strtDate));
+
+        $e_monthReq = date('m', strtotime($ndDate));
+        $e_dayReq = date('d', strtotime($ndDate));
+
+        if(date('n') == $monthReq)
+        {
+            $reqDays[] = $dayReq;
+        }
+
+        if(date('n') == $e_monthReq)
+        {
+            if (!(in_array($e_dayReq, $reqDays))) 
+            {
+                $reqDays[] = $e_dayReq;
+            } 
+        }
+    }
+
+    while ($row = mysqli_fetch_array($result3))
+    {
+        $strtDate = $row['start_date']; //end_date
+        $ndDate = $row['end_date']; 
+        
+        $monthReq = date('m', strtotime($strtDate));
+        $dayReq = date('d', strtotime($strtDate));
+
+        $e_monthReq = date('m', strtotime($ndDate));
+        $e_dayReq = date('d', strtotime($ndDate));
+
+        if(date('n') == $monthReq)
+        {
+            $reqAcptDays[] = $dayReq;
+        }
+
+        if(date('n') == $e_monthReq)
+        {
+            if (!(in_array($e_dayReq, $reqDays))) 
+            {
+                $reqAcptDays[] = $e_dayReq;
+            } 
+        }
     }
 
     // SELECT * FROM `balances`
@@ -223,7 +274,17 @@
                 echo "<tr>";
                 for ($col = 1; $col <= 7; $col++) 
                 {
-                    if ($prevMonthDayCount <= $daysInPrevMonth) 
+                    if (in_array($dayCount, $reqAcptDays))
+                    {
+                        echo "<td class='req-Acpt-day'>$dayCount</td>";
+                        $dayCount++;
+                    }
+                    elseif (in_array($dayCount, $reqDays))
+                    {
+                        echo "<td class='req-day'>$dayCount</td>";
+                        $dayCount++;
+                    }
+                    else if ($prevMonthDayCount <= $daysInPrevMonth) 
                     {
                         // Fill in days from the previous month
                         echo "<td class='prev-month'>$prevMonthDayCount</td>";
@@ -340,7 +401,7 @@
     
             if (selected) 
             {
-                if(selected.classList.contains('prev-month'))
+                if(selected.classList.contains('prev-month') || selected.classList.contains('req-day') || selected.classList.contains('req-Acpt-day'))
                 {
 
                 }
