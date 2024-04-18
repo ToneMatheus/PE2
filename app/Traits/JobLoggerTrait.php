@@ -37,7 +37,7 @@ trait jobLoggerTrait
             'name' => class_basename($this),
             'started_at' => Carbon::now(), 
             'ended_at' => null, 
-            'status' => 'Started', 
+            'status' => 'Running', 
         ]);
 
         $this->JobRunId = $jobRun->id;
@@ -51,10 +51,10 @@ trait jobLoggerTrait
         $job->ended_at = now();
 
         if (empty($job->error_message)) {
-            $job->status = 'completed';
+            $job->status = 'Completed';
             $job->error_message = $message;
         } else {
-            $job->status = 'failed';
+            $job->status = 'Failed';
         }
 
         $job->save();
@@ -66,7 +66,7 @@ trait jobLoggerTrait
 
         $job = CronJobRun::find($this->JobRunId);
         $job->ended_at = now();
-        $job->status = 'failed';
+        $job->status = 'Failed';
         $job->error_message = $errorMessage;
 
         $job->save();

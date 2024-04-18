@@ -169,6 +169,10 @@ class CronJobController extends Controller
         $logLevel = request('LogLevel');
         $entries = request('entries');
 
+        $jobRun = CronJobRun::query()
+            ->where('id', $jobRunId)
+            ->first();
+
         $jobLogsQuery = CronJobRunLog::query()
             ->where('cron_job_run_id', $jobRunId);
         
@@ -183,7 +187,7 @@ class CronJobController extends Controller
         ->where('cron_job_run_id', $jobRunId)
         ->groupBy('log_level')
         ->get();
-        
-        return view('cronjobs/parts/logs', compact('jobLogs', 'logCounts'));
+
+        return view('cronjobs/parts/logs', compact('jobRun', 'jobLogs', 'logCounts'));
     }
 }

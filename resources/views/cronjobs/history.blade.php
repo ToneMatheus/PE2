@@ -66,7 +66,7 @@
             <div class="w-full sm:w-3/4 px-2">
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                     <div id="Logs" class="relative overflow-x-auto sm:rounded-lg">
-                        @include('cronjobs.parts.logs')
+                        @include('cronjobs.parts.logs', ['jobRun' => $jobRuns->reverse()->first()])
                     </div>
                 </div>
             </div>

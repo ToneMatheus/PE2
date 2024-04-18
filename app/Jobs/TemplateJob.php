@@ -44,7 +44,7 @@ class TemplateJob implements ShouldQueue
             
             for ($i = 0; $i < 1000; $i++) {
                 $message = $messages[array_rand($messages)];
-                $this->logInfo(rand(1, 1000), $message);
+                $this->logInfo(null, $message);
             }
 
             $this->jobCompletion("Succesfully completed this job");
