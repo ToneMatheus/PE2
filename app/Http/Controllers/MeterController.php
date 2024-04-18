@@ -370,7 +370,33 @@ class MeterController extends Controller
         $meter_id = $request->input('meter_id');
         $index_value = $request->input('index_value');
 
-        DB::insert('INSERT INTO index_values (reading_date, meter_id, reading_value) VALUES (?, ?, ?)', [$date, $meter_id, $index_value]);
+        $current_index_id = DB::table('index_values')->insertGetId(
+            ['reading_date' => $date, 'meter_id' => $meter_id, 'reading_value' => $index_value]
+        );
+
+        $prev_index = DB::table('index_values')
+        ->join('consumptions', 'consumptions.current_index_id', '=', 'index_values.id')
+        ->where('index_values.meter_id', '=', $meter_id)
+        ->select('index_values.id', 'index_values.reading_value', 'index_values.reading_date')
+        ->orderBy('consumptions.id', 'desc')
+        ->get()
+        ->first();
+
+        $prev_index_id = $prev_index->id;
+        $prev_index_value = $prev_index->reading_value;
+        $start_date = $prev_index->reading_date;
+
+        $consumption_value = $index_value - $prev_index_value;
+
+        DB::table('consumptions')->insert(
+            ['start_date' => $start_date,
+            'end_date' => $date,
+            'consumption_value' => $consumption_value,
+            'prev_index_id' => $prev_index_id,
+            'current_index_id' => $current_index_id]
+        );
+
+
         DB::table('meter_reader_schedules')
             ->where('meter_id', '=', $meter_id)
             ->update(['status' => 'read']);
