@@ -19,6 +19,7 @@ use App\Models\{
 };
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 
 class EmployeeController extends Controller
@@ -38,6 +39,69 @@ class EmployeeController extends Controller
     }
 
     public function processEmployee(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'firstName' => 'required',
+            'name' => 'required',
+            'title' => 'required',
+            'nationality' => 'required',
+            'personalEmail' => 'required|email',
+            'phoneNbr' => 'required',
+            'birthDate' => 'required|date',
+            'street' => 'required',
+            'number' => 'required|numeric',
+            'box' => 'required',
+            'city' => 'required',
+            'province' => 'required',
+            'postalCode' => 'required|numeric',
+            'contractType' => 'required',
+            'startDate' => 'required|date',
+            'endDate' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) use ($request) {
+                    $startDate = $request->input('startDate');
+                    if (!is_null($value) && $value <= $startDate) {
+                        $fail('The end date must be later than the start date.');
+                    }
+                }
+            ],
+            'salary' => 'required|numeric|min:1700',
+            'team' => 'required',
+            'role' => 'required',
+        ], [
+            'firstName.required' => 'The first name is required.',
+            'name.required' => 'The last name is required.',
+            'title.required' => 'The title is required.',
+            'nationality.required' => 'The nationality is required.',
+            'personalEmail.required' => 'The personal email is required.',
+            'personalEmail.email' => 'The personal email must be a valid email address.',
+            'phoneNbr.required' => 'The phone number is required.',
+            'birthDate.required' => 'The birth date is required.',
+            'birthDate.date' => 'The birth date must be a valid date.',
+            'street.required' => 'The street is required.',
+            'number.required' => 'The number is required.',
+            'number.numeric' => 'The number must be numeric.',
+            'box.required' => 'The box is required.',
+            'city.required' => 'The city is required.',
+            'province.required' => 'The province is required.',
+            'postalCode.required' => 'The postal code is required.',
+            'postalCode.numeric' => 'The postal code must be numeric.',
+            'contractType.required' => 'The contract type is required.',
+            'startDate.required' => 'The start date is required.',
+            'startDate.date' => 'The start date must be a valid date.',
+            'endDate.required' => 'The end date is required.',
+            'endDate.date' => 'The end date must be a valid date.',
+            'salary.required' => 'The salary is required.',
+            'salary.numeric' => 'The salary must be numeric.',
+            'salary.min' => 'The salary must be at least 1700.',
+            'team.required' => 'The team is required.',
+            'role.required' => 'The role is required.',
+        ]);
+
+        if($validator->fails()){
+            return redirect()->route('employees')->withErrors($validator)->withInput();
+        }
+
         //new Employee_profile
         $employee = Employee_profile::create([
             'hire_date' => $request->input('startDate'),
