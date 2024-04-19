@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Invoice_line extends Model
 {
+    protected $table = 'invoice_lines';
     protected $fillable = [
         'type',
         'unit_price',
@@ -15,6 +16,8 @@ class Invoice_line extends Model
         'consumption_id',
         'invoice_id'
     ];
+
+    public $timestamps = false;
 
     public function invoice(): BelongsTo
     {

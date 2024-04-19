@@ -16,18 +16,14 @@ class Employee_Profile extends Model
 
     public const VALIDATION_RULES = [
         'job',
-        'hire_date',
-        'department'
+        'hire_date'
     ];
 
     protected $fillable = [
         'id',
         'job',
         'hire_date',
-        'department',
-        'notes',
-        'nationality',
-        'sex'
+        'notes'
     ];
 
     protected $table = 'employee_profiles';
@@ -68,5 +64,10 @@ class Employee_Profile extends Model
     public function employee_contracts(): HasMany
     {
         return $this->hasMany(Employee_contract::class);
+    }
+
+    public function employee_tickets(): HasMany
+    {
+        return $this->hasMany(Employee_Ticket::class);
     }
 }

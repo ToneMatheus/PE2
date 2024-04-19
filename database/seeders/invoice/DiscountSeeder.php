@@ -15,8 +15,16 @@ class DiscountSeeder extends Seeder
             'range_min' => null,
             'range_max' => null,
             'rate' => 0.26,
+            'start_date' => '2025-02-01',
+            'end_date' => '2025-02-15',
+        ]);
+
+        DB::table('discounts')->insert([
+            'contract_product_id' => 1,
+            'range_min' => null,
+            'range_max' => null,
+            'rate' => 0.23,
             'start_date' => '2024-01-01',
-            'end_date' => '2024-02-01',
         ]);
     }
 }

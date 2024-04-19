@@ -11,49 +11,58 @@ class InvoiceSeeder extends Seeder
 {
     public function run(): void
     {
-        $count = 1;
+        $prices = [113.75, 455.4, 108.75, 99.8];
 
-        for($i = 1; $i <= 4; $i++){
-            $consumptions = DB::table('consumptions')
-            ->join('index_values as iv', 'consumptions.prev_index_id', '=', 'iv.id')
-            ->where('iv.meter_id', $i)
-            ->get();
-
+        for($i = 1; $i < 5; $i++){ //Annual
             $ccID = ($i == 4) ? 3 : $i;
-            $tariffQuery = DB::table('customer_contracts as cc')
-            ->join('contract_products as cp', 'cp.customer_contract_id', '=', 'cc.id')
-            ->join('products as p', 'p.id', '=', 'cp.product_id')
-            ->join('product_tariffs as pt', 'pt.product_id', '=', 'p.id')
-            ->join('tariffs as t', 't.id', '=', 'pt.tariff_id')
-            ->first();
+            DB::table('invoices')->insert([
+                'invoice_date' => '2024-01-15',
+                'due_date' => '2024-01-30',
+                'total_amount' => 30,
+                'status' => 'paid',
+                'customer_contract_id' => $ccID,
+                'meter_id' => $i,
+                'type' => 'Annual'
+            ]);
+        }
 
-            $tariff = $tariffQuery->rate;
+        for($i = 1; $i < 5; $i++){
+            for($month = 2; $month <= 12; $month++){
+                $invoiceDate = Carbon::createFromDate(2024, $month, 15);
+                $dueDate = $invoiceDate->copy()->endOfMonth();
 
-            foreach($consumptions as $consumption){
-                if($consumption->consumption_value <= 0){
-                    $estimation = DB::table('estimations')->where('meter_id', '=', $i)->first();
-
-                    $estimationTotal = $estimation->estimation_total;
-                    $totalAmount = ($estimationTotal * $tariff) + 10 + 10;
-                } else {
-                    $consumptionTotal = $consumption->consumption_value;
-                    $totalAmount = ($consumptionTotal * $tariff) + 10 + 10;
-                }
-
-                $endDate = Carbon::parse($consumption->end_date);
+                $ccID = ($i == 4) ? 3 : $i;
 
                 DB::table('invoices')->insert([
-                    'id' => $count,
-                    'invoice_date' => $consumption->end_date,
-                    'due_date' => $endDate->copy()->addDays(15),
-                    'total_amount' => $totalAmount,
+                    'invoice_date' => $invoiceDate->toDateString(),
+                    'due_date' => $dueDate->toDateString(),
+                    'total_amount' => $prices[$i-1],
                     'status' => 'paid',
                     'customer_contract_id' => $ccID,
+                    'meter_id' => $i,
                     'type' => 'Monthly'
                 ]);
-                
-                $count++;
             }
         }
+
+        DB::table('invoices')->insert([
+            'invoice_date' => '2025-01-08',
+            'due_date' => '2025-01-22',
+            'total_amount' => '200',
+            'status' => 'sent',
+            'customer_contract_id' => 5,
+            'meter_id' => 6,
+            'type' => 'Monthly'
+        ]);
+
+        DB::table('invoices')->insert([
+            'invoice_date' => '2024-12-18',
+            'due_date' => '2025-01-01',
+            'total_amount' => '300',
+            'status' => 'sent',
+            'customer_contract_id' => 6,
+            'meter_id' => 7,
+            'type' => 'Monthly'
+        ]);
     }
 }

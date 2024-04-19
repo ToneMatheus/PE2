@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Employee_contract extends Model
 {
+    protected $table = 'employee_contracts';
     protected $fillable = [
         'employee_profile_id',
         'start_date',

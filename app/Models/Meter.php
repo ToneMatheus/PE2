@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Meter extends Model
 {
     use HasFactory;
-    public $table = "meter";
+    public $table = "meters";
     const CREATED_AT = null;
     const UPDATED_AT = null;
 
@@ -49,5 +49,10 @@ class Meter extends Model
      public function meter_addresses(): HasMany
      {
          return $this->hasMany(Meter_Addresses::class);
+     } 
+
+     public function meters(): HasMany
+     {
+         return $this->hasMany(Meter::class);
      } 
 }
