@@ -12,7 +12,6 @@ use App\Models\{
     Consumption,
     Meter_Addresses,
 };
-use App\Models\MeterReading;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use app\http\Controllers\CustomerController;
@@ -394,6 +393,11 @@ class MeterController extends Controller
         $meter_id = $request->input('meter_id');
         $index_value = $request->input('index_value');
 
+        // $estimation = DB::table('estimations')
+        // ->where('estimations.meter_id', '=', $meter_id)
+        // ->select('estimations.estimation_total')
+        // ->get();
+
         $prev_index = DB::table('index_values')
         ->join('consumptions', 'consumptions.current_index_id', '=', 'index_values.id')
         ->where('index_values.meter_id', '=', $meter_id)
@@ -413,6 +417,10 @@ class MeterController extends Controller
         if ($index_value < $prev_index_value) {
             return redirect()->to('/enter_index_employee')->withErrors(['index_value_error'=>'Please enter an index number higher than previous value']);
         }
+
+        // if ($index_value > $estimation->estimation_total) {
+        //     return redirect()->to('/enter_index_employee')->withErrors(['index_value_error'=>'Suspiciously high value']);
+        // }
 
         $current_index_id = DB::table('index_values')->insertGetId(
             ['reading_date' => $date, 'meter_id' => $meter_id, 'reading_value' => $index_value]
