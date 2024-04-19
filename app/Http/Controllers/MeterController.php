@@ -245,6 +245,16 @@ class MeterController extends Controller
         return redirect('/all_meters_dashboard');
     }
 
+    public function bulk_assignment(Request $request) {
+        $previous_employee = $request->input('previous_employee');
+        $next_employee = $request->input('next_employee');
+
+        Meter_Reader_Schedule::where('meter_reader_schedules.employee_profile_id', $previous_employee)
+        ->update(['meter_reader_schedules.employee_profile_id' => $next_employee]);
+
+        return redirect('/all_meters_dashboard');
+    }
+
     public function enter_index_pageload() {
         return view('Meters/enterIndexEmployee');
     }

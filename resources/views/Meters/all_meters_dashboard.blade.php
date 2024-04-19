@@ -15,6 +15,42 @@
         <p class="companyName">Thomas More Energy Company</p>
     </nav>
     <h1>All meters</h1>
+    <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="employeeModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+                </div>
+                <form method="POST" action="/bulk_assignment_change">
+                <div class="modal-body">
+                    <div class="form-group mb-3">
+                        @csrf
+                        @method('POST')
+                        <p>Change assignment of 
+                            <select class="previous_employee" id="previous_employee" name="previous_employee">
+                                <option selected value="">Select</option>
+                                @foreach($employees as $employee)
+                                    <option value={{$employee->employee_id}}>{{ $employee->first_name }}</option>
+                                @endforeach
+                            </select>
+                             to 
+                             <select class="next_employee" id="next_employee" name="next_employee">
+                                <option selected value="">Select</option>
+                                @foreach($employees as $employee)
+                                    <option value={{$employee->employee_id}}>{{ $employee->first_name }}</option>
+                                @endforeach
+                            </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="enter">Save</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <form>
         <p>Search by:</p>
         <label for="searchBarName">First or last name:</label>
@@ -32,6 +68,7 @@
                 <option value={{$employee->first_name}}>{{ $employee->first_name }}</option>
             @endforeach
         </select>
+        <button type="button" class="modalOpener">Bulk assignment</button>
         {{-- <x-input-label for="searchBar" :value="__('Username')" />
         <x-text-input id="searchBar" class="block mt-1 w-full" type="text" name="searchBar" /> --}}
     </form>
@@ -76,8 +113,12 @@
 
                 console.log($queryAssigned);
                 fetch_customer_data($queryName, $queryCity, $queryStreet, $queryNumber, $queryAssigned);
-            });
-        });
+            })
+
+            $(document).on('click', '.modalOpener', function (e) {
+                $('#employeeModal').modal('show');
+            })
+        })
     </script>
 </body>
 </html>

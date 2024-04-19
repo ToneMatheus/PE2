@@ -116,6 +116,7 @@ Route::controller(MeterController::class)->group(function () {
     Route::get('/all_meters_dashboard', 'all_meters_index')->name("viewAllMeters");
     Route::get('/all_meters_dashboard_search', 'search')->name("search");
     Route::post('/assignment_change', 'assignment');
+    Route::post('/bulk_assignment_change', 'bulk_assignment');
 });
 
 //page for employees to enter index values
