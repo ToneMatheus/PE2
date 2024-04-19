@@ -382,10 +382,6 @@ class MeterController extends Controller
         $meter_id = $request->input('meter_id');
         $index_value = $request->input('index_value');
 
-        $current_index_id = DB::table('index_values')->insertGetId(
-            ['reading_date' => $date, 'meter_id' => $meter_id, 'reading_value' => $index_value]
-        );
-
         $prev_index = DB::table('index_values')
         ->join('consumptions', 'consumptions.current_index_id', '=', 'index_values.id')
         ->where('index_values.meter_id', '=', $meter_id)
@@ -405,6 +401,11 @@ class MeterController extends Controller
         if ($index_value < $prev_index_value) {
             return redirect()->to('/enter_index_employee')->withErrors(['index_value_error'=>'Please enter an index number higher than previous value']);
         }
+
+        $current_index_id = DB::table('index_values')->insertGetId(
+            ['reading_date' => $date, 'meter_id' => $meter_id, 'reading_value' => $index_value]
+        );
+
         $consumption_value = $index_value - $prev_index_value;
 
         DB::table('consumptions')->insert(
@@ -420,6 +421,92 @@ class MeterController extends Controller
             ->where('meter_id', '=', $meter_id)
             ->update(['status' => 'read']);
         return redirect('enter_index_employee');
+    }
+
+    public function GasElectricity()
+    {
+        $query =  DB::table('users')
+        ->join('customer_addresses','users.id','=','customer_addresses.user_id')
+        ->join('addresses','customer_addresses.id','=','addresses.id')
+        ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
+        ->join('meters','meter_addresses.meter_id','=','meters.id')
+        ->where('users.id', '=', '5')
+        ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id')
+        ->get();
+
+        return view('Meters/Meter_History', ['details' => $query]);
+    }
+
+    public function fetchIndex($meterID) {
+        $prev_index = DB::table('index_values')
+            ->join('consumptions', 'consumptions.current_index_id', '=', 'index_values.id')
+            ->where('index_values.meter_id', '=', $meterID)
+            ->select('index_values.id', 'index_values.reading_value', 'index_values.reading_date')
+            ->orderBy('consumptions.id', 'desc')
+            ->get()
+            ->first();
+
+        $meter = Meter::find($meterID);
+
+        if($prev_index) {
+            return response()->json([
+                'status'=>200,
+                'prev_index'=> $prev_index,
+                'meter'=>$meter
+            ]);
+        }
+    }
+
+    public function submitIndexCustomer(Request $request) {
+        $errors = new MessageBag();
+        $request->validate([
+            'meter_id' => 'required',
+            'index_value' => 'required|integer'
+        ],
+        [
+            'meter_id.required' => 'Meter ID inclusion failed for unknown reasons.',
+            'index_value.required' => 'Please enter an index value!',
+            'index_value.integer' => 'You have to type in a number for the index value.'
+        ]);
+
+        $date = Carbon::now()->toDateString();
+        $meter_id = $request->input('meter_id');
+        $index_value = $request->input('index_value');
+
+        $prev_index = DB::table('index_values')
+        ->join('consumptions', 'consumptions.current_index_id', '=', 'index_values.id')
+        ->where('index_values.meter_id', '=', $meter_id)
+        ->select('index_values.id', 'index_values.reading_value', 'index_values.reading_date')
+        ->orderBy('consumptions.id', 'desc')
+        ->get()
+        ->first();
+
+        if ($prev_index == null) {
+            return redirect()->to('/Meter_History')->withErrors(['index_value_null'=>'No previous index value found - fatal error']);
+        }
+        
+        $prev_index_id = $prev_index->id;
+        $prev_index_value = $prev_index->reading_value;
+        $start_date = $prev_index->reading_date;
+
+        if ($index_value < $prev_index_value) {
+            return redirect()->to('/Meter_History')->withErrors(['index_value_error'=>'Please enter an index number higher than previous value']);
+        }
+
+        $current_index_id = DB::table('index_values')->insertGetId(
+            ['reading_date' => $date, 'meter_id' => $meter_id, 'reading_value' => $index_value]
+        );
+
+        $consumption_value = $index_value - $prev_index_value;
+
+        DB::table('consumptions')->insert(
+            ['start_date' => $start_date,
+            'end_date' => $date,
+            'consumption_value' => $consumption_value,
+            'prev_index_id' => $prev_index_id,
+            'current_index_id' => $current_index_id]
+        );
+        return redirect('Meter_History');
     }
 
     public function customerId($customerId)
@@ -448,11 +535,4 @@ class MeterController extends Controller
             // Redirect back with success message
             return redirect()->back()->with('success', 'Index value added successfully.');
         }
-
-        public function GasElectricity()
-        {
-            return view('Meters/Meter_History');
-        }
-
-
 }

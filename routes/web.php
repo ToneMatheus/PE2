@@ -124,6 +124,8 @@ Route::controller(MeterController::class)->group(function () {
     Route::get('/enter_index_employee_search', 'searchIndex')->name("searchIndex");
     Route::get('/fetchEAN/{meterID}', 'fetchEAN');
     Route::post('/index_value_entered','submitIndex')->name("submitIndex");
+    Route::post('/index_value_entered_customer','submitIndexCustomer')->name("submitIndexCustomer");
+    Route::get('/fetchIndex/{meterID}', 'fetchIndex');
 });
 
 Route::get('meters', [MeterController::class,'showMeters']);
