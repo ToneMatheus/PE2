@@ -105,12 +105,12 @@ trait cronJobTrait
         $this->__Log(4, $invoiceId, $message);
     }
 
-    public function sendMailInBackground($mailTo, $mailableClass, $mailableClassParams){
+    public function sendMailInBackground($mailTo, $mailableClass, $mailableClassParams, $invoiceID = null){
         if (env('APP_DEBUG')) {
             // Debug mode is enabled so use debugging mail instead of provided mail
             $mailTo = env("MAIL_DEBUG");
         }
-        _SendMailJob::dispatch($mailTo, $mailableClass, $mailableClassParams , $this->JobRunId);
+        _SendMailJob::dispatch($mailTo, $mailableClass, $mailableClassParams , $this->JobRunId, $invoiceID);
     }
 
 }

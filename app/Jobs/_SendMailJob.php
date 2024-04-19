@@ -19,22 +19,23 @@ class _SendMailJob implements ShouldQueue
     protected $mailTo;
     protected $mailableClass;
     protected $mailableClassParams;
+    protected $invoiceID;
 
-    public function __construct($mailTo, $mailableClass, $mailableClassParams, $jobRunID){
+    public function __construct($mailTo, $mailableClass, $mailableClassParams, $jobRunID, $invoiceID){
         $this->mailTo = $mailTo;
         $this->mailableClass = $mailableClass;
         $this->mailableClassParams = $mailableClassParams;
         $this->JobRunId = $jobRunID;
+        $this->invoiceID = $invoiceID;
     }
 
     public function handle(){
-        $invoiceID = null;
         if (Mail::to($this->mailTo)->send(new $this->mailableClass(...$this->mailableClassParams)) == null){
-            Log::error("Unable to send mail for invoice with ID: ". $invoiceID);
-            $this->logError($invoiceID, "Unable to send mail");
+            Log::error("Unable to send mail for invoice with ID: ". $this->invoiceID);
+            $this->logError($this->invoiceID, "Unable to send mail");
         }
         else{
-            $this->logInfo($invoiceID , "Succesfully sent mail.");
+            $this->logInfo($this->invoiceID , "Succesfully sent mail.");
         } 
     }
 }

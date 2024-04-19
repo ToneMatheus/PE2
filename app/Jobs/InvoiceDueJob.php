@@ -95,13 +95,6 @@ class InvoiceDueJob implements ShouldQueue
             $this->logCritical($invoiceID, "Unable to retrieve invoice information: " . $e);
         }
 
-        if (Mail::to('niki.de.visscher@gmail.com')->send(new InvoiceDue($invoice_info, $total_amount, $user_info)) == null)
-        {
-            Log::error("Unable to send invoice due mail for invoice with ID ". $invoiceID);
-            $this->logWarning($invoiceID , "Unable to send invoice due mail");
-        }
-        else{
-            $this->logInfo($invoiceID , "Succesfully sent mail.");
-        }
+        $this->sendMailInBackground("ToCustomer@mail.com", InvoiceDue::class, [$invoice_info, $total_amount, $user_info], $invoiceID);
     }
 }

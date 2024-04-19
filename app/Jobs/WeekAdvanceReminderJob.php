@@ -83,6 +83,8 @@ class WeekAdvanceReminderJob implements ShouldQueue
                 ->leftJoin('users', 'customer_contracts.user_id', '=', 'users.id')
                 ->where('invoices.id', $invoiceID)
                 ->first();
+            
+            $this->sendMailInBackground($user_info->email, weekAdvanceReminder::class, [$invoice_info, $total_amount, $user_info], $invoiceID);
         }
         catch(\Exception $e)
         {
@@ -90,6 +92,5 @@ class WeekAdvanceReminderJob implements ShouldQueue
             $this->logCritical($invoiceID, "Unable to retrieve invoice information: " . $e->getMessage());
         }
 
-        $this->sendMailInBackground('tocustomer@mail.com', weekAdvanceReminder::class, [$invoice_info, $total_amount, $user_info]);
     }
 }

@@ -27,12 +27,13 @@ use App\Mail\AnnualInvoiceMail;
 use App\Mail\MonthlyInvoiceMail;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Traits\cronJobTrait;
 
 use App\Services\InvoiceFineService;
 
 class InvoiceRunJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 
     protected $domain = "http://127.0.0.1:8000"; //change later
     protected $now;
@@ -48,6 +49,8 @@ class InvoiceRunJob implements ShouldQueue
 
     public function handle()
     {
+        $this->jobStart();
+
         $now = $this->now->copy();
         $month = $this->month;
         $year = $this->year;
@@ -131,7 +134,7 @@ class InvoiceRunJob implements ShouldQueue
                 }
             } 
         }
-
+        $this->jobCompletion("Completed invoice run job");
     }
 
     public function generateYearlyInvoice($customer, $lastInvoiceDate, $nextInvoiceDate){
@@ -315,9 +318,7 @@ class InvoiceRunJob implements ShouldQueue
         Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
         //Send email with PDF attachment
-        Mail::to('shaunypersy10@gmail.com')->send(new AnnualInvoiceMail(
-            $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices
-        ));
+        $this->sendMailInBackground("ToCustomer@mail.com", AnnualInvoiceMail::class, [$invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices], $invoice->id);
 
     }
 
@@ -544,9 +545,7 @@ class InvoiceRunJob implements ShouldQueue
         Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
         //Send email with PDF attachment
-        Mail::to('shaunypersy10@gmail.com')->send(new MonthlyInvoiceMail(
-            $invoice, $user, $pdfData, $newInvoiceLines
-        ));
+        $this->sendMailInBackground("ToCustomer@mail.com", MonthlyInvoiceMail::class, [$invoice, $user, $pdfData, $newInvoiceLines], $invoice->id);
 
     }
 }
