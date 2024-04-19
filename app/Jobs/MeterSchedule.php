@@ -3,14 +3,13 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class RegularJob implements ShouldQueue
+class MeterSchedule implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -31,6 +30,6 @@ class RegularJob implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('regular job executed successfully!');
+        //
     }
 }

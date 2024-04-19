@@ -116,6 +116,7 @@ Route::controller(MeterController::class)->group(function () {
     Route::get('/all_meters_dashboard', 'all_meters_index')->name("viewAllMeters");
     Route::get('/all_meters_dashboard_search', 'search')->name("search");
     Route::post('/assignment_change', 'assignment');
+    Route::post('/bulk_assignment_change', 'bulk_assignment');
 });
 
 //page for employees to enter index values
@@ -124,6 +125,12 @@ Route::controller(MeterController::class)->group(function () {
     Route::get('/enter_index_employee_search', 'searchIndex')->name("searchIndex");
     Route::get('/fetchEAN/{meterID}', 'fetchEAN');
     Route::post('/index_value_entered','submitIndex')->name("submitIndex");
+    Route::get('/fetchIndex/{meterID}', 'fetchIndex');
+    Route::post('/index_value_entered_customer','submitIndexCustomer')->name("submitIndexCustomer");
+});
+
+Route::get('/meter_group_dashboard', function() {
+    return view('Meters/MeterGroupDashboard');
 });
 
 Route::get('meters', [MeterController::class,'showMeters']);
