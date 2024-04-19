@@ -10,6 +10,12 @@
         </p>
     </header>
 
+    @if (session('verify_email_message'))
+        <div class="alert alert-info" style="color: red;">
+            {{ session('verify_email_message') }}
+        </div>
+    @endif          
+
     <form id="send-verification" method="post" action="{{ route('verification.send') }}">
         @csrf
     </form>
@@ -34,17 +40,15 @@
         </div>
 
         <div>
-            <x-input-label for="Calling" :value="__('Calling')" />
-                <!-- CH pas de colom van de database aan voor de calling -->
-            <lable for='Mr'>Mr</label>
-            <input type="radio" name="Calling" id="mr" value="Mr" @if($user->calling == 'Mr') checked @elseif($user->calling != 'Ms' && $user->calling != 'X') checked @endif>
-            <lable for='Ms'>Ms</label>
-            <input type="radio" name="Calling" id="Ms" value="Ms" @if($user->calling == 'Ms') checked @endif>
-            <lable for='X'>X</label>
-            <input type="radio" name="Calling" id="X" value="X" @if($user->calling == 'X') checked @endif>
-            <x-input-error class="mt-2" :messages="$errors->get('Calling')" />
+            <x-input-label for="title" :value="__('Title')" />
+            <label for='Mr'>Mr</label>
+            <input type="radio" name="title" id="mr" value="Mr" @if($user->title == 'Mr') checked @endif>
+            <label for='Ms'>Ms</label>
+            <input type="radio" name="title" id="Ms" value="Ms" @if($user->title == 'Ms') checked @endif>
+            <label for='X'>X</label>
+            <input type="radio" name="title" id="X" value="X" @if($user->title == 'X') checked @endif>
+            <x-input-error class="mt-2" :messages="$errors->get('title')" />
         </div>
-
 
 
         <div>

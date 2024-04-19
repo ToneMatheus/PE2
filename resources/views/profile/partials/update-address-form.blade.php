@@ -1,11 +1,13 @@
 <!-- LOOK iManage page her zetten gedeelte van de addressen -->
 
 <!-- CH enkel billing address aan passen. en niet alles.-->
+<!-- CH adres niet kunnen aanpassen -->
 <section>
+    @php
+        $aantal = 0;
+    @endphp
+
     @foreach ($addresses as $key => $address)
-    {{--@if($key == 1)
-    @php dd($key > 0 ? 'mt-4' : ''); @endphp
-    @endif--}}
     <div class="{{ $key > 0 ? 'mt-20' : '' }}">
         <header>
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -28,81 +30,61 @@
             @method('patch')
 
             <div>
-                <x-input-label for="street$key" :value="__('Street')" />
-                <x-text-input id="street$key" name="street$key" type="text" class="block w-full mt-1" :value="old('street', $address->street)"
-                    required autofocus autocomplete="street" />
-                <x-input-error class="mt-2" :messages="$errors->get('street')" />
+                <x-input-label for="street{{$key}}" :value="__('Street')" />
+                <p>{{ $address->street }}</p>
             </div>
+
 
             <div>
                 <x-input-label for="number" :value="__('Number')" />
-                <x-text-input id="number" name="number" type="text" class="block w-full mt-1" :value="old('number', $address->number)"
-                    required autofocus autocomplete="number" />
-                <x-input-error class="mt-2" :messages="$errors->get('number')" />
+                <p>{{ $address->number }}</p>
             </div>
 
             <div>
                 <x-input-label for="type" :value="__('Type')" />
-                <lable for='house'>House</label>
-                <input type="radio" name="type" id="house" value="house" @if($address->type == 'house') checked @elseif($address->type != 'appartment' && $address->type != 'business') checked @endif>
-                <lable for='appartment'>Appartment</label>
-                <input type="radio" name="type" id="appartment" value="appartment" @if($address->type == 'appartment') checked @endif>
-                <lable for='business'>Business</label>
-                <input type="radio" name="type" id="business" value="business" @if($address->type == 'business') checked @endif>
-                <x-input-error class="mt-2" :messages="$errors->get('type')" />
+                <p>{{ $address->type }}</p>
             </div>
 
 
 
             <div>
                 <x-input-label for="box" :value="__('Box')" />
-                <x-text-input id="box" name="box" type="text" class="block w-full mt-1" :value="old('box', $address->box)"
-                    required autocomplete="box" />
-                <x-input-error class="mt-2" :messages="$errors->get('box')" />
+                <p>{{ $address->box }}</p>
             </div>
 
             <div>
                 <x-input-label for="postal_code" :value="__('Postal Code')" />
-                <x-text-input id="postal_code" name="postal_code" type="text" class="block w-full mt-1"
-                    :value="old('postal_code', $address->postal_code)" required autofocus autocomplete="postal_code" />
-                <x-input-error class="mt-2" :messages="$errors->get('postal_code')" />
+                <p>{{ $address->postal_code }}</p>
             </div>
 
             <div>
                 <x-input-label for="city" :value="__('City')" />
-                <x-text-input id="city" name="city" type="text" class="block w-full mt-1" :value="old('city', $address->city)"
-                    required autofocus autocomplete="city" />
-                <x-input-error class="mt-2" :messages="$errors->get('city')" />
+                <p>{{ $address->city }}</p>
             </div>
 
             <div>
                 <x-input-label for="province" :value="__('Province')" />
-                <x-text-input id="province" name="province" type="text" class="block w-full mt-1" :value="old('province', $address->province)"
-                    required autofocus autocomplete="province" />
-                <x-input-error class="mt-2" :messages="$errors->get('province')" />
+                <p>{{ $address->province }}</p>
             </div>
 
             <div>
                 <x-input-label for="country" :value="__('Country')" />
-                <x-text-input id="country" name="country" type="text" class="block w-full mt-1" :value="old('country', $address->country)"
-                    required autofocus autocomplete="country" />
-                <x-input-error class="mt-2" :messages="$errors->get('country')" />
+                <p>{{ $address->country }}</p>
             </div>
 
             <div>
                 <x-input-label for="is_billing_address" :value="__('Is billing address')" />
-                <input type="checkbox" id="is_billing_address" name="is_billing_address" value="1" @if($address->is_billing_address == 1) checked @endif>
-                <x-input-error class="mt-2" :messages="$errors->get('is_billing_address')" />
+                <input type="checkbox" id="is_billing_address" name="is_billing_address" disabled = true @if($address->is_billing_address == 1) checked @endif>
             </div>
         </div>
+
+        <input type="hidden" id="{{ $key }}" name="{{ $key }}" value="{{ $address->id }}">
+        @php
+            $aantal ++;
+        @endphp
+        
         @endforeach
 
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
-            @if (session('status') === 'address-updated')
-                <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600 dark:text-gray-400">{{ __('Saved.') }}</p>
-            @endif
-        </div>
+        <input type="hidden" id="Aantal" name="Aantal" value="{{ $aantal }}">
     </form>
 </section>

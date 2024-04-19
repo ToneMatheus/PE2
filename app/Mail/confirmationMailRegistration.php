@@ -22,12 +22,9 @@ class confirmationMailRegistration extends Mailable
      * @return void
      */
     //$name so I can check the mailaddress
-    // public function __construct(protected $id)
-    public function __construct(protected $user)
-    {
-        //
-        // dd($this->request);
-    }
+    public function __construct(protected $id, protected $email, protected $origin)
+    // public function __construct(protected $user)
+    { }
 
     /**
      * Get the message envelope.
@@ -38,12 +35,6 @@ class confirmationMailRegistration extends Mailable
     {
         return new Envelope(
             from: new Address('energysupplier@gmail.com', 'Energy Supplier'),
-            /* It is possible to allow a GLOBAL email to be used. This is useful if we only use 1 email to send out all emails. 
-            'from' => [
-                'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-                'name' => env('MAIL_FROM_NAME', 'Example'),
-            ],
-            */
             subject: 'Account Registration',
         );
     }
@@ -55,39 +46,15 @@ class confirmationMailRegistration extends Mailable
      */
     public function content()
     {
-        // session()->flash('email', $this->user->email);
-
-        // Session::put('id', $this->user->id);
-        // Session::put('username', $this->user->username);
-        // Session::put('first_name', $this->user->first_name);
-        // Session::put('last_name', $this->user->last_name);
-        // Session::put('password', $this->user->password);
-        // Session::put('employee_profile_id', $this->user->employee_profile_id);
-        // Session::put('is_company', $this->user->is_company);
-        // Session::put('company_name', $this->user->company_name);
-        // Session::put('email', $this->user->email);
-        // Session::put('phone_nbr', $this->user->phone_nbr);
-        // Session::put('birth_date', $this->user->birth_date);
-        // Session::put('is_activate', $this->user->is_activate);
-
-        Session::put('id', Crypt::encrypt($this->user->id));
-        Session::put('username', Crypt::encrypt($this->user->username));
-        Session::put('first_name', Crypt::encrypt($this->user->first_name));
-        Session::put('last_name', Crypt::encrypt($this->user->last_name));
-        Session::put('password', Crypt::encrypt($this->user->password));
-        Session::put('employee_profile_id', Crypt::encrypt($this->user->employee_profile_id));
-        Session::put('is_company', Crypt::encrypt($this->user->is_company));
-        Session::put('company_name', Crypt::encrypt($this->user->company_name));
-        Session::put('email', Crypt::encrypt($this->user->email));
-        Session::put('phone_nbr', Crypt::encrypt($this->user->phone_nbr));
-        Session::put('birth_date', Crypt::encrypt($this->user->birth_date));
-        Session::put('is_activate', Crypt::encrypt($this->user->is_activate));
-
-
-        $url = route('email-confirmation', ['token' => Crypt::encrypt($this->user->id),]);
-        // $url = route('activate.account', ['encryptedUserID' => $this->id]);
+        if ($this->origin == "register"){
+            $url = route('email-confirmation-registration', ['token' => $this->id, 'email' => $this->email]);
+            // dd("in if");
+            // dd($url);
+        }else{
+            $url = route('activate.account', ['encryptedUserID' => $this->id, 'email' => $this->email]);
+        }
         
-        
+        // dd($url);
 
         return new Content(
             view: 'mails.accoutnMailConfirmation',

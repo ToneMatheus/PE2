@@ -1,21 +1,28 @@
 <?php
+/* profile */
 
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\AddressUpdateRequest;
+
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ConfirmationMailRegistration;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Session;
+
+use Illuminate\View\View;
+
+use App\Mail\ConfirmationMailRegistration;
+
 use App\Models\User;
 use App\Models\Address;
 use App\Models\Customer_Address;
-use Illuminate\Support\Facades\Session;
+
 
 class ProfileController extends Controller
 {
@@ -32,7 +39,6 @@ class ProfileController extends Controller
 
         foreach($customerAddresses as $cusadr){
             $addresses[] = Address::where('id', $cusadr->address_id)->first();
-            // $addresses[] = DB::table('addresses')->where('id', $cusadr->address_id)->first();
         }
 
         return view('profile.edit', [
@@ -48,79 +54,50 @@ class ProfileController extends Controller
     public function updateProfile(ProfileUpdateRequest $request): RedirectResponse
     {
         $request->user()->fill($request->validated());
-
-        $user = $request->user();
-
-        //TEST test dit of dit werkt. want krijg nu deze error "Trying to access array offset on value of type null" maar denk dat het komt omdat de mailserver zijn max limiet bereikt heeft
-        // $user->saveWithoutEmail();
+        $user = $request->user(); 
 
         $email = $user->email;
         $user->email = $user->getOriginal('email');
         $user->save();
         $user->email = $email;
-        //TEST tot hier
-            if ($user->isDirty('email')) 
-            {
-                Mail::to($user->email)->send(new ConfirmationMailRegistration($user));
-    
-                return redirect()->back()->with('status', 'Please confirm your new email address by clicking the link sent to your email.');
-            }
+
+        //TODO start mail server ga naar C:\Users\HEYVA\Downloads\mailpit-windows-amd64 (1) en voer mailpit.exe uit
+        if ($request->user()->isDirty('email')) {
+            $request->user()->email_verified_at = null;
+
+            $id = Crypt::encrypt($user->id);
+            $emailEncrypt = Crypt::encrypt($user->email);
+            $to = Crypt::encrypt("profile");
+
+            Mail::to($user->email)->send(new ConfirmationMailRegistration($id, $emailEncrypt, $to));
+
+            return Redirect::route('profile.edit')->with('verify_email_message', 'Please verify your email address.');
+        }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
     
-    public function confirmEmail($token, Request $request)
+    public function confirmEmail($token, $email, Request $request)
     {
-        $id = Crypt::decrypt(Session::get('id'));
-        $username = Crypt::decrypt(Session::get('username'));
-        $first_name = Crypt::decrypt(Session::get('first_name'));
-        $last_name = Crypt::decrypt(Session::get('last_name'));
-        $password = Crypt::decrypt(Session::get('password'));
-        $employee_profile_id = Crypt::decrypt(Session::get('employee_profile_id'));
-        $is_company = Crypt::decrypt(Session::get('is_company'));
-        $company_name = Crypt::decrypt(Session::get('company_name'));
-        $email = Crypt::decrypt(Session::get('email'));
-        $phone_nbr = Crypt::decrypt(Session::get('phone_nbr'));
-        $birth_date = Crypt::decrypt(Session::get('birth_date'));
-        $is_activate = Crypt::decrypt(Session::get('is_activate'));
-
-        Session::forget('id');
-        Session::forget('username');
-        Session::forget('first_name');
-        Session::forget('last_name');
-        Session::forget('password');
-        Session::forget('employee_profile_id');
-        Session::forget('is_company');
-        Session::forget('company_name');
-        Session::forget('email');
-        Session::forget('phone_nbr');
-        Session::forget('birth_date');
-        Session::forget('is_activate');
+        $id = Crypt::decrypt($token);
+        $email = Crypt::decrypt($email);
 
         $user = User::find($id);
 
-        if ($user) {
-            $user->id = $id;
-            $user->username = $username;
-            $user->first_name = $first_name;
-            $user->last_name = $last_name;
-            $user->password = $password;
-            $user->employee_profile_id = $employee_profile_id;
-            $user->is_company = $is_company;
-            $user->company_name = $company_name;
-            $user->email = $email;
-            $user->phone_nbr = $phone_nbr;
-            $user->birth_date = $birth_date;
-            $user->is_activate = $is_activate;
+        $user->email_verified_at = now();
+        $user->updated_at = now();
+        $user->email = $email;
 
-            $user->save();
-        }
+        $user->save();
+
+        $request->session()->forget('verify_email_message');
 
     return redirect()->route('profile.edit')->with('status', 'Profile updated.');
 
     }
 
+    // ! van hier
     /**
      * Update the user address
      */
@@ -128,6 +105,32 @@ class ProfileController extends Controller
     {
         dd($request->Address());
 
+    }
+    // ! tot hier mag weg
+
+    /**
+     * Update the user billing address
+     */
+    public function updateBillingAddress(Request $request): RedirectResponse
+    {    
+        $billingAddress = $request->input('is_billing_address');
+        $billingAddressObject = json_decode($billingAddress);
+        $userId = Auth::id();
+        $customerAddressesId = Customer_Address::where('user_id', $userId)->pluck('address_id');
+
+        foreach ($customerAddressesId as $AddressId) {
+            $adres = Address::find($AddressId);
+            if($AddressId == $billingAddressObject->id)
+            {
+                $adres->is_billing_address = 1;
+            }else{
+                $adres->is_billing_address = 0;
+            }
+
+            $adres->save();
+        }
+
+        return redirect()->route('profile.edit')->with('status', 'billing address is updated.');
     }
 
     /**
