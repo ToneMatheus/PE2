@@ -33,6 +33,38 @@
     $reqDays = [];
     $reqAcptDays = [];
 
+
+    // SELECT * FROM `balances`
+
+    if(!isset($_SESSION['currentM']))
+    {
+        $_SESSION['currentM'] = date('n');
+        $t = $_SESSION['currentM'];
+    }
+    else
+    {
+        $t = $_SESSION['currentM'];
+    }
+
+    if(!isset($_SESSION['currentY']))
+    {
+        $_SESSION['currentY'] = date('Y');
+    }
+
+    if(!isset($_SESSION['idUser']))
+    {
+        $_SESSION['idUser'] = $user_id;
+    }
+    else if($user_id !=  $_SESSION['idUser'])
+    {
+        $_SESSION['idUser'] = $user_id;
+    }
+
+    if(!isset($_SESSION['startM']))
+    {
+        $_SESSION['startM'] = date('n');
+    }
+
     while ($row = mysqli_fetch_array($result2))
     {
         $strtDate = $row['start_date']; //end_date
@@ -44,12 +76,12 @@
         $e_monthReq = date('m', strtotime($ndDate));
         $e_dayReq = date('d', strtotime($ndDate));
 
-        if(date('n') == $monthReq)
+        if($t == $monthReq)
         {
             $reqDays[] = $dayReq;
         }
 
-        if(date('n') == $e_monthReq)
+        if($t == $e_monthReq)
         {
             if (!(in_array($e_dayReq, $reqDays))) 
             {
@@ -81,32 +113,6 @@
                 $reqAcptDays[] = $e_dayReq;
             } 
         }
-    }
-
-    // SELECT * FROM `balances`
-
-    if(!isset($_SESSION['currentM']))
-    {
-        $_SESSION['currentM'] = date('n');
-        $t = $_SESSION['currentM'];
-    }
-    else
-    {
-        $t = $_SESSION['currentM'];
-    }
-
-    if(!isset($_SESSION['currentY']))
-    {
-        $_SESSION['currentY'] = date('Y');
-    }
-
-    if(!isset($_SESSION['idUser']))
-    {
-        $_SESSION['idUser'] = $user_id;
-    }
-    else if($user_id !=  $_SESSION['idUser'])
-    {
-        $_SESSION['idUser'] = $user_id;
     }
 ?>
 
@@ -162,7 +168,8 @@
                 }
 
                 
-            
+                $reqAcptDays = [];
+                $reqDays = [];
              
                 
                 //$currentYear = $ted == 12 ? $currentYear1 + 1 : $currentYear1;
@@ -201,6 +208,68 @@
                 $t = $_SESSION['currentM'] - 1;
                 if($t == 0)
                     $t = 12;
+
+                if($_SESSION['startM'] == $_SESSION['currentM'])
+                {
+                    echo $_SESSION['startM'];
+                    echo "\n";
+                    echo $_SESSION['currentM'];
+                    while ($row = mysqli_fetch_array($result2))
+                    {
+                        $strtDate = $row['start_date']; //end_date
+                        $ndDate = $row['end_date']; 
+                        
+                        $monthReq = date('m', strtotime($strtDate));
+                        $dayReq = date('d', strtotime($strtDate));
+                
+                        $e_monthReq = date('m', strtotime($ndDate));
+                        $e_dayReq = date('d', strtotime($ndDate));
+                
+                        if($_SESSION['currentM'] == $monthReq)
+                        {
+                            $reqDays[] = $dayReq;
+                        }
+                
+                        if($_SESSION['currentM'] == $e_monthReq)
+                        {
+                            if (!(in_array($e_dayReq, $reqDays))) 
+                            {
+                                $reqDays[] = $e_dayReq;
+                            } 
+                        }
+                    }
+                
+                    while ($row = mysqli_fetch_array($result3))
+                    {
+                        $strtDate = $row['start_date']; //end_date
+                        $ndDate = $row['end_date']; 
+                        
+                        $monthReq = date('m', strtotime($strtDate));
+                        $dayReq = date('d', strtotime($strtDate));
+                
+                        $e_monthReq = date('m', strtotime($ndDate));
+                        $e_dayReq = date('d', strtotime($ndDate));
+                
+                        if($_SESSION['currentM'] == $monthReq)
+                        {
+                            $reqAcptDays[] = $dayReq;
+                        }
+                
+                        if($_SESSION['currentM'] == $e_monthReq)
+                        {
+                            if (!(in_array($e_dayReq, $reqDays))) 
+                            {
+                                $reqAcptDays[] = $e_dayReq;
+                            } 
+                        }
+                    }
+                }
+                else
+                {
+                    $reqAcptDays = [];
+                    $reqDays = [];
+                }
+               
                 
             }
             else
@@ -348,9 +417,12 @@
             <button id="cancel" name="cancel" onclick="cnlButton()">Cancel</button>
             <button id="button" name="button" onclick="btnClicked()">Submit</button>
         </div>
-        
-    </div>
 
+        <form action="{{route('dashboard')}}">
+            <button>dashboard</button>
+        </form>   
+    </div>
+ 
     <script>
         var visBool = false;
         let numGr = 0;
