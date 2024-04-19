@@ -24,10 +24,35 @@
         
     }
 
-    $query2 = "SELECT * FROM `holidays` WHERE `employee_profile_id` = $user_id AND `manager_approval` != 1";
+    if(!isset($_SESSION['currentM']))
+    {
+        $_SESSION['currentM'] = date('n');
+        $t = $_SESSION['currentM'];
+    }
+    if($_SESSION['currentM'] == date('n'))
+    {
+        $t = $_SESSION['currentM'] + 1;
+    }
+    else if (isset($_GET['Mf']))
+    {
+        $t = $_SESSION['currentM'] + 1;
+    }
+    else if (isset($_GET['Mb']))
+    {
+        $t = $_SESSION['currentM'] - 1;
+    }
+    else if(isset($_GET['cncel']))
+    {
+        $t = date('n');
+    }
+
+    
+    echo $t;
+
+    $query2 = "SELECT * FROM `holidays` WHERE `employee_profile_id` = $user_id AND `manager_approval` != 1 AND MONTH(`start_date`) = $t AND MONTH(`end_date`) = $t";
     $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query.");
 
-    $query3 = "SELECT * FROM `holidays` WHERE `employee_profile_id` = $user_id AND `manager_approval` = 1";
+    $query3 = "SELECT * FROM `holidays` WHERE `employee_profile_id` = $user_id AND `manager_approval` = 1 AND MONTH(`start_date`) = $t AND MONTH(`end_date`) = $t";
     $result3 = $link->query($query3) or die("Error: an error has occurred while executing the query.");
 
     $reqDays = [];
@@ -36,15 +61,7 @@
 
     // SELECT * FROM `balances`
 
-    if(!isset($_SESSION['currentM']))
-    {
-        $_SESSION['currentM'] = date('n');
-        $t = $_SESSION['currentM'];
-    }
-    else
-    {
-        $t = $_SESSION['currentM'];
-    }
+    
 
     if(!isset($_SESSION['currentY']))
     {
@@ -168,12 +185,12 @@
                 }
 
                 
-                $reqAcptDays = [];
-                $reqDays = [];
+               
              
                 
                 //$currentYear = $ted == 12 ? $currentYear1 + 1 : $currentYear1;
                 echo $_SESSION['currentM'];
+
                 //$t = $t == 12 ? $t = 0 : $t = $_SESSION['currentM'];
                 $t = $_SESSION['currentM'] + 1;
                 if($t == 13)
@@ -209,67 +226,6 @@
                 if($t == 0)
                     $t = 12;
 
-                if($_SESSION['startM'] == $_SESSION['currentM'])
-                {
-                    echo $_SESSION['startM'];
-                    echo "\n";
-                    echo $_SESSION['currentM'];
-                    while ($row = mysqli_fetch_array($result2))
-                    {
-                        $strtDate = $row['start_date']; //end_date
-                        $ndDate = $row['end_date']; 
-                        
-                        $monthReq = date('m', strtotime($strtDate));
-                        $dayReq = date('d', strtotime($strtDate));
-                
-                        $e_monthReq = date('m', strtotime($ndDate));
-                        $e_dayReq = date('d', strtotime($ndDate));
-                
-                        if($_SESSION['currentM'] == $monthReq)
-                        {
-                            $reqDays[] = $dayReq;
-                        }
-                
-                        if($_SESSION['currentM'] == $e_monthReq)
-                        {
-                            if (!(in_array($e_dayReq, $reqDays))) 
-                            {
-                                $reqDays[] = $e_dayReq;
-                            } 
-                        }
-                    }
-                
-                    while ($row = mysqli_fetch_array($result3))
-                    {
-                        $strtDate = $row['start_date']; //end_date
-                        $ndDate = $row['end_date']; 
-                        
-                        $monthReq = date('m', strtotime($strtDate));
-                        $dayReq = date('d', strtotime($strtDate));
-                
-                        $e_monthReq = date('m', strtotime($ndDate));
-                        $e_dayReq = date('d', strtotime($ndDate));
-                
-                        if($_SESSION['currentM'] == $monthReq)
-                        {
-                            $reqAcptDays[] = $dayReq;
-                        }
-                
-                        if($_SESSION['currentM'] == $e_monthReq)
-                        {
-                            if (!(in_array($e_dayReq, $reqDays))) 
-                            {
-                                $reqAcptDays[] = $e_dayReq;
-                            } 
-                        }
-                    }
-                }
-                else
-                {
-                    $reqAcptDays = [];
-                    $reqDays = [];
-                }
-               
                 
             }
             else
