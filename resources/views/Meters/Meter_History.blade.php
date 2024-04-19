@@ -59,6 +59,7 @@
                             @method('POST')
                             <p>Previous index value = <span id="prev"></span></p>
                             <input id="meter_id" name="meter_id" type="hidden">
+                            <input id="EAN" name="EAN" type="hidden">
                             <label for="index_value">Enter index value for meter <span id="modalEAN" class="modalEAN"></span></label>
                             <input id="index_value" name="index_value" type="text" required class="name form-control">
                         </div>
@@ -107,6 +108,7 @@
                         else {
                             $('#meter_id').val($meterID);
                             $('#prev').html(response.prev_index.reading_value);
+                            $('#EAN').val(response.meter.EAN);
                             $('#modalEAN').html(response.meter.EAN);
                         }
                     }

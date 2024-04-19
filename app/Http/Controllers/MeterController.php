@@ -20,6 +20,8 @@ use illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\MessageBag;
 use \Illuminate\Http\Response;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\IndexValueEnteredByCustomer;
 
 
 class MeterController extends Controller
@@ -461,6 +463,7 @@ class MeterController extends Controller
         $errors = new MessageBag();
         $request->validate([
             'meter_id' => 'required',
+            'EAN' => 'required',
             'index_value' => 'required|integer'
         ],
         [
@@ -471,6 +474,7 @@ class MeterController extends Controller
 
         $date = Carbon::now()->toDateString();
         $meter_id = $request->input('meter_id');
+        $EAN = $request->input('EAN');
         $index_value = $request->input('index_value');
 
         $prev_index = DB::table('index_values')
@@ -506,6 +510,8 @@ class MeterController extends Controller
             'prev_index_id' => $prev_index_id,
             'current_index_id' => $current_index_id]
         );
+
+        Mail::to('anu01872@gmail.com')->send(new IndexValueEnteredByCustomer($EAN, $index_value, $date, $consumption_value));
         return redirect('Meter_History');
     }
 
