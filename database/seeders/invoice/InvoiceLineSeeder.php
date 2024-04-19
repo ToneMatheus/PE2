@@ -39,7 +39,7 @@ class InvoiceLineSeeder extends Seeder
                 DB::table('invoice_lines')->insert([
                     'type' => 'Basic Service Fee',
                     'unit_price' => 10,
-                    'amount' => 10,
+                    'amount' => 1,
                     'consumption_id' => null,
                     'invoice_id' => $invoice->id,
                 ]);
@@ -47,7 +47,7 @@ class InvoiceLineSeeder extends Seeder
                 DB::table('invoice_lines')->insert([
                     'type' => 'Distribution Fee',
                     'unit_price' => 10,
-                    'amount' => 10,
+                    'amount' => 1,
                     'consumption_id' => null,
                     'invoice_id' => $invoice->id,
                 ]);
