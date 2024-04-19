@@ -38,6 +38,8 @@
                         </tr>
                     @endforeach
                 </table>
+                <a class="redirect" href="/enter_index_employee">
+                    <div>Go to index entry page</div></a>
             </div>
             <div class="mapContainer">
                 <iframe class="map" src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyByBdD-HWq4mvd5hh2A_4HsIV3kBpp2HiI
