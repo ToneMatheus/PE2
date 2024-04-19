@@ -12,14 +12,14 @@ use Illuminate\Queue\SerializesModels;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-use App\Traits\jobLoggerTrait;
+use App\Traits\cronJobTrait;
 use Carbon\Carbon;
 
 use App\Models\Invoice;
 
 class InvoiceDueJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, jobLoggerTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
     /**
      * Create a new job instance.
      *

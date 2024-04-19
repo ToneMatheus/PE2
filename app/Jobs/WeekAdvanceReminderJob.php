@@ -13,14 +13,15 @@ use Illuminate\Support\Carbon;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-use App\Traits\jobLoggerTrait;
+use App\Traits\cronJobTrait;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Jobs\SendMailJob;
 
 use App\Models\Invoice;
 
 class WeekAdvanceReminderJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, jobLoggerTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 
     protected $now;
 
@@ -89,13 +90,6 @@ class WeekAdvanceReminderJob implements ShouldQueue
             $this->logCritical($invoiceID, "Unable to retrieve invoice information: " . $e->getMessage());
         }
 
-        if (Mail::to('shaunypersy10@gmail.com')->send(new weekAdvanceReminder($invoice_info, $total_amount, $user_info)) == null)
-        {
-            Log::error("Unable to send advance invoice reminder mail for invoice with ID ". $invoiceID);
-            $this->logError($invoiceID, "Unable to send advance invoice reminder mail");
-        }
-        else{
-            $this->logInfo($invoiceID , "Succesfully sent mail.");
-        }
+        $this->sendMailInBackground('tocustomer@mail.com', weekAdvanceReminder::class, [$invoice_info, $total_amount, $user_info]);
     }
 }

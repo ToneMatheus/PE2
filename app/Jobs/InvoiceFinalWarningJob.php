@@ -13,13 +13,13 @@ use Illuminate\Support\Carbon;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-use App\Traits\jobLoggerTrait;
+use App\Traits\cronJobTrait;
 
 use App\Models\Invoice;
 
 class InvoiceFinalWarningJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, jobLoggerTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
     protected $now;
 
     public function __construct()

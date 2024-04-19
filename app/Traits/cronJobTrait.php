@@ -5,8 +5,9 @@ use Carbon\Carbon;
 use App\Models\CronJobRun;
 use App\Models\CronJobRunLog;
 use Illuminate\Support\Facades\Log;
+use App\Jobs\_SendMailJob;
 
-trait jobLoggerTrait
+trait cronJobTrait
 {
     private $JobRunId;
 
@@ -102,6 +103,14 @@ trait jobLoggerTrait
 
     public function logError($invoiceId, $message){
         $this->__Log(4, $invoiceId, $message);
+    }
+
+    public function sendMailInBackground($mailTo, $mailableClass, $mailableClassParams){
+        if (env('APP_DEBUG')) {
+            // Debug mode is enabled so use debugging mail instead of provided mail
+            $mailTo = env("MAIL_DEBUG");
+        }
+        _SendMailJob::dispatch($mailTo, $mailableClass, $mailableClassParams , $this->JobRunId);
     }
 
 }
