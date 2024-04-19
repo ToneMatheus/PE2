@@ -393,6 +393,10 @@ class MeterController extends Controller
         ->orderBy('consumptions.id', 'desc')
         ->get()
         ->first();
+
+        if ($prev_index == null) {
+            return redirect()->to('/enter_index_employee')->withErrors(['index_value_null'=>'No previous index value found - fatal error']);
+        }
         
         $prev_index_id = $prev_index->id;
         $prev_index_value = $prev_index->reading_value;
