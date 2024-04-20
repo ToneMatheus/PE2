@@ -33,10 +33,16 @@ trait cronJobTrait
         }
     }
 
+    private function __getShortClassName(){
+        $className = get_class($this);
+        $classNameParts = explode('\\', $className);
+        return end($classNameParts);
+    }
+
     private function jobStart(){
         // Log that the job execution has started
         try {
-            Log::info('Job: '.get_class($this).' execution started.');
+            Log::info('Job: '.$this->__getShortClassName().' execution started.');
     
             // Create new JobRun in the database
             $jobRun = CronJobRun::create([
@@ -55,7 +61,7 @@ trait cronJobTrait
     private function jobCompletion($message){
         // Log that the job execution has completed
         try {
-            Log::info('Job: '.get_class($this).' execution completed.');
+            Log::info('Job: '.$this->__getShortClassName().' execution completed.');
     
             $job = CronJobRun::find($this->JobRunId);
             $job->ended_at = now();
@@ -76,7 +82,7 @@ trait cronJobTrait
     private function jobException($errorMessage){
         // Log the crash that happened
         try {
-            Log::info('Job: '.get_class($this).' had an exception');
+            Log::info('Job: '.$this->__getShortClassName().' had an exception');
     
             $job = CronJobRun::find($this->JobRunId);
             $job->ended_at = now();
@@ -124,7 +130,7 @@ trait cronJobTrait
             return; // or throw an exception
         }
         
-        _SendMailJob::dispatch($mailTo, $mailableClass, serialize($mailableClassParams) , $this->JobRunId, $invoiceID);
+        _SendMailJob::dispatch($mailTo, $mailableClass, serialize($mailableClassParams), $this->JobRunId, $invoiceID);
     }
 
 }
