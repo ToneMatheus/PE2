@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Crypt;
 use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\EstimationController;
 use App\Http\Controllers\meterreading;
 use App\Models\MeterReading as ModelsMeterReading;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
@@ -57,7 +59,9 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update.profile');
+    Route::patch('/profile/address', [ProfileController::class, 'updateAddress'])->name('profile.update.address');
+    Route::patch('/profile/address/billing', [ProfileController::class, 'updateBillingAddress'])->name('profile.update.address.billing');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -131,7 +135,7 @@ Route::get('/code', function () {
 
 
 //Meters Group
-Route::get('/meters_dashboard', [MeterController::class, 'viewScheduledMeters']);
+Route::get('/meters_dashboard/meters', [MeterController::class, 'viewScheduledMeters']);
 Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters']);
 Route::put('/all_meters_dashboard', [MeterController::class, 'assignment'])->name("assignment_change");
 
@@ -252,7 +256,8 @@ Route::controller(InvoiceController::class)->group(function () {
 });
 
 // Set active user when email confirm
-Route::get('/activate-account/{userId}', [CustomerController::class, 'activateAccount'])->name('activate.account');
+Route::get('/confirm-email/{encryptedUserID}/{email}', [ProfileController::class, 'confirmEmail'])->name('activate.account');
+Route::get('/confirm-emailTEST/{token}/{email}', [RegisteredUserController::class, 'confirmEmail'])->name('email-confirmation-registration');
 
 
 
