@@ -52,9 +52,6 @@ class InvoiceRunJob implements ShouldQueue
         $month = $this->month;
         $year = $this->year;
 
-        dispatch(new WeekAdvanceReminderJob);
-        dispatch(new InvoiceFinalWarningJob);
-
         //Select all customers
         $customers = User::join('Customer_contracts as cc', 'users.id', '=', 'cc.user_id')
         ->join('Customer_addresses as ca', 'users.id', '=', 'ca.user_id')
@@ -63,6 +60,9 @@ class InvoiceRunJob implements ShouldQueue
         ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
         ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
         ->get();
+
+        dispatch(new WeekAdvanceReminderJob);
+        dispatch(new InvoiceFinalWarningJob);
 
         //Check if monthly or annual
         foreach($customers as $customer){
@@ -116,6 +116,12 @@ class InvoiceRunJob implements ShouldQueue
             } else { //Yearly
                 //New Customer
                 if($startContract->year == $year){
+
+                    //Reminder index values 1 week prior invoice run
+                    if($startContract->copy()->addYear()->addWeeks(2)->subWeek() == $now){
+                        dispatch(new MeterReadingReminderJob($customer));
+                    }
+
                     //Check if needs an invoice now
                     if($startContract->copy()->addYear()->addWeeks(2) == $now){
                         $this->generateYearlyInvoice($customer, $startContract->start_date, $startContract->copy()->addYear()->addWeeks(2));
@@ -123,6 +129,11 @@ class InvoiceRunJob implements ShouldQueue
 
                 } else { //old Customer
                     $lastInvoiceDate = Carbon::parse($lastYearlyInvoice->invoice_date);
+                    
+                    //Reminder index values 1 week prior invoice run
+                    if($lastInvoiceDate->copy()->addYear()->subWeek() == $now){
+                        dispatch(new MeterReadingReminderJob($customer));
+                    }
 
                     //Check if needs an invoice now
                     if($lastInvoiceDate->copy()->addYear() == $now){
