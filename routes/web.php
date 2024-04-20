@@ -70,7 +70,7 @@ require __DIR__.'/auth.php';
 
 Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
     //cronjobs
-    Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+    //Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
     Route::get('/cron-jobs/schedule/edit/{job}', [CronJobController::class, 'edit_schedule'])->name('edit-schedule-cron-job');
     Route::post('/cron-jobs/schedule/store{job}', [CronJobController::class, 'store_schedule'])->name('store-schedule-cron-job');
     Route::post('/cron-jobs/schedule/toggle{job}', [CronJobController::class, 'toggle_schedule'])->name('toggle-schedule-cron-job');
@@ -107,7 +107,7 @@ Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(
 });
 
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
-
+Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
 
 Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
 Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
@@ -252,21 +252,21 @@ Route::get('/faq', [FAQController::class, 'showFAQ'])->name('faq');
 
 Route::get('/customer/overview', [SimpleUserOverViewController::class, 'overview'])->name('overview');
 
-/*JOREN*/
-//routes for custmer data for customer
-Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
-Route::get('/user/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
+// /*JOREN*/
+// //routes for custmer data for customer
+// Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
+// Route::get('/user/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
 
-Route::post('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');})->name('ChangeUser');
-Route::get('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');});
+// Route::post('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');})->name('ChangeUser');
+// Route::get('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');});
 
-// Validation route's to change customer info by customer
-Route::post('/Customer/Manage/Change/User/post/email', [CustomerController::class, 'emailValidationChangeUserInfo']) ->name('postEmail');
-Route::post('/Customer/Manage/Change/User/post/profile', [CustomerController::class, 'profileValidationChangeUserInfo']) ->name('postProfile');
-Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::class, 'passwdValidationChangeUserInfo']) ->name('postPasswd');
+// // Validation route's to change customer info by customer
+// Route::post('/Customer/Manage/Change/User/post/email', [CustomerController::class, 'emailValidationChangeUserInfo']) ->name('postEmail');
+// Route::post('/Customer/Manage/Change/User/post/profile', [CustomerController::class, 'profileValidationChangeUserInfo']) ->name('postProfile');
+// Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::class, 'passwdValidationChangeUserInfo']) ->name('postPasswd');
 
-// Validation route's to create a customer account by customer
-Route::post('/user/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
+// // Validation route's to create a customer account by customer
+// Route::post('/user/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
 
 Route::controller(InvoiceController::class)->group(function () {
     Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
