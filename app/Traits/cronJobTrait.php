@@ -127,7 +127,7 @@ trait cronJobTrait
         if ($payloadSize > $maxPayloadSize) {
             // Payload size exceeds the maximum allowed size
             Log::error("Payload size exceeds the maximum allowed size. Payload not dispatched.");
-            return; // or throw an exception
+            throw new \Exception('The email payload size is too large to put in the job queue. Please reduce the size of the email content or attachments.');
         }
         
         _SendMailJob::dispatch($mailTo, $mailableClass, serialize($mailableClassParams), $this->JobRunId, $invoiceID);
