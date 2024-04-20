@@ -85,13 +85,15 @@ class MeterController extends Controller
     }
 
     public function viewScheduledMeters(Request $request) { // viewing meters for specific employee
+        $today = Carbon::now()->toDateString();
+        
         $results = DB::table('users')
                     ->join('customer_addresses','users.id','=','customer_addresses.user_id')
                     ->join('addresses','customer_addresses.id','=','addresses.id')
                     ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
                     ->join('meters','meter_addresses.meter_id','=','meters.id')
                     ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
-                    ->where('meter_reader_schedules.reading_date','=','2024-03-21')
+                    ->where('meter_reader_schedules.reading_date','=', $today)
                     ->where('meter_reader_schedules.employee_profile_id','=',1)
                     ->where('meter_reader_schedules.status','=','unread')
                     ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN')
@@ -114,6 +116,7 @@ class MeterController extends Controller
     }
 
     public function search(Request $request) {
+        $today = Carbon::now()->toDateString();
         if($request->ajax())
         {
             $output = '';
@@ -131,7 +134,7 @@ class MeterController extends Controller
                             ->join('meters','meter_addresses.meter_id','=','meters.id')
                             ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                             ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
-                            ->where('meter_reader_schedules.reading_date','=','2024-03-21')
+                            ->where('meter_reader_schedules.reading_date','=', $today)
                             ->where('meter_reader_schedules.status','=','unread')
                             ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'e.first_name as assigned_to')
                             ->orderBy('users.id');
@@ -163,7 +166,7 @@ class MeterController extends Controller
                         ->join('meters','meter_addresses.meter_id','=','meters.id')
                         ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                         ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
-                        ->where('meter_reader_schedules.reading_date','=','2024-03-21')
+                        ->where('meter_reader_schedules.reading_date','=', $today)
                         ->where('meter_reader_schedules.status','=','unread')
                         ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'e.first_name as assigned_to')
                         ->orderBy('users.id');
@@ -261,6 +264,7 @@ class MeterController extends Controller
     public function searchIndex(Request $request)  {
         if($request->ajax())
         {
+            $today = Carbon::now()->toDateString();
             $output = '';
             $queryName = $request->get('queryName');
             $queryEAN = $request->get('queryEAN');
@@ -276,7 +280,7 @@ class MeterController extends Controller
                             ->join('meters','meter_addresses.meter_id','=','meters.id')
                             ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                             ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
-                            ->where('meter_reader_schedules.reading_date','=','2024-03-21')
+                            ->where('meter_reader_schedules.reading_date','=', $today)
                             ->where('meter_reader_schedules.employee_profile_id','=',1)
                             ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
                             ->orderBy('users.id');
@@ -307,7 +311,7 @@ class MeterController extends Controller
                         ->join('meters','meter_addresses.meter_id','=','meters.id')
                         ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                         ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
-                        ->where('meter_reader_schedules.reading_date','=','2024-03-21')
+                        ->where('meter_reader_schedules.reading_date','=', $today)
                         ->where('meter_reader_schedules.employee_profile_id','=',1)
                         ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
                         ->orderBy('users.id');

@@ -52,7 +52,7 @@ class MeterSchedule implements ShouldQueue
         foreach ($newMeters as $newMeterID)
         {
             DB::table('meter_reader_schedules')->insert(
-                ['employee_profile_id' => 1,
+                ['employee_profile_id' => 1000,
                 'meter_id' => $newMeterID,
                 'reading_date' => $now,
                 'status' => 'unread',
