@@ -231,16 +231,20 @@ class InvoiceRunJob implements ShouldQueue
                     'meter_id' => $customer->mID,
                     'type' => 'Annual'
                 ];
-
-                CreditNote::create([
-                    'type' => 'credit note',
-                    'amount' => $extraAmount,
-                    'user_id' => $customer->uID
-                ]);
             }
 
             $invoice = Invoice::create($invoiceData);
             $lastInserted = $invoice->id;
+
+            if ($extraAmount <= 0) {
+                CreditNote::create([
+                    'invoice_id' => $lastInserted,
+                    'type' => 'credit note',
+                    'amount' => $extraAmount,
+                    'user_id' => $customer->uID,
+                    'status' => 1
+                ]);
+            }
 
             Invoice_line::create([
                 'type' => 'Electricity',
