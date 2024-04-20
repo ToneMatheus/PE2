@@ -119,7 +119,7 @@ class InvoiceRunJob implements ShouldQueue
 
                     //Reminder index values 1 week prior invoice run
                     if($startContract->copy()->addYear()->addWeeks(2)->subWeek() == $now){
-                        dispatch(new MeterReadingReminderJob($customer));
+                        MeterReadingReminderJob::dispatch($customer->uID, $customer->mID);
                     }
 
                     //Check if needs an invoice now
@@ -132,7 +132,7 @@ class InvoiceRunJob implements ShouldQueue
                     
                     //Reminder index values 1 week prior invoice run
                     if($lastInvoiceDate->copy()->addYear()->subWeek() == $now){
-                        dispatch(new MeterReadingReminderJob($customer));
+                        MeterReadingReminderJob::dispatch($customer->uID, $customer->mID);
                     }
 
                     //Check if needs an invoice now

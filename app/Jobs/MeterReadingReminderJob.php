@@ -18,11 +18,13 @@ class MeterReadingReminderJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, jobLoggerTrait;
 
-    protected $customer;
+    protected $customeruID;
+    protected $customermID;
 
-    public function __construct($customer)
+    public function __construct($customeruID, $customermID)
     {
-        $this->customer = $customer;
+        $this->customeruID = $customeruID;
+        $this->customermID = $customermID;
     }
 
     public function handle()
@@ -30,14 +32,12 @@ class MeterReadingReminderJob implements ShouldQueue
         try {
             $this->jobStart();
 
-            $customer = $this->customer;
-
             $user = User::join('customer_addresses as ca', 'ca.user_id', '=', 'users.id')
                 ->join('addresses as a', 'a.id', '=', 'ca.address_id')
                 ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
                 ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
-                ->where('users.id', '=', $customer->uID)
-                ->where('m.id', '=', $customer->mID)
+                ->where('users.id', '=', $this->customeruID)
+                ->where('m.id', '=',  $this->customermID)
                 ->first();
 
             if ($user) {
