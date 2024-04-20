@@ -8,6 +8,9 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Crypt;
+use App\Models\User;
+use Illuminate\Support\Facades\Session;
 
 class confirmationMailRegistration extends Mailable
 {
@@ -19,10 +22,9 @@ class confirmationMailRegistration extends Mailable
      * @return void
      */
     //$name so I can check the mailaddress
-    public function __construct(protected $id)
-    {
-        //
-    }
+    public function __construct(protected $id, protected $email, protected $origin)
+    // public function __construct(protected $user)
+    { }
 
     /**
      * Get the message envelope.
@@ -33,12 +35,6 @@ class confirmationMailRegistration extends Mailable
     {
         return new Envelope(
             from: new Address('energysupplier@gmail.com', 'Energy Supplier'),
-            /* It is possible to allow a GLOBAL email to be used. This is useful if we only use 1 email to send out all emails. 
-            'from' => [
-                'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-                'name' => env('MAIL_FROM_NAME', 'Example'),
-            ],
-            */
             subject: 'Account Registration',
         );
     }
@@ -50,10 +46,20 @@ class confirmationMailRegistration extends Mailable
      */
     public function content()
     {
+        if ($this->origin == "register"){
+            $url = route('email-confirmation-registration', ['token' => $this->id, 'email' => $this->email]);
+            // dd("in if");
+            // dd($url);
+        }else{
+            $url = route('activate.account', ['encryptedUserID' => $this->id, 'email' => $this->email]);
+        }
+        
+        // dd($url);
+
         return new Content(
-            view: 'mails.accoutnRegistrationConfirmation',
+            view: 'mails.accoutnMailConfirmation',
             with: [
-                'id' => $this->id,
+                'url' => $url,
             ]
         );
     }
