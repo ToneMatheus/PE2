@@ -24,7 +24,7 @@ class _SendMailJob implements ShouldQueue
     public function __construct($mailTo, $mailableClass, $mailableClassParams, $jobRunID, $invoiceID){
         $this->mailTo = $mailTo;
         $this->mailableClass = $mailableClass;
-        $this->mailableClassParams = $mailableClassParams;
+        $this->mailableClassParams = unserialize($mailableClassParams);
         $this->JobRunId = $jobRunID;
         $this->invoiceID = $invoiceID;
     }
