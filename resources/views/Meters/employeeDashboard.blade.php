@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Employee Dashboard</title>
     <link href="/css/employeeDashboard.css" rel="stylesheet" type="text/css"/>
 
     <!-- The callback parameter is required, so we use console.debug as a noop -->

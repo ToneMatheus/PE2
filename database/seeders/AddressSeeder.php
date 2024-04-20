@@ -132,6 +132,18 @@ class AddressSeeder extends Seeder
                 'type' => 'house',
                 'is_billing_address' => 1,
             ],
+            [
+                'id' => 1000,
+                'street' => 'Nowhere',
+                'number' => 20,
+                'box' => 4,
+                'postal_code' => 5000,
+                'city' => 'Charleroi',
+                'province' => 'Brabant',
+                'country' => 'Belgium',
+                'type' => 'house',
+                'is_billing_address' => 1,
+            ]
         ]);
     }
 }

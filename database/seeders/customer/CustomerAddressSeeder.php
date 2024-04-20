@@ -30,6 +30,13 @@ class CustomerAddressSeeder extends Seeder
             ];
         }
 
+        $adds[] = [
+            'start_date' => '2024-01-01',
+            'end_date' => null,
+            'user_id' => 1000,
+            'address_id' => 1000
+        ];
+
         DB::table('customer_addresses')->insert($adds);
     }
 }

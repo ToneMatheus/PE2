@@ -155,7 +155,20 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
             ],
-            
+            [
+                'id' => 1000,
+                'username' => 'undefined',
+                'first_name' => 'Not Defined',
+                'last_name' => '',
+                'password' => Hash::make('undefined'),
+                'employee_profile_id' => 1000,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'undefined@gmail.com',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Dutch',
+            ],
         ]);
     }
 }
