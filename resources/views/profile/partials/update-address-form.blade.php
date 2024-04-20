@@ -24,52 +24,68 @@
             @csrf
         </form>
 
-        <!-- LOOK validatie en opslagen controleren. -->
         <form method="post" action="{{ route('profile.update.address') }}" class="mt-6 space-y-6">
             @csrf
             @method('patch')
 
             <div>
                 <x-input-label for="street{{$key}}" :value="__('Street')" />
-                <p>{{ $address->street }}</p>
+                <!-- CH zet dit zodat dit ook de dark mode aan kan. -->
+                <p class="mt-1 text-m dark:text-gray-100">
+                    {{ $address->street }}
+                </p>
             </div>
 
 
             <div>
                 <x-input-label for="number" :value="__('Number')" />
-                <p>{{ $address->number }}</p>
+                <p class="mt-1 text-m dark:text-gray-100">
+                    {{ $address->number }}
+                </p>
             </div>
 
             <div>
                 <x-input-label for="type" :value="__('Type')" />
-                <p>{{ $address->type }}</p>
+                <p class="mt-1 text-m dark:text-gray-100">
+                    {{ $address->type }}
+                </p>
             </div>
 
 
 
             <div>
                 <x-input-label for="box" :value="__('Box')" />
-                <p>{{ $address->box }}</p>
+                <p class="mt-1 text-m dark:text-gray-100">
+                    {{ $address->box }}
+                </p>
             </div>
 
             <div>
                 <x-input-label for="postal_code" :value="__('Postal Code')" />
-                <p>{{ $address->postal_code }}</p>
+                <p class="mt-1 text-m dark:text-gray-100">
+                    {{ $address->postal_code }}
+                </p>
             </div>
 
             <div>
                 <x-input-label for="city" :value="__('City')" />
-                <p>{{ $address->city }}</p>
+                <p class="mt-1 text-m dark:text-gray-100">
+                    {{ $address->city }}
+                </p>
             </div>
 
             <div>
                 <x-input-label for="province" :value="__('Province')" />
-                <p>{{ $address->province }}</p>
+                <p class="mt-1 text-m dark:text-gray-100">
+                    {{ $address->province }}
+                </p>
             </div>
 
             <div>
                 <x-input-label for="country" :value="__('Country')" />
-                <p>{{ $address->country }}</p>
+                <p class="mt-1 text-m dark:text-gray-100">
+                    {{ $address->country }}
+                </p>
             </div>
 
             <div>
