@@ -19,7 +19,8 @@ class Meter extends Model
         'type',
         'installation_date',
         'status',
-        'is_smart'
+        'is_smart',
+        'expecting_reading'
     ];
 
      public function scopeSearch($query, $value){
