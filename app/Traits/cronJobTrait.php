@@ -36,7 +36,7 @@ trait cronJobTrait
     private function jobStart(){
         // Log that the job execution has started
         try {
-            Log::info('Job execution started.');
+            Log::info('Job: '.get_class($this).' execution started.');
     
             // Create new JobRun in the database
             $jobRun = CronJobRun::create([
@@ -55,7 +55,7 @@ trait cronJobTrait
     private function jobCompletion($message){
         // Log that the job execution has completed
         try {
-            Log::info('Job execution completed.');
+            Log::info('Job: '.get_class($this).' execution completed.');
     
             $job = CronJobRun::find($this->JobRunId);
             $job->ended_at = now();
@@ -76,7 +76,7 @@ trait cronJobTrait
     private function jobException($errorMessage){
         // Log the crash that happened
         try {
-            Log::info('Job had an exception');
+            Log::info('Job: '.get_class($this).' had an exception');
     
             $job = CronJobRun::find($this->JobRunId);
             $job->ended_at = now();
@@ -109,8 +109,22 @@ trait cronJobTrait
         if (env('APP_DEBUG')) {
             // Debug mode is enabled so use debugging mail instead of provided mail
             $mailTo = env("MAIL_DEBUG");
+            Log::info("Dispatching mail job");
         }
-        _SendMailJob::dispatch($mailTo, $mailableClass, $mailableClassParams , $this->JobRunId, $invoiceID);
+
+        // Calculate the size of the payload
+        $payloadSize = strlen(serialize([$mailTo, $mailableClass, $mailableClassParams, $invoiceID]));
+
+        // Define the maximum allowed payload size (in bytes)
+        $maxPayloadSize = 65535;
+
+        if ($payloadSize > $maxPayloadSize) {
+            // Payload size exceeds the maximum allowed size
+            Log::error("Payload size exceeds the maximum allowed size. Payload not dispatched.");
+            return; // or throw an exception
+        }
+        
+        _SendMailJob::dispatch($mailTo, $mailableClass, serialize($mailableClassParams) , $this->JobRunId, $invoiceID);
     }
 
 }
