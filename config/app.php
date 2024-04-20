@@ -16,6 +16,8 @@ return [
     |
     */
 
+    'now' => Carbon\Carbon::create(2025, 3, 15),
+
     'providers' => [
         LaravelProfane\ProfaneServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,

@@ -15,7 +15,7 @@ class ProductSeeder extends Seeder
         for($i = 1; $i <= 3; $i++){
             $products[] = [
                 'id' => $i,
-                'product_name' => 'Tier' . $i,
+                'product_name' => 'Tier ' . $i,
                 'description' => null,
                 'start_date' => '2024-01-01',
                 'end_date' => null,
