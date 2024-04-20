@@ -48,13 +48,11 @@ class MeterAllocation implements ShouldQueue
             ->pluck('meter_id')
             ->toArray();
 
-        $i = 1;
         foreach ($newMeters as $newMeterID)
         {
-            $i++;
-            Meter_Reader_Schedule::where('meter_reader_schedules.employee_profile_id', 1)
+            Meter_Reader_Schedule::where('meter_reader_schedules.employee_profile_id', 1000)
             ->where('meter_reader_schedules.meter_id', $newMeterID)
-        ->update(['meter_reader_schedules.employee_profile_id' => $i]);
+        ->update(['meter_reader_schedules.employee_profile_id' => 3]);
         }
     }
 }
