@@ -61,7 +61,7 @@ class ProfileController extends Controller
         $user->save();
         $user->email = $email;
 
-        //! START start mail server ga naar C:\Users\HEYVA\Downloads\mailpit-windows-amd64 (1) en voer mailpit.exe uit
+        //START start mail server ga naar C:\Users\HEYVA\Downloads\mailpit-windows-amd64 (1) en voer mailpit.exe uit
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
 
