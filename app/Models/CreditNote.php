@@ -19,12 +19,17 @@ class CreditNote extends Model
         'amount',
         'user_id',
         'is_credit',
-        'is_active'
+        'is_active',
+        'invoice_id'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function invoice(){
+        return $this->belongsTo(Invoice::class);
     }
 
     public function lines()
