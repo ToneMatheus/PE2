@@ -54,7 +54,8 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');$invoicesQuery->whereYear('invoice_date', $selectedYear);
+    return view('dashboard');
+    //$invoicesQuery->whereYear('invoice_date', $selectedYear);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
