@@ -17,8 +17,10 @@ return new class extends Migration
         Schema::create('credit_notes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('type')->nullable();
+            $table->boolean('status');
             $table->text('description')->nullable();
             $table->double('amount')->nullable(); 
+            $table->foreignId('invoice_id')->references('id')->on('invoices')->onDelete('cascade')->nullable();
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });

@@ -1,4 +1,22 @@
 <x-app-layout>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Haal de $key-waarde op uit het verborgen inputveld
+        var aantal = document.getElementById('Aantal').value;
+        var addresses = {};
+        for(var i =0; i<aantal; i++){
+            var key = document.getElementById(i.toString()).name;
+            var value = document.getElementById(i.toString()).value;
+            addresses[key] = value;
+
+            console.log(key, value)
+        }
+        console.log('array: ', addresses)
+    });
+</script>
+
+
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Profile') }}
@@ -16,6 +34,19 @@
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     @include('profile.partials.update-password-form')
+                </div>
+            </div>
+
+            <!-- LOOK om hier een foreach loop te zetten -->
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                <div class="max-w-xl">
+                    @include('profile.partials.update-address-form')
+                </div>
+            </div>
+
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                <div class="max-w-xl">
+                    @include('profile.partials.billing-address-form', ['addresses' => $addresses])
                 </div>
             </div>
 

@@ -19,6 +19,8 @@ class Invoice extends Model
         'meter_id'
     ];
 
+    public $timestamps = false;
+
     public function invoice_lines(): HasMany
     {
         return $this->hasMany(Invoice_line::class);
