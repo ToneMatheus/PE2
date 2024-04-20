@@ -1,8 +1,4 @@
-#addTariff{
-    display: none;
-}
-
-#confirmCancel {
+#confirmCancel, #confirmDelete, #addTariff {
     display: none;
 }
 

@@ -4,10 +4,39 @@
         <title>Tariffs</title>
         <meta charset="utf-8"/>
         <link href="/css/tariff.css" rel="stylesheet"/>
-        <script>    
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+           $(document).ready(function() {
+                function fetchProductByType(type){
+                    $.ajax({
+                        url: '/tariff/products/' + type,
+                        type: 'GET',
+                        success: function(product){
+                        var lastTier = product.product_name;
+                        var numb = parseInt(lastTier.match(/\d+/));
+                        numb++;
+
+                        var newTier = 'Tier ' + numb;
+
+                        $('#nameSelect').empty();
+                        $('#nameSelect').append($('<option>', {
+                            value: newTier,
+                            text: newTier
+                        }));}
+                    });
+                }
+
+                $('#typeSelect').change(function() {
+                    var selectedType = $(this).val();
+                    fetchProductByType(selectedType);
+                });
+
+                fetchProductByType($('#typeSelect').val());
+            });
+
             function showForm() {
                 document.getElementById('addTariff').style.display = 'block';
-                document.getElementById('addBttn1').style.display = 'none';
+                document.getElementById('addBttn').style.display = 'none';
             }
 
             function confirmCancel() {
@@ -174,16 +203,15 @@
             @csrf
 
             <label for="name">Name:</label>
-            <select name="name" id="name">
-                <option value="Tier 1">Tier 1</option>
-                <option value="Tier 2">Tier 2</option>
-                <option value="Tier 3">Tier 3</option>
+            <select name="name" id="nameSelect">
+            
             </select>
 
             <label for="type">Type:</label>
-            <select name="type" id="type">
-                <option value="Residential">Residential</option>
-                <option value="Commercial">Commercial</option>
+            <select name="type" id="typeSelect">
+                @foreach ($types as $type)
+                    <option value="{{$type}}">{{$type}}</option>
+                @endforeach
             </select>
 
             <label for="rangeMin">Range Minimum:</label>
