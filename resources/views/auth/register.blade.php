@@ -73,11 +73,14 @@
         <!-- Calling -->
         <div class="mt-4">
             <x-input-label for="title" :value="__('Title')" />
-            <lable for='Mr'>Mr</label>
+            <!-- CH zet dit zodat dit ook de dark mode aan kan. 
+            f12 -> render tool -> emulate css
+            zie word doc "laravel To Darkmode" in C:\Users\HEYVA\OneDrive - Thomas More\Documenten\School\School jaar 2023 - 2024\2de semester\Practise Enterpirse 2\2de semester -->
+            <lable for='Mr' class="mt-1 text-sm dark:text-gray-100">Mr</label>
             <input type="radio" name="title" id="mr" value="Mr"  @if(old('title') == 'Mr') checked @else checked @endif>
-            <lable for='Ms'>Ms</label>
+            <lable for='Ms' class="mt-1 text-sm dark:text-gray-100">Ms</label>
             <input type="radio" name="title" id="Ms" value="Ms" @if(old('title') == 'Ms') checked @endif>
-            <lable for='X'>X</label>
+            <lable for='X' class="mt-1 text-sm dark:text-gray-100">X</label>
             <input type="radio" name="title" id="X" value="X"@if(old('title') == 'X') checked @endif>
             <x-input-error class="mt-2" :messages="$errors->get('title')" />
         </div>
@@ -108,7 +111,7 @@
                             name="password"
                             :value="old('password')"
                             required autocomplete="new-password" />
-            <ul style="list-style-type: disc;" class="ml-4">
+            <ul style="list-style-type: disc;" class="ml-4 mt-1 text-sm dark:text-gray-100">
                 <li>
                     at least 8 characters long
                 </li>
@@ -217,12 +220,12 @@
         <!--House -->
         <div class="mt-4">
             <x-input-label for="type" :value="__('Type')" />
-            <label for='house'>House</label>
+            <label for='house' class="mt-1 text-sm dark:text-gray-100">House</label>
             <input type="radio" name="type" id="house" value="house" checked>
-            <label for='appartment'>Appartment</label>
+            <label for='appartment' class="mt-1 text-sm dark:text-gray-100">Appartment</label>
             <input type="radio" name="type" id="appartment" value="appartment">
             <div id="business_div" style="display: inline;">
-                <label for='business'>Business</label>
+                <label for='business' class="mt-1 text-sm dark:text-gray-100">Business</label>
                 <input type="radio" name="type" id="business" value="business">
             </div>
             <x-input-error class="mt-2" :messages="$errors->get('type')" />
