@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Crypt;
 use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
@@ -8,10 +9,11 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
+use App\Http\Controllers\InvoiceRemindersController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNoteController;
-use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HolidayController;
 
 use App\Http\Controllers\FAQController;
@@ -19,10 +21,12 @@ use App\Http\Controllers\MeterController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UtilityController;
 use App\Http\Controllers\CronJobController;
+use App\Http\Controllers\EstimationController;
 
 use App\Http\Controllers\meterreading;
 use App\Models\MeterReading as ModelsMeterReading;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
@@ -50,17 +54,29 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard');
+    //$invoicesQuery->whereYear('invoice_date', $selectedYear);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update.profile');
+    Route::patch('/profile/address', [ProfileController::class, 'updateAddress'])->name('profile.update.address');
+    Route::patch('/profile/address/billing', [ProfileController::class, 'updateBillingAddress'])->name('profile.update.address.billing');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__.'/auth.php';
 
 Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
+    //cronjobs
+    Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+    Route::get('/cron-jobs/schedule/edit/{job}', [CronJobController::class, 'edit_schedule'])->name('edit-schedule-cron-job');
+    Route::post('/cron-jobs/schedule/store{job}', [CronJobController::class, 'store_schedule'])->name('store-schedule-cron-job');
+    Route::post('/cron-jobs/schedule/toggle{job}', [CronJobController::class, 'toggle_schedule'])->name('toggle-schedule-cron-job');
+    Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
+    Route::get('/cron-jobs/history', [CronJobController::class, 'showHistory'])->name('job.history');
+    Route::get('/cron-jobs/get-job-runs', [CronJobController::class, 'getJobRuns'])->name('get.job.runs');
+    Route::get('/cron-jobs/get-job-run-logs', [CronJobController::class, 'getJobRunLogs'])->name('get.job.run.logs');
     
 });
 
@@ -95,18 +111,31 @@ Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff')
 Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
 Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add');
 Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
+Route::get('/tariff/products/{type}', [EmployeeController::class, 'getProductByType']);
 
 //invoice query routes
 Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
 Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
 
-//preview advance reminder mail for testing
+//view invoice reminder mails for testing
 Route::get('/advance', [advancemailcontroller::class, 'index'])->name("advance_mail");
+Route::get('/reminders', [InvoiceRemindersController::class, 'index'])->name("invoice_reminder");
+Route::get('/test-qr-monthly', [InvoiceRemindersController::class, 'monthly'])->name("qr-monthly");
+
+//invoice payment
+Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
+Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
+
+//QR code test
+Route::get('/code', function () {
+    return view('Invoices/QRcodeTest');
+});
+
 // Meters branch
 
 
 //Meters Group
-Route::get('/meters_dashboard', [MeterController::class, 'viewScheduledMeters']);
+Route::get('/meters_dashboard/meters', [MeterController::class, 'viewScheduledMeters']);
 Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters']);
 Route::put('/all_meters_dashboard', [MeterController::class, 'assignment'])->name("assignment_change");
 
@@ -169,14 +198,8 @@ Route::get('/roles', function () {
     return view('roleOverview');
 });
 
-//cronjobs
-Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
-Route::get('/cron-jobs/edit/{job}', [CronJobController::class, 'edit'])->name('edit-cron-job');
-Route::put('/cron-jobs/update/{job}', [CronJobController::class, 'update'])->name('update-cron-job');
-Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
-
-Route::get('/customer/invoices', [InvoiceController::class, 'showInvoices'])->name('invoices.show');;
-
+Route::get('/employee/invoices', [InvoiceController::class, 'showAllInvoices'])->name('invoices.show');;
+Route::post('/employee/invoices', [InvoiceController::class, 'rerunValidation'])->name('invoices.rerunValidation');;
 
 //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
 Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
@@ -194,7 +217,8 @@ Route::get('/roleOverview', function () {
 
 Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
 Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
-Route::put('/customer/{id}/{cpID}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+Route::put('/customer/{id}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+Route::post('/customer/{id}/{oldCpID}/{cID}/{mID}', [CustomerGridViewController::class, 'updateContractProduct'])->name('customer.contractProduct');
 Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
 
 Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
@@ -209,24 +233,16 @@ Route::get('/faq', [FAQController::class, 'showFAQ'])->name('faq');
 
 Route::get('/customer/overview', [SimpleUserOverViewController::class, 'overview'])->name('overview');
 
+Route::controller(InvoiceController::class)->group(function () {
+    Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
+    Route::get('/invoices/{id}/download', 'download')->name('invoice.download');
+    Route::get('/invoices/run', 'run')->name('invoice.run');
+});
+
 /*JOREN*/
-//routes for custmer data for customer
-Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
-Route::get('/user/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
-
-Route::post('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');})->name('ChangeUser');
-Route::get('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');});
-
-// Validation route's to change customer info by customer
-Route::post('/Customer/Manage/Change/User/post/email', [CustomerController::class, 'emailValidationChangeUserInfo']) ->name('postEmail');
-Route::post('/Customer/Manage/Change/User/post/profile', [CustomerController::class, 'profileValidationChangeUserInfo']) ->name('postProfile');
-Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::class, 'passwdValidationChangeUserInfo']) ->name('postPasswd');
-
-// Validation route's to create a customer account by customer
-Route::post('/user/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
-
 // Set active user when email confirm
-Route::get('/activate-account/{userId}', [CustomerController::class, 'activateAccount'])->name('activate.account');
+Route::get('/confirm-email/{encryptedUserID}/{email}', [ProfileController::class, 'confirmEmail'])->name('activate.account');
+Route::get('/confirm-emailTEST/{token}/{email}', [RegisteredUserController::class, 'confirmEmail'])->name('email-confirmation-registration');
 
 
 
@@ -239,7 +255,40 @@ Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credi
 Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
 Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
 
+Route::get('/customer/invoice/search', [CreditNoteController::class, 'show']);
+Route::post('/customer/invoice/search', [CreditNoteController::class, 'search'])->name('credit-notes.search');
+
+Route::post('/refund', [CreditNoteController::class, 'refund']);
+
 //Customer Portal
 Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
 Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
 Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
+
+//Customer Portal
+Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
+Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
+Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
+
+//Guest routes for estimations
+Route::get('/EstimationGuestForm', [EstimationController::class, 'showGuestForm'])->name('EstimationGuestForm');
+Route::post('/EstimationGuestForm', [EstimationController::class, 'ShowGuestEnergyEstimate'])->name('EstimationGuestResult');
+
+Route::get('/CreateInvoice', [EstimationController::class, 'showButton'])->name('EstimationPage');
+Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
+
+Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
+
+
+
+//test route
+Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList1');
+Route::post('/TestUserList', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('TestUserList');
+Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');
+
+
+//Customer Portal
+Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
+Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
+Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
+Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');

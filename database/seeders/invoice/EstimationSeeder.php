@@ -20,7 +20,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3000,
+            'estimation_total' => 3200,
             'meter_id' => 1],
             [
                 'nbr_occupants' => 20,
@@ -49,7 +49,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3100,
+            'estimation_total' => 3300,
             'meter_id' => 3
             ],
             [
@@ -64,8 +64,53 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3300,
+            'estimation_total' => 3400,
             'meter_id' => 4
+            ],
+            [
+                'nbr_occupants' => 2,
+            'is_home_all_day' => 1,
+            'heat_with_power' => 1,
+            'water_with_power' => 1,
+            'cook_with_power' => 1,
+            'nbr_air_con' => 1,
+            'nbr_fridges' => 1,
+            'nbr_washers' => 1,
+            'nbr_computers' => 1,
+            'nbr_entertainment' => 1,
+            'nbr_dishwashers' => 1,
+            'estimation_total' => 3400,
+            'meter_id' => 5
+            ],
+            [
+                'nbr_occupants' => 2,
+            'is_home_all_day' => 1,
+            'heat_with_power' => 1,
+            'water_with_power' => 1,
+            'cook_with_power' => 1,
+            'nbr_air_con' => 1,
+            'nbr_fridges' => 1,
+            'nbr_washers' => 1,
+            'nbr_computers' => 1,
+            'nbr_entertainment' => 1,
+            'nbr_dishwashers' => 1,
+            'estimation_total' => 3400,
+            'meter_id' => 6
+            ],
+            [
+                'nbr_occupants' => 2,
+            'is_home_all_day' => 1,
+            'heat_with_power' => 1,
+            'water_with_power' => 1,
+            'cook_with_power' => 1,
+            'nbr_air_con' => 1,
+            'nbr_fridges' => 1,
+            'nbr_washers' => 1,
+            'nbr_computers' => 1,
+            'nbr_entertainment' => 1,
+            'nbr_dishwashers' => 1,
+            'estimation_total' => 3200,
+            'meter_id' => 7
             ]
         ]);
     }
