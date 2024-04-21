@@ -11,6 +11,7 @@
     <title>All meters dashboard</title>
 </head>
 <body>
+{{-- <x-app-layout :title="'All meters dashboard'"> --}}
     <nav>
         <p class="companyName">Thomas More Energy Company</p>
     </nav>
@@ -120,5 +121,6 @@
             })
         })
     </script>
+{{-- </x-app-layout> --}}
 </body>
 </html>

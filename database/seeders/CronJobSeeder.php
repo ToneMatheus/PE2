@@ -14,15 +14,17 @@ class CronJobSeeder extends Seeder
         DB::table('cron_jobs')->insert([
             [
                 'name' => 'MeterSchedule',
-                'description' => 'Adds meter to schedule',
-                'scheduled_day' => 1,
+                'interval' => 'daily',
+                'scheduled_day' => null,
+                'scheduled_month' => null,
                 'scheduled_time' => '00:00:00',
             ],
             [
                 'name' => 'MeterAllocation',
-                'description' => 'Allocates meter to employees',
-                'scheduled_day' => 1,
-                'scheduled_time' => '00:00:00',
+                'interval' => 'daily',
+                'scheduled_day' => null,
+                'scheduled_month' => null,
+                'scheduled_time' => '00:00:10',
             ],
             [
                 'name' => 'AnnualInvoiceJob',
