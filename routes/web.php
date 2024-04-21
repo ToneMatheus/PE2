@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Crypt;
 use App\Http\Controllers\DomPDFController;
 use App\Http\Controllers\myController;
 use App\Http\Controllers\EmployeeController;
@@ -13,7 +14,6 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNoteController;
-use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HolidayController;
 
 use App\Http\Controllers\FAQController;
@@ -26,6 +26,7 @@ use App\Http\Controllers\EstimationController;
 use App\Http\Controllers\meterreading;
 use App\Models\MeterReading as ModelsMeterReading;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
@@ -52,12 +53,15 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');$invoicesQuery->whereYear('invoice_date', $selectedYear);
+    return view('dashboard');
+    //$invoicesQuery->whereYear('invoice_date', $selectedYear);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update.profile');
+    Route::patch('/profile/address', [ProfileController::class, 'updateAddress'])->name('profile.update.address');
+    Route::patch('/profile/address/billing', [ProfileController::class, 'updateBillingAddress'])->name('profile.update.address.billing');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -131,7 +135,7 @@ Route::get('/code', function () {
 
 
 //Meters Group
-Route::get('/meters_dashboard', [MeterController::class, 'viewScheduledMeters']);
+Route::get('/meters_dashboard/meters', [MeterController::class, 'viewScheduledMeters']);
 Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters']);
 Route::put('/all_meters_dashboard', [MeterController::class, 'assignment'])->name("assignment_change");
 
@@ -229,30 +233,16 @@ Route::get('/faq', [FAQController::class, 'showFAQ'])->name('faq');
 
 Route::get('/customer/overview', [SimpleUserOverViewController::class, 'overview'])->name('overview');
 
-/*JOREN*/
-//routes for custmer data for customer
-Route::get('/Customer/Manage', [CustomerController::class,'Manage'])->name('Manage');
-Route::get('/user/Create', function () { return view('Customer.CreateAccount');})->name('createUser');
-
-Route::post('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');})->name('ChangeUser');
-Route::get('/Customer/Manage/Change/User', function () { return view('Customer.ManageChangeUser');});
-
-// Validation route's to change customer info by customer
-Route::post('/Customer/Manage/Change/User/post/email', [CustomerController::class, 'emailValidationChangeUserInfo']) ->name('postEmail');
-Route::post('/Customer/Manage/Change/User/post/profile', [CustomerController::class, 'profileValidationChangeUserInfo']) ->name('postProfile');
-Route::post('/Customer/Manage/Change/User/post/passwd', [CustomerController::class, 'passwdValidationChangeUserInfo']) ->name('postPasswd');
-
-// Validation route's to create a customer account by customer
-Route::post('/user/Create/validate', [CustomerController::class, 'profileValidationCreateAccount']) ->name('postCreateAccountValidate');
-
 Route::controller(InvoiceController::class)->group(function () {
     Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
     Route::get('/invoices/{id}/download', 'download')->name('invoice.download');
     Route::get('/invoices/run', 'run')->name('invoice.run');
 });
 
+/*JOREN*/
 // Set active user when email confirm
-Route::get('/activate-account/{userId}', [CustomerController::class, 'activateAccount'])->name('activate.account');
+Route::get('/confirm-email/{encryptedUserID}/{email}', [ProfileController::class, 'confirmEmail'])->name('activate.account');
+Route::get('/confirm-emailTEST/{token}/{email}', [RegisteredUserController::class, 'confirmEmail'])->name('email-confirmation-registration');
 
 
 
