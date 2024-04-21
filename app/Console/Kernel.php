@@ -17,16 +17,27 @@ class Kernel extends ConsoleKernel
         // Fetch job schedules from the database
         $cronjobs = CronJob::all();
         foreach ($cronjobs as $cronjob) {
-            $jobClass = 'App\Jobs\\' .  $cronjob->name;
-
-            // Extract hour and minutes from the scheduled_time string
-            $timeParts = explode(':', $cronjob->scheduled_time);
-            $hour = $timeParts[0];
-            $minute = $timeParts[1];
-
-            $schedule->job(new $jobClass())->monthlyOn($cronjob->scheduled_day, $hour . ':' . $minute);
+            if ($cronjob->is_enabled){
+                $jobClass = 'App\Jobs\\' .  $cronjob->name;
+    
+                // Extract hour and minutes from the scheduled_time string
+                $timeParts = explode(':', $cronjob->scheduled_time);
+                $hour = $timeParts[0];
+                $minute = $timeParts[1];
+                
+                switch ($cronjob->interval) {
+                    case 'daily':
+                        $schedule->job(new $jobClass())->dailyAt($hour . ':' . $minute);
+                        break;
+                    case 'monthly':
+                        $schedule->job(new $jobClass())->monthlyOn($cronjob->scheduled_day, $hour . ':' . $minute);
+                        break;
+                    case 'yearly':
+                        $schedule->job(new $jobClass())->yearlyOn($cronjob->scheduled_month, $cronjob->scheduled_day, $hour . ':' . $minute);
+                        break;
+                }
+            }
         }
-
     }
 
     /**

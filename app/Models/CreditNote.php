@@ -9,12 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class CreditNote extends Model
 {
     use HasFactory;
+    protected $table = 'credit_notes';
 
     protected $fillable = [
         'type',
+        'status',
         'description',
+        'user_id',
         'amount',
-        'customer_id',
+        'user_id',
+        'is_credit',
+        'is_active',
+        'invoice_id'
     ];
 
     public function user()
@@ -22,5 +28,12 @@ class CreditNote extends Model
         return $this->belongsTo(User::class);
     }
 
-    use HasFactory;
+    public function invoice(){
+        return $this->belongsTo(Invoice::class);
+    }
+
+    public function lines()
+    {
+        return $this->hasMany(CreditNoteLine::class);
+    }
 }

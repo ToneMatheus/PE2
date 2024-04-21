@@ -5,10 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User_Role extends Model
 {
+
+    public $timestamps = false;
+
     use HasFactory;
+    protected $table = 'user_roles';
 
     protected $fillable = [
         'user_id',
@@ -24,5 +29,10 @@ class User_Role extends Model
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function team_user_roles(): HasMany
+    {
+        return $this->hasMany(Team_User_Role::class);
     }
 }

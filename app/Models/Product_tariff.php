@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product_tariff extends Model
 {
+    protected $table = 'product_tariffs';
     protected $fillable = [
         'start_date',
         'end_date',
