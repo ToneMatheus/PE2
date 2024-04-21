@@ -29,7 +29,7 @@
         $_SESSION['currentM'] = date('n');
         $t = $_SESSION['currentM'];
     }
-    if($_SESSION['currentM'] == date('n'))
+    else if($_SESSION['currentM'] == date('n'))
     {
         $t = $_SESSION['currentM'] + 1;
     }
