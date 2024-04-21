@@ -1,4 +1,4 @@
-@props(['title'])
+@props(['title', 'scripts'])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -7,6 +7,8 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ $title ?? "Energy Company"}}</title>
+
+        {!! $scripts ?? '' !!}
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
