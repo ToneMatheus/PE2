@@ -375,4 +375,14 @@ class EmployeeController extends Controller
 
         return redirect()->route('employees.edit', ['eID' => $eID]);
     }
+
+    public function getProductByType($type){
+        $products = DB::table('products')
+        ->where('type', '=', $type)
+        ->whereNull('end_date')
+        ->orderBy('product_name', 'desc')
+        ->first();
+
+        return response()->json($products);
+    }
 }
