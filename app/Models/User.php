@@ -78,7 +78,7 @@ class User extends Authenticatable
         'personal_email',
         'changed_default',
         'index_method',
-        'employee_remember_token'
+        'password_reset_token'
     ];
 
     public static function validate(array $input): bool
