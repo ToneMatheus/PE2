@@ -1,6 +1,15 @@
 <?php
     session_start();
 
+    if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] === 'max-age=0') 
+    {
+        unset($_GET['Mf']);
+        unset($_GET['Mb']);
+        unset($_SESSION['currentM']);
+        unset($_SESSION['currentY']);
+        session_destroy();
+    }
+
     $user_id = auth()->user()->employee_profile_id;
     //$user_userName = auth()->
     //echo $user_id;
@@ -24,18 +33,18 @@
         
     }
 
-    if(!isset($_SESSION['currentM']))
+    if(!(isset($_SESSION['currentM'])) && !(isset($_GET['Mf'])))
     {
         $_SESSION['currentM'] = date('n');
         $t = $_SESSION['currentM'];
-    }
-    else if($_SESSION['currentM'] == date('n'))
-    {
-        $t = $_SESSION['currentM'] + 1;
+        echo "wut";
     }
     else if (isset($_GET['Mf']))
     {
+        if(!(isset($_SESSION['currentM'])))
+            $_SESSION['currentM'] = date('n');
         $t = $_SESSION['currentM'] + 1;
+        echo "yes 2";
     }
     else if (isset($_GET['Mb']))
     {
@@ -588,7 +597,7 @@
             } 
             else 
             {
-                var url = "{{ asset('php/test.php') }}";
+                var url = "{{ asset('php/calendarRequest.php') }}";
                 var params = "idNum=" + $idNum; // Send $idNum value as a POST parameter
                 //params += "color=" + $color;
                 xhr.open("POST", url, true);
@@ -615,7 +624,7 @@
                 } 
                 else 
                 {
-                    var url = "{{ asset('php/test.php') }}";
+                    var url = "{{ asset('php/calendarRequest.php') }}";
                     var idNum = $idNum;
                     //var color = $color;
                     var color = $num;
@@ -662,7 +671,7 @@
                 } 
                 else 
                 {
-                    var url = "{{ asset('php/test.php') }}";
+                    var url = "{{ asset('php/calendarRequest.php') }}";
                     var params = "button"; // Send $idNum value as a POST parameter
                     //params += "color=" + $color;
                     xhr.open("POST", url, true);
@@ -688,7 +697,7 @@
             } 
             else 
             {
-                var url = "{{ asset('php/test.php') }}";
+                var url = "{{ asset('php/calendarRequest.php') }}";
                 var params = "cancel"; // Send $idNum value as a POST parameter
                 //params += "color=" + $color;
                 xhr.open("POST", url, true);
