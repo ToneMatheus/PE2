@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
 
-class MeterReadingReminder extends Mailable
+class MissingMeterReading extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -25,13 +25,13 @@ class MeterReadingReminder extends Mailable
     {
         return new Envelope(
             from: new Address('energysupplier@gmail.com', 'Energy Supplier'),
-            subject: 'Meter index values reminder (due in 1 week)',
+            subject: 'Missing meter index values',
         );
     }
 
     public function build()
     {
-        return $this->view('Invoices.meter_reading_reminder')
+        return $this->view('Invoices.missing_meter_reading')
                     ->with([
                         'user' => $this->user,]);
     }
