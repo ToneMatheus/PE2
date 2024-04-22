@@ -27,7 +27,7 @@ class AnnualInvoiceMail extends Mailable
     protected $discounts;
     protected $monthlyInvoices;
 
-    public function __construct(Invoice $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices)
+    public function __construct(Invoice $invoice, $user, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices, $pdfData)
     {
         $this->invoice = $invoice;
         $this->user = $user;

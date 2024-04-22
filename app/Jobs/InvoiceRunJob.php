@@ -323,7 +323,7 @@ class InvoiceRunJob implements ShouldQueue
         // Generate PDF
         $hash = md5($invoice->id . $invoice->customer_contract_id . $invoice->meter_id);
 
-        $pdf = Pdf::loadView('Invoices.annual_invoice_pdf', [
+        $pdfData = [
             'invoice' => $invoice,
             'user' => $user,
             'consumption' => $consumption,
@@ -334,13 +334,12 @@ class InvoiceRunJob implements ShouldQueue
             'monthlyInvoices' => $monthlyInvoices,
             'domain' => $this->domain,
             'hash' => $hash
-        ], [], 'utf-8');
-        $pdfData = $pdf->output();
+        ];
 
         Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
         //Send email with PDF attachment
-        $this->sendMailInBackground("ToCustomer@mail.com", AnnualInvoiceMail::class, [$invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices], $invoice->id);
+        $this->sendMailInBackgroundWithPDF("ToCustomer@mail.com", AnnualInvoiceMail::class, [$invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices], 'Invoices.annual_invoice_pdf', $pdfData, $invoice->id);
 
     }
 
@@ -555,19 +554,18 @@ class InvoiceRunJob implements ShouldQueue
         // Generate PDF
         $hash = md5($invoice->id . $invoice->customer_contract_id . $invoice->meter_id);
 
-        $pdf = Pdf::loadView('Invoices.monthly_invoice_pdf', [
+        $pdfData = [
             'invoice' => $invoice,
             'user' => $user,
             'newInvoiceLines' => $newInvoiceLines,
             'domain' => $this->domain,
             'hash' => $hash
-        ], [], 'utf-8');
-        $pdfData = $pdf->output();
+        ];
 
         Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
         //Send email with PDF attachment
-        $this->sendMailInBackground("ToCustomer@mail.com", MonthlyInvoiceMail::class, [$invoice, $user, $pdfData, $newInvoiceLines], $invoice->id);
+        $this->sendMailInBackgroundWithPDF("ToCustomer@mail.com", MonthlyInvoiceMail::class, [$invoice, $user, $newInvoiceLines], 'Invoices.monthly_invoice_pdf', $pdfData, $invoice->id);
 
     }
 }

@@ -118,19 +118,42 @@ trait cronJobTrait
             Log::info("Dispatching mail job");
         }
 
-        // Calculate the size of the payload
-        $payloadSize = strlen(serialize([$mailTo, $mailableClass, $mailableClassParams, $invoiceID]));
+        // // Calculate the size of the payload
+        // $payloadSize = strlen(serialize([$mailTo, $mailableClass, $mailableClassParams, $invoiceID]));
 
-        // Define the maximum allowed payload size (in bytes)
-        $maxPayloadSize = 65535;
+        // // Define the maximum allowed payload size (in bytes)
+        // $maxPayloadSize = 65535;
 
-        if ($payloadSize > $maxPayloadSize) {
-            // Payload size exceeds the maximum allowed size
-            Log::error("Payload size exceeds the maximum allowed size. Payload not dispatched.");
-            throw new \Exception('The email payload size is too large to put in the job queue. Please reduce the size of the provided params.');
-        }
+        // if ($payloadSize > $maxPayloadSize) {
+        //     // Payload size exceeds the maximum allowed size
+        //     Log::error("Payload size exceeds the maximum allowed size. Payload not dispatched.");
+
+        //     //throw new \Exception('The email payload size is too large to put in the job queue. Please reduce the size of the provided params.');
+        // }
         
-        _SendMailJob::dispatch($mailTo, $mailableClass, serialize($mailableClassParams), $this->JobRunId, $invoiceID);
+        _SendMailJob::dispatch($mailTo, $mailableClass, serialize($mailableClassParams), null, null, $this->JobRunId, $invoiceID);
+    }
+
+    public function sendMailInBackgroundWithPDF($mailTo, $mailableClass, $mailableClassParams, $pdfView, $pdfParams ,$invoiceID = null){
+        if (env('APP_DEBUG')) {
+            // Debug mode is enabled so use debugging mail instead of provided mail
+            $mailTo = env("MAIL_DEBUG");
+            Log::info("Dispatching mail job");
+        }
+
+        // // Calculate the size of the payload
+        // $payloadSize = strlen(serialize([$mailTo, $mailableClass, $mailableClassParams, $invoiceID]));
+
+        // // Define the maximum allowed payload size (in bytes)
+        // $maxPayloadSize = 65535;
+
+        // if ($payloadSize > $maxPayloadSize) {
+        //     // Payload size exceeds the maximum allowed size
+        //     Log::error("Payload size exceeds the maximum allowed size. Payload not dispatched.");
+        //     //throw new \Exception('The email payload size is too large to put in the job queue. Please reduce the size of the provided params.');
+        // }
+        
+        _SendMailJob::dispatch($mailTo, $mailableClass, serialize($mailableClassParams), $pdfView, serialize($pdfParams), $this->JobRunId, $invoiceID);
     }
 
 }

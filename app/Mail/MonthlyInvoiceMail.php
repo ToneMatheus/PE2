@@ -23,7 +23,7 @@ class MonthlyInvoiceMail extends Mailable
     protected $newInvoiceLines;
     protected $pdfData;
 
-    public function __construct(Invoice $invoice, $user, $pdfData, $newInvoiceLines)
+    public function __construct(Invoice $invoice, $user, $newInvoiceLines, $pdfData)
     {
         $this->invoice = $invoice;
         $this->user = $user;
