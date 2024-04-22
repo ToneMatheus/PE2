@@ -10,6 +10,7 @@ class FAQController extends Controller
 {
     public function showFAQ(): View
     {
-        return view('Support_Pages/faq');
+        $title = 'FAQ';
+        return view('Support_Pages/faq', ['title' => $title]);
     }
 }
