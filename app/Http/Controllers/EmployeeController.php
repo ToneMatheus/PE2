@@ -15,7 +15,8 @@ use App\Models\{
     Role,
     User_Role,
     Customer_Address,
-    Balance
+    Balance,
+    Product
 };
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
@@ -129,7 +130,7 @@ class EmployeeController extends Controller
             'phone_nbr' => $request->input('phoneNbr'),
             'birth_date' => $request->input('birthDate'),
             'title' => $request->input('title'),
-            'nationality' => $request->input('nationality')
+            'nationality' => $request->input('nationality'),
         ];
 
         $user = User::create($userData);
@@ -377,8 +378,7 @@ class EmployeeController extends Controller
     }
 
     public function getProductByType($type){
-        $products = DB::table('products')
-        ->where('type', '=', $type)
+        $products = Product::where('type', '=', $type)
         ->whereNull('end_date')
         ->orderBy('product_name', 'desc')
         ->first();

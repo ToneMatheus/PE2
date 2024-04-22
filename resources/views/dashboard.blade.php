@@ -11,7 +11,13 @@
                 <div class="p-6 grid grid-cols-3 gap-4">
                     @php
                         $roleId = DB::table('user_roles')->where('user_id', Auth::id())->first()->role_id;
+                        $changedDefault = DB::table('users')->where('id', Auth::id())->first()->changed_default;
                     @endphp
+
+                    @if($roleId != config('roles.CUSTOMER') && !$changedDefault)
+                        <script>window.location = "{{ route('password.request') }}"</script>
+                    @endif
+
                     @if($roleId == config('roles.MANAGER'))
                         <a href="{{ route('create-ticket') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
