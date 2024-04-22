@@ -7,15 +7,15 @@
     <title>Email Template</title>
 </head>
 <body>
-    <p>Hello {{ $name }},</p>
+    <p>Hello {{ $user->first_name }},</p>
     
     <p>This is a custom email template for your invoice. Below are the details:</p>
 
     <ul>
-        <li>Invoice type: {{ $invoiceType }}</li>
-        <li>Price: ${{ $invoiceTotalAmount }}</li>
-        <li>Status: {{ $invoiceStatus }}</li>
-        <li>Due date: {{ $invoiceDueDate }}</li>
+        <li>Invoice type: {{ $invoice->type }}</li>
+        <li>Price: ${{ $invoice->total_amount }}</li>
+        <li>Status: {{ $invoice->status }}</li>
+        <li>Due date: {{ $invoice->due_date }}</li>
     </ul>
 
     <p>Thank you for using our service!</p>
