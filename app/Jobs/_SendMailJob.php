@@ -12,6 +12,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Traits\cronJobTrait;
+use Exception;
 
 class _SendMailJob implements ShouldQueue
 {
@@ -41,15 +42,19 @@ class _SendMailJob implements ShouldQueue
                 ...$this->pdfParams
             ], [], 'utf-8');
             $pdfData = $pdf->output();
-            array_push($this->mailableClassParams, $pdfData);
-        }
 
-        if (Mail::to($this->mailTo)->send(new $this->mailableClass(...$this->mailableClassParams)) == null){
+            $Mailresult = Mail::to($this->mailTo)->send(new $this->mailableClass($pdfData, ...$this->mailableClassParams)); 
+        }
+        else{
+            $Mailresult = Mail::to($this->mailTo)->send(new $this->mailableClass(...$this->mailableClassParams)); 
+        } 
+
+        if ($Mailresult == null){
             Log::error("Unable to send mail for invoice with ID: ". $this->invoiceID);
             $this->logError($this->invoiceID, "Unable to send mail");
         }
         else{
             $this->logInfo($this->invoiceID , "Succesfully sent mail.");
-        } 
+        }
     }
 }

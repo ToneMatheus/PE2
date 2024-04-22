@@ -336,10 +336,21 @@ class InvoiceRunJob implements ShouldQueue
             'hash' => $hash
         ];
 
+        $mailParams = [
+            $invoice, 
+            $user, 
+            $pdfData, 
+            $consumption,
+            $estimation, 
+            $newInvoiceLine, 
+            $meterReadings, 
+            $discounts, 
+            $monthlyInvoices
+        ];
         Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
         //Send email with PDF attachment
-        $this->sendMailInBackgroundWithPDF("ToCustomer@mail.com", AnnualInvoiceMail::class, [$invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices], 'Invoices.annual_invoice_pdf', $pdfData, $invoice->id);
+        $this->sendMailInBackgroundWithPDF("ToCustomer@mail.com", AnnualInvoiceMail::class, $mailParams, 'Invoices.annual_invoice_pdf', $pdfData, $invoice->id);
 
     }
 
@@ -562,10 +573,16 @@ class InvoiceRunJob implements ShouldQueue
             'hash' => $hash
         ];
 
+        $mailParams = [
+            $invoice, 
+            $user, 
+            $newInvoiceLines
+        ];
+
         Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
         //Send email with PDF attachment
-        $this->sendMailInBackgroundWithPDF("ToCustomer@mail.com", MonthlyInvoiceMail::class, [$invoice, $user, $newInvoiceLines], 'Invoices.monthly_invoice_pdf', $pdfData, $invoice->id);
+        $this->sendMailInBackgroundWithPDF("ToCustomer@mail.com", MonthlyInvoiceMail::class, $mailParams, 'Invoices.monthly_invoice_pdf', $pdfData, $invoice->id);
 
     }
 }
