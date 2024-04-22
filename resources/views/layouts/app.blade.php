@@ -9,7 +9,7 @@
 
         <title>{{$title ?? "Energy Company"}}</title>
 
-        {{ $scripts ?? '' }}
+        {!! $scripts ?? '' !!}
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
