@@ -61,36 +61,69 @@ class ValidationJob implements ShouldQueue
                     throw new \Exception("Validation Error Code 0: No active customers found.");
                 }
                 foreach($customers as $customer){
-                    $invoices = Invoice::join('customer_contracts as cc', 'cc.id', "=", 'invoices.customer_contract_id')
-                    ->select('invoices.id as invoice_id', 'invoices.invoice_date', 'invoices.due_date', 'invoices.total_amount', 'invoices.status', 'invoices.customer_contract_id', 'invoices.type', 'invoices.meter_id', 'cc.user_id')
-                    ->where('cc.user_id', '=', $customer)
-                    ->whereYear('invoices.invoice_date', '=', $year)
-                    ->whereMonth('invoices.invoice_date', '=', $month)
-                    ->get()->toArray();
+                    // $invoices = Invoice::join('customer_contracts as cc', 'cc.id', "=", 'invoices.customer_contract_id')
+                    // ->select('invoices.id as invoice_id', 'invoices.invoice_date', 'invoices.due_date', 'invoices.total_amount', 'invoices.status', 'invoices.customer_contract_id', 'invoices.type', 'invoices.meter_id', 'cc.user_id')
+                    // ->where('cc.user_id', '=', $customer)
+                    // ->whereYear('invoices.invoice_date', '=', $year)
+                    // ->whereMonth('invoices.invoice_date', '=', $month)
+                    // ->get()->toArray();
                     // dd($invoices);
-                    foreach($invoices as $invoice){
-                        // dd($invoice['type']);
+
+                    $meters = Meter::whereTypeAndStatus("Electricity", "Installed")
+                    ->get()->toArray();
+                    // dd($meters);
+                    foreach($meters as $meter){
+                        // dd($meter);
+                        $customers = User::join('Customer_contracts as cc', 'users.id', '=', 'cc.user_id')
+                        ->join('Customer_addresses as ca', 'users.id', '=', 'ca.user_id')
+                        ->join('Addresses as a', 'ca.Address_id', '=', 'a.id')
+                        ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
+                        ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
+                        ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
+                        ->where("m.id", "=", $meter['id'])
+                        ->get()->toArray();
+                        // dd($customers);
+                        $startContract = Carbon::parse($customers['startContract']);
+                        dd($startContract);
+                        $lastYearlyInvoice = Invoice::where('type', '=', 'Annual')
+                        ->where('meter_id', '=', $meter['id'])
+                        ->orderBy('invoice_date', 'desc')
+                        ->first();
+
+                        if(is_null($lastYearlyInvoice)){
+                            $invoiceCount = Invoice::where('meter_id', '=', $customer->mID)
+                            ->where('invoice_date', '>=', $customer->startContract)
+                            ->where('invoice_date', '<=', $now)
+                            ->count();
+                        } else {
+                            $invoiceCount = Invoice::where('meter_id', '=', $customer->mID)
+                            ->where('invoice_date', '>', $lastYearlyInvoice->invoice_date)
+                            ->where('invoice_date', '<=', $now)
+                            ->count();
+                        }
+
+
+
                         if ($invoice['type'] == "Monthly" || $invoice['type'] == "monthly"){
                             // Estimation validation
                             // Can i find the estimation
-                            if(sizeof(Estimation::get()->where('meter_id', '=', $invoice['meter_id'])->toArray()) == 0){
+                            if(sizeof(Estimation::get()->where('meter_id', '=', $meter['id'])->toArray()) == 0){
                                 // did not find the estimation
-                                $meter_id = $invoice['meter_id'];
-                                $invoice_id = $invoice['invoice_id'];
+                                $meter_id = $meter['id'];
                                 Log::error('Exception caught: ' . "Validation Error Code 1: No monthly estimation found for meter with id: $meter_id");
-                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 1']);
+                                // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 1']);
                             }elseif(Estimation::select('estimation_total')->where('meter_id', '=', $invoice['meter_id'])->pluck('estimation_total')->toArray() <= 0){
                                 // estimation is 0 of lager
                                 $meter_id = $invoice['meter_id'];
                                 $invoice_id = $invoice['invoice_id'];
                                 Log::error('Exception caught: ' . "Validation Error Code 2: Monthly estimation found to be 0 or lower for meter with id: $meter_id");
-                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 2']);
+                                // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 2']);
                             }else{
                                 $meter_id = $invoice['meter_id'];
                                 $invoice_id = $invoice['invoice_id'];
                                 // estimation gevonden en hoger dan 0
                                 Log::error("No validation error for meter with id: $meter_id.");
-                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
+                                // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
                             }
                         }elseif($invoice['type'] == "Yearly" || $invoice['type'] == "yearly" || $invoice['type'] == "Annual" || $invoice['type'] == "annual"){
                             // Consumption validation
@@ -102,15 +135,58 @@ class ValidationJob implements ShouldQueue
                             if (sizeof($consumptions) == 0) {
                                 // no consumption found
                                 Log::error('Exception caught: ' . "Validation Error Code 3: No consumption data found for meter with id: $meter_id.");
-                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 3']);
+                                // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 3']);
                             }
                             else {
                                 // consumption found
                                 Log::error("No validation error for meter with id: $meter_id.");
-                                Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
+                                // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
                             }
                         }
                     }
+                    // foreach($invoices as $invoice){
+                    //     // dd($invoice['type']);
+                    //     if ($invoice['type'] == "Monthly" || $invoice['type'] == "monthly"){
+                    //         // Estimation validation
+                    //         // Can i find the estimation
+                    //         if(sizeof(Estimation::get()->where('meter_id', '=', $invoice['meter_id'])->toArray()) == 0){
+                    //             // did not find the estimation
+                    //             $meter_id = $invoice['meter_id'];
+                    //             $invoice_id = $invoice['invoice_id'];
+                    //             Log::error('Exception caught: ' . "Validation Error Code 1: No monthly estimation found for meter with id: $meter_id");
+                    //             // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 1']);
+                    //         }elseif(Estimation::select('estimation_total')->where('meter_id', '=', $invoice['meter_id'])->pluck('estimation_total')->toArray() <= 0){
+                    //             // estimation is 0 of lager
+                    //             $meter_id = $invoice['meter_id'];
+                    //             $invoice_id = $invoice['invoice_id'];
+                    //             Log::error('Exception caught: ' . "Validation Error Code 2: Monthly estimation found to be 0 or lower for meter with id: $meter_id");
+                    //             // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 2']);
+                    //         }else{
+                    //             $meter_id = $invoice['meter_id'];
+                    //             $invoice_id = $invoice['invoice_id'];
+                    //             // estimation gevonden en hoger dan 0
+                    //             Log::error("No validation error for meter with id: $meter_id.");
+                    //             // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
+                    //         }
+                    //     }elseif($invoice['type'] == "Yearly" || $invoice['type'] == "yearly" || $invoice['type'] == "Annual" || $invoice['type'] == "annual"){
+                    //         // Consumption validation
+                    //         $meter_id = $invoice['meter_id'];
+                    //         $invoice_id = $invoice['invoice_id'];
+                    //         $consumptions = Index_Value::where('meter_id', '=', $meter_id)
+                    //         ->whereyear('reading_date', '=', $year)
+                    //         ->get()->toArray();
+                    //         if (sizeof($consumptions) == 0) {
+                    //             // no consumption found
+                    //             Log::error('Exception caught: ' . "Validation Error Code 3: No consumption data found for meter with id: $meter_id.");
+                    //             // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 3']);
+                    //         }
+                    //         else {
+                    //             // consumption found
+                    //             Log::error("No validation error for meter with id: $meter_id.");
+                    //             // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
+                    //         }
+                    //     }
+                    // }
                     // Make new invoices
                     // $invoiceData = [
                     //     'invoice_date' => Carbon::now()->toDateString(), //temporary
