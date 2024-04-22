@@ -37,14 +37,12 @@
     {
         $_SESSION['currentM'] = date('n');
         $t = $_SESSION['currentM'];
-        echo "wut";
     }
     else if (isset($_GET['Mf']))
     {
         if(!(isset($_SESSION['currentM'])))
             $_SESSION['currentM'] = date('n');
         $t = $_SESSION['currentM'] + 1;
-        echo "yes 2";
     }
     else if (isset($_GET['Mb']))
     {
@@ -56,7 +54,7 @@
     }
 
     
-    echo $t;
+    // echo $t;
 
     $query2 = "SELECT * FROM `holidays` WHERE `employee_profile_id` = $user_id AND `manager_approval` != 1 AND MONTH(`start_date`) = $t AND MONTH(`end_date`) = $t";
     $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query.");
@@ -112,6 +110,11 @@
             if (!(in_array($e_dayReq, $reqDays))) 
             {
                 $reqDays[] = $e_dayReq;
+                for ($i = $reqDays[0]; $i <= $reqDays[1]; $i++) 
+                {
+                    $reqDays[] = $i;
+                }
+                // print_r($reqDays);
             } 
         }
     }
@@ -137,9 +140,15 @@
             if (!(in_array($e_dayReq, $reqDays))) 
             {
                 $reqAcptDays[] = $e_dayReq;
+                for ($i = $reqDays[0]; $i <= $reqDays[1]; $i++) 
+                {
+                    $reqDays[] = $i;
+                }
+                // print_r($reqDays);
             } 
         }
     }
+    
 ?>
 
 <!DOCTYPE html>
@@ -170,7 +179,7 @@
             {
                 unset($_SESSION['numCal']);
 
-                echo $_SESSION['currentM'];
+                // echo $_SESSION['currentM'];
                 $t = $_SESSION['currentM'];
 
                 $_SESSION['currentY'] = $currentYear1;
@@ -198,7 +207,7 @@
              
                 
                 //$currentYear = $ted == 12 ? $currentYear1 + 1 : $currentYear1;
-                echo $_SESSION['currentM'];
+                // echo $_SESSION['currentM'];
 
                 //$t = $t == 12 ? $t = 0 : $t = $_SESSION['currentM'];
                 $t = $_SESSION['currentM'] + 1;
@@ -210,7 +219,7 @@
             {
                 unset($_SESSION['numCal']);
 
-                echo $_SESSION['currentM'];
+                // echo $_SESSION['currentM'];
                 if(!$_GET['Mb'] == "12" && $_SESSION['currentM'] == 0)
                 {
                     $currentMonth = $_SESSION['currentM'] - 1;
@@ -230,7 +239,7 @@
                 $_SESSION['currentY'] = $currentYear1;
                 $currentYear = $_SESSION['currentY']; 
 
-                echo $_SESSION['currentM'];
+                // echo $_SESSION['currentM'];
                 $t = $_SESSION['currentM'] - 1;
                 if($t == 0)
                     $t = 12;
@@ -267,7 +276,7 @@
                 $_SESSION['currentM'] = $currentYear;
                 if($currentYear == $currentYear1)
                     $currentYear--;
-                echo $currentYear;
+                // echo $currentYear;
                 $daysInPrevMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear - 1);
                 $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
             }
@@ -334,7 +343,7 @@
                     {
                         $class = isset($_SESSION['addedCells'][$dayCount]) ? 'added' : '';
                         echo "<td class='{$class} weekend'>{$dayCount}</td>";
-                        array_push($wee, "$dayCount");
+                        array_push($wee, $dayCount);
                         //$wee = ["$dayCount"];
                         $dayCount++;
                     } 
@@ -348,6 +357,7 @@
                 echo "</tr>";
             }
             echo "</table>";
+            $myArrayJSON = json_encode($wee);
         ?>
         
 
@@ -379,6 +389,7 @@
         <br>
         <div class="sidebar">
             <label id="label">This label is currently empty</label>
+            <br>
             <button id="cancel" name="cancel" onclick="cnlButton()">Cancel</button>
             <button id="button" name="button" onclick="btnClicked()">Submit</button>
         </div>
@@ -397,6 +408,11 @@
         var btn1 = document.getElementById('floBtnB');
         var arrWe = [];
         var toDay = new Date();
+
+        let isCtrlPressed = false;
+        var dayNumList = [];
+        var dayWithoutWE = [];
+        var num_WE = 0;
 
         var M = <?php 
         if(isset($_SESSION['currentM']))
@@ -429,77 +445,113 @@
             btn1.disabled = false;
         }
 
+        function sendingDate(i, selected, len_selectedElements)
+        {
+            //$idNum = document.getElementById("label").textContent;
+            <?php /*if(isset($_POST['idNum'])){$idNum = $_POST['idNum'];}*/?>
+            // if(typeof $idNum !== 'undefined')
+            // {
+                var dayNum = dayNumList[i]; 
+                var date_now = new Date();
+                
+                var dateMonth = <?php if(isset($_SESSION['currentM'])){echo $_SESSION['currentM'];}else{ echo 0;} ?>;
+                var date2 = new Date("2024-" + dateMonth + "-" + dayNum);
+                var div2 = document.getElementById('errorMsg');
+                // check if date is in the past
+                if (date_now > date2) 
+                {
+                    div2.style.visibility='visible'
+                    console.log("<?php echo $credit; ?>")
+                    dayNumList = [];
+                }
+                else
+                {
+                    div2.style.visibility='hidden'
+                    selected.classList.add("added");
+                    $color = 'green';
+                   
+                    countColor('green=', dayWithoutWE.length)
+                }
+                
+
+            //}
+        }
+
+        function checkingDays(i, selected, len_selectedElements)
+        {
+            var testW = len_selectedElements;
+            var dayNum = dayNumList[i]; 
+            
+            var date_now = new Date();
+            
+            var dateMonth = <?php if(isset($_SESSION['currentM'])){echo $_SESSION['currentM'];}else{ echo 0;} ?>;
+            var date2 = new Date("2024-" + dateMonth + "-" + dayNum);
+            var div2 = document.getElementById('errorMsg');
+
+            if (date_now > date2) 
+            {
+                div2.style.visibility='visible'
+                console.log("<?php echo $credit; ?>")
+            }
+            else
+            {
+                div2.style.visibility='hidden'
+                selected.classList.add("added");
+            
+                console.log("len: " + testW);
+            }
+            
+        }
+
 
 
         function addDate() 
         {
-            const selected = document.querySelector(".selected");
+            //const selected = document.querySelector(".selected");
+            const selectedElements = document.querySelectorAll(".selected");
             div4.style.visibility='hidden';
-    
-            if (selected) 
+            var len_selectedElements = selectedElements.length;
+            
+
+            for (var i = 0; i < selectedElements.length; i++) 
             {
-                if(selected.classList.contains('prev-month') || selected.classList.contains('req-day') || selected.classList.contains('req-Acpt-day'))
+                const selected = selectedElements[i];
+                if (selected) 
                 {
-
-                }
-                else if (selected.classList.contains('added'))
-                {
-                    selected.classList.remove("added");
-                    numGr--;
-                    // updateSession(selected.textContent, 'remove');
-                }
-                else
-                {
-                    
-                    //$idNum = document.getElementById("label").textContent;
-                   <?php if(isset($_POST['idNum'])){$idNum = $_POST['idNum'];}?>
-                    if(typeof $idNum !== 'undefined')
+                
+                    if(selected.classList.contains('prev-month') || selected.classList.contains('req-day') || selected.classList.contains('req-Acpt-day'))
                     {
-                       var dayNum = $idNum;
-                        var date_now = new Date();
-                        var idnum = <?php if(isset($_POST['idNum'])){echo $_POST['idNum'];}else{ echo 0;} ?>;
-                        var dateMonth = <?php if(isset($_SESSION['currentM'])){echo $_SESSION['currentM'];}else{ echo 0;} ?>;
-                        var date2    = new Date("2024-" + dateMonth + "-" + dayNum);
-                        var div2 = document.getElementById('errorMsg');
-                        // check if date is in the past
-                        if (date_now > date2) 
-                        {
-                            div2.style.visibility='visible'
-                            console.log("<?php echo $credit; ?>")
-                        }
-                        else
-                        {
-                            div2.style.visibility='hidden'
-                            selected.classList.add("added");
-                            $color = 'green';
-                            //console.log($color  + " " +$idNum);
-                            // console.log(<?php
-                            //     $js_array = json_encode($wee);
-                            //     echo "$js_array";
-                            // ?>);
-                            arrWe = (<?php
-                                $js_array = json_encode($wee);
-                                echo "$js_array";
-                            ?>);
-
-                            console.log(arrWe);
-                            console.log(dayNum);
-
-                            if(!arrWe.includes(dayNum))
-                            {
-                                numGr++;
-                            }
-                            console.log(numGr);
-                            countColor('green=', numGr)
-                        }
-                       
 
                     }
-                    
-                    //getDay();
-                    // updateSession(selected.textContent, 'add');
+                    else if (selected.classList.contains('added'))
+                    {
+                        selected.classList.remove("added");
+                        //numGr--;
+                        // updateSession(selected.textContent, 'remove');
+                    }
+                    else
+                    {
+                       
+
+                        // console.log(arrWe);
+                        // console.log(dayNum);
+
+                       checkingDays(i, selected, len_selectedElements);
+
+
+                        if(i == selectedElements.length -1)
+                        {
+                            // console.log("greenDays: " + len_selectedElements);
+                            sendingDate(i, selected, len_selectedElements);
+                        }
+                            
+
+                        
+                        //getDay();
+                        // updateSession(selected.textContent, 'add');
+                    }
+                    selected.classList.remove("selected");
                 }
-                selected.classList.remove("selected");
             }
         }
         function addDate2() 
@@ -566,25 +618,93 @@
             }
         }
     
-        document.getElementById("calendar").addEventListener("click", function(e) 
-        {
-            if(e.target && e.target.nodeName === "TD") 
-            {
-                // Remove previous selection and 'added' class from all cells
-                document.querySelectorAll("td").forEach(cell => {
-                    cell.classList.remove("selected");
-                    // Optionally remove 'added' class if you want each click to only mark one cell as added
-                    // cell.classList.remove("added");
-                });
+        // document.getElementById("calendar").addEventListener("click", function(e) 
+        // {
+        //     if(e.target && e.target.nodeName === "TD") 
+        //     {
+        //         // Remove previous selection and 'added' class from all cells
+        //         document.querySelectorAll("td").forEach(cell => {
+        //             cell.classList.remove("selected");
+        //             // Optionally remove 'added' class if you want each click to only mark one cell as added
+        //             // cell.classList.remove("added");
+        //         });
     
-                // Add 'selected' class to the clicked cell
-                e.target.classList.add("selected");
+        //         // Add 'selected' class to the clicked cell
+        //         e.target.classList.add("selected");
                 
-                // Update the label with the cell's number
-                document.getElementById("label").textContent = e.target.textContent;
-                $idNum = e.target.textContent;
-                getDay();
+        //         // Update the label with the cell's number
+        //         document.getElementById("label").textContent = e.target.textContent;
+        //         $idNum = e.target.textContent;
+        //         getDay();
                 
+        //     }
+        // });
+
+        document.getElementById("calendar").addEventListener("click", function(e) {
+            if (e.target && e.target.nodeName === "TD") {
+                if (!isCtrlPressed) {
+                    // Remove previous selection and 'added' class from all cells
+                    document.querySelectorAll("td").forEach(cell => {
+                        cell.classList.remove("selected");
+                        // Optionally remove 'added' class if you want each click to only mark one cell as added
+                        // cell.classList.remove("added");
+                    });
+                }
+
+                if(e.target.classList.contains('selected'))
+                {
+                    e.target.classList.remove("selected");
+                    // Get the text content of the clicked cell
+                    let selectedText = e.target.textContent.trim();
+
+                    // Find the index of the selected text in dayNumList
+                    let ind = dayNumList.indexOf(selectedText);
+
+                    // If the selected text is found in dayNumList, remove it
+                    if (ind !== -1) {
+                        dayNumList.splice(ind, 1);
+                    }
+                }
+                else
+                {
+                    e.target.classList.add("selected");
+
+                    // Update the label with the selected cells' numbers
+                    let selectedCells = document.querySelectorAll(".selected");
+                    let labelContent = "";
+                    selectedCells.forEach(cell => {
+                        labelContent += cell.textContent + " ";
+                        //console.log("label: " + labelContent.trim() + "\n")
+                        if (!dayNumList.includes(cell.textContent)) 
+                        {
+                            dayNumList.push(cell.textContent);
+                            var arrWE = <?php echo $myArrayJSON;?>;
+                            console.log("arrWE: " + arrWE);
+                            if(!arrWE.includes(Number(cell.textContent)))
+                            {
+                                dayWithoutWE.push(cell.textContent);
+                            }
+                        }
+                        
+                    });
+                    document.getElementById("label").textContent = labelContent.trim();
+                    $idNum = labelContent.trim();
+                    getDay();
+                }
+                console.log("dayNumList: "+ dayNumList + "\n" + "dayWithoutWE: " + dayWithoutWE);
+
+            }
+        });
+
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "Control") {
+                isCtrlPressed = true;
+            }
+        });
+
+        document.addEventListener("keyup", function(e) {
+            if (e.key === "Control") {
+                isCtrlPressed = false;
             }
         });
 

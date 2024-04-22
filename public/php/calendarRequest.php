@@ -63,14 +63,13 @@ else if(isset($_POST['green']) && isset($_POST['dayNum']))
     echo "\n";
 
     // echo $_SESSION['user']['green'], "test";
-    $idNum = $_POST['dayNum'];
-    $_SESSION['numCal'][] = $idNum;
+    //$idNum = $_POST['dayNum'];
+    //TODO: split nums
+    $idNum = explode(" ", $_POST['dayNum']);
+    $_SESSION['numCal'] = $idNum;
     
     echo "Days stored in session:\n";
-    foreach ($_SESSION['numCal'] as $item) 
-    {
-        echo $item . "\n";
-    }
+    print_r($_SESSION['numCal']);
 } 
 else if(isset($_POST['purple']) && isset($_POST['dayNum']))
 {
@@ -98,6 +97,7 @@ else if(isset($_POST['button']))
     if(isset($_SESSION['user']['green']))
     {
         $array =  $_SESSION['numCal'];
+        
         sort($array); // Sort the array in ascending order
 
         for ($i = 0; $i < count($array); $i++)
