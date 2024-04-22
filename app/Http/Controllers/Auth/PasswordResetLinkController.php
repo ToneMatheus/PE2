@@ -37,7 +37,7 @@ class PasswordResetLinkController extends Controller
         if(!is_null($user)){
             $token = Str::random(64);
 
-            $user->remember_token = $token;
+            $user->password_reset_token = $token;
             $user->sendPasswordResetNotification($token);
             $user->save();
         }

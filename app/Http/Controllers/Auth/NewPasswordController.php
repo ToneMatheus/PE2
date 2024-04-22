@@ -39,9 +39,9 @@ class NewPasswordController extends Controller
         $user = User::where('email', '=', $request->email)
         ->first();
 
-        if($user && $user->remember_token === $request->token){
+        if($user && $user->password_reset_token === $request->token){
             $user->password = Hash::make($request->password);
-            $user->remember_token = null;
+            $user->password_reset_token = null;
             $user->changed_default = 1;
             $user->save();
 
