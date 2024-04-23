@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout :title="$title">
   <div class="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-10 rounded-lg shadow-md">
       <h1 class="text-2xl font-bold text-center dark:text-white underline mb-6">Create Ticket</h1>
