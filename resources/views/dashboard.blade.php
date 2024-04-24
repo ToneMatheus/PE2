@@ -5,12 +5,12 @@
                 <div class="p-6 grid grid-cols-3 gap-4">
                     @php
                         $roleId = DB::table('user_roles')->where('user_id', Auth::id())->first()->role_id;
-                        $changedDefault = DB::table('users')->where('id', Auth::id())->first()->changed_default;
-                    @endphp
+                        // $changedDefault = DB::table('users')->where('id', Auth::id())->first()->changed_default;
+                    @endphp 
 
-                    @if($roleId != config('roles.CUSTOMER') && !$changedDefault)
+                    {{-- @if($roleId != config('roles.CUSTOMER') && !$changedDefault)
                         <script>window.location = "{{ route('password.request') }}"</script>
-                    @endif
+                    @endif --}}
 
                     @if($roleId == config('roles.MANAGER'))
                         <a href="{{ route('create-ticket') }}" class="block">
@@ -91,6 +91,50 @@
                         </a> 
                     @endif 
                 </div>
+                
+                <style>
+                    .card:hover{
+                        box-shadow: 0px 0px 5px rgb(188, 187, 187);
+                    }
+                </style>
+
+                <div class="intranet" style="margin: 20px 30px 30px 28px; display: flex; justify-content: space-between;">
+                    <div class="left-side">
+                        <div class="card" style="display: flex; width: 600px; border-radius: 5px">
+                            <img class="card-img" src="/images/cables.jpg" alt="Card image" style="width: 40%; border-top-left-radius: 5px; border-bottom-left-radius: 5px;">
+                            <div class="card-body" style="background-color: rgb(242, 240, 240); padding: 35px; border-top-right-radius: 5px; border-bottom-right-radius: 5px;">
+                              <h4 class="card-title h4">Benefits and compensation</h4>
+                              <p class="card-text">Some example text some example text. John Doe is an architect and engineer</p>
+                              <a href="#" class="btn btn-primary">See Profile</a>
+                            </div>
+                        </div>
+        
+                        <div class="card" style="display: flex; width: 600px; border-radius: 5px; margin-top: 20px;">
+                            <img class="card-img" src="/images/cables.jpg" alt="Card image" style="width: 40%; border-top-left-radius: 5px; border-bottom-left-radius: 5px;">
+                            <div class="card-body" style="background-color: rgb(242, 240, 240); padding: 35px; border-top-right-radius: 5px; border-bottom-right-radius: 5px;">
+                              <h4 class="card-title h4">Benefits and compensation</h4>
+                              <p class="card-text">Some example text some example text. John Doe is an architect and engineer</p>
+                              <a href="#" class="btn btn-primary">See Profile</a>
+                            </div>
+                        </div>
+    
+                        <div class="card" style="display: flex; width: 600px; border-radius: 5px; margin-top: 20px;">
+                            <img class="card-img" src="/images/cables.jpg" alt="Card image" style="width: 40%; border-top-left-radius: 5px; border-bottom-left-radius: 5px;">
+                            <div class="card-body" style="background-color: rgb(242, 240, 240); padding: 35px; border-top-right-radius: 5px; border-bottom-right-radius: 5px;">
+                              <h4 class="card-title h4">Benefits and compensation</h4>
+                              <p class="card-text">Some example text some example text. John Doe is an architect and engineer</p>
+                              <a href="#" class="btn btn-primary">See Profile</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="right-side">
+                        <h1>Company news</h1>
+                        <p>Renewable energy by 2035?</p>
+                        <p>Read about out company's approach to this</p>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
