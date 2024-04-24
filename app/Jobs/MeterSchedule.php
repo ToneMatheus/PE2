@@ -41,23 +41,23 @@ class MeterSchedule implements ShouldQueue
      */
     public function handle()
     {
-        $now = Carbon::now()->toDateString();
-        $date = Carbon::now()->subYears(3)->toDateString();
-        $newMeters = Meter::select('id')
-            ->whereDate('installation_date', '=', $date)
-            ->get()
-            ->pluck('id')
-            ->toArray();
+        $now = Carbon::now()->startOfDay();
 
-        foreach ($newMeters as $newMeterID)
+        $newMeters = DB::table('meters')->select('id', 'installation_date')->get();
+
+        foreach ($newMeters as $newMeter)
         {
-            DB::table('meter_reader_schedules')->insert(
+            $install = Carbon::parse($newMeter->installation_date)->startOfDay();
+            $diff = $install->diffInYears($now);
+
+            if ($diff > 0 && $diff % 3 == 0) {
+                DB::table('meter_reader_schedules')->insert(
                 ['employee_profile_id' => 1000,
-                'meter_id' => $newMeterID,
+                'meter_id' => $newMeter->id,
                 'reading_date' => $now,
                 'status' => 'unread',
-                ]
-            );
+                ]);
+            }
         }
     }
 }
