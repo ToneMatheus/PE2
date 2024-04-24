@@ -53,14 +53,14 @@
                         @foreach($invoices as $invoice)
                             <tr>
                                 <td class="px-4 py-2 border border-gray-400">{{ $invoice->id }}</td>
-                                <td name="InvoiceDate" class="px-4 py-2 border border-gray-400">{{ $invoice->InvoiceDate }}</td>
-                                <td name="DueDate" class="px-4 py-2 border border-gray-400">{{ $invoice->DueDate }}</td>
-                                <td class="px-4 py-2 border border-gray-400">{{ $invoice->TotalAmount }} €</td>
+                                <td name="InvoiceDate" class="px-4 py-2 border border-gray-400">{{ $invoice->invoice_date }}</td>
+                                <td name="DueDate" class="px-4 py-2 border border-gray-400">{{ $invoice->due_date }}</td>
+                                <td class="px-4 py-2 border border-gray-400">{{ $invoice->total_amount }} €</td>
                                 <td class="px-4 py-2 border border-gray-400">
                                     <a href="" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">View</a>
                                     <!-- Add other actions like edit or delete if needed -->
                                 </td>
-                                <td name="Status" class="px-4 py-2 border border-gray-400">{{ $invoice->Status }}</td>
+                                <td name="Status" class="px-4 py-2 border border-gray-400">{{ $invoice->status }}</td>
                             </tr>
                         @endforeach
                     @endif

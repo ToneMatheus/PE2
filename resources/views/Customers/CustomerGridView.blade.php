@@ -38,23 +38,23 @@
             </thead>
             <tbody>
                 @foreach ($customers as $customer)
-                <tr>
-                    <td>{{ $customer->id }}</td>
-                    <td>{{ $customer->last_name }}</td>
-                    <td>{{ $customer->first_name }}</td>
-                    <td>{{ $customer->phone_nbr }}</td>
-                    <td>{{ $customer->company_name }}</td>
-                    <td>{{ $customer->is_company }}</td>
-                    <td>{{ $customer->email }}</td>
-                    <td>{{ $customer->birth_date }}</td>
-                    <td>{{ $customer->is_active }}</td>
-                    <td>{{ $customer->start_date }}</td>
-                    <td>{{ $customer->end_date }}</td>
-                    <td>{{ $customer->type }}</td>
-                    <td>{{ $customer->price }}</td>
-                    <td>{{ $customer->status }}</td>
-                    <td><a href="{{ route('customer.edit', ['id' => $customer->id]) }}">Edit</a></td>
-                </tr>
+                    <tr>
+                        <td>{{ $customer->id }}</td>
+                        <td>{{ $customer->last_name }}</td>
+                        <td>{{ $customer->first_name }}</td>
+                        <td>{{ $customer->phone_nbr }}</td>
+                        <td>{{ $customer->company_name }}</td>
+                        <td>{{ $customer->is_company }}</td>
+                        <td>{{ $customer->email }}</td>
+                        <td>{{ $customer->birth_date }}</td>
+                        <td>{{ $customer->is_active }}</td>
+                        <td>{{ $customer->start_date }}</td>
+                        <td>{{ $customer->end_date }}</td>
+                        <td>{{ $customer->type }}</td>
+                        <td>{{ $customer->price }}</td>
+                        <td>{{ $customer->status }}</td>
+                        <td><a href="{{ route('customer.edit', ['id' => $customer->id]) }}">Edit</a></td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>

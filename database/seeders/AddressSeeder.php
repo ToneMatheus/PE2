@@ -34,7 +34,7 @@ class AddressSeeder extends Seeder
                 'province' => 'Antwerp',
                 'country' => 'Belgium',
                 'type' => 'appartment',
-                'is_billing_address' => 0,
+                'is_billing_address' => 1,
             ],
             [
                 'id' => 3,
@@ -58,7 +58,7 @@ class AddressSeeder extends Seeder
                 'province' => 'Flemish Brabant',
                 'country' => 'Belgium',
                 'type' => 'house',
-                'is_billing_address' => 0,
+                'is_billing_address' => 1,
             ],
             [
                 'id' => 5,
@@ -82,7 +82,7 @@ class AddressSeeder extends Seeder
                 'province' => 'Antwerp',
                 'country' => 'Belgium',
                 'type' => 'appartment',
-                'is_billing_address' => 1,
+                'is_billing_address' => 0,
             ],
             [
                 'id' => 7,
