@@ -31,6 +31,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\RelationsController;
+use App\Http\Controllers\TicketManagerPageController;
 
 
 
@@ -65,7 +66,7 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
-    
+    Route::get('/manager/TicketStatus', [TicketManagerPageController::class, 'index'])->name('manager.TicketStatus');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
