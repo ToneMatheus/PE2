@@ -12,11 +12,11 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\MeterReadingReminder;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
-use App\Traits\jobLoggerTrait;
+use App\Traits\cronJobTrait;
 
 class MeterReadingReminderJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, jobLoggerTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 
     protected $customeruID;
     protected $customermID;
@@ -41,7 +41,7 @@ class MeterReadingReminderJob implements ShouldQueue
                 ->first();
 
             if ($user) {
-                Mail::to('shaunypersy10@gmail.com')->send(new MeterReadingReminder($user));
+                $this->sendMailInBackground("ToCustomer@mail.com", MeterReadingReminder::class, [$user]);
                 $this->jobCompletion("Mail sent for user with ID: {$user->id}");
             } else {
                 Log::error('User not found for MeterReadingReminderJob');

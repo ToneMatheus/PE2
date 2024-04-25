@@ -13,13 +13,13 @@ use Illuminate\Support\Carbon;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-use App\Traits\jobLoggerTrait;
+use App\Traits\cronJobTrait;
 
 use App\Models\Invoice;
 
 class InvoiceFinalWarningJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, jobLoggerTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
     protected $now;
 
     public function __construct()
@@ -87,13 +87,6 @@ class InvoiceFinalWarningJob implements ShouldQueue
             $this->logCritical($invoiceID, "Unable to retrieve invoice information: " . $e->getMessage());
         }
 
-        if (Mail::to('shaunypersy10@gmail.com')->send(new InvoiceFinalWarning($invoice_info, $total_amount, $user_info)) == null)
-        {
-            Log::error("Unable to send unpaid invoice final warning mail for invoice with ID ". $invoiceID);
-            $this->logWarning($invoiceID, "Unable to send unpaid invoice final warning mail");
-        }
-        else{
-            $this->logInfo($invoiceID , "Succesfully sent mail.");
-        }
+        $this->sendMailInBackground("ToCustomer@mail.com", InvoiceFinalWarning::class, [$invoice_info, $total_amount, $user_info], $invoiceID);
     }
 }
