@@ -22,7 +22,7 @@ class CronJobController extends Controller
             $files = File::files($jobPath);
             foreach ($files as $file) {
                 $filename = pathinfo($file, PATHINFO_FILENAME);
-                if (Str::endsWith($file, '.php') && !Str::startsWith($filename, '.')) {
+                if (Str::endsWith($file, '.php') && !Str::startsWith($filename, '_')) {
                     // Check if the job is already in the database
                     $existingJob = CronJob::where('name', $filename)->exists();
                     if (!$existingJob) {
