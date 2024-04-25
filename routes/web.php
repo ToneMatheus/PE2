@@ -103,7 +103,12 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function() {
-    
+    Route::get('/customer/invoiceStatus', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoiceStatus');
+    Route::post('/customer/change-locale', [CustomerPortalController::class, 'changeLocale'])->name('customer.change-locale');
+    Route::post('/customer/chatbot', [CustomerPortalController::class, 'chatbot'])->name('customer.chatbot');
+    Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
+    Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
+    //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
@@ -285,8 +290,8 @@ Route::get('/confirm-emailTEST/{token}/{email}', [RegisteredUserController::clas
 
 Route::get('/holidays', [HolidayController::class, 'index']);
 Route::controller(InvoiceController::class)->group(function () {
-    Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
-});
+Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');});
+Route::get('/invoices/{id}/download', [InvoiceController::class, 'download'])->name('invoice.download');
 //All routes for credit notes
 Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
 Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
