@@ -65,7 +65,6 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View a specific ticket</p>
                             </div>
                         </a>
-<<<<<<< HEAD
                     @endif 
                     @if($roleId == config('roles.EMPLOYEE'))
                         {{-- for the employees to manage their holiday requests --}}
@@ -90,8 +89,6 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View your profile information</p>
                             </div>
                         </a> 
-                    @endi
-=======
                     @endif
                     @if($roleId == config('roles.CUSTOMER'))
                         <a href="{{ route('customer.invoiceStatus') }}" class="block">
@@ -108,7 +105,6 @@
                         </a>
                         @include('chatbot.chatbot')
                     @endif
->>>>>>> origin/main
                 </div>
                 
                 <style>
