@@ -7,15 +7,15 @@
         <div class="rounded-md shadow-sm space-y-4">
           <div>
             <label for="name" class="block text-sm font-medium text-gray-700 dark:text-white">Name</label>
-            <input id="name" name="name" type="text" required class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 text-gray-900 dark:text-black focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Name" value="{{ old('Name') }}">
+            <input id="name" name="name" type="text" required class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 text-gray-900 dark:text-black focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Name">
           </div>
           <div>
             <label for="email" class="block text-sm font-medium text-gray-700 dark:text-white">Email</label>
-            <input id="email" name="email" type="email" required class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 text-gray-900 dark:text-black focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Email" value="{{ old('Email') }}">
+            <input id="email" name="email" type="email" required class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 text-gray-900 dark:text-black focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Email">
           </div>
           <div>
             <label for="issue" class="block text-sm font-medium text-gray-700 dark:text-white">Issue</label>
-            <input id="issue" name="issue" type="text" required class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 text-gray-900 dark:text-black focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Issue" value="{{ old('Issue') }}">
+            <input id="issue" name="issue" type="text" required class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 text-gray-900 dark:text-black focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Issue" value="{{ old('Issue', request()->get('message')) }}">
           </div>
           <div>
             <label for="description" class="block text-sm font-medium text-gray-700 dark:text-white">Description</label>
@@ -31,4 +31,5 @@
       </form>
     </div>
   </div>
+  @include('chatbot.chatbot')
 </x-app-layout>
