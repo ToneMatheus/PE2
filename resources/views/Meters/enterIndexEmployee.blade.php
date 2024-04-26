@@ -37,7 +37,8 @@
                         @csrf
                         @method('POST')
                         <input id="meter_id" name="meter_id" type="hidden">
-                        <label for="index_value">Enter index value for meter <span id="modalEAN" class="modalEAN"></span></label>
+                        <label for="index_value">Enter index value for meter <span id="modalEAN" class="modalEAN"></span>
+                        <br>Previous index value: <b><span id="prev"></span></b></label>
                         <input id="index_value" name="index_value" type="text" required class="name form-control">
                     </div>
                 </div>
@@ -102,7 +103,7 @@
                 $meterID = $(this).val()
 
                 $.ajax({
-                    url: "/fetchEAN/" + $meterID,
+                    url: "/fetchIndex/" + $meterID,
                     method:'GET',
                     success:function(response)
                     {
@@ -113,7 +114,9 @@
                         }
                         else {
                             $('#meter_id').val($meterID);
-                            $('#modalEAN').html(response.result.EAN);
+                            $('#prev').html(response.prev_index.reading_value);
+                            $('#EAN').val(response.meter.EAN);
+                            $('#modalEAN').html(response.meter.EAN);
                         }
                     }
                 })

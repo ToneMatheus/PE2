@@ -366,17 +366,6 @@ class MeterController extends Controller
         }
     }
 
-    public function fetchEAN($meterID) {
-        $query = Meter::find($meterID);
-
-        if($query) {
-            return response()->json([
-                'status'=>200,
-                'result'=> $query,
-            ]);
-        }
-    }
-
     public function submitIndex(Request $request) {
         $errors = new MessageBag();
         $request->validate([
