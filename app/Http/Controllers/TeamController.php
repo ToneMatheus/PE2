@@ -30,6 +30,7 @@ class TeamController extends Controller
         $teamMembers = DB::table('team_members')
                 ->join('users', 'team_members.user_id', '=', 'users.id')
                 ->where('team_members.team_id', '=', $teamId)
+                ->orderByDesc('team_members.is_manager')
                 ->select('users.first_name', 'users.last_name')
                 ->get();
 

@@ -2,8 +2,9 @@
     TODO
     - click a team and get all info
     - be able to change team info:
-        - add/remove members
-        - replace manager
+        - remove members
+        - move members
+        - replace manager?
         - ...
  --}}
 
@@ -16,6 +17,9 @@
         <style>
             .hidden {
                 display: none;
+            }
+            .manager {
+                font-weight: bold;
             }
         </style>
         
@@ -78,9 +82,14 @@
                             teamNameElement.textContent = teamName;
 
                             tableBody.innerHTML = '';
-                            members.forEach(member => {
+                            members.forEach((member, index) => {
                                 const row = tableBody.insertRow();
-                                row.insertCell(0).textContent = member.first_name + ' ' + member.last_name;
+                                const cell = row.insertCell(0);
+                                cell.textContent = member.first_name + ' ' + member.last_name;
+                                //row.insertCell(0).textContent = member.first_name + ' ' + member.last_name;
+                                if (index === 0) {
+                                    cell.classList.add('manager');
+                                }
                             });
                             document.getElementById('teamMembers').classList.remove('hidden');
                         }).catch(error => {
