@@ -11,9 +11,59 @@
 
     </head>
 
+    <style>
+        .card img{
+            width: 60px;
+            margin-right: 20px;
+        }
+
+        .card-body{
+            font-size: 30px;
+            display: flex;
+            /* flex-direction: column; */
+            /* justify-content: center; */
+        }
+
+        .card-body:hover{
+            background-color: rgb(205, 203, 203);
+        }
+
+        .card a{
+            text-decoration: none;
+            color: black;
+        }
+
+        .h1{
+            margin: 20px 0px;
+        }
+    </style>
+
     <body>
         <div class="container">
+            <p class="h1" style="text-align: center">Your documents</p>
 
+            <div class="card">
+                <a href="{{ route('contract')}}">
+                    <div class="card-body">
+                        <img src="/images/contract.png" alt="contract image"/>
+                        <span>Contract</span>
+                    </div>
+                </a>
+
+                <a href="{{ route('employeeBenefits')}}">
+                    <div class="card-body">
+                        <img src="/images/benefits.png" alt="benefits image"/>
+                        <span>Your benefits</span>
+                    </div>
+                </a>
+
+                <a href="{{ route('payList')}}">
+                    <div class="card-body">
+                        <img src="/images/paycheck.png" alt="paycheck image"/>
+                        <span>Payslips</span>
+                    </div>
+                </a>
+            </div>
         </div>
     </body>
 </x-app-layout>

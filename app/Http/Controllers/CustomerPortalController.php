@@ -7,31 +7,66 @@ use App\Models\Invoice;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
+
 
 class CustomerPortalController extends Controller
 {
-    public function invoiceView(Request $request, $customerContractId)
+    public function invoiceView(Request $request)
     {
         $search = $request->get('search');
+        $status = $request->get('status');
+        $selectedAddress = $request->get('address');
         $query = Invoice::query();
-    
-        if ($search) {
-            $query->where('customer_contract_id', $customerContractId)
-                  ->where(function ($query) use ($search) {
-                      $query->where('id', $search)
-                            ->orWhere('total_amount', $search)
-                            ->orWhere('invoice_date', $search)
-                            ->orWhere('due_date', $search)
-                            ->orWhere('status', $search)
-                            ->orWhere('type', $search);
-                  });
-        } else {
-            $query->where('customer_contract_id', $customerContractId);
+
+        $user = auth()->user();
+
+        $query->join('meters', 'invoices.meter_id', '=', 'meters.id')
+              ->join('meter_addresses', 'meters.id', '=', 'meter_addresses.meter_id')
+              ->join('addresses', 'meter_addresses.address_id', '=', 'addresses.id')
+              ->join('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
+              ->select('invoices.*', 'meters.id', DB::raw("CONCAT(addresses.street, ' ', addresses.number, ', ', addresses.city) AS address"))
+              ->where('customer_contracts.user_id', $user->id);
+
+        if ($selectedAddress) {
+            $query->where(DB::raw("CONCAT(addresses.street, ' ', addresses.number, ', ', addresses.city)"), $selectedAddress);
         }
-    
+
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                      $query->where('invoices.id', $search)
+                            ->orWhere('invoices.total_amount', $search)
+                            ->orWhere('invoices.invoice_date', $search)
+                            ->orWhere('invoices.due_date', $search)
+                            ->orWhere('invoices.status', $search)
+                            ->orWhere('invoices.type', $search);
+                  });
+        }
+
+        $sentInvoicesSum = Invoice::where('customer_contract_id', $user->id)
+                          ->where('status', 'sent')
+                          ->sum('total_amount');
+
+        if ($status) {
+            $query->where('invoices.status', $status);
+        }
+
+        $query->orderBy('invoices.invoice_date', 'desc');
         $invoices = $query->paginate(10);
-        return view('Customers/CustomerInvoiceView', ['invoices' => $invoices, 'customerContractId' => $customerContractId]);
+
+        $addresses = DB::table('addresses')
+               ->join('meter_addresses', 'addresses.id', '=', 'meter_addresses.address_id')
+               ->join('meters', 'meter_addresses.meter_id', '=', 'meters.id')
+               ->join('invoices', 'meters.id', '=', 'invoices.meter_id')
+               ->join('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
+               ->where('customer_contracts.user_id', $user->id)
+               ->select(DB::raw("CONCAT(addresses.street, ' ', addresses.number, ', ', addresses.city) AS address"))
+               ->distinct()
+               ->get();
+
+        return view('Customers/CustomerInvoiceView', compact('invoices', 'sentInvoicesSum', 'addresses'));
     }
+
 
     public function showConsumptionHistory($timeframe = 'month')
     {
@@ -66,5 +101,21 @@ class CustomerPortalController extends Controller
     {
         $consumptionData = $this->showConsumptionHistory('month')->getData();
         return view('Customers/CustomerConsumptionHistory', ['consumptionData' => $consumptionData]);
+    }
+
+    public function changeLocale(Request $request)
+    {
+        session(['applocale' => $request->locale]);
+        return back();
+    }
+
+    public function chatbot(Request $request)
+    {
+        $user = auth()->user();
+
+        $firstName = $user->first_name; 
+        $email = $user->email;
+
+        return view('Customers/CustomerInvoiceView', compact('firstName', 'email'));
     }
 }

@@ -19,9 +19,16 @@ class Invoice extends Model
         'meter_id'
     ];
 
+    public $timestamps = false;
+
     public function invoice_lines(): HasMany
     {
         return $this->hasMany(Invoice_line::class);
+    } 
+
+    public function cron_job_run_logs(): HasMany
+    {
+        return $this->hasMany(CronJobRunLog::class);
     } 
 
     public function customer_contract(): BelongsTo

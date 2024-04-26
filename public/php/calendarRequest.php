@@ -4,6 +4,8 @@ use Illuminate\Support\Arr;
 
 session_start();
 
+$user_id = $_SESSION['idUser'];
+
 $host = '127.0.0.1';
 $user = 'root';
 $password = '';
@@ -61,14 +63,13 @@ else if(isset($_POST['green']) && isset($_POST['dayNum']))
     echo "\n";
 
     // echo $_SESSION['user']['green'], "test";
-    $idNum = $_POST['dayNum'];
-    $_SESSION['numCal'][] = $idNum;
+    //$idNum = $_POST['dayNum'];
+    //TODO: split nums
+    $idNum = explode(" ", $_POST['dayNum']);
+    $_SESSION['numCal'] = $idNum;
     
     echo "Days stored in session:\n";
-    foreach ($_SESSION['numCal'] as $item) 
-    {
-        echo $item . "\n";
-    }
+    print_r($_SESSION['numCal']);
 } 
 else if(isset($_POST['purple']) && isset($_POST['dayNum']))
 {
@@ -90,10 +91,13 @@ else if(isset($_POST['pink']) && isset($_POST['dayNum']))
 }
 else if(isset($_POST['button']))
 {
+    $monthTest = $_SESSION['currentM'];
+    
     // TODO: send the month (and maybe year) to the request
     if(isset($_SESSION['user']['green']))
     {
         $array =  $_SESSION['numCal'];
+        
         sort($array); // Sort the array in ascending order
 
         for ($i = 0; $i < count($array); $i++)
@@ -111,13 +115,13 @@ else if(isset($_POST['button']))
             echo "\nmax: " . $maxValue;
             echo "\nmin: " . $minValue . "\n";
 
-            $thsDay = "2024/03/$minValue";
-            $scdDay = "2024/03/$maxValue";
+            $thsDay = "2024/$monthTest/$minValue";
+            $scdDay = "2024/$monthTest/$maxValue";
             $todayRequest = date("Y/m/d");
             $type = "Vacation";
 
             $date_now = new DateTime();
-            $date2    = new DateTime("03/$minValue/2024");
+            $date2    = new DateTime("$monthTest/$minValue/2024");
             // check if date is in the past
             if ($date_now > $date2) 
             {
@@ -125,7 +129,7 @@ else if(isset($_POST['button']))
             }
             else
             {
-                $employee_profile_id = mysqli_real_escape_string($link, 1);
+                $employee_profile_id = mysqli_real_escape_string($link, $user_id);
                 $request_date = mysqli_real_escape_string($link, $todayRequest);
                 $start_date = mysqli_real_escape_string($link, $thsDay);
                 $end_date = mysqli_real_escape_string($link, $scdDay);
@@ -136,12 +140,12 @@ else if(isset($_POST['button']))
                 $boss_approval = mysqli_real_escape_string($link, 0);
                 $is_active = mysqli_real_escape_string($link, 1);
     
-                $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
-                $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
-                $check = mysqli_fetch_array($check_table_result) or die("Error: an error has occurred while executing the query.");
+                // $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
+                // $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
+                // $check = mysqli_fetch_array($check_table_result) or die("Error: an error has occurred while executing the query.");
     
                 $query2 = "INSERT INTO holidays (employee_profile_id, request_date, start_date, end_date, holiday_type_id, reason, fileLocation, manager_approval, boss_approval, is_active) VALUES ('$employee_profile_id', '$request_date', '$start_date', '$end_date', '$holiday_type_id', '$reason', '$fileLoc', '$manager_approval', '$boss_approval', '$is_active')";
-                $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query.");
+                $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query. id: $user_id");
     
                 if($result2)
                 {
@@ -187,14 +191,15 @@ else if(isset($_POST['button']))
                                 $minValue = min($temp);
                                 echo "\nmax: " . $maxValue;
                                 echo "\nmin: " . $minValue . "\n";
+                               
 
-                                $thsDay = "2024/03/$minValue";
-                                $scdDay = "2024/03/$maxValue";
+                                $thsDay = "2024/$monthTest/$minValue";
+                                $scdDay = "2024/$monthTest/$maxValue";
                                 $todayRequest = date("Y/m/d");
                                 $type = "Vacation";
 
                                 $date_now = new DateTime();
-                                $date2    = new DateTime("03/$minValue/2024");
+                                $date2    = new DateTime("$monthTest/$minValue/2024");
                                 // check if date is in the past
                                 if ($date_now > $date2) 
                                 {
@@ -202,7 +207,7 @@ else if(isset($_POST['button']))
                                 }
                                 else
                                 {
-                                    $employee_profile_id = mysqli_real_escape_string($link, 1);
+                                    $employee_profile_id = mysqli_real_escape_string($link, $user_id);
                                     $request_date = mysqli_real_escape_string($link, $todayRequest);
                                     $start_date = mysqli_real_escape_string($link, $thsDay);
                                     $end_date = mysqli_real_escape_string($link, $scdDay);
@@ -213,12 +218,12 @@ else if(isset($_POST['button']))
                                     $boss_approval = mysqli_real_escape_string($link, 0);
                                     $is_active = mysqli_real_escape_string($link, 1);
 
-                                    $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
-                                    $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
-                                    $check = mysqli_fetch_array($check_table_result) or die("Error: an error has occurred while executing the query.");
+                                    // $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
+                                    // $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
+                                    // $check = mysqli_fetch_array($check_table_result) or die("Error: an error has occurred while executing the query.");
 
                                     $query2 = "INSERT INTO holidays (employee_profile_id, request_date, start_date, end_date, holiday_type_id, reason, fileLocation, manager_approval, boss_approval, is_active) VALUES ('$employee_profile_id', '$request_date', '$start_date', '$end_date', '$holiday_type_id', '$reason', '$fileLoc', '$manager_approval', '$boss_approval', '$is_active')";
-                                    $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query.");
+                                    $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query. id: $user_id");
 
                                     if($result2)
                                     {
@@ -240,13 +245,13 @@ else if(isset($_POST['button']))
                                 echo "\nmax: " . $maxValue;
                                 echo "\nmin: " . $minValue . "\n";
 
-                                $thsDay = "2024/03/$minValue";
-                                $scdDay = "2024/03/$maxValue";
+                                $thsDay = "2024/$monthTest/$minValue";
+                                $scdDay = "2024/$monthTest/$maxValue";
                                 $todayRequest = date("Y/m/d");
                                 $type = "Vacation";
 
                                 $date_now = new DateTime();
-                                $date2    = new DateTime("03/$minValue/2024");
+                                $date2    = new DateTime("$monthTest/$minValue/2024");
                                 // check if date is in the past
                                 if ($date_now > $date2) 
                                 {
@@ -254,7 +259,7 @@ else if(isset($_POST['button']))
                                 }
                                 else
                                 {
-                                    $employee_profile_id = mysqli_real_escape_string($link, 1);
+                                    $employee_profile_id = mysqli_real_escape_string($link, $user_id);
                                     $request_date = mysqli_real_escape_string($link, $todayRequest);
                                     $start_date = mysqli_real_escape_string($link, $thsDay);
                                     $end_date = mysqli_real_escape_string($link, $scdDay);
@@ -265,12 +270,12 @@ else if(isset($_POST['button']))
                                     $boss_approval = mysqli_real_escape_string($link, 0);
                                     $is_active = mysqli_real_escape_string($link, 1);
 
-                                    $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
-                                    $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
-                                    $check = mysqli_fetch_array($check_table_result) or die("Error: an error has occurred while executing the query.");
+                                    // $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
+                                    // $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
+                                    // $check = mysqli_fetch_array($check_table_result) or die("Error: an error has occurred while executing the query.");
 
                                     $query2 = "INSERT INTO holidays (employee_profile_id, request_date, start_date, end_date, holiday_type_id, reason, fileLocation, manager_approval, boss_approval, is_active) VALUES ('$employee_profile_id', '$request_date', '$start_date', '$end_date', '$holiday_type_id', '$reason', '$fileLoc', '$manager_approval', '$boss_approval', '$is_active')";
-                                    $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query.");
+                                    $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query. id: $user_id");
 
                                     if($result2)
                                     {

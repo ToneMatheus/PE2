@@ -141,13 +141,12 @@
             <table>
                 <th>#</th>
                 <th>Request date</th>
-                <th>Employee name</th>
+                <th>Emp name</th>
                 <th>Start date</th>
                 <th>End date</th>
                 <th>Requested days</th>
                 <th>Holiday type</th>
                 <th>Status</th>
-                <th>Approved/Reject on the..</th>
                 @php $i = 1; @endphp
 
                 @foreach($all_data as $data)
@@ -173,7 +172,6 @@
                             <td>{{ $diffInDays }}</td>
                             <td>{{ $holiday_type_name[0]->type }}</td>
                             <td><span class="badge badge-danger" style="font-size: 16px">Rejected</span></td>
-                            <td>{{ $decision_date }}</td>
                         </tr>
                         @php $i++; @endphp
 
@@ -198,7 +196,6 @@
                                 <td>{{ $diffInDays }}</td>
                                 <td>{{ $holiday_type_name[0]->type }}</td>
                             <td><span class="badge badge-success" style="font-size: 16px">Approved</span></td>
-                            <td>{{ $decision_date }}</td>
                         </tr>
                         @php $i++; @endphp
                     @endif

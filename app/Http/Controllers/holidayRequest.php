@@ -21,7 +21,7 @@ class holidayRequest extends Controller
 
     public function index()
     {
-        $user_id = auth()->user()->id;
+        $user_id = auth()->user()->employee_profile_id;
         $user_name = auth()->user()->username;
         return view('holidayRequestPage', compact('user_name', 'user_id'));
     }

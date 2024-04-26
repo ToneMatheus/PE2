@@ -16,7 +16,8 @@ class TicketController extends Controller
 {
     public function showForm(): View
     {
-        return view('Support_Pages/create-ticket');
+        $title = 'Create Ticket';
+        return view('Support_Pages/create-ticket', ['title' => $title]);
     }
 
     public function store(Request $request): Redirector|RedirectResponse

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Meter extends Model
 {
     use HasFactory;
-    public $table = "meter";
+    public $table = "meters";
     const CREATED_AT = null;
     const UPDATED_AT = null;
 
@@ -19,7 +19,8 @@ class Meter extends Model
         'type',
         'installation_date',
         'status',
-        'is_smart'
+        'is_smart',
+        'expecting_reading'
     ];
 
      public function scopeSearch($query, $value){

@@ -7,6 +7,7 @@
     <link href="/css/Joren/reset.css" rel="stylesheet"/>
     <link href="/css/Joren/main.css" rel="stylesheet"/>
     <link href="/css/Joren/CreateAccount.css" rel="stylesheet"/>
+    <script src="{{ asset('js/address-autocomplete.js')}}"></script>
 
     <script>
         window.onload = function(){
@@ -66,9 +67,11 @@
         //     }
         // });
     </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJxVIJtLGU0anxCft7GRMVblVKBByiTj8&libraries=places"></script>
+    <script src="/js/address-autocomplete.js"></script>
 
 </head>
-<body>
+<body onload="initAutocomplete()">
     <div class="wrapper">
         <header> 
             <p class="CompanyNameH1">Name Company</p>
@@ -193,14 +196,15 @@
                             <label>Street</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="Street name" name="Street" value="{{old('Street')}}" required/>
+                            <input id="address-input" type="text" class="form-control" placeholder="Street name" name="Street" value="{{old('Street')}}" required>
+                            <!-- <input type="text" placeholder="Street name" name="Street" value="{{old('Street')}}" required/> -->
                         </td>
                         
                         <td>
                             <label>Number</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="10" name="Number" value="{{old('Number')}}" required/>
+                            <input type="text" placeholder="10" name="Number" id="Number" value="{{old('Number')}}" required/>
                         </td>
                     </tr>
 
@@ -209,7 +213,7 @@
                             <label>Province</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="Province" name="Province" value="{{old('Province')}}" required/>
+                            <input type="text" placeholder="Province" name="Province" id="Province" value="{{old('Province')}}" required/>
                         </td>
 
                         <td>
@@ -226,14 +230,14 @@
                             <label>PostalCode</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="4000" name="PostalCode" value="{{old('PostalCode')}}" required/>
+                            <input type="text" placeholder="4000" name="PostalCode" id="PostalCode" value="{{old('PostalCode')}}" required/>
                         </td>
 
                         <td>
                             <label>City</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="City" name="City" value="{{old('City')}}" required/>
+                            <input type="text" placeholder="City" name="City" id="City" value="{{old('City')}}" required/>
                         </td>    
                     </tr>
 
