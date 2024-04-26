@@ -118,13 +118,6 @@
                     }
                 })
             })
-
-            $(document).on('click', '#enter', function (e) {
-                $meterID = $("#meter_id").val();
-                $indexValue = $("#index_value").val();
-                console.log($meterID);
-                console.log($indexValue);
-            })
         });
     </script>
 </body>

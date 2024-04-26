@@ -102,7 +102,7 @@
                 $meterID = $(this).val()
 
                 $.ajax({
-                    url: "/fetchEAN_paper/" + $meterID,
+                    url: "/fetchEAN/" + $meterID,
                     method:'GET',
                     success:function(response)
                     {
@@ -117,13 +117,6 @@
                         }
                     }
                 })
-            })
-
-            $(document).on('click', '#enter', function (e) {
-                $meterID = $("#meter_id").val();
-                $indexValue = $("#index_value").val();
-                console.log($meterID);
-                console.log($indexValue);
             })
         });
     </script>

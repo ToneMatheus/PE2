@@ -440,7 +440,7 @@ class MeterController extends Controller
         DB::table('meter_reader_schedules')
             ->where('meter_id', '=', $meter_id)
             ->update(['status' => 'read']);
-        return redirect('enter_index_employee');
+        return redirect()->back();
     }
 
     public function searchIndexPaper(Request $request)  {
@@ -552,83 +552,6 @@ class MeterController extends Controller
             );
             echo json_encode($data);
         }
-    }
-
-    public function fetchEAN_paper($meterID) {
-        $query = Meter::find($meterID);
-
-        if($query) {
-            return response()->json([
-                'status'=>200,
-                'result'=> $query,
-            ]);
-        }
-    }
-
-    public function submitIndexPaper(Request $request) {
-        $errors = new MessageBag();
-        $request->validate([
-            'meter_id' => 'required',
-            'index_value' => 'required|integer'
-        ],
-        [
-            'meter_id.required' => 'Meter ID inclusion failed for unknown reasons.',
-            'index_value.required' => 'Please enter an index value!',
-            'index_value.integer' => 'You have to type in a number for the index value.'
-        ]);
-
-        $date = Carbon::now()->toDateString();
-        $meter_id = $request->input('meter_id');
-        $index_value = $request->input('index_value');
-
-        // $estimation = DB::table('estimations')
-        // ->where('estimations.meter_id', '=', $meter_id)
-        // ->select('estimations.estimation_total')
-        // ->get();
-
-        $prev_index = DB::table('index_values')
-        ->join('consumptions', 'consumptions.current_index_id', '=', 'index_values.id')
-        ->where('index_values.meter_id', '=', $meter_id)
-        ->select('index_values.id', 'index_values.reading_value', 'index_values.reading_date')
-        ->orderBy('consumptions.id', 'desc')
-        ->get()
-        ->first();
-
-        if ($prev_index == null) {
-            return redirect()->to('/enter_index_employee')->withErrors(['index_value_null'=>'No previous index value found - fatal error']);
-        }
-        
-        $prev_index_id = $prev_index->id;
-        $prev_index_value = $prev_index->reading_value;
-        $start_date = $prev_index->reading_date;
-
-        if ($index_value < $prev_index_value) {
-            return redirect()->to('/enter_index_employee')->withErrors(['index_value_error'=>'Please enter an index number higher than previous value']);
-        }
-
-        // if ($index_value > $estimation->estimation_total) {
-        //     return redirect()->to('/enter_index_employee')->withErrors(['index_value_error'=>'Suspiciously high value']);
-        // }
-
-        $current_index_id = DB::table('index_values')->insertGetId(
-            ['reading_date' => $date, 'meter_id' => $meter_id, 'reading_value' => $index_value]
-        );
-
-        $consumption_value = $index_value - $prev_index_value;
-
-        DB::table('consumptions')->insert(
-            ['start_date' => $start_date,
-            'end_date' => $date,
-            'consumption_value' => $consumption_value,
-            'prev_index_id' => $prev_index_id,
-            'current_index_id' => $current_index_id]
-        );
-
-
-        DB::table('meter_reader_schedules')
-            ->where('meter_id', '=', $meter_id)
-            ->update(['status' => 'read']);
-        return redirect('enter_index_employee');
     }
 
     public function GasElectricity()
