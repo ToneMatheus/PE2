@@ -6,7 +6,7 @@ body {
 }
 
 header {
-    background-color: #007bff;
+    background-color: #34659a;
     color: white;
     padding: 10px 0;
     text-align: center;
@@ -29,20 +29,33 @@ select, input {
 table {
     width: 70%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin: 20px;
 }
 
 th, td {
     text-align: left;
     padding: 8px;
-    border: 1px solid #ddd;
+    border: 2px solid rgb(130, 130, 130);
 }
 
 th {
-    background-color: #007bff;
+    background-color: #34659a;
     color: white;
 }
 
 tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: #dedede;
+}
+
+tr:nth-child(odd) {
+    background-color: #f4f4f4;
+}
+
+button, .view-members-btn, #addMemberBtn {
+    outline: none;
+    cursor: pointer;
+    border-radius: 3px;
+    padding: 2px;
+    color: #fff;
+    background-color: #34659a;
 }
