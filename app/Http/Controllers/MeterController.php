@@ -257,10 +257,6 @@ class MeterController extends Controller
         return redirect('/all_meters_dashboard');
     }
 
-    public function enter_index_pageload() {
-        return view('Meters/enterIndexEmployee');
-    }
-
     public function searchIndex(Request $request)  {
         if($request->ajax())
         {
@@ -382,6 +378,194 @@ class MeterController extends Controller
     }
 
     public function submitIndex(Request $request) {
+        $errors = new MessageBag();
+        $request->validate([
+            'meter_id' => 'required',
+            'index_value' => 'required|integer'
+        ],
+        [
+            'meter_id.required' => 'Meter ID inclusion failed for unknown reasons.',
+            'index_value.required' => 'Please enter an index value!',
+            'index_value.integer' => 'You have to type in a number for the index value.'
+        ]);
+
+        $date = Carbon::now()->toDateString();
+        $meter_id = $request->input('meter_id');
+        $index_value = $request->input('index_value');
+
+        // $estimation = DB::table('estimations')
+        // ->where('estimations.meter_id', '=', $meter_id)
+        // ->select('estimations.estimation_total')
+        // ->get();
+
+        $prev_index = DB::table('index_values')
+        ->join('consumptions', 'consumptions.current_index_id', '=', 'index_values.id')
+        ->where('index_values.meter_id', '=', $meter_id)
+        ->select('index_values.id', 'index_values.reading_value', 'index_values.reading_date')
+        ->orderBy('consumptions.id', 'desc')
+        ->get()
+        ->first();
+
+        if ($prev_index == null) {
+            return redirect()->to('/enter_index_employee')->withErrors(['index_value_null'=>'No previous index value found - fatal error']);
+        }
+        
+        $prev_index_id = $prev_index->id;
+        $prev_index_value = $prev_index->reading_value;
+        $start_date = $prev_index->reading_date;
+
+        if ($index_value < $prev_index_value) {
+            return redirect()->to('/enter_index_employee')->withErrors(['index_value_error'=>'Please enter an index number higher than previous value']);
+        }
+
+        // if ($index_value > $estimation->estimation_total) {
+        //     return redirect()->to('/enter_index_employee')->withErrors(['index_value_error'=>'Suspiciously high value']);
+        // }
+
+        $current_index_id = DB::table('index_values')->insertGetId(
+            ['reading_date' => $date, 'meter_id' => $meter_id, 'reading_value' => $index_value]
+        );
+
+        $consumption_value = $index_value - $prev_index_value;
+
+        DB::table('consumptions')->insert(
+            ['start_date' => $start_date,
+            'end_date' => $date,
+            'consumption_value' => $consumption_value,
+            'prev_index_id' => $prev_index_id,
+            'current_index_id' => $current_index_id]
+        );
+
+
+        DB::table('meter_reader_schedules')
+            ->where('meter_id', '=', $meter_id)
+            ->update(['status' => 'read']);
+        return redirect('enter_index_employee');
+    }
+
+    public function searchIndexPaper(Request $request)  {
+        if($request->ajax())
+        {
+            $today = Carbon::now()->toDateString();
+            $output = '';
+            $queryName = $request->get('queryName');
+            $queryEAN = $request->get('queryEAN');
+            $queryCity = $request->get('queryCity');
+            $queryStreet = $request->get('queryStreet');
+            $queryNumber = $request->get('queryNumber');
+
+            if($queryName != '' || $queryEAN != '' || $queryCity != '' || $queryStreet != '' || $queryNumber != '') { // getting all the required data for the table
+                $query = DB::table('users')
+                            ->join('customer_addresses','users.id','=','customer_addresses.user_id')
+                            ->join('addresses','customer_addresses.id','=','addresses.id')
+                            ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
+                            ->join('meters','meter_addresses.meter_id','=','meters.id')
+                            ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
+                            ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
+                            ->where('users.index_method', '=', 'paper')
+                            ->where('meter_reader_schedules.reading_date','=', $today)
+                            ->where('meter_reader_schedules.employee_profile_id','=',1)
+                            ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
+                            ->orderBy('users.id');
+
+                // searching with multiple parameters
+                $query->where(function($query) use($queryName) {
+                    $query->where('users.first_name','like','%'.$queryName.'%')
+                        ->orWhere('users.last_name','like','%'.$queryName.'%');
+                    })
+                    ->where(function($query) use($queryEAN) {
+                        $query->where('meters.EAN','like','%'.$queryEAN.'%');
+                    })
+                    ->where(function($query) use($queryCity) {
+                        $query->where('addresses.city','like','%'.$queryCity.'%');
+                    })
+                    ->where(function($query) use($queryStreet) {
+                        $query->where('addresses.street','like','%'.$queryStreet.'%');
+                    })
+                    ->where(function($query) use($queryNumber) {
+                        $query->where('addresses.number','like','%'.$queryNumber.'%');
+                    });
+            }
+            else {
+            $query = DB::table('users')
+                        ->join('customer_addresses','users.id','=','customer_addresses.user_id')
+                        ->join('addresses','customer_addresses.id','=','addresses.id')
+                        ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
+                        ->join('meters','meter_addresses.meter_id','=','meters.id')
+                        ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
+                        ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
+                        ->where('users.index_method', '=', 'paper')
+                        ->where('meter_reader_schedules.reading_date','=', $today)
+                        ->where('meter_reader_schedules.employee_profile_id','=',1)
+                        ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
+                        ->orderBy('users.id');
+            }
+
+            $data = $query->get();
+            $total_row = $data->count();
+            if($total_row > 0){
+                foreach($data as $row)
+                {
+                    $output .= '<div class="searchResult';
+
+                    if ($row->status == "read") {
+                        $output .= ' readMeter">';
+                    }
+
+                    if ($row->status == "unread") {
+                        $output .= '">';
+                    }
+                    $output .= '<div class="searchResultLeft">
+                                <p>Name: <span class="highlighted">'.$row->first_name.' '.$row->last_name.'</span></p>
+                                <p>EAN code: <span class="highlighted">'.$row->EAN.'</span></p>
+                                <p>Type: <span class="highlighted">'.$row->type.'</span></p>
+                                <p>Address: '.$row->street.' '.$row->number.', '.$row->city.'</span></p>
+                            </div>
+                            <div class="searchResultRight">
+                                <p>Status:<br>
+                                    <span style="font-size:30px;color:';
+                                    if ($row->status == "unread") {
+                                        $output .= 'red;font-weight:bold;">'.ucfirst($row->status).'</span></p>
+                                        <p>
+                                            <button type="button" class="modalOpener" value='.$row->meter_id.'>Add index value</button>
+                                        </p>';
+                                    }
+                                    else {
+                                        $output .= 'white;font-weight:bold;">'.ucfirst($row->status).'</span></p>';
+                                    }
+
+                        $output .= '
+                                </p>
+                            </div>
+                        </div>';
+                }
+            } else {
+                $output = '
+                <tr>
+                    <td align="center" colspan="5">No Data Found</td>
+                </tr>
+                ';
+            }
+            $data = array(
+                'table_data'  => $output,
+                'total_data'  => $total_row
+            );
+            echo json_encode($data);
+        }
+    }
+
+    public function fetchEAN_paper($meterID) {
+        $query = Meter::find($meterID);
+
+        if($query) {
+            return response()->json([
+                'status'=>200,
+                'result'=> $query,
+            ]);
+        }
+    }
+
+    public function submitIndexPaper(Request $request) {
         $errors = new MessageBag();
         $request->validate([
             'meter_id' => 'required',
