@@ -100,13 +100,14 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function
     Route::get('/customer/invoiceStatus', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoiceStatus');
     Route::post('/customer/change-locale', [CustomerPortalController::class, 'changeLocale'])->name('customer.change-locale');
     Route::post('/customer/chatbot', [CustomerPortalController::class, 'chatbot'])->name('customer.chatbot');
+
+    //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
     Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
     Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
-    //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
-    
+
 });
 
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
@@ -206,9 +207,7 @@ Route::get('/roles', function () {
 Route::get('/employee/invoices', [InvoiceController::class, 'showAllInvoices'])->name('invoices.show');;
 Route::post('/employee/invoices', [InvoiceController::class, 'rerunValidation'])->name('invoices.rerunValidation');;
 
-//Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
-Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
-Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
+
 
 
 Route::get('/test', function () {
