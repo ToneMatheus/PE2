@@ -169,7 +169,7 @@ class FinalSettlementJob implements ShouldQueue
                 'status' => 'sent',
                 'customer_contract_id' => $this->ccID,
                 'meter_id' => $meter->id,
-                'type' => 'Annual'
+                'type' => 'Final'
             ];
 
         } else{                              //Credit note
@@ -180,7 +180,7 @@ class FinalSettlementJob implements ShouldQueue
                 'status' => 'paid',
                 'customer_contract_id' => $this->ccID,
                 'meter_id' => $meter->id,
-                'type' => 'Annual'
+                'type' => 'Final'
             ];
         }
 
