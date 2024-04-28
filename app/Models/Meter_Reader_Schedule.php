@@ -14,7 +14,8 @@ class Meter_Reader_Schedule extends Model
         'employee_profile_id',
         'reading_date',
         'meter_id',
-        'status'
+        'status',
+        'priority'
     ];
 
     use HasFactory;
