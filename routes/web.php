@@ -32,6 +32,7 @@ use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\PayoutsController;
 use App\Http\Controllers\RelationsController;
 
 
@@ -85,7 +86,8 @@ Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(function() {
-    
+    Route::get('/payouts', [PayoutsController::class, 'showPayouts'])->name('payouts');
+    Route::get('/payouts/{id}', [PayoutsController::class, 'processPayout'])->name('payouts.pay');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group(function() {
@@ -117,6 +119,7 @@ Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivate
 Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add');
 Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
 Route::get('/tariff/products/{type}', [EmployeeController::class, 'getProductByType']);
+
 
 //invoice query routes
 Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");

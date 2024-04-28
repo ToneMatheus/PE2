@@ -482,6 +482,7 @@ class InvoiceRunJob implements ShouldQueue
         $extraInvoiceLines = CreditNote::where('user_id', '=', $customer->uID)
         ->where('is_active', '=', 1)
         ->where('is_credit', '=', 1)
+        ->where('is_applied', '=', 0)
         ->select('id', 'type', 'amount')
         ->get()->toArray();
 
@@ -529,7 +530,10 @@ class InvoiceRunJob implements ShouldQueue
 
                 if ($surplus < 0){
                     CreditNote::where('id', $extraInvoiceLine['id'])
-                    ->update(['amount' => $surplus]);
+                    ->update([
+                        'amount' => $surplus,
+                        'is_applied' => 1
+                    ]);
                 } else {
                     CreditNote::where('id', $extraInvoiceLine['id'])
                     ->update(['is_active' => 0]);
