@@ -66,12 +66,6 @@ class IndexValueSeeder extends Seeder
                 'meter_id' => 1
             ],
             [
-                'id' => 10,
-                'reading_date' => '2025-01-01',
-                'reading_value' => 6700,
-                'meter_id' => 2
-            ],
-            [
                 'id' => 11,
                 'reading_date' => '2025-01-01',
                 'reading_value' => 3500,

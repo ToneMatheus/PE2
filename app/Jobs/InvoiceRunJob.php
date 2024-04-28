@@ -62,11 +62,12 @@ class InvoiceRunJob implements ShouldQueue
         ->join('Addresses as a', 'ca.Address_id', '=', 'a.id')
         ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
         ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
+        ->where('users.id', '=', 6)
         ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
         ->get();
 
-        //dispatch(new WeekAdvanceReminderJob);
-        //dispatch(new InvoiceFinalWarningJob);
+        dispatch(new WeekAdvanceReminderJob);
+        dispatch(new InvoiceFinalWarningJob);
 
         //Check if monthly or annual
         foreach($customers as $customer){
@@ -92,26 +93,15 @@ class InvoiceRunJob implements ShouldQueue
 
             //Monthly
             if($invoiceCount < 11){
-                //New Customer (this month)
-                if($startContract->year == $year && $startContract->month == $month){
-                    //Check if needs an invoice now
-                    if($startContract->addWeeks(2) == $now){
-                        $invoiceDate = $now;
-                        $dueDate =  $invoiceDate->copy()->endOfMonth();
-                        
-                        $this->generateMonthlyInvoice($customer, $invoiceDate, $dueDate);
-                    }
-                } else { //Old Customer
-                    $invoiceDate = $startContract->addWeeks(2);
-                    $invoiceDate->setYear($year);
-                    $invoiceDate->setMonth($month);
-            
-                    //Check if needs an invoice now
-                    if($invoiceDate == $now){
-                        $dueDate = $invoiceDate->copy()->endOfMonth();
-    
-                        $this->generateMonthlyInvoice($customer, $invoiceDate, $dueDate);
-                    }
+                $invoiceDate = $startContract->addWeeks(2);
+                $invoiceDate->setYear($year);
+                $invoiceDate->setMonth($month);
+        
+                //Check if needs an invoice now
+                if($invoiceDate == $now){
+                    $dueDate = $invoiceDate->copy()->endOfMonth();
+
+                    $this->generateMonthlyInvoice($customer, $invoiceDate, $dueDate);
                 }
 
             } else { //Yearly
@@ -139,15 +129,15 @@ class InvoiceRunJob implements ShouldQueue
                     $missing = Meter::where('id', '=', $customer->mID)->first();
 
                     //Rerun missing meter reading
-                    if($invoiceDate->copy()->addYear()->addWeek() == $now && $missing->expecting_reading){
+                    if($invoiceDate->copy()->addWeek() == $now && $missing->expecting_reading){
                         $this->generateYearlyInvoice($customer, $lastInvoiceDate, $now->copy());
                         Meter::where('id', '=', $customer->mID)
                         ->update(['expecting_reading' => 0]);
                     }//Reminder index values 1 week prior invoice run
-                    elseif($invoiceDate->copy()->addYear()->subWeek() == $now){
+                    elseif($invoiceDate->copy()->subWeek() == $now){
                         MeterReadingReminderJob::dispatch($customer->uID, $customer->mID);
                     } //Check if needs an invoice now
-                    elseif($invoiceDate->copy()->addYear()->isSameAs($now)){
+                    elseif($invoiceDate->copy() == $now){
                         $this->generateYearlyInvoice($customer, $lastInvoiceDate, $invoiceDate->copy()->addYear());
                     }
                 }
