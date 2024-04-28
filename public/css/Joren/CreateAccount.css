@@ -17,6 +17,10 @@ table{
     width: 100%;
 }
 
+#address-input{
+    width: 270px;
+}
+
 /* ----------------------- */
 /* Company inputfield style */
 .CompanyField{
