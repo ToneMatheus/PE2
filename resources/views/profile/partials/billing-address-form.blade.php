@@ -1,4 +1,6 @@
 <!-- LOOK Manage page hier zetten -->
+<!-- TODO als de type huis op appartement staat moet je de huisbaas ook in zetten. dit is met een checkbox. -->
+<!-- TODO deze checkbox kan ook aangepast worden-->
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">

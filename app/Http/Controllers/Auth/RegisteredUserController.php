@@ -127,7 +127,8 @@ class RegisteredUserController extends Controller
 
         Mail::to($user->email)->send(new ConfirmationMailRegistration($id, $emailEncrypt, $origin));
 
-        return Redirect::back()->with('top_message', 'Please verify your email address.');
+        // return Redirect::back()->with('top_message', 'Please verify your email address.');
+        return Redirect::route('profile.emailChanged')->with('from', 'Thanks for signing up! Before getting started');
 
     }
 

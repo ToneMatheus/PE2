@@ -56,6 +56,8 @@ class ProfileController extends Controller
         $request->user()->fill($request->validated());
         $user = $request->user(); 
 
+        // TODO username na kijken dat dit uniek is en geen scheldwoorden kan zijn.
+
         $email = $user->email;
         $user->email = $user->getOriginal('email');
         $user->save();
@@ -72,7 +74,8 @@ class ProfileController extends Controller
             Mail::to($user->email)->send(new ConfirmationMailRegistration($id, $emailEncrypt, $to));
 
             //TODO naar een nieuwe pagina herleiden.
-            return Redirect::route('profile.edit')->with('verify_email_message', 'Please verify your email address.');
+            // return Redirect::route('profile.edit')->with('verify_email_message', 'Please verify your email address.');
+            return Redirect::route('profile.emailChanged')->with('from', 'You have made a change of your email');
         }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
@@ -97,6 +100,15 @@ class ProfileController extends Controller
     return redirect()->route('profile.edit')->with('status', 'Profile updated.');
 
     }
+
+    //TEST van hier
+    public function emailChanged()
+    {
+        $from = session('from');
+        return view('auth.verify-email', compact('from'));
+    }
+
+    // TEST tot hier
 
     // ! van hier
     /**

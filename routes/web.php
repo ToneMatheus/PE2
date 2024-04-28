@@ -244,6 +244,9 @@ Route::controller(InvoiceController::class)->group(function () {
 Route::get('/confirm-email/{encryptedUserID}/{email}', [ProfileController::class, 'confirmEmail'])->name('activate.account');
 Route::get('/confirm-emailTEST/{token}/{email}', [RegisteredUserController::class, 'confirmEmail'])->name('email-confirmation-registration');
 
+// verify email
+Route::get('/profile/email-changed', [ProfileController::class, 'emailChanged'])->name('profile.emailChanged');
+
 
 
 Route::get('/holidays', [HolidayController::class, 'index']);

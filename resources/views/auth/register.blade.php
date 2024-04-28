@@ -1,5 +1,6 @@
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
+        <!-- TODO als de type huis op appartement staat moet je de huisbaas ook in zetten. dit is met een checkbox. -->
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
