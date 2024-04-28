@@ -59,13 +59,17 @@ class ProfileController extends Controller
         // TODO username na kijken dat dit uniek is en geen scheldwoorden kan zijn.
 
         $email = $user->email;
-        $user->email = $user->getOriginal('email');
+        $original = $user->getOriginal('email');
+        $user->email = $original;
         $user->save();
         $user->email = $email;
 
         //START start mail server ga naar C:\Users\HEYVA\Downloads\mailpit-windows-amd64 (1) en voer mailpit.exe uit
         if ($request->user()->isDirty('email')) {
+            $user->email = $original;
             $request->user()->email_verified_at = null;
+            $request->user()->save();
+            $user->email = $email;
 
             $id = Crypt::encrypt($user->id);
             $emailEncrypt = Crypt::encrypt($user->email);
@@ -73,9 +77,10 @@ class ProfileController extends Controller
 
             Mail::to($user->email)->send(new ConfirmationMailRegistration($id, $emailEncrypt, $to));
 
-            //TODO naar een nieuwe pagina herleiden.
-            // return Redirect::route('profile.edit')->with('verify_email_message', 'Please verify your email address.');
-            return Redirect::route('profile.emailChanged')->with('from', 'You have made a change of your email');
+            session()->put('from_tekst', 'You have made a change of your email');
+            session()->put('from', Crypt::encrypt("profile"));
+            return Redirect::route('profile.emailChanged');
+
         }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
@@ -89,26 +94,27 @@ class ProfileController extends Controller
 
         $user = User::find($id);
 
-        $user->email_verified_at = now();
-        $user->updated_at = now();
+        $user->email_verified_at = now()->timezone('Europe/Brussels');
+        $user->updated_at = now()->timezone('Europe/Brussels');
         $user->email = $email;
 
         $user->save();
 
         $request->session()->forget('verify_email_message');
 
+        session()->forget('from');
+        session()->forget('from_tekst');
+
     return redirect()->route('profile.edit')->with('status', 'Profile updated.');
 
     }
 
-    //TEST van hier
     public function emailChanged()
     {
         $from = session('from');
         return view('auth.verify-email', compact('from'));
     }
 
-    // TEST tot hier
 
     // ! van hier
     /**

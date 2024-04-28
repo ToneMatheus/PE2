@@ -1,4 +1,5 @@
 <!-- LOOK Manage page hier zetten -->
+<!-- TODO index_method bij zetten-->
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">

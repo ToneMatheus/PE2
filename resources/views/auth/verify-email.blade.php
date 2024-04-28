@@ -1,8 +1,11 @@
+@php
+$from_tekst = session('from_tekst');
+@endphp
 <x-guest-layout>
     <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        {{ __(':from,
+        {{ __(':from_tekst,
              could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email,
-              we will gladly send you another.', ['from' => $from]) }}
+              we will gladly send you another.', ['from_tekst' => $from_tekst]) }}
     </div>
 
     @if (session('status') == 'verification-link-sent')
@@ -15,15 +18,14 @@
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
 
-            <!-- TODO kijken of dit werkt om een nieuwe email te versturen. -->
+            <!-- TODO werken met session -->
+            <!-- CH als je een account aanmaakt doet dit het niet -->
             <div>
                 <x-primary-button>
                     {{ __('Resend Verification Email') }}
                 </x-primary-button>
             </div>
         </form>
-
-        {{ session()->forget('from'); }}
 
         <!-- <form method="POST" action="{{ route('logout') }}">
             @csrf
