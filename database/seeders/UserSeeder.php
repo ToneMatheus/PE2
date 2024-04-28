@@ -177,6 +177,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Dutch',
+                'changed_default' => 1
             ],
         ]);
     }
