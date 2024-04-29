@@ -18,11 +18,17 @@ use App\Models\{
     CreditNote,
     Estimation,
     Discount,
-    Meter
+    Meter,
+    User,
+    Index_Value
 };
 use App\Services\InvoiceFineService;
+use App\Mail\FinalSettlementMail;
 use App\Http\Controllers\EstimationController;
 use Illuminate\Support\Facades\Log;
+use App\Traits\cronJobTrait;
+
+use function PHPUnit\Framework\isEmpty;
 
 //not finished yet: mail and logging still needed
 //this job calculates data for the final settlement invoice and stores it in database
@@ -30,8 +36,9 @@ use Illuminate\Support\Facades\Log;
 //how do we tell the job which meter?
 class FinalSettlementJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 
+    protected $domain = "http://127.0.0.1:8000"; //change later
     protected $now;
     protected $year;
     protected $month;
@@ -91,6 +98,8 @@ class FinalSettlementJob implements ShouldQueue
             // 2) calculate amount based on actual consumption
             $this->calculateInvoice($meter);
         }
+
+        $this->jobCompletion("Completed invoice run job");
     }
 
     public function calculateInvoice($meter)
@@ -123,6 +132,12 @@ class FinalSettlementJob implements ShouldQueue
                 ->where('cp.meter_id', $meter->id)
                 ->orderByDesc('cp.start_date')
                 ->value('t.rate');
+
+            //get meter readings
+            $meterReadings = Index_Value::where('meter_id', $meter->id)
+            ->orderByDesc('reading_date')
+            ->limit(1)
+            ->first();
         }
         catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) 
         {
@@ -219,6 +234,7 @@ class FinalSettlementJob implements ShouldQueue
         $newInvoiceLine = Invoice_line::where('invoice_id', '=', $lastInserted)->first();
         EstimationController::UpdateEstimation($meter->id);  
         // 4) send mail (not yet added)
+        $this->sendFinalSettlementMail($invoice, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
     }
 
     public function getMonthlyInvoices() //(function copied from InvoiceRunJob)
@@ -245,5 +261,48 @@ class FinalSettlementJob implements ShouldQueue
         }
 
         return $monthlyInvoicesData;
+    }
+
+    public function sendFinalSettlementMail(Invoice $invoice, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices)
+    {
+        $user = User::findOrFail($this->userID);
+
+        // Generate PDF
+        $hash = md5($invoice->id . $invoice->customer_contract_id . $invoice->meter_id);
+
+        $pdfData = [
+            'invoice' => $invoice,
+            'user' => $user,
+            'consumption' => $consumption,
+            'estimation' => $estimation,
+            'newInvoiceLine' => $newInvoiceLine,
+            'meterReadings' => $meterReadings,
+            'discounts' => $discounts,
+            'monthlyInvoices' => $monthlyInvoices,
+            'domain' => $this->domain,
+            'hash' => $hash
+        ];
+
+        $mailParams = [
+            $invoice, 
+            $user, 
+            $pdfData, 
+            $consumption,
+            $estimation, 
+            $newInvoiceLine, 
+            $meterReadings, 
+            $discounts, 
+            $monthlyInvoices
+        ];
+        Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
+
+        if (isEmpty($user->employee_profile_id))
+            $mailAddress = $user->email;
+        else
+            $mailAddress = $user->personal_email;
+
+        //Send email with PDF attachment
+        $this->sendMailInBackgroundWithPDF($mailAddress, FinalSettlementMail::class, $mailParams, 'Invoices.annual_invoice_pdf', $pdfData, $invoice->id);
+
     }
 }
