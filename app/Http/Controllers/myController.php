@@ -321,5 +321,9 @@
         public function jobApply(){
             return view('HR_EmployeeJobs.jobApply');
         }
+
+        public function finance(){
+            return view('financialAnalystPage');
+        }
     }
 ?>
