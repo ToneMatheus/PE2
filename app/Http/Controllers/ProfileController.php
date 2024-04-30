@@ -1,5 +1,6 @@
 <?php
 /* profile */
+// TODO landlord opslaan
 
 namespace App\Http\Controllers;
 
@@ -148,6 +149,16 @@ class ProfileController extends Controller
 
             $adres->save();
         }
+
+        // Landlord updaten
+        $is_landlord = $request->input('is_landlord');
+        $user = User::find($userId);
+        if($is_landlord == true){
+            $user->is_landlord = 1;
+        }else{
+            $user->is_landlord = 0;
+        }
+        $user->save();
 
         return redirect()->route('profile.edit')->with('status', 'billing address is updated.');
     }
