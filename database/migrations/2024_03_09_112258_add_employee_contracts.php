@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('status', 50)->nullable();
             $table->bigInteger('role_id')->unsigned();
             $table->bigInteger('salary_range_id')->unsigned();
-            $table->bigInteger('benefits_id')->unsigned();
+            $table->bigInteger('benefits_id')->unsigned()->nullable();
         });
     }
 
