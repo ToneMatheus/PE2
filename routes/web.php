@@ -205,6 +205,7 @@ Route::get('/jobDescription', [myController::class, 'jobDescription'])->name('jo
 Route::get('/jobApply', [myController::class, 'jobApply'])->name('jobApply');
 Route::get('/documents', [myController::class, 'documents'])->name('documents');
 Route::get('/financialAnalystPage', [myController::class, 'finance'])->name('financialAnalyst');
+Route::get('/weeklyActivity', [myController::class, 'weeklyActivity'])->name('weeklyActivity');
 // Route::get('/profileHR', [myController::class, 'profileHR'])->name('profileHR');
 // Route::get('/profileInvoice', [myController::class, 'profileInvoice'])->name('profileInvoice');
 // Route::get('/profileCustomers', [myController::class, 'profileCustomers'])->name('profileCustomers');

@@ -328,5 +328,9 @@
         public function finance(){
             return view('financialAnalystPage');
         }
+
+        public function weeklyActivity(){
+            return view('weeklyActivity');
+        }
     }
 ?>
