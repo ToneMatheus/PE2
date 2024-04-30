@@ -23,8 +23,8 @@
 
         <div style="padding-left: 20px; padding-top: 20px">
             <b><u>Contract details:</u></b><br/>
-            <b>Job:</b> {{$job}}<br/>
-            <b>Department:</b> {{$dept}}
+            <b>Title:</b> {{$role[0]->role_name == 'Employee' ? "normal " . $role[0]->role_name : "" . $role[0]->role_name}}<br/>
+            {{-- <b>Department:</b> {{$dept}} --}}
         </div>
     </div>
 </div>
