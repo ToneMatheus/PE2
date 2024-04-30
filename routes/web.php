@@ -32,6 +32,7 @@ use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\PayoutsController;
 use App\Http\Controllers\RelationsController;
 
 
@@ -85,7 +86,8 @@ Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(function() {
-    
+    Route::get('/payouts', [PayoutsController::class, 'showPayouts'])->name('payouts');
+    Route::get('/payouts/{id}', [PayoutsController::class, 'processPayout'])->name('payouts.pay');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group(function() {
@@ -97,7 +99,12 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function() {
-    
+    Route::get('/customer/invoiceStatus', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoiceStatus');
+    Route::post('/customer/change-locale', [CustomerPortalController::class, 'changeLocale'])->name('customer.change-locale');
+    Route::post('/customer/chatbot', [CustomerPortalController::class, 'chatbot'])->name('customer.chatbot');
+    Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
+    Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
+    //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
@@ -112,6 +119,7 @@ Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivate
 Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add');
 Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
 Route::get('/tariff/products/{type}', [EmployeeController::class, 'getProductByType']);
+
 
 //invoice query routes
 Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
@@ -248,8 +256,8 @@ Route::get('/confirm-emailTEST/{token}/{email}', [RegisteredUserController::clas
 
 Route::get('/holidays', [HolidayController::class, 'index']);
 Route::controller(InvoiceController::class)->group(function () {
-    Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');
-});
+Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');});
+Route::get('/invoices/{id}/download', [InvoiceController::class, 'download'])->name('invoice.download');
 //All routes for credit notes
 Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
 Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');

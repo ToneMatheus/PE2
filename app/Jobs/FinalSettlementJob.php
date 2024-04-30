@@ -18,10 +18,17 @@ use App\Models\{
     CreditNote,
     Estimation,
     Discount,
-    Meter
+    Meter,
+    User,
+    Index_Value
 };
 use App\Services\InvoiceFineService;
+use App\Mail\FinalSettlementMail;
 use App\Http\Controllers\EstimationController;
+use Illuminate\Support\Facades\Log;
+use App\Traits\cronJobTrait;
+
+use function PHPUnit\Framework\isEmpty;
 
 //not finished yet: mail and logging still needed
 //this job calculates data for the final settlement invoice and stores it in database
@@ -29,8 +36,9 @@ use App\Http\Controllers\EstimationController;
 //how do we tell the job which meter?
 class FinalSettlementJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 
+    protected $domain = "http://127.0.0.1:8000"; //change later
     protected $now;
     protected $year;
     protected $month;
@@ -50,29 +58,33 @@ class FinalSettlementJob implements ShouldQueue
     public function handle()
     {
         $meterID = $this->meterID;
-        $meter = Meter::find($meterID);
 
-        if ($meter == null)
+        try
         {
-            //meter not found
+            $meter = Meter::findOrFail($meterID);
         }
-
-        //query assumes the customer contract for this meter is still active
-        $result = Meter::select('customer_contracts.id', 'customer_contracts.user_id')
-            ->leftJoin('contract_products as cp', 'meters.id', '=', 'cp.meter_id')
-            ->leftJoin('customer_contracts as cc', 'cp.customer_contract_id', '=', 'cc.id')
-            ->where('meters.id', $meterID)
-            ->whereNull('cp.end_date')
-            ->first();
-        
-        if ($result) 
+        catch (\Exception $e)
         {
+            Log::error("Unable to find meter record of with meterID " . $meterID);
+        }
+        
+        try
+        {
+            //query assumes the customer contract for this meter is still active
+            $result = Meter::select('customer_contracts.id', 'customer_contracts.user_id')
+                ->leftJoin('contract_products as cp', 'meters.id', '=', 'cp.meter_id')
+                ->leftJoin('customer_contracts as cc', 'cp.customer_contract_id', '=', 'cc.id')
+                ->where('meters.id', $meterID)
+                ->whereNull('cp.end_date')
+                ->first();
+
             $this->ccID = $result->id;
             $this->userID = $result->user_id;
-        } 
-        else 
+        }
+        catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) 
         {
             // no result found
+            Log::error("Unable to retrieve customerContractID and userID");
         }
 
         // 1) check if we have meter reading
@@ -86,36 +98,51 @@ class FinalSettlementJob implements ShouldQueue
             // 2) calculate amount based on actual consumption
             $this->calculateInvoice($meter);
         }
+
+        $this->jobCompletion("Completed invoice run job");
     }
 
     public function calculateInvoice($meter)
     {
-        //consumption
-        //get most recent consumtion
-        $consumption = Consumption::rightJoin('index_values as iv', 'iv.id', '=', 'consumptions.current_index_id')
-            ->where('iv.meter_id', $meter->id)
-            ->orderByDesc('iv.reading_date')
+        try
+        {
+            //consumption
+            //get most recent consumtion
+            $consumption = Consumption::rightJoin('index_values as iv', 'iv.id', '=', 'consumptions.current_index_id')
+                ->where('iv.meter_id', $meter->id)
+                ->orderByDesc('iv.reading_date')
+                ->limit(1)
+                ->first();
+
+            //get estimation for this meter
+            $estimation = Estimation::where('meter_id', $meter->id)->value('estimation_total');
+
+            //discounts
+            $discounts = Discount::rightJoin('contract_products as cp', 'cp.id', '=', 'discounts.contract_product_id')
+                ->where('cp.meter_id', '=', $meter->id)
+                ->whereDate('discounts.end_date', '>=', $this->now->format('Y/m/d'))
+                ->get();
+
+            //get tariff rate
+            $tariffRate = Contract_product::leftJoin('products as p', 'cp.product_id', '=', 'p.id')
+                ->leftJoin('product_tariffs as pt', 'p.id', '=', 'pt.product_id')
+                ->leftJoin('tariffs as t', 'pt.tariff_id', '=', 't.id')
+                ->whereNull('pt.end_date')
+                ->where('cp.customer_contract_id', $this->ccID)
+                ->where('cp.meter_id', $meter->id)
+                ->orderByDesc('cp.start_date')
+                ->value('t.rate');
+
+            //get meter readings
+            $meterReadings = Index_Value::where('meter_id', $meter->id)
+            ->orderByDesc('reading_date')
             ->limit(1)
             ->first();
-
-        //get estimation for this meter
-        $estimation = Estimation::where('meter_id', $meter->id)->value('estimation_total');
-
-        //discounts
-        $discounts = Discount::rightJoin('contract_products as cp', 'cp.id', '=', 'discounts.contract_product_id')
-            ->where('cp.meter_id', '=', $meter->id)
-            ->whereDate('discounts.end_date', '>=', $this->now->format('Y/m/d'))
-            ->get();
-
-        //get tariff rate
-        $tariffRate = Contract_product::leftJoin('products as p', 'cp.product_id', '=', 'p.id')
-            ->leftJoin('product_tariffs as pt', 'p.id', '=', 'pt.product_id')
-            ->leftJoin('tariffs as t', 'pt.tariff_id', '=', 't.id')
-            ->whereNull('pt.end_date')
-            ->where('cp.customer_contract_id', $this->ccID)
-            ->where('cp.meter_id', $meter->id)
-            ->orderByDesc('cp.start_date')
-            ->value('t.rate');
+        }
+        catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) 
+        {
+            Log::error("Unable to find information for meter " . $meter->id . " in database.");
+        }
 
         //calculate discounts
         $extraAmount = 0;
@@ -157,7 +184,7 @@ class FinalSettlementJob implements ShouldQueue
                 'status' => 'sent',
                 'customer_contract_id' => $this->ccID,
                 'meter_id' => $meter->id,
-                'type' => 'Annual'
+                'type' => 'Final'
             ];
 
         } else{                              //Credit note
@@ -168,38 +195,46 @@ class FinalSettlementJob implements ShouldQueue
                 'status' => 'paid',
                 'customer_contract_id' => $this->ccID,
                 'meter_id' => $meter->id,
-                'type' => 'Annual'
+                'type' => 'Final'
             ];
         }
 
         // 3) store in database
-        $invoice = Invoice::create($invoiceData);
-        $lastInserted = $invoice->id;
+        try
+        {
+            $invoice = Invoice::create($invoiceData);
+            $lastInserted = $invoice->id;
 
-        if ($extraAmount <= 0) {
-            CreditNote::create([
-                'invoice_id' => $lastInserted,
-                'type' => 'credit note',
+            if ($extraAmount <= 0) {
+                CreditNote::create([
+                    'invoice_id' => $lastInserted,
+                    'type' => 'credit note',
+                    'amount' => $extraAmount,
+                    'user_id' => $this->userID,
+                    'status' => 1
+                ]);
+            }
+
+            Invoice_line::create([
+                'type' => 'Electricity',
+                'unit_price' => $tariffRate,
                 'amount' => $extraAmount,
-                'user_id' => $this->userID,
-                'status' => 1
+                'consumption_id' => $consumption->id,
+                'invoice_id' => $lastInserted
             ]);
+
+            $fineService = new InvoiceFineService;
+            $fineService->unpaidInvoiceFine($lastInserted);
         }
-
-        Invoice_line::create([
-            'type' => 'Electricity',
-            'unit_price' => $tariffRate,
-            'amount' => $extraAmount,
-            'consumption_id' => $consumption->id,
-            'invoice_id' => $lastInserted
-        ]);
-
-        $fineService = new InvoiceFineService;
-        $fineService->unpaidInvoiceFine($lastInserted);
+        catch (\Exception $e)
+        {
+            Log::error("Unable to store final settlement invoice for meter " . $meter->id . " in database.");
+        }
         
         $newInvoiceLine = Invoice_line::where('invoice_id', '=', $lastInserted)->first();
         EstimationController::UpdateEstimation($meter->id);  
         // 4) send mail (not yet added)
+        $this->sendFinalSettlementMail($invoice, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
     }
 
     public function getMonthlyInvoices() //(function copied from InvoiceRunJob)
@@ -226,5 +261,48 @@ class FinalSettlementJob implements ShouldQueue
         }
 
         return $monthlyInvoicesData;
+    }
+
+    public function sendFinalSettlementMail(Invoice $invoice, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices)
+    {
+        $user = User::findOrFail($this->userID);
+
+        // Generate PDF
+        $hash = md5($invoice->id . $invoice->customer_contract_id . $invoice->meter_id);
+
+        $pdfData = [
+            'invoice' => $invoice,
+            'user' => $user,
+            'consumption' => $consumption,
+            'estimation' => $estimation,
+            'newInvoiceLine' => $newInvoiceLine,
+            'meterReadings' => $meterReadings,
+            'discounts' => $discounts,
+            'monthlyInvoices' => $monthlyInvoices,
+            'domain' => $this->domain,
+            'hash' => $hash
+        ];
+
+        $mailParams = [
+            $invoice, 
+            $user, 
+            $pdfData, 
+            $consumption,
+            $estimation, 
+            $newInvoiceLine, 
+            $meterReadings, 
+            $discounts, 
+            $monthlyInvoices
+        ];
+        Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
+
+        if (isEmpty($user->employee_profile_id))
+            $mailAddress = $user->email;
+        else
+            $mailAddress = $user->personal_email;
+
+        //Send email with PDF attachment
+        $this->sendMailInBackgroundWithPDF($mailAddress, FinalSettlementMail::class, $mailParams, 'Invoices.annual_invoice_pdf', $pdfData, $invoice->id);
+
     }
 }
