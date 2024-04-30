@@ -51,11 +51,63 @@ class ValidationJob implements ShouldQueue
             if(!DB::connection()->getDatabaseName()){
                 throw new \Exception("Database Error Code 0: No connection could be made");
             } else {
-                $meters = Meter::whereTypeAndStatus("Electricity", "Installed")
+                $meters = Meter::whereTypeAndStatus("Electricity", "Installed")->where("is_smart", "=", 0)
                 ->get();
                 // dd($meters);
-                if(is_null($meters)){
-                    throw new \Exception("Database Error Code 1: No installed meters of type electricity found.");
+                if(is_null($meters) || count($meters) == 0){
+                    $meters = Meter::whereTypeAndStatus("Electricity", "Installed")->where("is_smart", "=", 1)
+                    ->get();
+                    if(is_null($meters)){
+                        $this->logWarning(null, "Database Error Code 1: No installed smart meters of type electricity found.");   
+                    }else {
+                        foreach($meters as $meter){
+                            // dd($meter); 
+                            $customers = User::join('Customer_contracts as cc', 'users.id', '=', 'cc.user_id')
+                            ->join('Customer_addresses as ca', 'users.id', '=', 'ca.user_id')
+                            ->join('Addresses as a', 'ca.Address_id', '=', 'a.id')
+                            ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
+                            ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
+                            ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
+                            ->where("m.id", "=", $meter['id'])
+                            ->whereNull("cc.end_date")
+                            ->first();
+                            if(is_null($customers)){
+                                // Check what error it is in the customer array.
+                                $customers2 = User::join('Customer_addresses as ca', 'users.id', '=', 'ca.user_id')
+                                ->join('Addresses as a', 'ca.Address_id', '=', 'a.id')
+                                ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
+                                ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
+                                ->select('users.id as uID', 'm.id as mID' )
+                                ->where("m.id", "=", $meter['id'])
+                                ->first();
+                                if(is_null($customers2)) {
+                                    $meter_id = $meter['id'];
+                                    $this->logError(null, "Customer array is null for meter with id: $meter_id. Meter does not have a customer.");
+                                } else {
+                                    $meter_id = $meter['id'];
+                                    $this->logError(null, "Customer array is null for meter with id: $meter_id. The customer tied to this meter does not have an active contract.");
+                                }
+                            } else {
+                                //smart meter checks
+                                $meter_id = $meter['id'];
+                                $consumptions = Index_Value::where('meter_id', '=', $meter_id)
+                                ->whereyear('reading_date', '=', $year)
+                                ->wheremonth('reading_date', '=', $month)
+                                ->get()->toArray();
+                                if (sizeof($consumptions) == 0) {
+                                    // no consumption found
+                                    $this->logError(null, 'Exception caught: ' . "Validation Error Code 3: No consumption data found for meter with id: $meter_id.");
+                                    // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 3']);
+                                }
+                                else {
+                                    // consumption found
+                                    $this->logInfo(null, "No validation error for meter with id: $meter_id.");
+                                    // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
+                                }
+                            }
+                        }
+                    }
+                    $this->logWarning(null, "Database Error Code 1: No installed manual meters of type electricity found."); 
                 }else {
                     foreach($meters as $meter){
                         // dd($meter); 
@@ -140,6 +192,59 @@ class ValidationJob implements ShouldQueue
                                     $this->logInfo(null, "No validation error for meter with id: $meter_id.");
                                     // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
                                 }
+                            }
+                        }
+                    }
+                }
+                $meters = Meter::whereTypeAndStatus("Electricity", "Installed")->where("is_smart", "=", 1)
+                ->get();
+                // dd($meters);
+                if(is_null($meters) || count($meters) == 0){
+                    $this->logWarning(null, "Database Error Code 1: No installed smart meters of type electricity found.");  
+                }else {
+                    foreach($meters as $meter){
+                        // dd($meter); 
+                        $customers = User::join('Customer_contracts as cc', 'users.id', '=', 'cc.user_id')
+                        ->join('Customer_addresses as ca', 'users.id', '=', 'ca.user_id')
+                        ->join('Addresses as a', 'ca.Address_id', '=', 'a.id')
+                        ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
+                        ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
+                        ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
+                        ->where("m.id", "=", $meter['id'])
+                        ->whereNull("cc.end_date")
+                        ->first();
+                        if(is_null($customers)){
+                            // Check what error it is in the customer array.
+                            $customers2 = User::join('Customer_addresses as ca', 'users.id', '=', 'ca.user_id')
+                            ->join('Addresses as a', 'ca.Address_id', '=', 'a.id')
+                            ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
+                            ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
+                            ->select('users.id as uID', 'm.id as mID' )
+                            ->where("m.id", "=", $meter['id'])
+                            ->first();
+                            if(is_null($customers2)) {
+                                $meter_id = $meter['id'];
+                                $this->logError(null, "Customer array is null for meter with id: $meter_id. Meter does not have a customer.");
+                            } else {
+                                $meter_id = $meter['id'];
+                                $this->logError(null, "Customer array is null for meter with id: $meter_id. The customer tied to this meter does not have an active contract.");
+                            }
+                        } else {
+                            //smart meter checks
+                            $meter_id = $meter['id'];
+                            $consumptions = Index_Value::where('meter_id', '=', $meter_id)
+                            ->whereyear('reading_date', '=', $year)
+                            ->wheremonth('reading_date', '=', $month)
+                            ->get()->toArray();
+                            if (sizeof($consumptions) == 0) {
+                                // no consumption found
+                                $this->logError(null, 'Exception caught: ' . "Validation Error Code 3: No consumption data found for meter with id: $meter_id.");
+                                // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 3']);
+                            }
+                            else {
+                                // consumption found
+                                $this->logInfo(null, "No validation error for meter with id: $meter_id.");
+                                // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
                             }
                         }
                     }
