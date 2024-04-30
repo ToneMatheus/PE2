@@ -23,7 +23,7 @@
                 <img src="/images/Employee_Benefits.jpg" alt="green energy" style="height: 200px"/>
             </div>
             <div class="container">
-                <h2 class="mb-3 text-dark" style="text-align: center; margin-top: 40px; margin-bottom: 30px">As {{$role[0]->role_name == 'Employee' ? "an " . $role[0]->role_name : "a" . $role[0]->role_name}} in our company, you get the following benefits</h2><br>
+                <h2 class="mb-3 text-dark" style="text-align: center; margin-top: 40px; margin-bottom: 30px">As {{$role[0]->role_name == 'Employee' ? "an " . $role[0]->role_name : "a " . $role[0]->role_name}} in our company, you get the following benefits</h2><br>
 
                 {{-- <div class="container-trui"> --}}
                     <div class="container" style="background-color: white; padding: 20px">

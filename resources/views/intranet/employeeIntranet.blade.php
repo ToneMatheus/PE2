@@ -29,7 +29,7 @@
             <div class="card-body" style="background-color: rgb(242, 240, 240); padding: 35px; border-top-right-radius: 5px; border-bottom-right-radius: 5px;">
               <h4 class="card-title h4" style=" font-weight: 900; font-size: 18px">Benefits and compensation</h4>
               <p class="card-text text-sm" style="padding: 8px 0px;">We care about our workers. See the many benefits we provide as a company</p>
-              <a href="#" class="text-blue-500">See Profile</a>
+              <a href="{{route('employeeBenefits')}}" class="text-blue-500">Visit</a>
             </div>
         </div>
     </div>
