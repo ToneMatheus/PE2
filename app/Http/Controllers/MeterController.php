@@ -86,7 +86,7 @@ class MeterController extends Controller
 
     public function viewScheduledMeters(Request $request) { // viewing meters for specific employee
         $today = Carbon::now()->toDateString();
-        
+
         $results = DB::table('users')
                     ->join('customer_addresses','users.id','=','customer_addresses.user_id')
                     ->join('addresses','customer_addresses.id','=','addresses.id')
@@ -398,7 +398,7 @@ class MeterController extends Controller
         if ($prev_index == null) {
             return redirect()->to('/enter_index_employee')->withErrors(['index_value_null'=>'No previous index value found - fatal error']);
         }
-        
+
         $prev_index_id = $prev_index->id;
         $prev_index_value = $prev_index->reading_value;
         $start_date = $prev_index->reading_date;
@@ -606,7 +606,7 @@ class MeterController extends Controller
         if ($prev_index == null) {
             return redirect()->to('/Meter_History')->withErrors(['index_value_null'=>'No previous index value found - fatal error']);
         }
-        
+
         $prev_index_id = $prev_index->id;
         $prev_index_value = $prev_index->reading_value;
         $start_date = $prev_index->reading_date;
@@ -659,4 +659,38 @@ class MeterController extends Controller
             // Redirect back with success message
             return redirect()->back()->with('success', 'Index value added successfully.');
         }
+        public function showConsumptionHistory($timeframe = 'month')
+    {
+        $query = DB::table('index_values')
+            ->where('meter_id',1) //Auth::id())
+            ->orderBy('reading_date');
+
+            switch ($timeframe) {
+                case 'week':
+                    $query->whereDate('reading_date', '>=', Carbon::now()->startOfWeek())
+                          ->whereDate('reading_date', '<=', Carbon::now()->endOfWeek());
+                    break;
+                case 'month':
+                    $query->whereDate('reading_date', '>=', Carbon::now()->startOfMonth())
+                          ->whereDate('reading_date', '<=', Carbon::now()->endOfMonth());
+                    break;
+                case 'year':
+                    $query->whereDate('reading_date', '>=', Carbon::now()->startOfYear())
+                          ->whereDate('reading_date', '<=', Carbon::now()->endOfYear());
+                    break;
+                case 'all':
+                    break;
+        }
+
+        $consumptionData = $query->get();
+
+
+        return response()->json(['consumptionData' => $consumptionData]);
+    }
+
+    public function showConsumptionPage()
+    {
+        $consumptionData = $this->showConsumptionHistory('month')->getData();
+        return view('Meters\Meter_History', ['consumptionData' => $consumptionData]);
+    }
 }
