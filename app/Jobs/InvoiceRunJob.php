@@ -31,6 +31,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Traits\cronJobTrait;
 
 use App\Services\InvoiceFineService;
+use App\Services\StructuredCommunicationService;
 
 class InvoiceRunJob implements ShouldQueue
 {
@@ -247,6 +248,10 @@ class InvoiceRunJob implements ShouldQueue
             $invoice = Invoice::create($invoiceData);
             $lastInserted = $invoice->id;
 
+            $scService = new StructuredCommunicationService;
+            $strCom = $scService->generate($lastInserted);
+            $scService->addStructuredCommunication($strCom, $lastInserted);
+
             if ($extraAmount <= 0) {
                 CreditNote::create([
                     'invoice_id' => $lastInserted,
@@ -378,6 +383,10 @@ class InvoiceRunJob implements ShouldQueue
 
         $invoice = Invoice::create($invoiceData);
         $lastInserted = $invoice->id;
+
+        $scService = new StructuredCommunicationService;
+        $strCom = $scService->generate($lastInserted);
+        $scService->addStructuredCommunication($strCom, $lastInserted);
 
         $discount = Discount::where('contract_product_id', $customer->ccID)
         ->where(function ($query) use ($invoiceDate, $invoiceDueDate) {

@@ -23,6 +23,7 @@ use App\Models\{
     Index_Value
 };
 use App\Services\InvoiceFineService;
+use App\Services\StructuredCommunicationService;
 use App\Mail\FinalSettlementMail;
 use App\Http\Controllers\EstimationController;
 use Illuminate\Support\Facades\Log;
@@ -204,6 +205,10 @@ class FinalSettlementJob implements ShouldQueue
         {
             $invoice = Invoice::create($invoiceData);
             $lastInserted = $invoice->id;
+
+            $scService = new StructuredCommunicationService;
+            $strCom = $scService->generate($lastInserted);
+            $scService->addStructuredCommunication($strCom, $lastInserted);
 
             if ($extraAmount <= 0) {
                 CreditNote::create([

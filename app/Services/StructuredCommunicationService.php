@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use Illuminate\Support\Facades\Log;
+use App\Models\Invoice;
 
 class StructuredCommunicationService
 {
@@ -40,7 +41,16 @@ class StructuredCommunicationService
         return $fCode;
     }
 
-    private function format($code) {
+    public function addStructuredCommunication($structuredCom, $invoiceID)
+    {
+        //add a structured communication to an invoice
+        $invoiceEdit = Invoice::find($invoiceID);
+        $invoiceEdit->structured_communication = $structuredCom;
+        $invoiceEdit->save();
+    }
+
+    private function format($code) 
+    {
         $group1 = substr($code, 0, 3);
         $group2 = substr($code, 3, 4);
         $group3 = substr($code, 7);
