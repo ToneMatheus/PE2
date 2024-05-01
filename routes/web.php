@@ -33,9 +33,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\RelationsController;
-
-
-
+use App\Http\Controllers\TicketDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -93,17 +91,18 @@ Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(function() {
-    
+    Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
+
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function() {
     Route::get('/customer/invoiceStatus', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoiceStatus');
     Route::post('/customer/change-locale', [CustomerPortalController::class, 'changeLocale'])->name('customer.change-locale');
     Route::post('/customer/chatbot', [CustomerPortalController::class, 'chatbot'])->name('customer.chatbot');
-
+    
     //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
     Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
-    Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
+    Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');    
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
@@ -111,6 +110,7 @@ Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(
 });
 
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
+Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
 
 
 Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
