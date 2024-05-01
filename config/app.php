@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'now' => Carbon\Carbon::create(2025, 3, 15),
+    'now' => Carbon\Carbon::create(2025, 1, 14),
 
     'providers' => [
         LaravelProfane\ProfaneServiceProvider::class,

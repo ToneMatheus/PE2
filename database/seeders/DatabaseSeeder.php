@@ -47,6 +47,7 @@ class DatabaseSeeder extends Seeder
 
             Invoice\InvoiceSeeder::class,
             Invoice\InvoiceLineSeeder::class,
+            Invoice\CreditNoteSeeder::class,
         ]);
     }
 }

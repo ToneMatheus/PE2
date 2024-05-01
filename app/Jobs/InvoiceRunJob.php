@@ -12,7 +12,8 @@ use App\Models\{
     CreditNote,
     Estimation,
     Index_Value,
-    Discount
+    Discount,
+    Meter
 };
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -27,12 +28,14 @@ use App\Mail\AnnualInvoiceMail;
 use App\Mail\MonthlyInvoiceMail;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Traits\cronJobTrait;
 
 use App\Services\InvoiceFineService;
+use App\Services\StructuredCommunicationService;
 
 class InvoiceRunJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 
     protected $domain = "http://127.0.0.1:8000"; //change later
     protected $now;
@@ -48,12 +51,11 @@ class InvoiceRunJob implements ShouldQueue
 
     public function handle()
     {
+        $this->jobStart();
+
         $now = $this->now->copy();
         $month = $this->month;
         $year = $this->year;
-
-        dispatch(new WeekAdvanceReminderJob);
-        dispatch(new InvoiceFinalWarningJob);
 
         //Select all customers
         $customers = User::join('Customer_contracts as cc', 'users.id', '=', 'cc.user_id')
@@ -61,8 +63,12 @@ class InvoiceRunJob implements ShouldQueue
         ->join('Addresses as a', 'ca.Address_id', '=', 'a.id')
         ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
         ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
+        ->where('users.id', '=', 6)
         ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
         ->get();
+
+        dispatch(new WeekAdvanceReminderJob);
+        dispatch(new InvoiceFinalWarningJob);
 
         //Check if monthly or annual
         foreach($customers as $customer){
@@ -88,55 +94,61 @@ class InvoiceRunJob implements ShouldQueue
 
             //Monthly
             if($invoiceCount < 11){
-                //New Customer (this month)
-                if($startContract->year == $year && $startContract->month == $month){
-                    //Check if needs an invoice now
-                    if($startContract->addWeeks(2) == $now){
-                        $invoiceDate = $now;
-                        $dueDate =  $invoiceDate->copy()->endOfMonth();
-                        
-                        $this->generateMonthlyInvoice($customer, $invoiceDate, $dueDate);
-                    }
-                } else { //Old Customer
-                    $lastInvoice = Invoice::where('meter_id', '=', $customer->mID)
-                    ->orderBy('invoice_date', 'desc')
-                    ->first();
-
-                    $lastInvoiceDate = Carbon::parse($lastInvoice->invoice_date);
-
-                    //Check if needs an invoice now
-                    if($lastInvoiceDate->addMonth() == $now){
-                        $invoiceDate = $now;
-                        $dueDate = $invoiceDate->copy()->endOfMonth();
+                $invoiceDate = $startContract->addWeeks(2);
+                $invoiceDate->setYear($year);
+                $invoiceDate->setMonth($month);
         
-                        $this->generateMonthlyInvoice($customer, $invoiceDate, $dueDate);
-                    }
+                //Check if needs an invoice now
+                if($invoiceDate == $now){
+                    $dueDate = $invoiceDate->copy()->endOfMonth();
+
+                    $this->generateMonthlyInvoice($customer, $invoiceDate, $dueDate);
                 }
 
             } else { //Yearly
                 //New Customer
                 if($startContract->year == $year){
+
+                    //Reminder index values 1 week prior invoice run
+                    if($startContract->copy()->addYear()->addWeeks(2)->subWeek() == $now){
+                        MeterReadingReminderJob::dispatch($customer->uID, $customer->mID);
+                    }
+
                     //Check if needs an invoice now
                     if($startContract->copy()->addYear()->addWeeks(2) == $now){
                         $this->generateYearlyInvoice($customer, $startContract->start_date, $startContract->copy()->addYear()->addWeeks(2));
                     }
 
                 } else { //old Customer
-                    $lastInvoiceDate = Carbon::parse($lastYearlyInvoice->invoice_date);
+                    $invoiceDate = $startContract->addYear()->addWeeks(2);
+                    $lastInvoiceDate = $invoiceDate->copy()->setYear($year-1);
 
-                    //Check if needs an invoice now
-                    if($lastInvoiceDate->copy()->addYear() == $now){
-                        $this->generateYearlyInvoice($customer, $lastInvoiceDate, $lastInvoiceDate->copy()->addYear());
+                    $invoiceDate->setYear($year);
+                    $invoiceDate->setMonth($month);
+                    $invoiceDate->setTimezone('Europe/Berlin');
+
+                    $missing = Meter::where('id', '=', $customer->mID)->first();
+
+                    //Rerun missing meter reading
+                    if($invoiceDate->copy()->addWeek() == $now && $missing->expecting_reading){
+                        $this->generateYearlyInvoice($customer, $lastInvoiceDate, $now->copy());
+                        Meter::where('id', '=', $customer->mID)
+                        ->update(['expecting_reading' => 0]);
+                    }//Reminder index values 1 week prior invoice run
+                    elseif($invoiceDate->copy()->subWeek() == $now){
+                        MeterReadingReminderJob::dispatch($customer->uID, $customer->mID);
+                    } //Check if needs an invoice now
+                    elseif($invoiceDate->copy() == $now){
+                        $this->generateYearlyInvoice($customer, $lastInvoiceDate, $invoiceDate->copy()->addYear());
                     }
                 }
             } 
         }
-
+        $this->jobCompletion("Completed invoice run job");
     }
 
     public function generateYearlyInvoice($customer, $lastInvoiceDate, $nextInvoiceDate){
         $now = $this->now->copy();
-        $year = $this->year;
 
         $meterReadings = Index_Value::where('meter_id', $customer->mID)
         ->where('reading_date', '>=', $lastInvoiceDate)
@@ -213,7 +225,7 @@ class InvoiceRunJob implements ShouldQueue
             if($extraAmount > 0){                   //Invoice
                 $invoiceData = [
                     'invoice_date' => $now->format('Y-m-d'),
-                    'due_date' => $now->endOfMonth()->format('Y-m-d'),
+                    'due_date' => $now->addWeeks(2)->format('Y-m-d'),
                     'total_amount' => $extraAmount,
                     'status' => 'sent',
                     'customer_contract_id' => $customer->ccID,
@@ -224,7 +236,7 @@ class InvoiceRunJob implements ShouldQueue
             } else{                              //Credit note
                 $invoiceData = [
                     'invoice_date' => $now->format('Y-m-d'),
-                    'due_date' => $now->endOfMonth()->format('Y-m-d'),
+                    'due_date' => $now->addWeeks(2)->format('Y-m-d'),
                     'total_amount' => $extraAmount,
                     'status' => 'paid',
                     'customer_contract_id' => $customer->ccID,
@@ -235,6 +247,10 @@ class InvoiceRunJob implements ShouldQueue
 
             $invoice = Invoice::create($invoiceData);
             $lastInserted = $invoice->id;
+
+            $scService = new StructuredCommunicationService;
+            $strCom = $scService->generate($lastInserted);
+            $scService->addStructuredCommunication($strCom, $lastInserted);
 
             if ($extraAmount <= 0) {
                 CreditNote::create([
@@ -262,7 +278,7 @@ class InvoiceRunJob implements ShouldQueue
             $this->sendAnnualMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
             EstimationController::UpdateEstimation($customer->mID);  
         } else {
-            //Missing Meter readings
+            dispatch(new MissingMeterReadingJob($customer->uID, $customer->mID));
         }
     }
 
@@ -302,7 +318,7 @@ class InvoiceRunJob implements ShouldQueue
         // Generate PDF
         $hash = md5($invoice->id . $invoice->customer_contract_id . $invoice->meter_id);
 
-        $pdf = Pdf::loadView('Invoices.annual_invoice_pdf', [
+        $pdfData = [
             'invoice' => $invoice,
             'user' => $user,
             'consumption' => $consumption,
@@ -313,15 +329,23 @@ class InvoiceRunJob implements ShouldQueue
             'monthlyInvoices' => $monthlyInvoices,
             'domain' => $this->domain,
             'hash' => $hash
-        ], [], 'utf-8');
-        $pdfData = $pdf->output();
+        ];
 
+        $mailParams = [
+            $invoice, 
+            $user, 
+            $pdfData, 
+            $consumption,
+            $estimation, 
+            $newInvoiceLine, 
+            $meterReadings, 
+            $discounts, 
+            $monthlyInvoices
+        ];
         Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
         //Send email with PDF attachment
-        Mail::to('shaunypersy10@gmail.com')->send(new AnnualInvoiceMail(
-            $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices
-        ));
+        $this->sendMailInBackgroundWithPDF("ToCustomer@mail.com", AnnualInvoiceMail::class, $mailParams, 'Invoices.annual_invoice_pdf', $pdfData, $invoice->id);
 
     }
 
@@ -359,6 +383,10 @@ class InvoiceRunJob implements ShouldQueue
 
         $invoice = Invoice::create($invoiceData);
         $lastInserted = $invoice->id;
+
+        $scService = new StructuredCommunicationService;
+        $strCom = $scService->generate($lastInserted);
+        $scService->addStructuredCommunication($strCom, $lastInserted);
 
         $discount = Discount::where('contract_product_id', $customer->ccID)
         ->where(function ($query) use ($invoiceDate, $invoiceDueDate) {
@@ -463,6 +491,7 @@ class InvoiceRunJob implements ShouldQueue
         $extraInvoiceLines = CreditNote::where('user_id', '=', $customer->uID)
         ->where('is_active', '=', 1)
         ->where('is_credit', '=', 1)
+        ->where('is_applied', '=', 0)
         ->select('id', 'type', 'amount')
         ->get()->toArray();
 
@@ -510,7 +539,10 @@ class InvoiceRunJob implements ShouldQueue
 
                 if ($surplus < 0){
                     CreditNote::where('id', $extraInvoiceLine['id'])
-                    ->update(['amount' => $surplus]);
+                    ->update([
+                        'amount' => $surplus,
+                        'is_applied' => 1
+                    ]);
                 } else {
                     CreditNote::where('id', $extraInvoiceLine['id'])
                     ->update(['is_active' => 0]);
@@ -536,21 +568,24 @@ class InvoiceRunJob implements ShouldQueue
         // Generate PDF
         $hash = md5($invoice->id . $invoice->customer_contract_id . $invoice->meter_id);
 
-        $pdf = Pdf::loadView('Invoices.monthly_invoice_pdf', [
+        $pdfData = [
             'invoice' => $invoice,
             'user' => $user,
             'newInvoiceLines' => $newInvoiceLines,
             'domain' => $this->domain,
             'hash' => $hash
-        ], [], 'utf-8');
-        $pdfData = $pdf->output();
+        ];
+
+        $mailParams = [
+            $invoice, 
+            $user, 
+            $newInvoiceLines
+        ];
 
         Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
         //Send email with PDF attachment
-        Mail::to('shaunypersy10@gmail.com')->send(new MonthlyInvoiceMail(
-            $invoice, $user, $pdfData, $newInvoiceLines
-        ));
+        $this->sendMailInBackgroundWithPDF("ToCustomer@mail.com", MonthlyInvoiceMail::class, $mailParams, 'Invoices.monthly_invoice_pdf', $pdfData, $invoice->id);
 
     }
 }

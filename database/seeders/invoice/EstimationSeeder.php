@@ -9,19 +9,6 @@ class EstimationSeeder extends Seeder
     public function run(): void
     {
         DB::table('estimations')->insert([
-            ['nbr_occupants' => 2,
-            'is_home_all_day' => 1,
-            'heat_with_power' => 1,
-            'water_with_power' => 1,
-            'cook_with_power' => 1,
-            'nbr_air_con' => 1,
-            'nbr_fridges' => 1,
-            'nbr_washers' => 1,
-            'nbr_computers' => 1,
-            'nbr_entertainment' => 1,
-            'nbr_dishwashers' => 1,
-            'estimation_total' => 3200,
-            'meter_id' => 1],
             [
                 'nbr_occupants' => 20,
             'is_home_all_day' => 1,
@@ -34,7 +21,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 6500,
+            'estimation_total' => 0,
             'meter_id' => 2
             ],
             [

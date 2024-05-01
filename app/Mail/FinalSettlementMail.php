@@ -10,10 +10,8 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Log;
 
-class AnnualInvoiceMail extends Mailable
+class FinalSettlementMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -27,8 +25,9 @@ class AnnualInvoiceMail extends Mailable
     protected $meterReadings;
     protected $discounts;
     protected $monthlyInvoices;
+    protected $interval;
 
-    public function __construct($pdfData, Invoice $invoice, $user, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices)
+    public function __construct($pdfData, Invoice $invoice, $user, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices, $interval)
     {
         $this->invoice = $invoice;
         $this->user = $user;
@@ -39,19 +38,20 @@ class AnnualInvoiceMail extends Mailable
         $this->discounts = $discounts;
         $this->monthlyInvoices = $monthlyInvoices;
         $this->pdfData = $pdfData;
+        $this->interval = $interval;
     }
 
     public function envelope()
     {
         return new Envelope(
             from: new Address('energysupplier@gmail.com', 'Energy Supplier'),
-            subject: 'Invoice Mail',
+            subject: 'Invoice Mail: Final Settlement',
         );
     }
 
     public function build()
     {
-        return $this->view('Invoices.invoice_mail')
+        return $this->view('Invoices.final_settlement')
                     ->with([
                         'user' => $this->user,
                         'invoice' => $this->invoice,
@@ -60,7 +60,8 @@ class AnnualInvoiceMail extends Mailable
                         'newInvoiceLine' => $this->newInvoiceLine,
                         'meterReadings' => $this->meterReadings,
                         'discounts' => $this->discounts,
-                        'monthlyInvoices' => $this->monthlyInvoices
+                        'monthlyInvoices' => $this->monthlyInvoices,
+                        'interval' => $this->interval
                     ])
                     ->attachData($this->pdfData, 'invoice.pdf', [
                         'mime' => 'application/pdf',

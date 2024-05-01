@@ -23,7 +23,7 @@ class MonthlyInvoiceMail extends Mailable
     protected $newInvoiceLines;
     protected $pdfData;
 
-    public function __construct(Invoice $invoice, $user, $pdfData, $newInvoiceLines)
+    public function __construct($pdfData, Invoice $invoice, $user, $newInvoiceLines)
     {
         $this->invoice = $invoice;
         $this->user = $user;
@@ -41,31 +41,14 @@ class MonthlyInvoiceMail extends Mailable
 
     public function build()
     {
-        $pdfData = $this->generatePdf();
-
         return $this->view('Invoices.invoice_mail')
                     ->with([
                         'user' => $this->user,
                         'invoice' => $this->invoice,
                         'newInvoiceLines' => $this->newInvoiceLines,
                     ])
-                    ->attachData($pdfData, 'invoice.pdf', [
+                    ->attachData($this->pdfData, 'invoice.pdf', [
                         'mime' => 'application/pdf',
                     ]);
-    }
-
-    private function generatePdf()
-    {
-        $hash = md5($this->invoice->id . $this->invoice->customer_contract_id . $this->invoice->meter_id);
-        $pdf = Pdf::loadView('Invoices.monthly_invoice_pdf', [
-            'invoice' => $this->invoice,
-            'user' => $this->user,
-            'newInvoiceLines' => $this->newInvoiceLines,
-            'domain' => $this->domain,
-            'hash' => $hash
-        ], [], 'utf-8');
-        
-             
-        return $pdf->output();
     }
 }

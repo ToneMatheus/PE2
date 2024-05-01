@@ -20,6 +20,7 @@ use App\Mail\MonthlyInvoiceMail;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use App\Traits\cronJobTrait;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -28,7 +29,7 @@ use App\Services\InvoiceFineService;
 
 class MonthlyInvoiceJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 
     public function __construct()
     {
@@ -37,6 +38,7 @@ class MonthlyInvoiceJob implements ShouldQueue
 
     public function handle()
     {
+        $this->jobStart();
         $now = Carbon::now();
         $month = $now->format('m');
         $year = $now->format('Y');
@@ -110,6 +112,7 @@ class MonthlyInvoiceJob implements ShouldQueue
                 $this->generateInvoice($oldCustomer, $formattedInvoiceDate, $formattedDueDate);
             }
         }
+        $this->jobCompletion("Completed montly invoice");
     }
 
     public function generateInvoice($customer, $invoiceDate, $invoiceDueDate){
@@ -244,9 +247,7 @@ class MonthlyInvoiceJob implements ShouldQueue
         $pdfData = $pdf->output();
 
         //Send email with PDF attachment
-        Mail::to('yannick.strackx@gmail.com')->send(new MonthlyInvoiceMail(
-            $invoice, $user, $pdfData, $newInvoiceLines
-        ));
+        $this->sendMailInBackground("ToCustomer@mail.com", MonthlyInvoiceMail::class, [$invoice, $user, $pdfData, $newInvoiceLines], $invoice->id);
 
     }
 }
