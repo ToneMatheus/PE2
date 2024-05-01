@@ -3,10 +3,26 @@
 
     if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] === 'max-age=0') 
     {
-        unset($_GET['Mf']);
-        unset($_GET['Mb']);
-        unset($_SESSION['currentM']);
-        unset($_SESSION['currentY']);
+        if(isset($_GET['Mf']))
+        {
+            unset($_GET['Mf']);
+        }
+        
+        if(isset($_GET['Mb']))
+        {
+            unset($_GET['Mb']);
+        }
+        
+        if(isset($_SESSION['currentM']))
+        {
+            unset($_SESSION['currentM']);
+        }
+
+        if(isset($_SESSION['currentY']))
+        {
+            unset($_SESSION['currentY']);
+        }
+        
         session_destroy();
     }
 
@@ -164,10 +180,16 @@
     <header>
         
     </header>
-    <h1>Calendar</h1>
-    <h2>
+    <x-app-layout :title="'Calendar'">    
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+               
+
+    <h1></h1>
+    <!-- <h2>
         welcome user: {{ $user_name}} id: {{$user_id}}
-    </h2>
+    </h2> -->
 
     <div class="table-container">
         <?php
@@ -296,7 +318,7 @@
             $numMonth = $currentMonth - 1;
             
             
-            echo "<form method='get'><button id='floBtn' name='cncel' value=''>home</button><button id='floBtn' name='Mf' value='$t'>next</button><button id='floBtnB' name='Mb' value='$t' disabled>back</button></form>";
+            
             echo "<h1 id='monthName'> $monthsName[$numMonth] </h1>";
             
             if(isset($_GET['cncel']))
@@ -308,6 +330,7 @@
                 session_destroy();
             }
             // Start the table and iterate through each day of the month
+            echo "<div id='cal_btns'>";
             echo "<table id='calendar'>";
             $dayCount = 1;
             $prevMonthDayCount = $daysInPrevMonth - $firstDayOfMonth + 2;
@@ -350,37 +373,39 @@
                     else 
                     {
                         $class = isset($_SESSION['addedCells'][$dayCount]) ? 'added' : '';
-                        echo "<td class='{$class}'>{$dayCount}</td>";
+                        echo "<td class='{$class}' id='td_cal'>{$dayCount}</td>";
                         $dayCount++;
                     }
                 }
                 echo "</tr>";
             }
             echo "</table>";
-            $myArrayJSON = json_encode($wee);
-        ?>
-        
-
-        <table>
+            echo "<table id='selectionTable'>
             <tr>
                 <td id='selection'>
                     <p>Vacation</p>
-                    <button id="btn" onclick="addDate()"><div class="square"></div>
+                    <button id='btn' onclick='addDate()'><div class='square'></div>
                 </td>
             </tr>
             <tr>
                 <td id='selection'>
                     <p>Parental Leave</p>
-                    <button id="btn" onclick="addDate2()"><div class="square2"></div>
+                    <button id='btn' onclick='addDate2()'><div class='square2'></div>
                 </td>
             </tr>
             <tr>
                 <td id='selection'>
                     <p>Sick Leave</p>
-                    <button id="btn" onclick="addDate3()"><div class="square3"></div>
+                    <button id='btn' onclick='addDate3()'><div class='square3'></div>
                 </td>
             </tr>
-        </table>   
+        </table>";
+            echo "</div>";
+            $myArrayJSON = json_encode($wee);
+        ?>
+        
+        <?php echo "<div><form method='get' id='form_left'><button class='btn1' id='floBtn' name='cncel' value=''>home</button><button class='btn1' id='floBtn' name='Mf' value='$t'>next</button><button class='btn1' id='floBtnB' name='Mb' value='$t' disabled>back</button></form></div>";?> 
+        <br>  
         <div >
             <p id="errorMsg">The date that you are asking is in the past.</p>
             <p id="scsMsg">The request has been send.</p>
@@ -390,13 +415,9 @@
         <div class="sidebar">
             <label id="label">This label is currently empty</label>
             <br>
-            <button id="cancel" name="cancel" onclick="cnlButton()">Cancel</button>
-            <button id="button" name="button" onclick="btnClicked()">Submit</button>
+            <button class='btn1' id="cancel" name="cancel" onclick="cnlButton()">Cancel</button>
+            <button class='btn1' id="button" name="button" onclick="btnClicked()">Submit</button>
         </div>
-
-        <form action="{{route('dashboard')}}">
-            <button>dashboard</button>
-        </form>   
     </div>
  
     <script>
@@ -838,6 +859,13 @@
     </script>
 
 
+                                        </div>
+
+            </div>
+        </div>
+    </div>
+
+</x-app-layout>
 
 </body>
 </html>

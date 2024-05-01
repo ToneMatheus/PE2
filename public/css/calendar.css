@@ -1,7 +1,28 @@
+.btn1
+{
+  padding: 2px;
+  margin: 4px;
+  margin-top: 0;
+  color: whitesmoke;
+  border: 1px solid whitesmoke;
+}
+#cal_btns
+{
+  display: flex;
+}
+
+#calendar
+{
+  background-color: whitesmoke;
+  
+  width: auto;
+}
+
 table, th, td 
 {
   border: 1px solid black;
   border-collapse: collapse;
+  
 }
 
 th, td 
@@ -83,10 +104,10 @@ th, td
 
 .table-container {
   white-space: nowrap; 
-  background-color: rgb(230, 230, 230);
+  
   border-radius: 15px;
   padding: 20px;
-  border: 2px solid black;
+  border: 2px solid white;
 }
 .table-container table {
   display: inline-block; 
@@ -112,6 +133,7 @@ th, td
 #selection
 {
   padding-top: 0px;
+  border: none;
 }
 
 p{
@@ -141,7 +163,7 @@ table{
 #btn
 {
   border: none;
-  background-color: rgb(230, 230, 230);
+  
 }
 
 #scsMsg
@@ -149,10 +171,7 @@ table{
   visibility: hidden;
   color:darkgreen;
 }
-#floBtn ,#floBtnB
-{
-  float: right;
-}
+
 #errorCredit
 {
   color:lightsalmon;
@@ -161,4 +180,15 @@ table{
 #label
 {
   visibility: hidden;
+}
+
+#selectionTable
+{
+  border: none;
+}
+
+
+h1, p
+{
+  color: whitesmoke;
 }
