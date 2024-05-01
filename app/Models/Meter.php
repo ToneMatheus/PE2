@@ -23,7 +23,8 @@ class Meter extends Model
         'installation_date',
         'status',
         'is_smart',
-        'expecting_reading'
+        'expecting_reading',
+        'has_validation_error'
     ];
 
      public function scopeSearch($query, $value){

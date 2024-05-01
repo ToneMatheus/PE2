@@ -14,6 +14,7 @@ use App\Models\{
 };
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use app\http\Controllers\CustomerController;
 use illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Model;
@@ -103,6 +104,10 @@ class MeterController extends Controller
                         ->where('users.employee_profile_id', '=', 1)
                         ->select('users.first_name')
                         ->get();
+
+        // $response = Http::get('https://maps.googleapis.com/maps/api/directions/json?destination=Adelaide%2C%20SA&origin=Adelaide%2C%20SA&waypoints=optimize%3Atrue%7CBarossa%20Valley%2C%20SA%7CClare%2C%20SA%7CConnawarra%2C%20SA%7CMcLaren%20Vale%2C%20SA&key=AIzaSyDJxVIJtLGU0anxCft7GRMVblVKBByiTj8');
+        // return $response;
+
         return view("Meters/employeeDashboard",['results'=>$results, 'employeeName'=>$employeeName]);
     }
 
