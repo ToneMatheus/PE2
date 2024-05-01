@@ -4,29 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Role extends Model
+class EmployeeBenefit extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'role_name'
+        'benefit_name',
+        'description',
+        'role_id'
     ];
 
-    public function user_roles(): HasMany
+    public function role(): BelongsTo
     {
-        return $this->hasMany(User_Role::class);
-    }
-
-    public function employee_benefits(): HasMany
-    {
-        return $this->hasMany(EmployeeBenefit::class);
-    }
-
-    public function salary_ranges(): HasMany
-    {
-        return $this->hasMany(SalaryRange::class);
+        return $this->belongsTo(Role::class);
     }
 
     public function employee_contracts(): HasMany
