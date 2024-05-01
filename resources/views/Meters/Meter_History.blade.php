@@ -1,4 +1,4 @@
-    {{-- <!DOCTYPE html>
+    <!DOCTYPE html>
     <html>
     <head>
         <title>Meter History</title>
@@ -37,7 +37,7 @@
     <body>
 
         <h1>Meter History</h1>
-        @if (count($errors) > 0)
+      {{--  @if (count($errors) > 0)
             <div class="alert alert-danger">
                 <ul>
                     @foreach ($errors->all() as $error)

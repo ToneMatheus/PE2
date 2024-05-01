@@ -696,6 +696,6 @@ class MeterController extends Controller
     public function showConsumptionPage()
     {
         $consumptionData = $this->showConsumptionHistory('month')->getData();
-        return view('Meters\Meter_History', ['consumptionData' => $consumptionData]);
+        return view('Meters/Meter_History', ['consumptionData' => $consumptionData]);
     }
 }

@@ -191,6 +191,9 @@ Route::controller(MeterController::class)->group(function () {
 });
 
 
+Route::get('Meters/Meter_History/{timeframe?}', [MeterController::class, 'showConsumptionHistory'])->name('consumption.history');
+Route::get('Meters/Consumption_Page', [MeterController::class, 'showConsumptionPage'])->name('consumption.page');
+
 // Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 // Route::post('login', [LoginController::class, 'login']);
 
