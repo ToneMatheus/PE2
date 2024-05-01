@@ -24,18 +24,16 @@
             <div style="display: flex; justify-content: space-between">
                 <div class="col-4">
                     <table class="employee-table">
-                        <th>EmployeeID</th>
-                        <th>First name</th>
-                        <th>Last name</th>
-                        <th>Email</th>
-                        <th>Hire date</th>
-                        <th>View profile</th>
+                        <th>EmpID</th>
+                        <th>Full name</th>
+                        <th>Work done %</th>
+                        <th>Tasks completed</th>
+                        <th>Message</th>
                         <tr>
                             <td>1</td>
                             <td>John</td>
                             <td>Doe</td>
                             <td>john@example.com</td>
-                            <td>2023-01-01</td>
                             <td style="text-align: center"><a href="#"><button class="btn btn-primary">View</button></a></td>
                         </tr>
                         <!-- Add more rows as needed -->
@@ -54,16 +52,14 @@
         </div>
 
         <div style="margin: auto">
-            <h2 style="text-align: center; margin-bottom: 20px" class="h4">Request history</h2>
+            <h2 style="text-align: center; margin-bottom: 20px" class="h4">Task history</h2>
 
             <table>
                 <th>#</th>
-                <th>Request date</th>
                 <th>Emp name</th>
                 <th>Start date</th>
-                <th>End date</th>
-                <th>Requested days</th>
-                <th>Holiday type</th>
+                <th>Task name</th>
+                <th>Description</th>
                 <th>Status</th>
 
                 <tr>
@@ -72,9 +68,7 @@
                     <td>John Doe</td>
                     <td>2024-04-10</td>
                     <td>2024-04-15</td>
-                    <td>6</td>
-                    <td>Vacation</td>
-                    <td><span class="badge badge-success" style="font-size: 16px">Approved</span></td>
+                    <td><span class="badge badge-success">Completed</span></td>
                 </tr>
                 <!-- Add more rows as needed -->
             </table>

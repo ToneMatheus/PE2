@@ -81,6 +81,8 @@
                                 @include('chatbot.chatbotEmployeeInvoice');
                         
                         @endif
+
+                        @include('notifications.managerNotifications');
                             
                     @endif
                     @if($roleId == config('roles.BOSS'))
@@ -138,6 +140,8 @@
                             @include('chatbot.chatbotEmployeeInvoice');
                         
                         @endif
+
+                        @include('notifications.notifications');
                     @endif
                     @if($roleId == config('roles.CUSTOMER'))
                         <a href="{{ route('customer.invoiceStatus') }}" class="block">
