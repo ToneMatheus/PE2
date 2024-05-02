@@ -187,7 +187,7 @@ Route::get('/consumption', function () {
 //aryan
 Route::controller(MeterController::class)->group(function () {
     Route::get('/Consumption_Dashboard', 'showConsumptionDashboard');
-    Route::get('/Meter_History', 'GasElectricity');
+    Route::get('/Meter_History/{userID}', 'GasElectricity');
 });
 
 

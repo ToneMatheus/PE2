@@ -37,7 +37,7 @@
     <body>
 
         <h1>Meter History</h1>
-      {{--  @if (count($errors) > 0)
+       @if (count($errors) > 0)
             <div class="alert alert-danger">
                 <ul>
                     @foreach ($errors->all() as $error)
@@ -116,8 +116,8 @@
                     }
                 })
             })
-        </script> --}}
-        <div class="content">
+        </script>
+        {{-- <div class="content">
             <h1>Energy Consumption History</h1>
             <canvas id="consumptionChart"></canvas>
         </div>
@@ -127,7 +127,7 @@
         <script src="/js/consumptionChart.js"></script>
         <button onclick="fetchData('week')">Week</button>
         <button onclick="fetchData('month')">Month</button>
-        <button onclick="fetchData('year')">Year</button>
+        <button onclick="fetchData('year')">Year</button> --}}
     </body>
     </html>
 
