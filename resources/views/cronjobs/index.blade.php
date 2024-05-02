@@ -46,7 +46,7 @@
                                 </td>
                                 <td class="px-2 py-2 border dark:border-gray-700">{{ $job->scheduled_time }}</td>
                                 <td class="border dark:border-gray-700">
-                                <select id="interval" name="interval" onchange="updateLogLevel(true, '{{ $job->name }}', this.value)" class="block py-2 border-none dark:bg-gray-800 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                                <select name="log" onchange="updateLogLevel(true,'{{ $job->name }}', this.value)" class="block py-2 border-none dark:bg-gray-800 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
                                         <option value="0" {{ $job->log_level == 0 ? 'selected' : '' }}>Debug</option>
                                         <option value="1" {{ $job->log_level == 1 ? 'selected' : '' }}>Info</option>
                                         <option value="2" {{ $job->log_level == 2 ? 'selected' : '' }}>Warning</option>
@@ -60,11 +60,12 @@
                                         <x-primary-anchor-button href="{{ route('job.history', ['job' => $job->name]) }}" class="ml-1">
                                             {{ __('View History') }}
                                         </x-primary-anchor-button>
-                                        <form method="POST" action="{{ route('run-cron-job', ['job' => $job->name, 'logLevel' => 0]) }}">
-                                            @csrf
-                                            <x-primary-button class="ml-2">
-                                                {{ __('Run Job') }}
-                                            </x-primary-button>
+                                        <form method="POST" action="{{ route('run-cron-job', ['job' => $job->name]) }}">
+                                        <input type="hidden" id="logLevelInput" name="logLevel" value="{{ $job->log_level }}">
+                                        @csrf
+                                        <x-primary-button class="ml-1">
+                                            {{ __('Run Job') }}
+                                        </x-primary-button>
                                         </form>
                                         
                                         <x-primary-anchor-button href="{{ route('edit-schedule-cron-job', ['job' => $job->name]) }}" class="ml-1">
@@ -119,7 +120,7 @@
                             <tr>
                                 <td class="px-2 py-2 border dark:border-gray-700">{{ $job->name }}</td>
                                 <td class="border dark:border-gray-700">
-                                <select id="interval" name="interval" onchange="updateLogLevel(false, '{{ $job->name }}', this.value)" class="block py-2 border-none dark:bg-gray-800 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                                <select name="log" onchange="updateLogLevel(false, '{{ $job->name }}', this.value)" class="block py-2 border-none dark:bg-gray-800 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
                                         <option value="0" {{ $job->log_level == 0 ? 'selected' : '' }}>Debug</option>
                                         <option value="1" {{ $job->log_level == 1 ? 'selected' : '' }}>Info</option>
                                         <option value="2" {{ $job->log_level == 2 ? 'selected' : '' }}>Warning</option>
@@ -134,7 +135,8 @@
                                         {{ __('View History') }}
                                     </x-primary-anchor-button>
                                         
-                                    <form method="POST" action="{{ route('run-cron-job', ['job' => $job->name, 'logLevel' => 0]) }}">
+                                    <form method="POST" action="{{ route('run-cron-job', ['job' => $job->name]) }}">
+                                        <input type="hidden" id="logInput_{{ $job->name }}" name="logInput" value="{{ $job->log_level }}">
                                         @csrf
                                         <x-primary-button class="ml-1">
                                             {{ __('Run Job') }}

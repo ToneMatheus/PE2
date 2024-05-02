@@ -106,7 +106,8 @@ class CronJobController extends Controller
         return redirect()->back()->with('success', 'Schedule updated successfully');
     }
     
-    public function run($job, $logLevel){
+    public function run(Request $request, $job){
+        $logLevel = $request->input('logInput');
         $jobClass = 'App\Jobs\\' . $job;
         $jobClass::dispatch($logLevel);
         return redirect()->back()->with('regularJobStatus', 'job has been run.');

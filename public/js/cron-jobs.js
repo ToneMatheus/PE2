@@ -86,7 +86,7 @@ function onApplyFilters(page = 1){
 
 function runJob() {
     var jobName = document.getElementById('log_level_modal').getAttribute('data-job-name');
-    var LogLevel = document.getElementById('LogLevel').value;
+    var LogLevel = document.getElementById('logLevelInput').value;
 
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/cron-jobs/run/' + jobName + "/" + LogLevel);
@@ -103,6 +103,8 @@ function runJob() {
 }
 
 function updateLogLevel(isScheduled, jobName, logLevel) {
+    var selectId = "logInput_" + jobName;
+    document.getElementById(selectId).value = logLevel;
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
     fetch(`/cron-jobs/update-log-level/${jobName}`, {
         method: 'POST',
