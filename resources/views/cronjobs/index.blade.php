@@ -4,7 +4,15 @@
         {{ __('Job Scheduler') }}
     </h2>
 </x-slot>
-
+@php
+$logLevelMap = [
+    0 => "Debug",
+    1 => "Info",
+    2 => "Warning",
+    3 => "Critical",
+    4 => "Error",
+];
+@endphp
 <div class="py-8 dark:text-white">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
         <div id="modal-backdrop" onclick="hideModal()" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden"></div>
@@ -41,6 +49,7 @@
                             <th scope="col" class="px-6 py-3">Scheduled Day</th>
                             <th scope="col" class="px-6 py-3">Scheduled Month</th>
                             <th scope="col" class="px-6 py-3">Scheduled Time</th>
+                            <th scope="col" class="px-6 py-3">Log level</th>
                             <th scope="col" class="px-6 py-3">Is Enabled</th>
                             <th scope="col" class="px-6 py-3">Actions</th>
                         </tr>
@@ -62,6 +71,7 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-2 border dark:border-gray-700">{{ $job->scheduled_time }}</td>
+                                <td class="px-4 py-2 border dark:border-gray-700">{{ $logLevelMap[$job->log_level] }}</td>
                                 <td class="px-4 py-2 border dark:border-gray-700">{{ $job->is_enabled ? 'Yes' : 'No' }}</td>
                                 <td class="px-4 py-2 border dark:border-gray-700">
                                     <div class="flex gap-2">
@@ -112,6 +122,7 @@
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" class="px-6 py-3">Name:</th>
+                            <th scope="col" class="px-6 py-3">Log level:</th>
                             <th scope="col" class="px-6 py-3">Actions:</th>
                         </tr>
                     </thead>
@@ -123,26 +134,27 @@
                     @else
                         @foreach ($unscheduledJobs as $job)
                             <tr>
-                                <td class="px-4 py-2 border dark:border-gray-700">{{ $job }}</td>
+                                <td class="px-4 py-2 border dark:border-gray-700">{{ $job->name }}</td>
+                                <td class="px-4 py-2 border dark:border-gray-700">{{ $logLevelMap[$job->log_level] }}</td>
                                 <td class="px-4 py-2 border dark:border-gray-700">
                                     <div class="flex gap-2">
                                         
-                                    <x-primary-anchor-button href="{{ route('job.history', ['job' => $job]) }}" class="ml-1">
+                                    <x-primary-anchor-button href="{{ route('job.history', ['job' => $job->name]) }}" class="ml-1">
                                         {{ __('View History') }}
                                     </x-primary-anchor-button>
                                         
-                                    <form method="POST" action="{{ route('run-cron-job', ['job' => $job, 'logLevel' => 0]) }}">
+                                    <form method="POST" action="{{ route('run-cron-job', ['job' => $job->name, 'logLevel' => 0]) }}">
                                         @csrf
                                         <x-primary-button class="ml-1">
                                             {{ __('Run Job') }}
                                         </x-primary-button>
                                     </form>
 
-                                    <x-primary-button class="ml-1" onclick="showModal('{{ $job }}')">
+                                    <x-primary-button class="ml-1" onclick="showModal('{{ $job->name }}')">
                                         {{ __('With Log') }}
                                     </x-primary-button>
 
-                                    <x-primary-anchor-button href="{{ route('edit-schedule-cron-job', ['job' => $job]) }}" class="ml-1">
+                                    <x-primary-anchor-button href="{{ route('edit-schedule-cron-job', ['job' => $job->name]) }}" class="ml-1">
                                         {{ __('Add Schedule') }}
                                     </x-primary-anchor-button>
                                     </div>

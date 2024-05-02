@@ -25,6 +25,8 @@ class CronJobController extends Controller
                         $newJob = new CronJob();
                         $newJob->name = $filename;
                         $newJob->is_enabled = false;
+                        $newJob->log_level = 2;
+                        $newJob->scheduled_time = "00:00:00";
                         $newJob->save();
                     }
                 }
