@@ -70,37 +70,39 @@
             $('#indexModal').modal('show');
             var $meterID = $(this).val();
 
-            $.ajax({
-                url: "/fetchIndex/" + $meterID,
-                method:'GET',
-                success:function(response)
-                {
-                    if (response.status == 404) {
-                        $('#message').addClass('alert alert-success');
-                        $('#message').text(response.message);
-                        $('#indexModal').modal('hide');
+                $.ajax({
+                    url: "/fetchIndex/" + $meterID,
+                    method:'GET',
+                    success:function(response)
+                    {
+                        if (response.status == 404) {
+                            $('#message').addClass('alert alert-success');
+                            $('#message').text(response.message);
+                            $('#indexModal').modal('hide');
+                        }
+                        else {
+                            $('#meter_id').val($meterID);
+                            $('#prev').html(response.prev_index.reading_value);
+                            $('#EAN').val(response.meter.EAN);
+                            $('#modalEAN').html(response.meter.EAN);
+                        }
                     }
-                    else {
-                        $('#meter_id').val($meterID);
-                        $('#prev').html(response.prev_index.reading_value);
-                        $('#EAN').val(response.meter.EAN);
-                        $('#modalEAN').html(response.meter.EAN);
-                    }
-                }
-            });
-        });
-    </script>
-{{--
-    <div class="content">
-        <h1>Energy Consumption History</h1>
-        <canvas id="consumptionChart"></canvas>
-    </div>
-    <script>
-        var consumptionData = @json($consumptionData);
-    </script>
-    <script src="/js/consumptionChart.js"></script>
-    <button onclick="fetchData('week')">Week</button>
-    <button onclick="fetchData('month')">Month</button>
-    <button onclick="fetchData('year')">Year</button> --}}
-</body>
-</html>
+                })
+            })
+        </script> --}}
+        <div class="content">
+            <h1>Energy Consumption History</h1>
+            <canvas id="consumptionChart"></canvas>
+        </div>
+        <script>
+            var consumptionData = @json($consumptionData);
+        </script>
+        <script src="/js/consumptionChart.js"></script>
+        <button onclick="fetchData('week')">Week</button>
+        <button onclick="fetchData('month')">Month</button>
+        <button onclick="fetchData('year')">Year</button>
+    </body>
+    </html>
+
+
+
