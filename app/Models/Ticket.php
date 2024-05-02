@@ -37,7 +37,9 @@ class Ticket extends Model
         'description',
         'active',
         'user_id',
-        'status'
+        'status',
+        'close_date',
+        'is_solved'
     ];
 
     public static function validate(array $input): bool
