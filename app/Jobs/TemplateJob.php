@@ -34,17 +34,13 @@ class TemplateJob implements ShouldQueue
         try {
             // Log that the job execution has started
             $this->jobStart();
-
-            $messages = [
-                "this is an info message",
-                "this is a warning",
-                "this is a critical error",
-                "oh no i did big oopsie"
-            ];
             
-            for ($i = 0; $i < 100; $i++) {
-                $message = $messages[array_rand($messages)];
-                $this->logInfo(null, $message);
+            for ($i = 0; $i < 2; $i++) {
+                $this->logInfo(null, "Info message $i");
+                $this->logDebug(null, "Debug message $i");
+                $this->logCritical(null, "Critical error message $i");
+                $this->logWarning(null, "Warning message $i");
+                $this->logError(null, "Error message $i");
             }
 
             $this->jobCompletion("Succesfully completed this job");
