@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Dashboard</title>
+    <title>Paper Index Dashboard</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -50,7 +50,7 @@
             </div>
         </div>
     </div>
-    <h1>Enter index values</h1>
+    <h1>Enter index values - Paper preferences</h1>
     <form>
         <p>Search by:</p>
         <label for="searchBarName">First or last name:</label>
@@ -76,7 +76,7 @@
             function fetch_customer_data(queryName = '', queryEAN = '', queryCity = '', queryStreet = '', queryNumber = '')
             {
                 $.ajax({
-                    url:"{{ route('searchIndex') }}",
+                    url:"{{ route('searchIndexPaper') }}",
                     method:'GET',
                     data:{queryName:queryName, queryEAN:queryEAN, queryCity:queryCity, queryStreet:queryStreet, queryNumber:queryNumber},
                     dataType:'json',
