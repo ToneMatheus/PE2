@@ -100,10 +100,10 @@ class CronJobController extends Controller
         return redirect()->back()->with('success', 'Schedule updated successfully');
     }
     
-    public function run($job){
+    public function run($job, $logLevel){
         $jobClass = 'App\Jobs\\' . $job;
-        $jobClass::dispatch();
-        return redirect()->back()->with('regularJobStatus', 'Regular job has been run.');
+        $jobClass::dispatch($logLevel);
+        return redirect()->back()->with('regularJobStatus', 'job has been run.');
     }
     
     public function showHistory()

@@ -10,14 +10,19 @@ use App\Jobs\_SendMailJob;
 trait cronJobTrait
 {
     private $JobRunId;
+    private $LoggingLevel;
 
     private function __Log($logLevel, $invoiceId, $message) {
         $logLevelMap = [
+            0 => "Debug",
             1 => "Info",
             2 => "Warning",
             3 => "Critical",
             4 => "Error",
         ];
+        if ($logLevel < $this->LoggingLevel){
+            return;
+        }
     
         $logLevelString = $logLevelMap[$logLevel] ?? "Unknown";
     
@@ -41,6 +46,7 @@ trait cronJobTrait
 
     private function jobStart(){
         // Log that the job execution has started
+
         try {
             Log::info('Job: '.$this->__getShortClassName().' execution started.');
     
@@ -93,6 +99,10 @@ trait cronJobTrait
         } catch (\Exception $e) {
             Log::error("Error occurred while handling logging job exception: " . $e->getMessage());
         }
+    }
+
+    public function logDebug($invoiceId, $message){
+        $this->__Log(0, $invoiceId, $message);
     }
 
     public function logInfo($invoiceId, $message){

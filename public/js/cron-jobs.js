@@ -83,3 +83,34 @@ function onApplyFilters(page = 1){
     };
     xhr.send();
 }
+
+function showModal(jobName) {
+    document.getElementById('log_level_modal').setAttribute('data-job-name', jobName);
+    document.getElementById('log_level_modal').classList.remove('hidden');
+    document.getElementById('modal-backdrop').classList.remove('hidden');
+}
+
+function hideModal() {
+    const modal = document.getElementById('log_level_modal');
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    modal.classList.add('hidden');
+    modalBackdrop.classList.add('hidden');
+}
+
+function runJob() {
+    var jobName = document.getElementById('log_level_modal').getAttribute('data-job-name');
+    var LogLevel = document.getElementById('LogLevel').value;
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/cron-jobs/run/' + jobName + "/" + LogLevel);
+    var csrf = document.querySelector('meta[name="csrf-token"]').content;
+    xhr.setRequestHeader('X-CSRF-TOKEN', csrf);
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            console.log('Request succesful. Status: ' + xhr.status);
+        } else {
+            console.error('Request failed. Status: ' + xhr.status);
+        }
+    };
+    xhr.send();
+}

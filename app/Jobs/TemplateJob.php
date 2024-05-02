@@ -19,9 +19,9 @@ class TemplateJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($LogLevel)
     {
-
+        $this->LoggingLevel = $LogLevel;
     }
 
     /**
@@ -42,7 +42,7 @@ class TemplateJob implements ShouldQueue
                 "oh no i did big oopsie"
             ];
             
-            for ($i = 0; $i < 1000; $i++) {
+            for ($i = 0; $i < 100; $i++) {
                 $message = $messages[array_rand($messages)];
                 $this->logInfo(null, $message);
             }

@@ -7,6 +7,27 @@
 
 <div class="py-8 dark:text-white">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div id="modal-backdrop" onclick="hideModal()" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden"></div>
+        <div id="log_level_modal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-1/2">
+                <div class="text-xl mb-4">Choose logging level</div>
+                
+                <x-input-label for="logLevel" />
+                <x-select id="LogLevel" name="logLevel">  
+                    <option value="0">Debug</option>
+                    <option value="1">Info</option>
+                    <option value="2">Warning</option>
+                    <option value="3">Critical</option>
+                    <option value="4">Error</option>
+                </x-select>
+                <x-primary-button onclick="runJob()" class="ml-1">
+                    {{ __('Run Job') }}
+                </x-primary-button>
+                <x-danger-button onclick="hideModal()" class="ml-1">
+                    {{ __('Close') }}
+                </x-danger-button>
+            </div>
+        </div>
         <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
             <div class="max-w-xl">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -47,12 +68,16 @@
                                         <x-primary-anchor-button href="{{ route('job.history', ['job' => $job->name]) }}" class="ml-1">
                                             {{ __('View History') }}
                                         </x-primary-anchor-button>
-                                        <form method="POST" action="{{ route('run-cron-job', ['job' => $job->name]) }}">
+                                        <form method="POST" action="{{ route('run-cron-job', ['job' => $job->name, 'logLevel' => 0]) }}">
                                             @csrf
                                             <x-primary-button class="ml-2">
                                                 {{ __('Run Job') }}
                                             </x-primary-button>
                                         </form>
+                                        <x-primary-button class="ml-2" onclick="showModal('{{ $job->name }}')">
+                                            {{ __('With Log') }}
+                                        </x-primary-button>
+                                        
                                         <x-primary-anchor-button href="{{ route('edit-schedule-cron-job', ['job' => $job->name]) }}" class="ml-1">
                                             {{ __('Edit') }}
                                         </x-primary-anchor-button>
@@ -106,12 +131,16 @@
                                         {{ __('View History') }}
                                     </x-primary-anchor-button>
                                         
-                                    <form method="POST" action="{{ route('run-cron-job', ['job' => $job]) }}">
+                                    <form method="POST" action="{{ route('run-cron-job', ['job' => $job, 'logLevel' => 0]) }}">
                                         @csrf
                                         <x-primary-button class="ml-1">
                                             {{ __('Run Job') }}
                                         </x-primary-button>
                                     </form>
+
+                                    <x-primary-button class="ml-1" onclick="showModal('{{ $job }}')">
+                                        {{ __('With Log') }}
+                                    </x-primary-button>
 
                                     <x-primary-anchor-button href="{{ route('edit-schedule-cron-job', ['job' => $job]) }}" class="ml-1">
                                         {{ __('Add Schedule') }}
