@@ -63,7 +63,7 @@ class AddressSeeder extends Seeder
             [
                 'id' => 5,
                 'street' => 'Meir',
-                'number' => 88,
+                'number' => 66,
                 'box' => 7,
                 'postal_code' => 2000,
                 'city' => 'Antwerp',
@@ -98,8 +98,8 @@ class AddressSeeder extends Seeder
             ],
             [
                 'id' => 8,
-                'street' => 'Marktplein',
-                'number' => 12,
+                'street' => 'Bredeheide',
+                'number' => 13,
                 'box' => 8,
                 'postal_code' => 2860,
                 'city' => 'Sint-Katelijne-Waver',
@@ -110,8 +110,8 @@ class AddressSeeder extends Seeder
             ],
             [
                 'id' => 9,
-                'street' => 'Marktplein',
-                'number' => 33,
+                'street' => 'Wilsonstraat',
+                'number' => 70,
                 'box' => 8,
                 'postal_code' => 2860,
                 'city' => 'Sint-Katelijne-Waver',
