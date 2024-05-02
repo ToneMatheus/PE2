@@ -12,20 +12,20 @@ class TicketManagerPageController extends Controller
     {
         $status = $request->get('status', 'all');
 
-        if ($status == 'all') {
-            $tickets = Ticket::select(DB::raw("COUNT(*) as count"), DB::raw("DATE(created_at) as date"))
-                ->groupBy(DB::raw("DATE(created_at)"))
-                ->get();
-        } else {
-            $tickets = Ticket::where('status', $status)
-                ->select(DB::raw("COUNT(*) as count"), DB::raw("DATE(created_at) as date"))
-                ->groupBy(DB::raw("DATE(created_at)"))
-                ->get();
-        }
+        $openTickets = Ticket::where('status', 'open')
+            ->select(DB::raw("COUNT(*) as count"), DB::raw("DATE(created_at) as date"))
+            ->groupBy(DB::raw("DATE(created_at)"))
+            ->get();
 
-        $dates = $tickets->pluck('date');
-        $counts = $tickets->pluck('count');
+        $closedTickets = Ticket::where('status', 'closed')
+            ->select(DB::raw("COUNT(*) as count"), DB::raw("DATE(created_at) as date"))
+            ->groupBy(DB::raw("DATE(created_at)"))
+            ->get();
 
-        return view('customertickets/ManagerTicketPage', compact('dates', 'counts'));
+        $dates = $openTickets->pluck('date');
+        $openCounts = $openTickets->pluck('count');
+        $closedCounts = $closedTickets->pluck('count');
+
+        return view('customertickets/ManagerTicketPage', compact('dates', 'openCounts', 'closedCounts'));
     }
 }

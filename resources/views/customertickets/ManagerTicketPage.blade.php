@@ -5,11 +5,7 @@
             {{ __('Tickets.TicketOverview') }}
         </h2>
     </x-slot> 
-    <div class="flex space-x-4 mt-4">
-        <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onclick="window.location.href='?status=open'">Open</button>
-        <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600" onclick="window.location.href='?status=closed'">Closed</button>
-        <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" onclick="window.location.href='?status=all'">All</button>
-    </div>
+    
     <canvas id="myChart" width="800" height="400"></canvas>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -20,10 +16,16 @@
             data: {
                 labels: <?php echo json_encode($dates->toArray()); ?>,
                 datasets: [{
-                    label: '# of Tickets',
-                    data: <?php echo json_encode($counts->toArray()); ?>,
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
+                    label: '# of Open Tickets',
+                    data: <?php echo json_encode($openCounts->toArray()); ?>,
+                    backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    borderWidth: 1
+                }, {
+                    label: '# of Closed Tickets',
+                    data: <?php echo json_encode($closedCounts->toArray()); ?>,
+                    backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                    borderColor: 'rgba(255, 0, 0, 1)',
                     borderWidth: 1
                 }]
             },
