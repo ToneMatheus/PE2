@@ -14,7 +14,7 @@ return new class extends Migration
             $table->date('invoice_date');
             $table->date('due_date');
             $table->float('total_amount', 10, 2);
-            $table->enum('status', ['pending', 'sent', 'paid', 'validation ok', 'validation error 1', 'validation error 2', 'validation error 3'])->default('pending');
+            $table->enum('status', ['pending', 'sent', 'paid'])->default('pending');
             $table->bigInteger('customer_contract_id')->unsigned();
             $table->string('type', 50);
         });
