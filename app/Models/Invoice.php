@@ -16,8 +16,11 @@ class Invoice extends Model
         'status',
         'customer_contract_id',
         'type',
-        'meter_id'
+        'meter_id',
+        'structured_communication'
     ];
+
+    public $timestamps = false;
 
     public function invoice_lines(): HasMany
     {

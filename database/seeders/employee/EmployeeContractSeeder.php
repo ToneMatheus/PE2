@@ -18,7 +18,8 @@ class EmployeeContractSeeder extends Seeder
                 'end_date' => '2025-02-14',
                 'type' => 'Contract',
                 'status' => 'Active',
-                'salary_per_month' => 4000.00,
+                'role_id' => '1',
+                'salary_range_id' => 1
             ],
             [
                 'employee_profile_id' => 2,
@@ -26,7 +27,8 @@ class EmployeeContractSeeder extends Seeder
                 'end_date' => null,
                 'type' => 'Full-time',
                 'status' => 'Active',
-                'salary_per_month' => 5000.00,
+                'role_id' => '2',
+                'salary_range_id' => 1
             ],
             [
                 'employee_profile_id' => 3,
@@ -34,7 +36,8 @@ class EmployeeContractSeeder extends Seeder
                 'end_date' => null,
                 'type' => 'Full-time',
                 'status' => 'Active',
-                'salary_per_month' => 3500.00,
+                'role_id' => '3',
+                'salary_range_id' => 1
             ],
         ]);
     }

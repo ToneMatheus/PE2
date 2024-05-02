@@ -6,7 +6,7 @@
     <title>Advance reminder: open invoice</title>
 </head>
 <body>
-    <h1>Dear {{ $user_info[0]->first_name }} {{ $user_info[0]->last_name }},</h1>
+    <h1>Dear {{ $user_info->first_name }} {{ $user_info->last_name }},</h1>
     
     <p>
         We wanted to let you know that you have an unpaid invoice from our company. 
@@ -40,15 +40,17 @@
         </tr>
         @endforeach
 
-        @foreach ($total_amount as $r)
         <tr>
             <td colspan="2">Total</td>
-            <td>{{ $r->total_amount }}</td>
+            <td>{{ $total_amount }}</td>
         </tr>       
-        @endforeach
 
 
     </table>
+
+    <p>
+        Please log in to our website or scan the QR code in attachment to fill in payment.
+    </p>
 
     <p>
         If your payment has already been settled when you recieve this e-mail, you can ignore this reminder.

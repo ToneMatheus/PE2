@@ -60,3 +60,21 @@ nav {
     height: 500px;
     width: 100%;
 }
+
+.redirect div {
+    background-color: rgb(1, 1, 153);
+    color: white;
+    padding: 10px;
+    width: 100%;
+    margin-top: 10px;
+    vertical-align: middle;
+    text-align: center;
+    text-decoration: none;
+    transition: 0.5s;
+}
+
+.redirect div:hover {
+    background-color: rgb(2, 2, 80);
+    transition: 0.5s;
+    cursor: pointer;
+}

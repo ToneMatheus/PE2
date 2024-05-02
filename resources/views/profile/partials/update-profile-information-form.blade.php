@@ -41,11 +41,11 @@
 
         <div>
             <x-input-label for="title" :value="__('Title')" />
-            <label for='Mr'>Mr</label>
+            <label for='Mr' class="mt-1 text-sm dark:text-gray-100">Mr</label>
             <input type="radio" name="title" id="mr" value="Mr" @if($user->title == 'Mr') checked @endif>
-            <label for='Ms'>Ms</label>
+            <label for='Ms' class="mt-1 text-sm dark:text-gray-100">Ms</label>
             <input type="radio" name="title" id="Ms" value="Ms" @if($user->title == 'Ms') checked @endif>
-            <label for='X'>X</label>
+            <label for='X' class="mt-1 text-sm dark:text-gray-100">X</label>
             <input type="radio" name="title" id="X" value="X" @if($user->title == 'X') checked @endif>
             <x-input-error class="mt-2" :messages="$errors->get('title')" />
         </div>
@@ -98,6 +98,8 @@
                 required autofocus autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('username')" />
         </div>
+
+        <!-- TODO nationality bij zetten -->
 
         @if($user->is_company == 1)
             <div>
