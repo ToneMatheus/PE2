@@ -144,7 +144,7 @@ class InvoiceController extends Controller
                 }
 
             }
-            
+
         }
 
         return redirect()->route('invoice.index')
@@ -156,7 +156,7 @@ class InvoiceController extends Controller
         $user = User::where('id', $invoice->user_id)->first();
         if ($invoice != null) {
             //finnvc99@gmail.com is going to be replaced with: $user->email
-            Mail::to('finnvc99@gmail.com')->send(new InvoiceMail($invoice, $user->name));
+            Mail::to('anu01872@gmail.com')->send(new InvoiceMail($invoice, $user->name));
         }
         return redirect()->intended('dashboard');
     }

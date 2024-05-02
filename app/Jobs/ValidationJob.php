@@ -33,16 +33,22 @@ class ValidationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 
+    protected $now;
+    protected $year;
+    protected $month;
+
     public function __construct()
     {
-      
+        $this->now = config('app.now');
+        $this->month = $this->now->format('m');
+        $this->year = $this->now->format('Y');
     }
 
     public function handle()
     {
-        $now = Carbon::now();
-        $month = $now->format('m');
-        $year = $now->format('Y');
+        $now = $this->now->copy();
+        $month = $this->month;
+        $year = $this->year;
 
         try {
             $this->jobStart();
@@ -51,6 +57,10 @@ class ValidationJob implements ShouldQueue
             if(!DB::connection()->getDatabaseName()){
                 throw new \Exception("Database Error Code 0: No connection could be made");
             } else {
+
+                dispatch(new WeekAdvanceReminderJob);
+                dispatch(new InvoiceFinalWarningJob);
+
                 $meters = Meter::whereTypeAndStatus("Electricity", "Installed")->where("is_smart", "=", 0)
                 ->get();
                 // dd($meters);
@@ -68,6 +78,9 @@ class ValidationJob implements ShouldQueue
                         ->where("m.id", "=", $meter['id'])
                         ->whereNull("cc.end_date")
                         ->first();
+
+                        $startContract = Carbon::parse($customers['startContract']);
+
                         if(is_null($customers)){
                             // Check what error it is in the customer array.
                             $customers2 = User::join('Customer_addresses as ca', 'users.id', '=', 'ca.user_id')
@@ -86,7 +99,6 @@ class ValidationJob implements ShouldQueue
                             }
                         } else {
                             // dd($customers);
-                            // $startContract = Carbon::parse($customers['startContract'])->format('Y-m-d');
                             // dd($startContract);
                             $lastYearlyInvoice = Invoice::where('type', '=', 'Annual')
                             ->where('meter_id', '=', $meter['id'])
@@ -106,6 +118,7 @@ class ValidationJob implements ShouldQueue
                                 ->count();
                                 // dd($invoiceCount);
                             }
+                            
                             if($invoiceCount < 11){
                                 //Monthly checks
                                 if(sizeof(Estimation::get()->where('meter_id', '=', $meter['id'])->toArray()) == 0){
@@ -127,9 +140,26 @@ class ValidationJob implements ShouldQueue
                             } else {
                                 //Yearly checks
                                 $meter_id = $meter['id'];
+
+                                $contractDuration = $startContract->diffInYears($now);
+
+                                $invoiceDate = $startContract->addYear()->addWeek();
+                                $lastInvoiceDate = ($contractDuration < 1) ? $startContract->start_date : $invoiceDate->copy()->setYear($year-1);
+                
+                                $invoiceDate->setYear($year);
+                                $invoiceDate->setMonth($month);
+                                $invoiceDate->setTimezone('Europe/Berlin');
+                                
+                                //Reminder index values 1 week prior invoice run
+                                if($invoiceDate->copy() == $now){
+                                    MeterReadingReminderJob::dispatch($customers->uID, $customers->mID);
+                                }
+
                                 $consumptions = Index_Value::where('meter_id', '=', $meter_id)
-                                ->whereyear('reading_date', '=', $year)
+                                ->where('reading_date', '>=', $lastInvoiceDate)
+                                ->where('reading_date', '<', $invoiceDate->copy())
                                 ->get()->toArray();
+
                                 if (sizeof($consumptions) == 0) {
                                     // no consumption found
                                     $this->logError(null, 'Exception caught: ' . "Validation Error Code 3: No consumption data found for meter with id: $meter_id.");

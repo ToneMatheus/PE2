@@ -15,7 +15,9 @@ class Employee_contract extends Model
         'end_date',
         'type',
         'status',
-        'salary_per_month'
+        'role_id',
+        'salary_range_id',
+        'benefits_id'
     ];
 
     use HasFactory;
@@ -23,5 +25,20 @@ class Employee_contract extends Model
     public function employee_profile(): BelongsTo
     {
         return $this->belongsTo(Employee_Profile::class);
+    }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function salary_range(): BelongsTo
+    {
+        return $this->belongsTo(SalaryRange::class);
+    }
+
+    public function employee_benefit(): BelongsTo
+    {
+        return $this->belongsTo(EmployeeBenefit::class);
     }
 }

@@ -23,14 +23,13 @@ use App\Models\{
     Index_Value
 };
 use App\Services\InvoiceFineService;
+use App\Services\StructuredCommunicationService;
 use App\Mail\FinalSettlementMail;
 use App\Http\Controllers\EstimationController;
 use Illuminate\Support\Facades\Log;
 use App\Traits\cronJobTrait;
 
-use function PHPUnit\Framework\isEmpty;
-
-//not finished yet: mail and logging still needed
+//not finished yet: logging still needed
 //this job calculates data for the final settlement invoice and stores it in database
 //the job only handles the final settlement invoice of 1 leaving customer
 //how do we tell the job which meter?
@@ -55,8 +54,10 @@ class FinalSettlementJob implements ShouldQueue
         $this->meterID = $meterID;
     }
 
-    public function handle()
+    public function handle($mID)
     {
+        //$meterID = $this->meterID;
+        $this->meterID = $mID;
         $meterID = $this->meterID;
 
         try
@@ -71,7 +72,7 @@ class FinalSettlementJob implements ShouldQueue
         try
         {
             //query assumes the customer contract for this meter is still active
-            $result = Meter::select('customer_contracts.id', 'customer_contracts.user_id')
+            $result = Meter::select('cc.id', 'cc.user_id')
                 ->leftJoin('contract_products as cp', 'meters.id', '=', 'cp.meter_id')
                 ->leftJoin('customer_contracts as cc', 'cp.customer_contract_id', '=', 'cc.id')
                 ->where('meters.id', $meterID)
@@ -99,11 +100,13 @@ class FinalSettlementJob implements ShouldQueue
             $this->calculateInvoice($meter);
         }
 
-        $this->jobCompletion("Completed invoice run job");
+        //$this->jobCompletion("Completed invoice run job");
     }
 
     public function calculateInvoice($meter)
     {
+        $discounts = null;
+
         try
         {
             //consumption
@@ -114,8 +117,18 @@ class FinalSettlementJob implements ShouldQueue
                 ->limit(1)
                 ->first();
 
+            if (is_null($consumption))
+            {
+                throw new \Exception("Couldn't find consumption.");
+            }
+
             //get estimation for this meter
             $estimation = Estimation::where('meter_id', $meter->id)->value('estimation_total');
+
+            if (is_null($estimation))
+            {
+                throw new \Exception("Couldn't find estimation.");
+            }
 
             //discounts
             $discounts = Discount::rightJoin('contract_products as cp', 'cp.id', '=', 'discounts.contract_product_id')
@@ -124,24 +137,35 @@ class FinalSettlementJob implements ShouldQueue
                 ->get();
 
             //get tariff rate
-            $tariffRate = Contract_product::leftJoin('products as p', 'cp.product_id', '=', 'p.id')
+            $tariffRate = Contract_product::leftJoin('products as p', 'contract_products.product_id', '=', 'p.id')
                 ->leftJoin('product_tariffs as pt', 'p.id', '=', 'pt.product_id')
                 ->leftJoin('tariffs as t', 'pt.tariff_id', '=', 't.id')
                 ->whereNull('pt.end_date')
-                ->where('cp.customer_contract_id', $this->ccID)
-                ->where('cp.meter_id', $meter->id)
-                ->orderByDesc('cp.start_date')
+                ->where('contract_products.customer_contract_id', $this->ccID)
+                ->where('contract_products.meter_id', $meter->id)
+                ->orderByDesc('contract_products.start_date')
                 ->value('t.rate');
+
+            if (is_null($tariffRate))
+            {
+                throw new \Exception("Couldn't find tariff rate.");
+            }
 
             //get meter readings
             $meterReadings = Index_Value::where('meter_id', $meter->id)
             ->orderByDesc('reading_date')
             ->limit(1)
             ->first();
+
+            if (is_null($meterReadings))
+            {
+                throw new \Exception("Couldn't find meter readings.");
+            }
         }
-        catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) 
+        catch (\Exception $e) 
         {
-            Log::error("Unable to find information for meter " . $meter->id . " in database.");
+            Log::error("Unable to find information for meter " . $meter->id . " in database. " . $e->getMessage());
+            exit();
         }
 
         //calculate discounts
@@ -205,6 +229,10 @@ class FinalSettlementJob implements ShouldQueue
             $invoice = Invoice::create($invoiceData);
             $lastInserted = $invoice->id;
 
+            $scService = new StructuredCommunicationService;
+            $strCom = $scService->generate($lastInserted);
+            $scService->addStructuredCommunication($strCom, $lastInserted);
+
             if ($extraAmount <= 0) {
                 CreditNote::create([
                     'invoice_id' => $lastInserted,
@@ -233,8 +261,15 @@ class FinalSettlementJob implements ShouldQueue
         
         $newInvoiceLine = Invoice_line::where('invoice_id', '=', $lastInserted)->first();
         EstimationController::UpdateEstimation($meter->id);  
-        // 4) send mail (not yet added)
-        $this->sendFinalSettlementMail($invoice, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
+
+        $lastAnnual = Invoice::where('invoices.type', '=', 'Annual')
+            ->orderByDesc('invoices.invoice_date')
+            ->limit(1)
+            ->first();
+
+        $interval = array((new Carbon($lastAnnual->invoice_date))->format('m'), $this->month);
+        // 4) send mail
+        $this->sendFinalSettlementMail($invoice, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices, $interval);
     }
 
     public function getMonthlyInvoices() //(function copied from InvoiceRunJob)
@@ -263,7 +298,7 @@ class FinalSettlementJob implements ShouldQueue
         return $monthlyInvoicesData;
     }
 
-    public function sendFinalSettlementMail(Invoice $invoice, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices)
+    public function sendFinalSettlementMail(Invoice $invoice, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices, $interval)
     {
         $user = User::findOrFail($this->userID);
 
@@ -280,7 +315,8 @@ class FinalSettlementJob implements ShouldQueue
             'discounts' => $discounts,
             'monthlyInvoices' => $monthlyInvoices,
             'domain' => $this->domain,
-            'hash' => $hash
+            'hash' => $hash,
+            'interval' => $interval
         ];
 
         $mailParams = [
@@ -292,17 +328,18 @@ class FinalSettlementJob implements ShouldQueue
             $newInvoiceLine, 
             $meterReadings, 
             $discounts, 
-            $monthlyInvoices
+            $monthlyInvoices,
+            $interval
         ];
         Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
-        if (isEmpty($user->employee_profile_id))
+        if (is_null($user->employee_profile_id))
             $mailAddress = $user->email;
         else
             $mailAddress = $user->personal_email;
 
         //Send email with PDF attachment
-        $this->sendMailInBackgroundWithPDF($mailAddress, FinalSettlementMail::class, $mailParams, 'Invoices.annual_invoice_pdf', $pdfData, $invoice->id);
+        $this->sendMailInBackgroundWithPDF($mailAddress, FinalSettlementMail::class, $mailParams, 'Invoices.final_invoice_pdf', $pdfData, $invoice->id);
 
     }
 }

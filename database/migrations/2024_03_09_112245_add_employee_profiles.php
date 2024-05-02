@@ -14,7 +14,6 @@ return new class extends Migration
             $table->string('job', 50)->nullable();
             $table->date('hire_date');
             $table->string('department', 50)->nullable();
-            $table->float('salary_per_month', 10, 2);
             $table->string('notes', 100)->nullable();
             $table->string('nationality', 50)->nullable();
             $table->string('sex', 20)->nullable();

@@ -31,6 +31,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Traits\cronJobTrait;
 
 use App\Services\InvoiceFineService;
+use App\Services\StructuredCommunicationService;
 
 class InvoiceRunJob implements ShouldQueue
 {
@@ -62,12 +63,11 @@ class InvoiceRunJob implements ShouldQueue
         ->join('Addresses as a', 'ca.Address_id', '=', 'a.id')
         ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
         ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
-        ->where('users.id', '=', 6)
+        ->where('m.type', '=', 'Electricity')
+        ->where('m.status', '=', 'Installed')
+        ->where('m.is_smart', '=', '0')
         ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
         ->get();
-
-        dispatch(new WeekAdvanceReminderJob);
-        dispatch(new InvoiceFinalWarningJob);
 
         //Check if monthly or annual
         foreach($customers as $customer){
@@ -105,41 +105,26 @@ class InvoiceRunJob implements ShouldQueue
                 }
 
             } else { //Yearly
-                //New Customer
-                if($startContract->year == $year){
+                $invoiceDate = $startContract->addYear()->addWeeks(2);
+                $lastInvoiceDate = $invoiceDate->copy()->setYear($year-1);
 
-                    //Reminder index values 1 week prior invoice run
-                    if($startContract->copy()->addYear()->addWeeks(2)->subWeek() == $now){
-                        MeterReadingReminderJob::dispatch($customer->uID, $customer->mID);
-                    }
+                $invoiceDate->setYear($year);
+                $invoiceDate->setMonth($month);
+                $invoiceDate->setTimezone('Europe/Berlin');
 
-                    //Check if needs an invoice now
-                    if($startContract->copy()->addYear()->addWeeks(2) == $now){
-                        $this->generateYearlyInvoice($customer, $startContract->start_date, $startContract->copy()->addYear()->addWeeks(2));
-                    }
+                $missing = Meter::where('id', '=', $customer->mID)->first();
 
-                } else { //old Customer
-                    $invoiceDate = $startContract->addYear()->addWeeks(2);
-                    $lastInvoiceDate = $invoiceDate->copy()->setYear($year-1);
-
-                    $invoiceDate->setYear($year);
-                    $invoiceDate->setMonth($month);
-                    $invoiceDate->setTimezone('Europe/Berlin');
-
-                    $missing = Meter::where('id', '=', $customer->mID)->first();
-
-                    //Rerun missing meter reading
-                    if($invoiceDate->copy()->addWeek() == $now && $missing->expecting_reading){
-                        $this->generateYearlyInvoice($customer, $lastInvoiceDate, $now->copy());
-                        Meter::where('id', '=', $customer->mID)
-                        ->update(['expecting_reading' => 0]);
-                    }//Reminder index values 1 week prior invoice run
-                    elseif($invoiceDate->copy()->subWeek() == $now){
-                        MeterReadingReminderJob::dispatch($customer->uID, $customer->mID);
-                    } //Check if needs an invoice now
-                    elseif($invoiceDate->copy() == $now){
-                        $this->generateYearlyInvoice($customer, $lastInvoiceDate, $invoiceDate->copy()->addYear());
-                    }
+                //Rerun missing meter reading
+                if($invoiceDate->copy()->addWeek() == $now && $missing->expecting_reading){
+                    $this->generateYearlyInvoice($customer, $lastInvoiceDate, $now->copy());
+                    Meter::where('id', '=', $customer->mID)
+                    ->update(['expecting_reading' => 0]);
+                }//Reminder index values 1 week prior invoice run
+                elseif($invoiceDate->copy()->subWeek() == $now){
+                    MeterReadingReminderJob::dispatch($customer->uID, $customer->mID);
+                } //Check if needs an invoice now
+                elseif($invoiceDate->copy() == $now){
+                    $this->generateYearlyInvoice($customer, $lastInvoiceDate, $invoiceDate->copy()->addYear());
                 }
             } 
         }
@@ -246,6 +231,10 @@ class InvoiceRunJob implements ShouldQueue
 
             $invoice = Invoice::create($invoiceData);
             $lastInserted = $invoice->id;
+
+            $scService = new StructuredCommunicationService;
+            $strCom = $scService->generate($lastInserted);
+            $scService->addStructuredCommunication($strCom, $lastInserted);
 
             if ($extraAmount <= 0) {
                 CreditNote::create([
@@ -378,6 +367,10 @@ class InvoiceRunJob implements ShouldQueue
 
         $invoice = Invoice::create($invoiceData);
         $lastInserted = $invoice->id;
+
+        $scService = new StructuredCommunicationService;
+        $strCom = $scService->generate($lastInserted);
+        $scService->addStructuredCommunication($strCom, $lastInserted);
 
         $discount = Discount::where('contract_product_id', $customer->ccID)
         ->where(function ($query) use ($invoiceDate, $invoiceDueDate) {
