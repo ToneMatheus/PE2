@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Log;
 
 use App\Mail\AnnualInvoiceMail;
 use App\Mail\MonthlyInvoiceMail;
+use App\Mail\SmartInvoiceMail;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Traits\cronJobTrait;
@@ -121,7 +122,7 @@ class SmartInvoiceRunJob implements ShouldQueue
             }
             $correctValue = $newValue-$lastValue;
         } else {
-            dd("No reading.");
+            $this->logException("Error when meter reading."); // temporary
         }
         $contractProduct = Contract_product::join('products as p', 'p.id', '=', 'contract_products.product_id')
         ->where('customer_contract_id', '=', $customer->ccID)
@@ -152,9 +153,9 @@ class SmartInvoiceRunJob implements ShouldQueue
         $invoice = Invoice::create($invoiceData);
         $lastInserted = $invoice->id;
         // service?
-        // $scService = new StructuredCommunicationService;
-        // $strCom = $scService->generate($lastInserted);
-        // $scService->addStructuredCommunication($strCom, $lastInserted);
+        $scService = new StructuredCommunicationService;
+        $strCom = $scService->generate($lastInserted);
+        $scService->addStructuredCommunication($strCom, $lastInserted);
         // discount
         $discount = Discount::where('contract_product_id', $customer->ccID)
         ->where(function ($query) use ($invoiceDate, $invoiceDueDate) {
@@ -169,7 +170,160 @@ class SmartInvoiceRunJob implements ShouldQueue
                 });
         })
         ->first();
-        dd($discount);
+        // dd($discount);
+        if (!is_null($discount)) {
+            if(!is_null($discount->end_date)){
+                $startDate = Carbon::create($discount->start_date);
+                $endDate = Carbon::create($discount->end_date);
+
+                $totalDays = $invoiceDate->subWeeks(2)->diffInDays($invoiceDueDate);
+                $days = $startDate->diffInDays($endDate);
+
+                // ex. 2 months = 31 - 60 = neg
+                // ex. 2 weeks = 31 - 14 = pos
+
+                if ($days > $totalDays && $endDate->month == $month) { //Overlapse into another month
+                    $prevMonthDays = $startDate->copy()->endOfMonth()->day;
+                    $thisMonthDays = $endDate->copy()->endOfMonth()->day;
+                    
+                    $days -= $prevMonthDays;
+                    $discountRatio = $thisMonthDays - $days;
+                } else {
+                    $discountRatio = $totalDays - $days; 
+                }
+
+                if($discountRatio > 0) { //For # days of billing period
+
+                    $discountPerDay = ($correctValue * $discount->rate) / $totalDays;
+                    $discountAmount = $discountPerDay * $days;
+
+                    $consumedPerDay = ($correctValue * $productTariff->rate) / $totalDays;
+                    $consumedAmount = $estimatedPerDay * $discountRatio;
+
+                    $totalAmount = $discountAmount + $estimatedAmount + 20;
+
+                    $conumationPerDay = $correctValue / $totalDays;
+
+                    Invoice_line::create([
+                        'type' => "Electricity (for " . $discountRatio . "days)",
+                        'unit_price' => $productTariff->rate,
+                        'amount' => $conumationPerDay * $discountRatio,
+                        'consumption_id' => null,
+                        'invoice_id' => $lastInserted
+                    ]);
+
+                    Invoice_line::create([
+                        'type' => "Electricity (discount for " . $days . " days)",
+                        'unit_price' => $discount->rate,
+                        'amount' => $conumationPerDay * $days,
+                        'consumption_id' => null,
+                        'invoice_id' => $lastInserted
+                    ]);
+                } else { //For whole billing period
+                    $discountAmount = $correctValue * $discount->rate;
+                    $totalAmount = $discountAmount + 20;
+
+                    Invoice_line::create([
+                        'type' => 'Electricity (discount)',
+                        'unit_price' => $discount->rate,
+                        'amount' => $correctValue,
+                        'consumption_id' => null,
+                        'invoice_id' => $lastInserted
+                    ]);
+                }        
+            } else {
+                $discountAmount = $correctValue * $discount->rate;
+                $totalAmount = $discountAmount + 20;
+                
+                Invoice_line::create([
+                    'type' => 'Electricity (discount)',
+                    'unit_price' => $discount->rate,
+                    'amount' => $correctValue,
+                    'consumption_id' => null,
+                    'invoice_id' => $lastInserted
+                ]);
+            }
+        } else {
+            $consumedAmount = $correctValue * $productTariff->rate;
+            $totalAmount = $consumedAmount + 20;           //Transport & distribution costs    
+
+            Invoice_line::create([
+                'type' => 'Electricity',
+                'unit_price' => $productTariff->rate,
+                'amount' => $correctValue,
+                'consumption_id' => null,
+                'invoice_id' => $lastInserted
+            ]);
+        } 
+
+        //Check for extra invoice lines
+        $extraInvoiceLines = CreditNote::where('user_id', '=', $customer->uID)
+        ->where('is_active', '=', 1)
+        ->where('is_credit', '=', 1)
+        ->where('is_applied', '=', 0)
+        ->select('id', 'type', 'amount')
+        ->get()->toArray();
+
+        //Add to totalAmount
+        if (sizeof($extraInvoiceLines) > 0){
+            foreach ($extraInvoiceLines as $extraInvoiceLine) {
+                $surplus = $extraInvoiceLine['amount'] + $totalAmount;
+                $totalAmount += $extraInvoiceLine['amount'];
+
+                if($totalAmount < 0){
+                    $totalAmount = 0;
+                }
+            }
+        }
+
+        $invoice->total_amount = $totalAmount;
+        $invoice->save();
+
+        // standard invoice lines
+        Invoice_line::create([
+            'type' => 'Basic Service Fee',
+            'unit_price' => 10.00,
+            'amount' => 1,
+            'consumption_id' => null,
+            'invoice_id' => $lastInserted
+        ]);
+
+        Invoice_line::create([
+            'type' => 'Distribution Fee',
+            'unit_price' => 10.00,
+            'amount' => 1,
+            'consumption_id' => null,
+            'invoice_id' => $lastInserted
+        ]);
+
+        //Add extra invoice line if there are any
+        if (sizeof($extraInvoiceLines) > 0){
+            foreach ($extraInvoiceLines as $extraInvoiceLine) {
+                Invoice_line::create([
+                    'type' => $extraInvoiceLine['type'],
+                    'unit_price' => $extraInvoiceLine['amount'],
+                    'amount' => 1,
+                    'consumption_id' => null,
+                    'invoice_id' => $lastInserted
+                ]);
+
+                if ($surplus < 0){
+                    CreditNote::where('id', $extraInvoiceLine['id'])
+                    ->update([
+                        'amount' => $surplus,
+                        'is_applied' => 1
+                    ]);
+                } else {
+                    CreditNote::where('id', $extraInvoiceLine['id'])
+                    ->update(['is_active' => 0]);
+                }
+            }
+        }
+        $fineService = new InvoiceFineService;
+        $fineService->unpaidInvoiceFine($lastInserted);
+
+        $newInvoiceLines = Invoice_line::where('invoice_id', '=', $lastInserted)->get();
+        $this->sendSmartMail($invoice, $customer->uID, $newInvoiceLines);
     }
 
     public function sendSmartMail(Invoice $invoice, $uID, $newInvoiceLines)
@@ -200,7 +354,7 @@ class SmartInvoiceRunJob implements ShouldQueue
         Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
         //Send email with PDF attachment
-        $this->sendMailInBackgroundWithPDF("ToCustomer@mail.com", MonthlyInvoiceMail::class, $mailParams, 'Invoices.monthly_invoice_pdf', $pdfData, $invoice->id);
+        $this->sendMailInBackgroundWithPDF("ToCustomer@mail.com", SmartInvoiceMail::class, $mailParams, 'Invoices.smart_invoice_pdf', $pdfData, $invoice->id);
 
     }
 }
