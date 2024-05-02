@@ -548,18 +548,18 @@ class MeterController extends Controller
         }
     }
 
-    public function GasElectricity()
+    public function GasElectricity($id)
     {
         $query =  DB::table('users')
         ->join('customer_addresses','users.id','=','customer_addresses.user_id')
         ->join('addresses','customer_addresses.id','=','addresses.id')
         ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
         ->join('meters','meter_addresses.meter_id','=','meters.id')
-        ->where('users.id', '=', '5')
+        ->where('users.id', '=', $id)
         ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id')
         ->get();
 
-        return view('Meters/Meter_History', ['details' => $query]);
+        return view('Meters/Meter_History/'.$id, ['details' => $query]);
     }
 
     public function fetchIndex($meterID) {
@@ -667,7 +667,7 @@ class MeterController extends Controller
         public function showConsumptionHistory($timeframe = 'month')
     {
         $query = DB::table('index_values')
-            ->where('meter_id',1) //Auth::id())
+            ->where('meter_id',4) //Auth::id())
             ->orderBy('reading_date');
 
             switch ($timeframe) {
