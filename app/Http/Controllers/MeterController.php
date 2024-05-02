@@ -87,6 +87,11 @@ class MeterController extends Controller
 
     public function viewScheduledMeters(Request $request) { // viewing meters for specific employee
         $today = Carbon::now()->toDateString();
+        $company_address = urlencode('Jan Pieter de Nayerlaan 7 Sint Katelijne Waver');
+        $key = env('GOOGLE_API_KEY');
+        $addresses = [];
+        $waypoints = '';
+        $optimized_waypoints = '';
 
         $results = DB::table('users')
                     ->join('customer_addresses','users.id','=','customer_addresses.user_id')
@@ -104,11 +109,32 @@ class MeterController extends Controller
                         ->where('users.employee_profile_id', '=', 1)
                         ->select('users.first_name')
                         ->get();
+        
+        foreach($results as $result) {
+            $address = $result->street.' '.$result->number.' '.$result->city;
+            $addresses[] = $address;
+            $waypoints .= urlencode($address.'|');
+        }
 
-        // $response = Http::get('https://maps.googleapis.com/maps/api/directions/json?destination=Adelaide%2C%20SA&origin=Adelaide%2C%20SA&waypoints=optimize%3Atrue%7CBarossa%20Valley%2C%20SA%7CClare%2C%20SA%7CConnawarra%2C%20SA%7CMcLaren%20Vale%2C%20SA&key=AIzaSyDJxVIJtLGU0anxCft7GRMVblVKBByiTj8');
-        // return $response;
+        $waypoints = substr($waypoints, 0, -3); // removing the pipe character in the end
 
-        return view("Meters/employeeDashboard",['results'=>$results, 'employeeName'=>$employeeName]);
+        $api = 'https://maps.googleapis.com/maps/api/directions/json?destination=' . $company_address . '&origin=' . $company_address . '&waypoints=optimize%3Atrue%7C' . $waypoints . env('GOOGLE_API_KEY');
+        $response = Http::get($api); // getting JSON response from the API
+
+        $data = json_decode($response, true);
+        $waypoint_order = $data['routes'][0]['waypoint_order']; // optimized order of addresses
+
+        foreach($waypoint_order as $position) {
+            $optimized_waypoints .= urlencode($addresses[$position]) . "|";
+        }
+
+        $optimized_waypoints = substr($optimized_waypoints, 0, -1); // removing the pipe character in the end
+
+        $url = "https://www.google.com/maps/embed/v1/directions?origin=" . $company_address .
+                "&destination=" . $company_address .
+                "&waypoints=" . $optimized_waypoints . "&avoid=highways" . env('GOOGLE_API_KEY'); // creating url for maps embed
+
+        return view("Meters/employeeDashboard",['results'=>$results, 'employeeName'=>$employeeName, 'url'=>$url]);
     }
 
     public function all_meters_index() {
