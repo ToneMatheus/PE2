@@ -196,4 +196,22 @@ class CronJobController extends Controller
 
         return view('cronjobs/parts/logs', compact('jobRun', 'jobLogs', 'logCounts'));
     }
+
+    public function updateLogLevel(Request $request, $jobName)
+    {
+        $request->validate([
+            'log_level' => 'required|numeric|min:0|max:4',
+        ]);
+
+        $job = CronJob::where('name', $jobName)->first();
+        if (!$job) {
+            return response()->json(['error' => 'Job not found'], 404);
+        }
+
+        $job->log_level = $request->input('log_level');
+        $job->save();
+
+        return response()->json(['message' => 'Log level updated successfully', 'job' => $job]);
+    }
+
 }

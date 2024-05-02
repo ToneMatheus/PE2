@@ -78,6 +78,7 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::get('/cron-jobs/history', [CronJobController::class, 'showHistory'])->name('job.history');
     Route::get('/cron-jobs/get-job-runs', [CronJobController::class, 'getJobRuns'])->name('get.job.runs');
     Route::get('/cron-jobs/get-job-run-logs', [CronJobController::class, 'getJobRunLogs'])->name('get.job.run.logs');
+    Route::post('/cron-jobs/update-log-level/{jobName}', [CronJobController::class, 'updateLogLevel'])->name('update.log.level');
     
 });
 

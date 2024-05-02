@@ -84,19 +84,6 @@ function onApplyFilters(page = 1){
     xhr.send();
 }
 
-function showModal(jobName) {
-    document.getElementById('log_level_modal').setAttribute('data-job-name', jobName);
-    document.getElementById('log_level_modal').classList.remove('hidden');
-    document.getElementById('modal-backdrop').classList.remove('hidden');
-}
-
-function hideModal() {
-    const modal = document.getElementById('log_level_modal');
-    const modalBackdrop = document.getElementById('modal-backdrop');
-    modal.classList.add('hidden');
-    modalBackdrop.classList.add('hidden');
-}
-
 function runJob() {
     var jobName = document.getElementById('log_level_modal').getAttribute('data-job-name');
     var LogLevel = document.getElementById('LogLevel').value;
@@ -113,4 +100,42 @@ function runJob() {
         }
     };
     xhr.send();
+}
+
+function updateLogLevel(isScheduled, jobName, logLevel) {
+    var csrf = document.querySelector('meta[name="csrf-token"]').content;
+    fetch(`/cron-jobs/update-log-level/${jobName}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrf
+        },
+        body: JSON.stringify({ log_level: logLevel })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Log level updated successfully:', data);
+        
+        const toastType = isScheduled ? "scheduled_toast" : "unscheduled_toast";
+        showToast(toastType, 'Updated the log level for ' + jobName + ' successfully.');
+    })
+    .catch(error => {
+        console.error('Error updating log level:', error);
+        const toastType = isScheduled ? "scheduled_toast" : "unscheduled_toast";
+        showToast(toastType, 'There was an error updating ' + jobName + '\'s log level!');
+    });
+}
+
+function showToast(toastid, message, duration = 5000) {
+    var toast = document.getElementById(toastid);
+    toast.innerHTML = message;
+    toast.classList.remove('hidden');
+    setTimeout(function() {
+        toast.classList.add('hidden');
+    }, duration);
 }
