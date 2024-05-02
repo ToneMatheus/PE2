@@ -12,18 +12,20 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\MissingMeterReading;
 use App\Models\User;
 use App\Models\Meter;
+use App\Traits\cronJobTrait;
 use Illuminate\Support\Facades\Log;
 use App\Traits\jobLoggerTrait;
 
 class MissingMeterReadingJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 
     protected $customeruID;
     protected $customermID;
 
-    public function __construct($customeruID, $customermID)
+    public function __construct($customeruID, $customermID, $logLevel = null)
     {
+        $this->LoggingLevel = $logLevel;
         $this->customeruID = $customeruID;
         $this->customermID = $customermID;
     }

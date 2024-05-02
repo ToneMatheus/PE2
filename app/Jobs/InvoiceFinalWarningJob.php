@@ -22,8 +22,9 @@ class InvoiceFinalWarningJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
     protected $now;
 
-    public function __construct()
+    public function __construct($logLevel = null)
     {
+        $this->LoggingLevel = $logLevel;
         $this->now = config('app.now');
     }
 

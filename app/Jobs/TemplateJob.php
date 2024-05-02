@@ -19,7 +19,7 @@ class TemplateJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($LogLevel)
+    public function __construct($LogLevel = null)
     {
         $this->LoggingLevel = $LogLevel;
     }

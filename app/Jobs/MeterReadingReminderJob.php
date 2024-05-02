@@ -21,8 +21,9 @@ class MeterReadingReminderJob implements ShouldQueue
     protected $customeruID;
     protected $customermID;
 
-    public function __construct($customeruID, $customermID)
+    public function __construct($customeruID, $customermID, $logLevel = null)
     {
+        $this->LoggingLevel = $logLevel;
         $this->customeruID = $customeruID;
         $this->customermID = $customermID;
     }

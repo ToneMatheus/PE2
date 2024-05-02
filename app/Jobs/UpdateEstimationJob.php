@@ -27,14 +27,15 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
 use App\Services\InvoiceFineService;
+use App\Traits\cronJobTrait;
 
 class UpdateEstimationJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 
-    public function __construct()
+    public function __construct($logLevel = null)
     {
-      
+        $this->LoggingLevel = $logLevel;
     }
 
     public function handle()

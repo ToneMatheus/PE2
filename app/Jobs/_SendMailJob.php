@@ -25,7 +25,7 @@ class _SendMailJob implements ShouldQueue
     protected $pdfView;
     protected $pdfParams;
 
-    public function __construct($mailTo, $mailableClass, $mailableClassParams, $pdfView, $pdfParams, $jobRunID, $invoiceID){
+    public function __construct($mailTo, $mailableClass, $mailableClassParams, $pdfView, $pdfParams, $jobRunID, $invoiceID, $logLevel = null){
         $this->mailTo = $mailTo;
         $this->mailableClass = $mailableClass;
         $this->mailableClassParams = unserialize($mailableClassParams);
@@ -33,6 +33,7 @@ class _SendMailJob implements ShouldQueue
         $this->invoiceID = $invoiceID;
         $this->pdfView = $pdfView;
         $this->pdfParams = unserialize($pdfParams);
+        $this->LoggingLevel = $logLevel;
     }
 
     public function handle(){
