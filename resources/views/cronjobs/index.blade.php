@@ -61,7 +61,7 @@
                                             {{ __('View History') }}
                                         </x-primary-anchor-button>
                                         <form method="POST" action="{{ route('run-cron-job', ['job' => $job->name]) }}">
-                                        <input type="hidden" id="logLevelInput" name="logLevel" value="{{ $job->log_level }}">
+                                        <input type="hidden" id="logInput_{{ $job->name }}" name="logInput" value="{{ $job->log_level }}">
                                         @csrf
                                         <x-primary-button class="ml-1">
                                             {{ __('Run Job') }}
