@@ -11,32 +11,64 @@ class CustomerAddressSeeder extends Seeder
 {
     public function run(): void
     {
-        $adds = [];
         for($i=1; $i <= 5; $i++) {
-            $adds[] = [
-                'start_date' => '2024-01-01',
-                'end_date' => null,
-                'user_id' => $i,
-                'address_id' => $i
-            ];
+            DB::table('customer_addresses')->insert([
+                [
+                    'start_date' => '2024-01-01',
+                    'end_date' => null,
+                    'user_id' => $i,
+                    'address_id' => $i
+                ]
+            ]);
         }
 
-        for($i=5; $i <= 9; $i++) {
-            $adds[] = [
-                'start_date' => '2024-01-01',
-                'end_date' => null,
-                'user_id' => $i,
-                'address_id' => $i + 1
-            ];
+        for($i=5; $i <= 12; $i++) {
+            DB::table('customer_addresses')->insert([
+                [
+                    'start_date' => '2024-01-01',
+                    'end_date' => null,
+                    'user_id' => $i, // 12
+                    'address_id' => $i + 1 // 13
+                ]
+            ]);
         }
 
-        $adds[] = [
-            'start_date' => '2024-01-01',
-            'end_date' => null,
-            'user_id' => 1000,
-            'address_id' => 1000
-        ];
+        DB::table('customer_addresses')->insert([
+            [
+                'start_date' => '2024-01-01',
+                'end_date' => null,
+                'user_id' => 10,
+                'address_id' => 14
+            ]
+        ]);
 
-        DB::table('customer_addresses')->insert($adds);
+        for($i=5; $i <= 18; $i++) {
+            DB::table('customer_addresses')->insert([
+                [
+                    'start_date' => '2024-01-01',
+                    'end_date' => null,
+                    'user_id' => $i, // 18
+                    'address_id' => $i + 2 // 20
+                ]
+            ]);
+        }
+
+        DB::table('customer_addresses')->insert([
+            [
+                'start_date' => '2024-01-01',
+                'end_date' => null,
+                'user_id' => 19,
+                'address_id' => 13
+            ]
+        ]);
+
+        DB::table('customer_addresses')->insert([
+            [
+                'start_date' => '2024-01-01',
+                'end_date' => null,
+                'user_id' => 10,
+                'address_id' => 21
+            ]
+        ]);
     }
 }

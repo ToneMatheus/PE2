@@ -42,7 +42,10 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
             [   //Employee
                 'id' => 2,
@@ -57,7 +60,10 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
             [   //Employee who's Customer
                 'id' => 3,
@@ -72,7 +78,10 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
             [   //Commercial Customer
                 'id' => 4,
@@ -87,7 +96,10 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
             [   //Residential Customer
                 'id' => 5,
@@ -102,7 +114,10 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
             [   
                 'id' => 6,
@@ -117,7 +132,10 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
             [   
                 'id' => 7,
@@ -132,7 +150,10 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
             [   
                 'id' => 8,
@@ -147,9 +168,12 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
-            [   
+            [
                 'id' => 9,
                 'username' => 'jan',
                 'first_name' => 'Jan',
@@ -162,7 +186,190 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
+            ],
+            [
+                'id' => 10,
+                'username' => 'landlord',
+                'first_name' => 'Landlord',
+                'last_name' => 'Doe',
+                'password' => Hash::make('landlord'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'landlord@gmail.com',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 1,
+                'index_method' => 'website'
+            ],
+            [
+                'id' => 11,
+                'username' => 'rent1',
+                'first_name' => 'Renter',
+                'last_name' => 'One',
+                'password' => Hash::make('rent1'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'rent1@gmail.com',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
+            ],
+            [
+                'id' => 12,
+                'username' => 'rent2',
+                'first_name' => 'Renter',
+                'last_name' => 'Two',
+                'password' => Hash::make('rent2'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'rent2@gmail.com',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'is_active' => 0,
+                'is_landlord' => 0,
+                'index_method' => 'website'
+            ],
+            [
+                'id' => 13,
+                'username' => 'rent3',
+                'first_name' => 'Renter',
+                'last_name' => 'Three',
+                'password' => Hash::make('rent2'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'rent3@gmail.com',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
+            ],
+            [
+                'id' => 14,
+                'username' => 'rent4',
+                'first_name' => 'Renter',
+                'last_name' => 'Four',
+                'password' => Hash::make('rent2'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'rent4@gmail.com',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
+            ],
+            [
+                'id' => 15,
+                'username' => 'oldie',
+                'first_name' => 'Old',
+                'last_name' => 'Man',
+                'password' => Hash::make('oldie'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'oldman@gmail.com',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'paper'
+            ],
+            [
+                'id' => 16,
+                'username' => 'goldie',
+                'first_name' => 'Older',
+                'last_name' => 'Woman',
+                'password' => Hash::make('goldie'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'olderwoman@gmail.com',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'paper'
+            ],
+            [
+                'id' => 17,
+                'username' => 'lazy',
+                'first_name' => 'Lazy',
+                'last_name' => 'Person',
+                'password' => Hash::make('lazy'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'lazy@gmail.com',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
+            ],
+            [
+                'id' => 18,
+                'username' => 'verylazy',
+                'first_name' => 'VeryLazy',
+                'last_name' => 'Person',
+                'password' => Hash::make('lazy'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'verylazy@gmail.com',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
+            ],
+            [
+                'id' => 19,
+                'username' => 'rent5',
+                'first_name' => 'New Renter',
+                'last_name' => 'Five',
+                'password' => Hash::make('rent5'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'rentnew@gmail.com',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
             [
                 'id' => 1000,
@@ -177,7 +384,10 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Dutch',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
         ]);
     }
