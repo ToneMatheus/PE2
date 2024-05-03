@@ -56,4 +56,9 @@
         </div>
     </div>
 
+        {{-- @php
+            $notifications = auth()->user()->unreadNotifications;
+            dd($notifications);
+        @endphp --}}
+
 </x-app-layout>

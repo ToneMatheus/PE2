@@ -110,6 +110,12 @@ Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(
 
 });
 
+// Notifications
+Route::get('/notifications/{notification}', function (Illuminate\Notifications\DatabaseNotification $notification) {
+    $notification->markAsRead();
+    return redirect()->back();
+})->name('notification.read');
+
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
 Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
 Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
