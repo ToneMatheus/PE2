@@ -15,6 +15,7 @@ class CronJobSeeder extends Seeder
             [
                 'name' => 'MeterSchedule',
                 'interval' => 'daily',
+                'log_level' => 3,
                 'scheduled_day' => null,
                 'scheduled_month' => null,
                 'scheduled_time' => '00:00:00',
@@ -22,27 +23,15 @@ class CronJobSeeder extends Seeder
             [
                 'name' => 'MeterAllocation',
                 'interval' => 'daily',
+                'log_level' => 3,
                 'scheduled_day' => null,
                 'scheduled_month' => null,
                 'scheduled_time' => '00:00:10',
             ],
             [
-                'name' => 'AnnualInvoiceJob',
-                'interval' => 'yearly',
-                'scheduled_day' => 15,
-                'scheduled_month' => 6,
-                'scheduled_time' => '10:15:00'
-            ],
-            [
-                'name' => 'MonthlyInvoiceJob',
-                'interval' => 'monthly',
-                'scheduled_day' => 15,
-                'scheduled_month' => null,
-                'scheduled_time' => '22:30:00'
-            ],
-            [
                 'name' => 'InvoicerunJob',
                 'interval' => 'daily',
+                'log_level' => 3,
                 'scheduled_day' => 15,
                 'scheduled_month' => null,
                 'scheduled_time' => '22:30:00'
