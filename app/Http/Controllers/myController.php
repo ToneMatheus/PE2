@@ -326,11 +326,29 @@
         }
 
         public function finance(){
-            return view('financialAnalystPage');
+            $users = DB::select("select * from users where employee_profile_id is not null");
+
+            $roleNames = [];
+            $salaries = [];
+            $i = 0;
+
+            foreach($users as $user){
+                $role = DB::select("select * from user_roles where user_id = " . $user->id);
+                $roleName = DB::select("select role_name from roles where id = " . $role[0]->role_id);
+                $roleNames = array_merge($roleNames, $roleName);
+                $salary = DB::select("select * from salary_ranges where role_id = " . $role[0]->role_id);
+                $salaries = array_merge($salaries, $salary);
+            }
+
+            return view('financialAnalyst', compact('users', 'roleNames', 'i', 'salaries'));
         }
 
         public function weeklyActivity(){
             return view('weeklyActivity');
+        }
+
+        public function sickLeave(){
+            return view('sickLeaveReason');
         }
     }
 ?>

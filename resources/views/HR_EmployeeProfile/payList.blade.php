@@ -31,6 +31,8 @@
                                 $hours = htmlspecialchars($info->total_hours);
                                 $amountPerHour = htmlspecialchars($info->amount_per_hour);
                                 $totalAmount = $hours * $amountPerHour;
+                                $taxAmount = $totalAmount * 0.21;
+                                $totalAmount = $totalAmount - $taxAmount;
 
                                 echo("                       
                                 <span style=\"margin-left: 85px\">Created on $issued </span><br/>

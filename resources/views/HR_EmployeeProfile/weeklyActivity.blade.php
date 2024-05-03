@@ -13,7 +13,7 @@
 
 <body style="background-color: #D6D5C9">
     
-    <h1 style="text-align: center; margin-top: 20px" class="h1">This week's activity</h1><br/>
+    <h1 style="text-align: center; margin-top: 20px" class="h1">This week's activity (sprint 1)</h1><br/>
 
     <div class="requests" style="margin: auto">
         <div>

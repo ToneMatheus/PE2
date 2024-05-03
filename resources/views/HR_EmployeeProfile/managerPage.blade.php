@@ -108,6 +108,22 @@
                                 $diffInDays = $endDate->diffInDays($startDate) + 1;
                             @endphp
 
+                            @if ($request->reason == "Sick")
+                            <tr style="background-color: pink">
+                                <td>{{ $i }}</td>
+                                <td>{{ $request->request_date }}</td>
+                                <td>{{ $fullname[0]->first_name }} {{ $fullname[0]->last_name }}</td>
+                                <td>{{ $request->start_date }}</td>
+                                <td>{{ $request->end_date }}</td>
+                                <td>{{ $diffInDays }}</td>
+                                <td>{{ $holiday_type_name[0]->type }}</td>
+                                <td><span class="badge badge-primary" style="font-size: 16px">Pending</span></td>
+                                <td>
+                                    <a href="{{ route('managerPage', ['accept' => 1, 'id' => $employee_id, 'req_id' => $request_id, 'manager_id' => $manager_id ]) }}"><button class="btn btn-warning">Demand documents</button></a>
+                                    {{-- <a href="{{ route('managerPage', ['decline' => 1, 'id' => $employee_id, 'req_id' => $request_id, 'manager_id' => $manager_id ]) }}"><button class="btn btn-danger">Decline</button></a> --}}
+                                </td>
+                            </tr>
+                            @else
                             <tr>
                                 <td>{{ $i }}</td>
                                 <td>{{ $request->request_date }}</td>
@@ -122,6 +138,8 @@
                                     <a href="{{ route('managerPage', ['decline' => 1, 'id' => $employee_id, 'req_id' => $request_id, 'manager_id' => $manager_id ]) }}"><button class="btn btn-danger">Decline</button></a>
                                 </td>
                             </tr>
+                            @endif
+
                             @php $i++; @endphp
                         @endforeach
                     </table>
