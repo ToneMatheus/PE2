@@ -384,7 +384,7 @@
             <tr>
                 <td id='selection'>
                     <p>Vacation</p>
-                    <button id='btn' onclick='addDate()'><div class='square'></div>
+                    <button id='btn' onclick='addDate(`green`)'><div class='square'></div>
                 </td>
             </tr>
             <tr>
@@ -396,7 +396,7 @@
             <tr>
                 <td id='selection'>
                     <p>Sick Leave</p>
-                    <button id='btn' onclick='addDate3()'><div class='square3'></div>
+                    <button id='btn' onclick='addDate(`pink`)'><div class='square3'></div>
                 </td>
             </tr>
         </table>";
@@ -466,7 +466,7 @@
             btn1.disabled = false;
         }
 
-        function sendingDate(i, selected, len_selectedElements)
+        function sendingDate(i, selected, len_selectedElements, clr_var)
         {
             //$idNum = document.getElementById("label").textContent;
             <?php /*if(isset($_POST['idNum'])){$idNum = $_POST['idNum'];}*/?>
@@ -474,6 +474,7 @@
             // {
                 var dayNum = dayNumList[i]; 
                 var date_now = new Date();
+                var clr_str = '';
                 
                 var dateMonth = <?php if(isset($_SESSION['currentM'])){echo $_SESSION['currentM'];}else{ echo 0;} ?>;
                 var date2 = new Date("2024-" + dateMonth + "-" + dayNum);
@@ -488,10 +489,20 @@
                 else
                 {
                     div2.style.visibility='hidden'
-                    selected.classList.add("added");
-                    $color = 'green';
+                    if(clr_var == 'green')
+                    {
+                        selected.classList.add("added");
+                    }
+                    else if(clr_var == 'pink')
+                    {
+                        selected.classList.add("added3");
+                    }
+                    
+                    //$color = 'green';
+                    clr_str = clr_var + '=';
+
                    
-                    countColor('green=', dayWithoutWE.length)
+                    countColor(clr_str, dayWithoutWE.length)
                 }
                 
 
@@ -526,7 +537,7 @@
 
 
 
-        function addDate() 
+        function addDate(clr_var) 
         {
             //const selected = document.querySelector(".selected");
             const selectedElements = document.querySelectorAll(".selected");
@@ -539,39 +550,48 @@
                 const selected = selectedElements[i];
                 if (selected) 
                 {
-                
-                    if(selected.classList.contains('prev-month') || selected.classList.contains('req-day') || selected.classList.contains('req-Acpt-day'))
+                    if(clr_var == 'green')
                     {
-
-                    }
-                    else if (selected.classList.contains('added'))
-                    {
-                        selected.classList.remove("added");
-                        //numGr--;
-                        // updateSession(selected.textContent, 'remove');
-                    }
-                    else
-                    {
-                       
-
-                        // console.log(arrWe);
-                        // console.log(dayNum);
-
-                       checkingDays(i, selected, len_selectedElements);
-
-
-                        if(i == selectedElements.length -1)
+                        if(selected.classList.contains('prev-month') || selected.classList.contains('req-day') || selected.classList.contains('req-Acpt-day'))
                         {
-                            // console.log("greenDays: " + len_selectedElements);
-                            sendingDate(i, selected, len_selectedElements);
-                        }
-                            
 
-                        
-                        //getDay();
-                        // updateSession(selected.textContent, 'add');
+                        }
+                        else if (selected.classList.contains('added'))
+                        {
+                            selected.classList.remove("added");
+                        }
+                        else
+                        {
+                            checkingDays(i, selected, len_selectedElements);
+
+                            if(i == selectedElements.length -1)
+                            {
+                                sendingDate(i, selected, len_selectedElements, clr_var);
+                            }
+                        }
                     }
+                    else if(clr_var == 'pink')
+                    {
+                        if(selected.classList.contains('prev-month') || selected.classList.contains('req-day') || selected.classList.contains('req-Acpt-day'))
+                        {
+
+                        }
+                        else if (selected.classList.contains('added3'))
+                        {
+                            selected.classList.remove("added3");
+                        }
+                        else
+                        {
+                            //TODO: check enough sickdays checkingDays(i, selected, len_selectedElements);
+
+                            if(i == selectedElements.length -1)
+                            {
+                                sendingDate(i, selected, len_selectedElements, clr_var);
+                            }
+                        }
+                    }  
                     selected.classList.remove("selected");
+                    
                 }
             }
         }

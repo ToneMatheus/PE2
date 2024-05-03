@@ -66,8 +66,8 @@ else if(isset($_POST['green']) && isset($_POST['dayNum']))
     //$idNum = $_POST['dayNum'];
     //TODO: split nums
     $idNum = explode(" ", $_POST['dayNum']);
-    $_SESSION['numCal'] = $idNum;
-    
+    $_SESSION['numCal'] = array_merge($_SESSION['numCal'], $idNum);
+
     echo "Days stored in session:\n";
     print_r($_SESSION['numCal']);
 } 
@@ -87,14 +87,18 @@ else if(isset($_POST['pink']) && isset($_POST['dayNum']))
     $_SESSION['user']['pink'] = $color;
     $color < 1 ?  $_SESSION['user']['pink'] += 1 : $color = 1;
     echo "\n";
-    echo $_SESSION['user']['pink'];
+    $idNum = explode(" ", $_POST['dayNum']);
+    $_SESSION['numCal'] = array_merge($_SESSION['numCal'], $idNum);
+    
+    echo "Days stored in session:\n";
+    print_r($_SESSION['numCal']);
 }
 else if(isset($_POST['button']))
 {
     $monthTest = $_SESSION['currentM'];
     
     // TODO: send the month (and maybe year) to the request
-    if(isset($_SESSION['user']['green']))
+    if(isset($_SESSION['user']['green']) || isset($_SESSION['user']['pink']))
     {
         $array =  $_SESSION['numCal'];
         
@@ -118,7 +122,15 @@ else if(isset($_POST['button']))
             $thsDay = "2024/$monthTest/$minValue";
             $scdDay = "2024/$monthTest/$maxValue";
             $todayRequest = date("Y/m/d");
-            $type = "Vacation";
+            if(isset($_SESSION['user']['green']))
+            {
+                $type = "Vacation";
+            }
+            else if (isset($_SESSION['user']['pink']))
+            {
+                $type = "Sick";
+            }
+            
 
             $date_now = new DateTime();
             $date2    = new DateTime("$monthTest/$minValue/2024");
@@ -134,7 +146,7 @@ else if(isset($_POST['button']))
                 $start_date = mysqli_real_escape_string($link, $thsDay);
                 $end_date = mysqli_real_escape_string($link, $scdDay);
                 $holiday_type_id = mysqli_real_escape_string($link, 1);
-                $reason = mysqli_real_escape_string($link, "Vacation");
+                $reason = mysqli_real_escape_string($link, $type);
                 $fileLoc = mysqli_real_escape_string($link, "");
                 $manager_approval = mysqli_real_escape_string($link, 0);
                 $boss_approval = mysqli_real_escape_string($link, 0);
@@ -196,7 +208,14 @@ else if(isset($_POST['button']))
                                 $thsDay = "2024/$monthTest/$minValue";
                                 $scdDay = "2024/$monthTest/$maxValue";
                                 $todayRequest = date("Y/m/d");
-                                $type = "Vacation";
+                                if(isset($_SESSION['user']['green']))
+                                {
+                                    $type = "Vacation";
+                                }
+                                else if (isset($_SESSION['user']['pink']))
+                                {
+                                    $type = "Sick";
+                                }
 
                                 $date_now = new DateTime();
                                 $date2    = new DateTime("$monthTest/$minValue/2024");
@@ -212,7 +231,7 @@ else if(isset($_POST['button']))
                                     $start_date = mysqli_real_escape_string($link, $thsDay);
                                     $end_date = mysqli_real_escape_string($link, $scdDay);
                                     $holiday_type_id = mysqli_real_escape_string($link, 1);
-                                    $reason = mysqli_real_escape_string($link, "Vacation");
+                                    $reason = mysqli_real_escape_string($link, $type);
                                     $fileLoc = mysqli_real_escape_string($link, "");
                                     $manager_approval = mysqli_real_escape_string($link, 0);
                                     $boss_approval = mysqli_real_escape_string($link, 0);
@@ -248,7 +267,14 @@ else if(isset($_POST['button']))
                                 $thsDay = "2024/$monthTest/$minValue";
                                 $scdDay = "2024/$monthTest/$maxValue";
                                 $todayRequest = date("Y/m/d");
-                                $type = "Vacation";
+                                if(isset($_SESSION['user']['green']))
+                                {
+                                    $type = "Vacation";
+                                }
+                                else if (isset($_SESSION['user']['pink']))
+                                {
+                                    $type = "Sick";
+                                }
 
                                 $date_now = new DateTime();
                                 $date2    = new DateTime("$monthTest/$minValue/2024");
@@ -264,7 +290,7 @@ else if(isset($_POST['button']))
                                     $start_date = mysqli_real_escape_string($link, $thsDay);
                                     $end_date = mysqli_real_escape_string($link, $scdDay);
                                     $holiday_type_id = mysqli_real_escape_string($link, 1);
-                                    $reason = mysqli_real_escape_string($link, "Vacation");
+                                    $reason = mysqli_real_escape_string($link, $type);
                                     $fileLoc = mysqli_real_escape_string($link, "");
                                     $manager_approval = mysqli_real_escape_string($link, 0);
                                     $boss_approval = mysqli_real_escape_string($link, 0);
