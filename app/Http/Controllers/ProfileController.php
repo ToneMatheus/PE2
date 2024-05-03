@@ -117,17 +117,6 @@ class ProfileController extends Controller
     }
 
 
-    // ! van hier
-    /**
-     * Update the user address
-     */
-    public function updateAddress(AddressUpdateRequest $request): RedirectResponse
-    {
-        dd($request->Address());
-
-    }
-    // ! tot hier mag weg
-
     /**
      * Update the user billing address
      */
@@ -161,6 +150,52 @@ class ProfileController extends Controller
         $user->save();
 
         return redirect()->route('profile.edit')->with('status', 'billing address is updated.');
+    }
+
+    /**
+     * add a new address to the user
+     */
+    public function addAddress(AddressUpdateRequest $request): RedirectResponse
+    {
+        $addressRequest = [
+            'street' => $request->street,
+            'number' => $request->number,
+            'box' => $request->box,
+            'province' => $request->province,
+            'city' => $request->city,
+            'country' => $request->country,
+            'type' => $request->type,
+            'is_billing_address' => 0,
+            'postal_code' => $request->postal_code,
+        ];
+
+
+        $userId = Auth::id();
+        $address = Address::create($addressRequest);
+        
+        $user = User::find($userId);
+
+        if($user->is_landlord != 1)
+        {
+            if($request->is_landlord == true){
+                $user->is_landlord = 1;
+            }else{
+                $user->is_landlord = 0;
+            }
+        }
+        $user->updated_at = now()->timezone('Europe/Brussels');
+
+        $user->save();
+
+        $customerAddressData = [
+            'start_date' => now()->timezone('Europe/Brussels'),
+            'user_id' => $user->id,
+            'address_id' => $address->id,
+        ];
+
+        $test =Customer_Address::create($customerAddressData);
+
+        return redirect()->route('profile.edit')->with('status', 'New adres has been added.');
     }
 
     /**

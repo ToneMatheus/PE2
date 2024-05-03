@@ -6,7 +6,7 @@
         var isLandlordDiv = document.getElementById("is_landlord_div");
         var addresses = {!! json_encode($addresses) !!};
         var showLandlordDiv = addresses.some(function(address) {
-            return address.type === "appartement" || address.type === "business";
+            return address.type === "appartment" || address.type === "business";
         });
 
         if (showLandlordDiv) {
@@ -24,7 +24,8 @@
         </h2>
 
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __("Choose your invoice address.") }}
+            {{--{{ __("Choose your invoice address.") }}--}}
+            {{ __("Changeable adddress data.") }}
         </p>
     </header>
 
