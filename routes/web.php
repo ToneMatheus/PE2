@@ -297,4 +297,4 @@ Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalControlle
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
 
 //Statistics route
-Route::get('/statistics', [StatisticsController::class, 'index']);
+Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
