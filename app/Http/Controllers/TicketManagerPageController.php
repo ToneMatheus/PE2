@@ -53,8 +53,24 @@ class TicketManagerPageController extends Controller
             ->join('users', 'team_members.user_id', '=', 'users.id')
             ->where('team_members.team_id', $teamId)
             ->where('team_members.is_manager', 0)
-            ->select('users.first_name', 'users.last_name', 'team_members.is_active')
+            ->select('users.id', 'users.first_name', 'users.last_name', 'team_members.is_active')
             ->get();
+
+    
+        $teamMembers->each(function ($teamMember) {
+            $teamMember->tickets = DB::table('users')
+                ->join('employee_profiles', 'users.employee_profile_id', '=', 'employee_profiles.id')
+                ->join('employee_tickets', 'employee_profiles.id', '=', 'employee_tickets.employee_profile_id')
+                ->join('tickets', 'employee_tickets.ticket_id', '=', 'tickets.id')
+                ->where('users.id', $teamMember->id)
+                ->select('tickets.status', DB::raw('COUNT(*) as count'), DB::raw('SUM(case when tickets.is_solved = 0 then 1 else 0 end) as unsolved'))
+                ->groupBy('tickets.status')
+                ->get()
+                ->mapWithKeys(function ($item) {
+                    return [$item->status => ['count' => $item->count, 'unsolved' => $item->unsolved]];
+                });
+        });
+    
 
         return view('customertickets/ManagerTicketPage', compact('dates', 'openCounts', 'closedCounts', 'averageClosingTime', 'teamMembers'));
     }
