@@ -79,7 +79,7 @@ class ValidationJob implements ShouldQueue
                         ->whereNull("cc.end_date")
                         ->first();
 
-                        $startContract = Carbon::parse($customers['startContract']);
+                       
 
                         if(is_null($customers)){
                             // Check what error it is in the customer array.
@@ -98,6 +98,7 @@ class ValidationJob implements ShouldQueue
                                 $this->logError(null, "Customer array is null for meter with id: $meter_id. The customer tied to this meter does not have an active contract.");
                             }
                         } else {
+                            $startContract = Carbon::parse($customers['startContract']);
                             // dd($customers);
                             // dd($startContract);
                             $lastYearlyInvoice = Invoice::where('type', '=', 'Annual')
