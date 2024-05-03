@@ -10,6 +10,23 @@ use Illuminate\Http\Request;
 
 class StatisticsController extends Controller
 {
+
+    public function fetch(){
+        $oldestInvoiceDate = Invoice::orderBy('invoice_date', 'asc')->value('invoice_date');
+        $startDate = Carbon::parse($oldestInvoiceDate)->format('Y-m-d');
+        $endDate = now()->format('Y-m-d');
+
+        $invoices = Invoice::whereBetween('invoice_date', [$startDate, $endDate])->orderBy('invoice_date')->get();
+    
+        $invoicesByMonthYear = $invoices->mapToGroups(function ($item, $key) {
+            $date = Carbon::parse($item->invoice_date)->format('M Y');
+            return [$date => $item->total_amount];
+        })->map(function ($group) {
+            return $group->sum();
+        });
+
+        return response()->json($invoicesByMonthYear);
+    }
     //
     public function index(Request $request){
         // Get the date inputs
@@ -52,11 +69,6 @@ class StatisticsController extends Controller
         $ratioPaidUnpaid =  100-($invoicesUnpaid/$invoicesTotalCount*100); // Calculate the ratio between paid and unpaid invoices
         $totalSoldElectricity = $invoice_lines->collapse()->where('type', 'Electricity')->sum('amount');
 
-        // Create the chart
-        $chart = new IncomeChart;
-        $chart->labels($labels);
-        $chart->dataset('Gross income', 'line', $grossIncomes);
-
-        return view('statistics.index', compact('totalGrossIncome', 'totalPotentialGrossIncome', 'amountDue', 'ratioPaidUnpaid', 'totalSoldElectricity', 'startDate', 'endDate', 'chart'));
+        return view('statistics.index', compact('totalGrossIncome', 'totalPotentialGrossIncome', 'amountDue', 'ratioPaidUnpaid', 'totalSoldElectricity', 'startDate', 'endDate'));
     }
 }

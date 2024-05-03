@@ -298,3 +298,4 @@ Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'
 
 //Statistics route
 Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
+Route::get('/chart-data', [StatisticsController::class, 'fetch'])->name('chart-data');  
