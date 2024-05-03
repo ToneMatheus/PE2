@@ -122,7 +122,7 @@ class SmartInvoiceRunJob implements ShouldQueue
             }
             $correctValue = $newValue-$lastValue;
         } else {
-            $this->logException("Error when meter reading."); // temporary
+            $this->jobException("Error when meter reading."); // temporary
         }
         $contractProduct = Contract_product::join('products as p', 'p.id', '=', 'contract_products.product_id')
         ->where('customer_contract_id', '=', $customer->ccID)
@@ -182,7 +182,7 @@ class SmartInvoiceRunJob implements ShouldQueue
                 // ex. 2 months = 31 - 60 = neg
                 // ex. 2 weeks = 31 - 14 = pos
 
-                if ($days > $totalDays && $endDate->month == $month) { //Overlapse into another month
+                if ($days > $totalDays && $endDate->month == $this->month) { //Overlapse into another month
                     $prevMonthDays = $startDate->copy()->endOfMonth()->day;
                     $thisMonthDays = $endDate->copy()->endOfMonth()->day;
                     
@@ -198,9 +198,9 @@ class SmartInvoiceRunJob implements ShouldQueue
                     $discountAmount = $discountPerDay * $days;
 
                     $consumedPerDay = ($correctValue * $productTariff->rate) / $totalDays;
-                    $consumedAmount = $estimatedPerDay * $discountRatio;
+                    $consumedAmount = $consumedPerDay * $discountRatio;
 
-                    $totalAmount = $discountAmount + $estimatedAmount + 20;
+                    $totalAmount = $discountAmount + $consumedAmount + 20;
 
                     $conumationPerDay = $correctValue / $totalDays;
 
