@@ -4,10 +4,13 @@
         <form action="{{ route('statistics') }}" method="GET" class="my-4">
             <div class="flex items-center space-x-4">
                 <label for="start_date" class="text-gray-600">Start Date:</label>
-                <input type="date" id="start_date" name="start_date" value="{{ $startDate }}" class="border border-gray-300 rounded px-2 py-1">
+                <input type="date" id="start_date" name="start_date" value="{{ $startDate }}"
+                    class="border border-gray-300 rounded px-2 py-1">
                 <label for="end_date" class="text-gray-600">End Date:</label>
-                <input type="date" id="end_date" name="end_date" value="{{ $endDate }}" class="border border-gray-300 rounded px-2 py-1">
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Apply</button>
+                <input type="date" id="end_date" name="end_date" value="{{ $endDate }}"
+                    class="border border-gray-300 rounded px-2 py-1">
+                <button id="button" type="submit"
+                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Apply</button>
             </div>
         </form>
 
@@ -38,40 +41,32 @@
             </div>
         </div>
         <div class="bg-white shadow-md rounded-lg p-4 mt-8">
-            <canvas id="myChart"></canvas>
+            {!! $chart->container() !!}
         </div>
     </div>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            fetch('/chart-data')
-                .then(response => response.json())
-                .then(data => {
-                    const labels = Object.keys(data);
-                    const values = Object.values(data);
-                    
-                    var ctx = document.getElementById('myChart').getContext('2d');
-                    var myChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Chart Data',
-                                data: values,
-                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                borderColor: 'rgba(255, 99, 132, 1)',
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true
-                                }
-                            }
-                        }
-                    });
-                });
+        function formatYAxisDecimal() {
+            // Select all elements with the class 'apexcharts-yaxis'
+            var yAxisElements = document.querySelectorAll('.apexcharts-yaxis-label');
+
+            // Iterate over each element and modify its inner HTML
+            yAxisElements.forEach(function(element) {
+                // Get the original text content
+                var originalText = element.textContent;
+
+                // Convert the text content to a floating point number with 2 decimal points
+                var formattedText = parseFloat(originalText).toFixed(2);
+
+                // Set the formatted text as the new content
+                element.textContent = formattedText;
+            });
+        }
+
+        // Call the function when the document is fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            formatYAxisDecimal();
         });
     </script>
+    <script src="{{ $chart->cdn() }}"></script>
+    {{ $chart->script() }}
 </x-app-layout>

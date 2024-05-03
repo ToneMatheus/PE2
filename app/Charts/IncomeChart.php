@@ -2,17 +2,21 @@
 
 namespace App\Charts;
 
-use ConsoleTVs\Charts\Classes\Chartjs\Chart;
+use ArielMejiaDev\LarapexCharts\LarapexChart;
 
-class IncomeChart extends Chart
+
+class IncomeChart
 {
-    /**
-     * Initializes the chart.
-     *
-     * @return void
-     */
-    public function __construct()
+    protected $chart;
+
+    public function __construct(LarapexChart $chart)
     {
-        parent::__construct();
+        $this->chart = $chart;
+    }
+
+    public function build($labels, $values, $startDate, $endDate)
+    {
+        return $this->chart->lineChart()->addData('Monthly Income', $values)->setLabels($labels)
+        ->setMarkers()->setStroke(3, [], 'smooth')->setTitle('Gross Income')->setSubtitle($startDate.'  -  '.$endDate);
     }
 }
