@@ -93,9 +93,11 @@ class ValidationJob implements ShouldQueue
                             if(is_null($customers2)) {
                                 $meter_id = $meter['id'];
                                 $this->logError(null, "Customer array is null for meter with id: $meter_id. Meter does not have a customer.");
+                                Meter::where('id', $meter_id)->update(['has_validation_error' => 1]);
                             } else {
                                 $meter_id = $meter['id'];
                                 $this->logError(null, "Customer array is null for meter with id: $meter_id. The customer tied to this meter does not have an active contract.");
+                                Meter::where('id', $meter_id)->update(['has_validation_error' => 1]);
                             }
                         } else {
                             // dd($customers);
@@ -125,17 +127,17 @@ class ValidationJob implements ShouldQueue
                                     // did not find the estimation
                                     $meter_id = $meter['id'];
                                     $this->logError(null, 'Exception caught: ' . "Validation Error Code 1: No monthly estimation found for meter with id: $meter_id");
-                                    // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 1']);
+                                    Meter::where('id', $meter_id)->update(['has_validation_error' => 1]);
                                 }elseif(Estimation::select('estimation_total')->where('meter_id', '=', $meter['id'])->pluck('estimation_total')->toArray()[0] <= 0){
                                     // estimation is 0 of lager                  
                                     $meter_id = $meter['id'];
                                     $this->logError(null, 'Exception caught: ' . "Validation Error Code 2: Monthly estimation found to be 0 or lower for meter with id: $meter_id");
-                                    // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 2']);
+                                    Meter::where('id', $meter_id)->update(['has_validation_error' => 1]);
                                 }else{
                                     $meter_id = $meter['id'];
                                     // estimation gevonden en hoger dan 0
                                     $this->logInfo(null, "No validation error for meter with id: $meter_id.");
-                                    // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
+                                    Meter::where('id', $meter_id)->update(['has_validation_error' => 0]);
                                 }
                             } else {
                                 //Yearly checks
@@ -163,12 +165,12 @@ class ValidationJob implements ShouldQueue
                                 if (sizeof($consumptions) == 0) {
                                     // no consumption found
                                     $this->logError(null, 'Exception caught: ' . "Validation Error Code 3: No consumption data found for meter with id: $meter_id.");
-                                    // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 3']);
+                                    Meter::where('id', $meter_id)->update(['has_validation_error' => 1]);
                                 }
                                 else {
                                     // consumption found
                                     $this->logInfo(null, "No validation error for meter with id: $meter_id.");
-                                    // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
+                                    Meter::where('id', $meter_id)->update(['has_validation_error' => 0]);
                                 }
                             }
                         }
@@ -203,9 +205,11 @@ class ValidationJob implements ShouldQueue
                             if(is_null($customers2)) {
                                 $meter_id = $meter['id'];
                                 $this->logError(null, "Customer array is null for meter with id: $meter_id. Meter does not have a customer.");
+                                Meter::where('id', $meter_id)->update(['has_validation_error' => 1]);
                             } else {
                                 $meter_id = $meter['id'];
                                 $this->logError(null, "Customer array is null for meter with id: $meter_id. The customer tied to this meter does not have an active contract.");
+                                Meter::where('id', $meter_id)->update(['has_validation_error' => 1]);
                             }
                         } else {
                             //smart meter checks
@@ -217,12 +221,12 @@ class ValidationJob implements ShouldQueue
                             if (sizeof($consumptions) == 0) {
                                 // no consumption found
                                 $this->logError(null, 'Exception caught: ' . "Validation Error Code 3: No consumption data found for meter with id: $meter_id.");
-                                // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 3']);
+                                Meter::where('id', $meter_id)->update(['has_validation_error' => 1]);
                             }
                             else {
                                 // consumption found
                                 $this->logInfo(null, "No validation error for meter with id: $meter_id.");
-                                // Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
+                                Meter::where('id', $meter_id)->update(['has_validation_error' => 0]);
                             }
                         }
                     }
@@ -230,7 +234,6 @@ class ValidationJob implements ShouldQueue
             }
             $this->jobCompletion("Succesfully completed this job");
         } catch (\Exception $code) {
-            // Log::error('Exception caught: ' . $code->getMessage());
             $this->jobException($code->getMessage());
         }
         
