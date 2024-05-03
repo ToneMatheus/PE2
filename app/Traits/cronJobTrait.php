@@ -127,19 +127,6 @@ trait cronJobTrait
             $mailTo = env("MAIL_DEBUG");
             Log::info("Dispatching mail job");
         }
-
-        // // Calculate the size of the payload
-        // $payloadSize = strlen(serialize([$mailTo, $mailableClass, $mailableClassParams, $invoiceID]));
-
-        // // Define the maximum allowed payload size (in bytes)
-        // $maxPayloadSize = 65535;
-
-        // if ($payloadSize > $maxPayloadSize) {
-        //     // Payload size exceeds the maximum allowed size
-        //     Log::error("Payload size exceeds the maximum allowed size. Payload not dispatched.");
-
-        //     //throw new \Exception('The email payload size is too large to put in the job queue. Please reduce the size of the provided params.');
-        // }
         
         _SendMailJob::dispatch($mailTo, $mailableClass, serialize($mailableClassParams), null, null, $this->JobRunId, $invoiceID);
     }
@@ -150,20 +137,8 @@ trait cronJobTrait
             $mailTo = env("MAIL_DEBUG");
             Log::info("Dispatching mail job");
         }
-
-        // // Calculate the size of the payload
-        // $payloadSize = strlen(serialize([$mailTo, $mailableClass, $mailableClassParams, $invoiceID]));
-
-        // // Define the maximum allowed payload size (in bytes)
-        // $maxPayloadSize = 65535;
-
-        // if ($payloadSize > $maxPayloadSize) {
-        //     // Payload size exceeds the maximum allowed size
-        //     Log::error("Payload size exceeds the maximum allowed size. Payload not dispatched.");
-        //     //throw new \Exception('The email payload size is too large to put in the job queue. Please reduce the size of the provided params.');
-        // }
         
-        _SendMailJob::dispatch($mailTo, $mailableClass, serialize($mailableClassParams), $pdfView, serialize($pdfParams), $this->JobRunId, $invoiceID);
+        _SendMailJob::dispatch($mailTo, $mailableClass, serialize($mailableClassParams), $pdfView, serialize($pdfParams), $this->JobRunId, $invoiceID, $this->LoggingLevel);
     }
 
 }
