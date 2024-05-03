@@ -122,7 +122,9 @@ class SmartInvoiceRunJob implements ShouldQueue
             }
             $correctValue = $newValue-$lastValue;
         } else {
-            $this->jobException("Error when meter reading."); // temporary
+            $meter_id = $customer->mID;
+            $this->logError(null, "No meter data for meter with id: $meter_id, not generating mail.");
+            return;
         }
         $contractProduct = Contract_product::join('products as p', 'p.id', '=', 'contract_products.product_id')
         ->where('customer_contract_id', '=', $customer->ccID)
