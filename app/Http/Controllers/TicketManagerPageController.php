@@ -38,12 +38,16 @@ class TicketManagerPageController extends Controller
         });
 
         $averageClosingTime = Ticket::where('status', 1) // 1 for 'closed'
-        ->select(DB::raw("AVG(TIMESTAMPDIFF(SECOND, created_at, close_date)) as averageClosingTime"))
-        ->first()
-        ->averageClosingTime;
+            ->select(DB::raw("AVG(TIMESTAMPDIFF(SECOND, created_at, close_date)) as averageClosingTime"))
+            ->first()
+            ->averageClosingTime;
 
         // Convert the average closing time from seconds to hours
         $averageClosingTime = $averageClosingTime / 3600;
+
+        // Round the average closing time to the nearest whole number
+        $averageClosingTime = round($averageClosingTime);
+
 
         $userId = Auth::id();
 
