@@ -13,14 +13,16 @@ class TicketManagerPageController extends Controller
 {
     public function index(Request $request)
     {
+
+        DB::enableQueryLog();
         $status = $request->get('status', 'all');
 
-        $openTickets = Ticket::where('status', 'open')
+        $openTickets = Ticket::where('status', 0) // 0 for 'open'
             ->select(DB::raw("COUNT(*) as count"), DB::raw("DATE(created_at) as date"))
             ->groupBy(DB::raw("DATE(created_at)"))
             ->get();
 
-        $closedTickets = Ticket::where('status', 'closed')
+        $closedTickets = Ticket::where('status', 1) // 1 for 'closed'
             ->select(DB::raw("COUNT(*) as count"), DB::raw("DATE(close_date) as date"))
             ->groupBy(DB::raw("DATE(close_date)"))
             ->get();
@@ -35,7 +37,7 @@ class TicketManagerPageController extends Controller
             return [$item['date'] => $item['count']];
         });
 
-        $averageClosingTime = Ticket::where('status', 'closed')
+        $averageClosingTime = Ticket::where('status', 1) // 1 for 'closed'
         ->select(DB::raw("AVG(TIMESTAMPDIFF(SECOND, created_at, close_date)) as averageClosingTime"))
         ->first()
         ->averageClosingTime;
@@ -56,21 +58,21 @@ class TicketManagerPageController extends Controller
             ->select('users.id', 'users.first_name', 'users.last_name', 'team_members.is_active')
             ->get();
 
-    
+
         $teamMembers->each(function ($teamMember) {
             $teamMember->tickets = DB::table('users')
                 ->join('employee_profiles', 'users.employee_profile_id', '=', 'employee_profiles.id')
                 ->join('employee_tickets', 'employee_profiles.id', '=', 'employee_tickets.employee_profile_id')
                 ->join('tickets', 'employee_tickets.ticket_id', '=', 'tickets.id')
                 ->where('users.id', $teamMember->id)
-                ->select('tickets.status', DB::raw('COUNT(*) as count'), DB::raw('SUM(case when tickets.is_solved = 0 then 1 else 0 end) as unsolved'))
+                ->select('tickets.status', DB::raw('COUNT(*) as count'), DB::raw('SUM(case when tickets.status = 0 then 1 else 0 end) as unsolved'), DB::raw('SUM(case when tickets.status = 1 then 1 else 0 end) as solved'))
                 ->groupBy('tickets.status')
                 ->get()
                 ->mapWithKeys(function ($item) {
-                    return [$item->status => ['count' => $item->count, 'unsolved' => $item->unsolved]];
+                    return [$item->status => ['count' => $item->count, 'unsolved' => $item->unsolved, 'solved' => $item->solved]];
                 });
         });
-    
+        
 
         return view('customertickets/ManagerTicketPage', compact('dates', 'openCounts', 'closedCounts', 'averageClosingTime', 'teamMembers'));
     }

@@ -14,7 +14,7 @@ class TicketSeeder extends Seeder
     public function run(): void
     {
         for ($i = 0; $i < 50; $i++) {
-            $status = rand(0, 1) ? 'open' : 'closed';
+            $status = rand(0, 1) ? 1 : 0; // 1 for 'closed', 0 for 'open'
             $ticketData = [
                 'role' => 'user',
                 'name' => 'User ' . $i,
@@ -26,7 +26,7 @@ class TicketSeeder extends Seeder
                 'status' => $status,
             ];
 
-            if ($status === 'closed') {
+            if ($status === 1) { // if status is 'closed'
                 $ticketData['close_date'] = now()->addDays(rand(1, 10));
                 $ticketData['is_solved'] = rand(0, 1);
             } else {

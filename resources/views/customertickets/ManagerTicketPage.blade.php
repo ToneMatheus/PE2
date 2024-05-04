@@ -130,9 +130,9 @@
             <tr class="bg-gray-600">
                 <td class="p-2">{{ $teamMember->first_name }}</td>
                 <td class="p-2">{{ $teamMember->last_name }}</td>
-                <td class="p-2">{{ $teamMember->tickets['open']['count'] ?? 0 }}</td>
-                <td class="p-2">{{ $teamMember->tickets['closed']['count'] ?? 0 }}</td>
-                <td class="p-2">{{ $teamMember->tickets['solved']['unsolved'] ?? 0 }}</td>
+                <td class="p-2">{{ $teamMember->tickets[0]['count'] ?? 0 }}</td>
+                <td class="p-2">{{ $teamMember->tickets[1]['count'] ?? 0 }}</td>
+                <td class="p-2">{{ $teamMember->tickets[0]['unsolved'] ?? 0 }}</td>
                 <td class="p-2">{{ $averageClosingTime }} hours</td>
             </tr>
         @endforeach
