@@ -17,8 +17,7 @@ class TicketManagerPageController extends Controller
         DB::enableQueryLog();
         $status = $request->get('status', 'all');
 
-        $openTickets = Ticket::where('status', 0) // 0 for 'open'
-            ->select(DB::raw("COUNT(*) as count"), DB::raw("DATE(created_at) as date"))
+        $openTickets = Ticket::select(DB::raw("COUNT(*) as count"), DB::raw("DATE(created_at) as date"))
             ->groupBy(DB::raw("DATE(created_at)"))
             ->get();
 

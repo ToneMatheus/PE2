@@ -36,25 +36,42 @@
     
         var openData = dates.map((date) => openCounts[date] || 0);
         var closedData = dates.map((date) => closedCounts[date] || 0);
-    
+
+        var cumulativeCounts = {};
+        var cumulativeCount = 0;
+        dates.forEach((date, index) => {
+            cumulativeCount += openCounts[date] || 0;
+            cumulativeCount -= closedCounts[date] || 0;
+            cumulativeCounts[date] = cumulativeCount;
+        });
+        
+        var cumulativeData = dates.map((date) => cumulativeCounts[date] || 0);
+        
         var months = [...new Set(dates.map(date => new Date(date).getFullYear() * 100 + new Date(date).getMonth()))];
         var currentMonth = Math.max(...months);
+
     
         var myChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: dates.filter(date => new Date(date).getMonth() === currentMonth),
+                labels: dates.filter(date => new Date(date).getFullYear() * 100 + new Date(date).getMonth() === currentMonth),
                 datasets: [{
                     label: '# of Open Tickets',
-                    data: openData.filter((_, index) => new Date(dates[index]).getMonth() === currentMonth),
+                    data: openData.filter((_, index) => new Date(dates[index]).getFullYear() * 100 + new Date(dates[index]).getMonth() === currentMonth),
                     backgroundColor: 'rgba(0, 123, 255, 0.2)',
                     borderColor: 'rgba(0, 123, 255, 1)',
                     borderWidth: 1
                 }, {
                     label: '# of Closed Tickets',
-                    data: closedData.filter((_, index) => new Date(dates[index]).getMonth() === currentMonth),
+                    data: closedData.filter((_, index) => new Date(dates[index]).getFullYear() * 100 + new Date(dates[index]).getMonth() === currentMonth),
                     backgroundColor: 'rgba(255, 0, 0, 0.2)',
                     borderColor: 'rgba(255, 0, 0, 1)',
+                    borderWidth: 1
+                },{
+                    label: 'Cumulative Open Tickets',
+                    data: cumulativeData.filter((_, index) => new Date(dates[index]).getFullYear() * 100 + new Date(dates[index]).getMonth() === currentMonth),
+                    backgroundColor: 'rgba(0, 255, 0, 0.2)',
+                    borderColor: 'rgba(0, 255, 0, 1)',
                     borderWidth: 1
                 }]
             },
@@ -88,6 +105,7 @@
         myChart.data.labels = dates.filter(date => new Date(date).getFullYear() * 100 + new Date(date).getMonth() === currentMonth);
         myChart.data.datasets[0].data = openData.filter((_, index) => new Date(dates[index]).getFullYear() * 100 + new Date(dates[index]).getMonth() === currentMonth);
         myChart.data.datasets[1].data = closedData.filter((_, index) => new Date(dates[index]).getFullYear() * 100 + new Date(dates[index]).getMonth() === currentMonth);
+        myChart.data.datasets[2].data = cumulativeData.filter((_, index) => new Date(dates[index]).getFullYear() * 100 + new Date(dates[index]).getMonth() === currentMonth);
         myChart.update();
     
         var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
