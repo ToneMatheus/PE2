@@ -53,9 +53,14 @@ class Ticket extends Model
         return \Illuminate\Support\Facades\Validator::make($input, $rules)->passes();
     }
 
-    public function ticket(): BelongsTo
+    public function employee_profile(): BelongsTo
     {
-        return $this->belongsTo(Ticket::class);
+        return $this->belongsTo(Employee_Profile::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function employee_tickets(): HasMany
