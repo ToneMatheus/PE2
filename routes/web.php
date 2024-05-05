@@ -37,6 +37,7 @@ use App\Http\Controllers\PayoutsController;
 use App\Http\Controllers\RelationsController;
 use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
+use App\Http\Controllers\ManualInvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,7 +79,12 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::get('/cron-jobs/history', [CronJobController::class, 'showHistory'])->name('job.history');
     Route::get('/cron-jobs/get-job-runs', [CronJobController::class, 'getJobRuns'])->name('get.job.runs');
     Route::get('/cron-jobs/get-job-run-logs', [CronJobController::class, 'getJobRunLogs'])->name('get.job.run.logs');
-    
+
+    Route::get('/payouts', [PayoutsController::class, 'showPayouts'])->name('payouts');
+    Route::get('/payouts/{id}', [PayoutsController::class, 'processPayout'])->name('payouts.pay');
+
+    Route::get('/manualInvoice', [ManualInvoiceController::class, 'showManualInvoice'])->name('manualInvoice');
+    Route::post('/manualInvoice', [ManualInvoiceController::class, 'processManualInvoice'])->name('manualInvoice.process');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
@@ -86,8 +92,6 @@ Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(function() {
-    Route::get('/payouts', [PayoutsController::class, 'showPayouts'])->name('payouts');
-    Route::get('/payouts/{id}', [PayoutsController::class, 'processPayout'])->name('payouts.pay');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group(function() {
