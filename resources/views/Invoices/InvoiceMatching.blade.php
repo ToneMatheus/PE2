@@ -26,10 +26,10 @@
                 <td class="border-collapse border border-gray-200 px-5">{{ $row->name }}</td>
                 <td class="border-collapse border border-gray-200 px-5">{{ $row->IBAN }}</td>
                 @if ($row->has_matched == 1)
-                    <td class="border-collapse border border-gray-200 px-5">matched</td>
+                    <td class="border-collapse border border-gray-200 px-5 bg-green-200 text-green-800">matched</td>
                     <td class="border-collapse border border-gray-200 px-5">{{ $row->invoice_id }}</td>
                 @else
-                    <td class="border-collapse border border-gray-200 px-5">not matched</td>
+                    <td class="border-collapse border border-gray-200 px-5 bg-red-200 text-red-800">not matched</td>
                     <td class="border-collapse border border-gray-200 px-5">N/A</td>
                 @endif
             </tr>

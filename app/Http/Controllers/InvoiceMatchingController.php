@@ -8,15 +8,16 @@ use App\Models\Invoice;
 use App\Models\User;
 use App\Models\Customer_contracts;
 
+use Illuminate\Support\Facades\Log;
+
 class InvoiceMatchingController extends Controller
 {
-    //$payments, $invoice_id
     public function startMatching()
     {
         // 1) get all payments from database
-        $payments = Payment::all();
+        $payments = Payment::select('*')->orderByDesc('payment_date')->get();
 
-        // 2) match on struc comm
+        // 2) match on structured communication
         foreach ($payments as $payment)
         {
             if (!$this->matchOnStructuredCommunication($payment))
@@ -35,43 +36,56 @@ class InvoiceMatchingController extends Controller
 
     private function matchOnStructuredCommunication($payment)
     {
-        $invoiceID = Invoice::where('structured_communication', '=', $payment->structured_communication)->first('id');
+        $invoiceRecord = Invoice::where('structured_communication', '=', $payment->structured_communication)->first();
 
-        if (is_null($invoiceID))
+        if (is_null($invoiceRecord))
             return false;
         else
         {
+            $invoiceID = $invoiceRecord->id;
             $editPayment = Payment::find($payment->id);
             $editPayment->has_matched = 1;
             $editPayment->invoice_id = $invoiceID;
             $editPayment->save();
+            $this->setPaid($invoiceID);
             return true;
         }
     }
 
     private function matchOnIBAN($payment)
     {
-        $userID = User::where('IBAN', '=', $payment->IBAN)->first('id');
+        Log::info('in function');
+        $userRecord = User::where('IBAN', '=', $payment->IBAN)->first();
 
-        if (empty($userIDs)) //no users found with this IBAN
+        if (empty($userRecord)) //no users found with this IBAN
             return false;
         else
         {
             //find invoice
-            $invoiceID = Invoice::leftJoin('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
+            $userID = $userRecord->id;
+            $invoiceRecord = Invoice::leftJoin('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
             ->where('customer_contracts.user_id', $userID)
             ->where('invoices.total_amount', $payment->amount)
             ->whereNotIn('invoices.status', ['paid', 'pending'])
-            ->first('id');
+            ->first();
 
-            if (is_null($invoiceID)) //no matching invoices found for this user
+            if (is_null($invoiceRecord)) //no matching invoices found for this user
                 return false;
 
+            $invoiceID = $invoiceRecord->id;
             $editPayment = Payment::find($payment->id);
             $editPayment->has_matched = 1;
             $editPayment->invoice_id = $invoiceID;
             $editPayment->save();
+            $this->setPaid($invoiceID);
             return true;
         }
+    }
+
+    private function setPaid($invoiceID)
+    {
+        $invoice = Invoice::find($invoiceID);
+        $invoice->status = 'paid';
+        $invoice->save();
     }
 }

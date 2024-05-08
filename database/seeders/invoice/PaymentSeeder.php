@@ -15,13 +15,13 @@ class PaymentSeeder extends Seeder
             'IBAN' => 'IBAN1',
             'name' => 'John Doe',
             'address' => '123 Main Street, Antwerp, Belgium',
-            'structured_communication' => '1234567890'
+            'structured_communication' => '+++000/0000/002572+++'
         ]);
 
         Payment::create([
             'amount' => 200,
             'payment_date' => '2024-05-09',
-            'IBAN' => 'IBAN2',
+            'IBAN' => 'BE23772625035880',
             'name' => 'Jane Smith',
             'address' => '456 Elm Street, Brussels, Belgium',
             'structured_communication' => '0987654321'
