@@ -67,9 +67,26 @@ class SmartInvoiceRunJob implements ShouldQueue
         ->where('m.type', '=', 'Electricity')
         ->where('m.status', '=', 'Installed')
         ->where('m.is_smart', '=', '1')
+        ->where('m.has_validation_error', '=', '0')
         ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
         ->get();
-        // dd($customers);
+        $customersWithValidationError = User::join('Customer_contracts as cc', 'users.id', '=', 'cc.user_id')
+        ->join('Customer_addresses as ca', 'users.id', '=', 'ca.user_id')
+        ->join('Addresses as a', 'ca.Address_id', '=', 'a.id')
+        ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
+        ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
+        ->where('m.type', '=', 'Electricity')
+        ->where('m.status', '=', 'Installed')
+        ->where('m.is_smart', '=', '1')
+        ->where('m.has_validation_error', '=', '1')
+        ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
+        ->get();
+        // dd($customersWithValidationError);
+        // post errors for every meter that has an active validation error.
+        foreach($customersWithValidationError as $customerWithValidationError){
+            $meter_id = $customerWithValidationError->mID;
+            $this->logError(null, "The meter with id: $meter_id still has an active validation error. Mail is not generating for this meter.");
+        }
         // no check needed for monthly or yearly. Only one type: smart.
         foreach($customers as $customer){
             $startContract = Carbon::parse($customer->startContract);
