@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.pageContainer {
+    padding: 10px;
+}
+
+nav {
+    height: 100px;
+    background-color: rgb(48, 69, 147);
+    top: 0;
+    margin: 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.companyName {
+    color:white;
+    font-weight: bolder;
+    margin: 0px;
+    padding: 30px;
+    font-size: 30px;
+}
+
+.searchResults {
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+}
+
+.searchResult {
+    display: flex;
+    flex-direction: row;
+    padding: 10px 20px;
+    width: 60%;
+    background-color: bisque;
+    margin: 5px 0px;
+    justify-content: space-between;
+    border-radius: 20px;
+    box-shadow: 5px 5px 5px rgb(45, 45, 45, 0.45);
+}
+
+.readMeter {
+    background-color: green;
+}
+
+.highlighted {
+    color: red;
+    font-weight: bold;
+}
+
+.readMeter .highlighted {
+    color: black;
+}
+
+.searchResultRight {
+    text-align: right;
+    margin: auto 0px;
+}
+
+
+

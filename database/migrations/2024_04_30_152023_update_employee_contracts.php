@@ -13,15 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('salary_ranges', function (Blueprint $table) {
-            $table->id();
-            $table->float('min_salary');
-            $table->float('max_salary');
-            $table->bigInteger('role_id')->unsigned();
-        });
-
-        Schema::table('salary_ranges', function (Blueprint $table) {
+        Schema::table('employee_contracts', function (Blueprint $table) {
             $table->foreign('role_id')->references('id')->on('roles');
+            $table->foreign('salary_range_id')->references('id')->on('salary_ranges');
+            $table->foreign('benefits_id')->references('id')->on('employee_benefits');
         });
     }
 
@@ -32,7 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('salary_ranges');
+        //
     }
-
 };
