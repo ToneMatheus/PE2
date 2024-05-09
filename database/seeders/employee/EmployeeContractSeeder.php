@@ -35,7 +35,6 @@ class EmployeeContractSeeder extends Seeder
                         'role_id' => $id,
                         'salary_range_id' => $salary_range_id_result[0]->id,
                         'benefits_id' => $benefits_id_result[0]->id, 
-                        'salary_per_month' => 0
                     ];
                 }
             }
