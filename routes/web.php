@@ -124,17 +124,18 @@ Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function
 });
 
 Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function() {
-    
+    Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+    Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
+
+    Route::get('/tariff', [TariffController::class, 'showTariff'])->name('tariff');
+    Route::get('/tariff/delete/{pID}/{tID}', [TariffController::class, 'inactivateTariff'])->name('tariff.delete');
+    Route::post('/tariff/add', [TariffController::class, 'processTariff'])->name('tariff.add');
+    Route::post('/tariff/edit/{pID}/{tID}', [TariffController::class, 'editTariff'])->name('tariff.edit');
+
+    Route::get('/tariff/products/{type}', [TariffController::class, 'getProductByType']);
 });
 
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
-Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
-Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
-
-Route::get('/tariff', [TariffController::class, 'showTariff'])->name('tariff');
-Route::get('/tariff/delete/{pID}/{tID}', [TariffController::class, 'inactivateTariff'])->name('tariff.delete');
-Route::post('/tariff/add', [TariffController::class, 'processTariff'])->name('tariff.add');
-Route::post('/tariff/edit/{pID}/{tID}', [TariffController::class, 'editTariff'])->name('tariff.edit');
 
 //
 Route::get('/employeeOverview', [EmployeeController::class, 'showEmployees'])->name('employees');
