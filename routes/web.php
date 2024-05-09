@@ -18,6 +18,7 @@ use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\RelationsController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TariffController;
+use App\Http\Controllers\EvaluationController;
 
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
@@ -134,6 +135,8 @@ Route::get('/editEmployee/{eID}', [EmployeeController::class, 'editEmployee'])->
 Route::post('/editEmployee/{eID}/personal', [EmployeeController::class, 'editPersonalEmployee'])->name('employees.edit.personal');
 Route::post('/editEmployee/{eID}/{aID}/{uID}/address', [EmployeeController::class, 'editAddressEmployee'])->name('employees.edit.address');
 Route::post('/editEmployee/{eID}/{uID}/contract', [EmployeeController::class, 'editContractEmployee'])->name('employees.edit.contract');
+Route::get('/evaluations', [EvaluationController::class, 'evaluations'])->name('evaluations');
+//Route::get('/evaluations', [EvaluationController::class, 'managerTicketPage'])->name('manager-tickets');
 
 //invoice query routes
 Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
