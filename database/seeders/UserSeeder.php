@@ -177,6 +177,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   
                 'id' => 11,
@@ -191,6 +192,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   
                 'id' => 12,
@@ -205,6 +207,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   
                 'id' => 13,
@@ -219,6 +222,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   
                 'id' => 14,
@@ -233,6 +237,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   
                 'id' => 15,
@@ -247,6 +252,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   
                 'id' => 16,
@@ -261,6 +267,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   
                 'id' => 17,
@@ -275,6 +282,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   
                 'id' => 18,
@@ -289,6 +297,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   
                 'id' => 19,
@@ -303,6 +312,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   
                 'id' => 20,
@@ -317,7 +327,23 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
+            [
+                'id' => 1000,
+                'username' => 'undefined',
+                'first_name' => 'Not Defined',
+                'last_name' => '',
+                'password' => Hash::make('undefined'),
+                'employee_profile_id' => 1000,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'undefined@gmail.com',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Dutch',
+                'changed_default' => 1
+            ]
         ]);
     }
 }

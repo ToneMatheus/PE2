@@ -83,7 +83,8 @@
             $userID = Auth::id();
         
             $payslipInfo = DB::select("select * from payslips where employee_profile_id = $userID");//fetching payslip plus contract information
-        
+            $role = DB::select("select *from roles inner join user_roles on user_roles.role_id = roles.id where user_roles.user_id = " . Auth::id());
+
             foreach($payslipInfo as $info){
                 $start = htmlspecialchars($info->start_date);
                 $end = htmlspecialchars($info->end_date);
@@ -96,10 +97,9 @@
             }
         
             //selecting the employee's job
-            $jobb = DB::select("select job, department from employee_profiles where id = $userID");
+            $jobb = DB::select("select job from employee_profiles where id = $userID");
             $job = htmlspecialchars($jobb[0]->job);
-            $dept = htmlspecialchars($jobb[0]->department);
-        
+
             //selecting employee information
             $users = DB::select("select * from users where employee_profile_id = $userID");
             foreach ($users as $user) {
@@ -147,7 +147,7 @@
             $total = $newTotalAmount - $TVA;
         
             //return view('payslip', ['id' => $id]);
-            return view('payslip', compact('userID', 'start', 'end', 'issued', 'hours', 'amountPerHour', 'daysWorked', 'IBAN', 'totalAmount', 'job', 'dept', 'lastName', 'firstName', 'street', 'num', 'box', 'pC', 'city', 'province', 'differenceInDays', 'newTotalAmount', 'TVA', 'total'));
+            return view('payslip', compact('role', 'userID', 'start', 'end', 'issued', 'hours', 'amountPerHour', 'daysWorked', 'IBAN', 'totalAmount', 'job', 'lastName', 'firstName', 'street', 'num', 'box', 'pC', 'city', 'province', 'differenceInDays', 'newTotalAmount', 'TVA', 'total'));
         }
 
         public function payList(){
@@ -166,6 +166,9 @@
             $addressID = htmlspecialchars($address[0]->address_id);
             $emp_address = DB::select("select * from addresses where id = $addressID");
             $payslips = DB::select("select IBAN, amount_per_hour from payslips where employee_profile_id = $userID");
+            $role = DB::select("select *from roles inner join user_roles on user_roles.role_id = roles.id where user_roles.user_id = " . Auth::id());
+            $benefits = DB::select("select * from employee_benefits where role_id = " . $role[0]->role_id);
+            $salary = DB::select("select * from salary_ranges where role_id = " . $role[0]->role_id);
 
             //making variables to hold the info that way i don't have to do much when its time to actually fetch the data from the database
             //$contract_end_date = $contract[0]->;
@@ -179,7 +182,7 @@
             $amount_per_hour = $payslips[0]->amount_per_hour;
             $account_number = $payslips[0]->IBAN;
 
-            return view('contract', compact('contract_start_date', 'company_name', 'company_address', 'employee_name', 'employee_address', 'job_title', 'amount_per_hour', 'account_number'));
+            return view('contract', compact('role', 'salary', 'benefits', 'contract_start_date', 'company_name', 'company_address', 'employee_name', 'employee_address', 'job_title', 'amount_per_hour', 'account_number'));
         }
 
         public function tariff(){
@@ -320,6 +323,32 @@
 
         public function jobApply(){
             return view('HR_EmployeeJobs.jobApply');
+        }
+
+        public function finance(){
+            $users = DB::select("select * from users where employee_profile_id is not null");
+
+            $roleNames = [];
+            $salaries = [];
+            $i = 0;
+
+            foreach($users as $user){
+                $role = DB::select("select * from user_roles where user_id = " . $user->id);
+                $roleName = DB::select("select role_name from roles where id = " . $role[0]->role_id);
+                $roleNames = array_merge($roleNames, $roleName);
+                $salary = DB::select("select * from salary_ranges where role_id = " . $role[0]->role_id);
+                $salaries = array_merge($salaries, $salary);
+            }
+
+            return view('financialAnalyst', compact('users', 'roleNames', 'i', 'salaries'));
+        }
+
+        public function weeklyActivity(){
+            return view('weeklyActivity');
+        }
+
+        public function sickLeave(){
+            return view('sickLeaveReason');
         }
     }
 ?>

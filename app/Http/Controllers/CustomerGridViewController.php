@@ -58,9 +58,13 @@ class CustomerGridViewController extends Controller
 
         $contractProducts = DB::table('contract_products as cp')
         ->select('cp.id as cpID', 'cp.start_date as cpStartDate', 'p.product_name as productName',
-        'p.id as pID', 't.id as tID')
+        'p.id as pID', 'm.id as mID', 'p.*', 't.*', 'a.*', 'cp.customer_contract_id as cID')
         ->join('products as p', 'p.id', '=', 'cp.product_id')
-        ->leftjoin('tariffs as t', 't.id', '=', 'cp.tariff_id')
+        ->join('meters as m', 'm.id', '=', 'cp.meter_id')
+        ->join('meter_addresses as ma', 'ma.meter_id', '=', 'm.id')
+        ->join('addresses as a', 'a.id', '=', 'ma.address_id')
+        ->join('product_tariffs as pt', 'pt.product_id', '=', 'p.id')
+        ->join('tariffs as t', 't.id', '=', 'pt.id')
         ->where('customer_contract_id', '=', $customerContract->id)
         ->whereNull('cp.end_date')
         ->get();
@@ -199,4 +203,3 @@ class CustomerGridViewController extends Controller
         return response()->json($products);
     }
 }
-

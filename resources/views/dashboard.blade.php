@@ -53,7 +53,37 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View your profile information</p>
                             </div>
                         </a> 
+
+                        <a href="{{ route('employeeBenefits') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Your benefits</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">See your benefits as manager</p>
+                            </div>
+                        </a> 
+
+                        <a href="{{ route('weeklyActivity') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Weekly activity</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Weekly employee performance</p>
+                            </div>
+                        </a> 
+
+                        @if($teamName == 'HR')
+                            @include('chatbot.chatbotEmployeeHR');
                         
+                            @elseif($teamName == 'Customer service')
+                                @include('chatbot.chatbotEmployeeCustomerService');
+                            
+                            @elseif($teamName == 'Meters')
+                                @include('chatbot.chatbotEmployeeMeters');
+                            
+                            @elseif($teamName == 'Invoice')
+                                @include('chatbot.chatbotEmployeeInvoice');
+                        
+                        @endif
+
+                        @include('notifications.managerNotifications');
+                            
                     @endif
                     @if($roleId == config('roles.BOSS'))
                         <a href="{{ route('submitted-ticket') }}" class="block">
@@ -68,6 +98,13 @@
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Show Ticket</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View a specific ticket</p>
+                            </div>
+                        </a>
+
+                        <a href="{{ route('tariff') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Tariffs</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Change the tariffs of products</p>
                             </div>
                         </a>
                     @endif 
@@ -101,6 +138,12 @@
                             @include('chatbot.chatbotEmployeeHR');
                         
                         @elseif($teamName == 'Customer service')
+                            <a href="{{ route('customerGridView') }}" class="block">
+                                <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                    <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Customer Overview</span>
+                                    <p class="text-gray-600 dark:text-gray-400 text-sm">View all customers</p>
+                                </div>
+                            </a> 
                             @include('chatbot.chatbotEmployeeCustomerService');
                         
                         @elseif($teamName == 'Meters')
@@ -110,6 +153,8 @@
                             @include('chatbot.chatbotEmployeeInvoice');
                         
                         @endif
+
+                        @include('notifications.notifications');
                     @endif
                     @if($roleId == config('roles.CUSTOMER'))
                         <a href="{{ route('customer.invoiceStatus') }}" class="block">

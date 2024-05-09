@@ -3,10 +3,26 @@
 
     if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] === 'max-age=0') 
     {
-        unset($_GET['Mf']);
-        unset($_GET['Mb']);
-        unset($_SESSION['currentM']);
-        unset($_SESSION['currentY']);
+        if(isset($_GET['Mf']))
+        {
+            unset($_GET['Mf']);
+        }
+        
+        if(isset($_GET['Mb']))
+        {
+            unset($_GET['Mb']);
+        }
+        
+        if(isset($_SESSION['currentM']))
+        {
+            unset($_SESSION['currentM']);
+        }
+
+        if(isset($_SESSION['currentY']))
+        {
+            unset($_SESSION['currentY']);
+        }
+        
         session_destroy();
     }
 
@@ -114,7 +130,7 @@
                 {
                     $reqDays[] = $i;
                 }
-                // print_r($reqDays);
+                //print_r($reqDays);
             } 
         }
     }
@@ -164,10 +180,16 @@
     <header>
         
     </header>
-    <h1>Calendar</h1>
-    <h2>
+    <x-app-layout :title="'Calendar'">    
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+               
+
+    <h1></h1>
+    <!-- <h2>
         welcome user: {{ $user_name}} id: {{$user_id}}
-    </h2>
+    </h2> -->
 
     <div class="table-container">
         <?php
@@ -296,7 +318,7 @@
             $numMonth = $currentMonth - 1;
             
             
-            echo "<form method='get'><button id='floBtn' name='cncel' value=''>home</button><button id='floBtn' name='Mf' value='$t'>next</button><button id='floBtnB' name='Mb' value='$t' disabled>back</button></form>";
+            
             echo "<h1 id='monthName'> $monthsName[$numMonth] </h1>";
             
             if(isset($_GET['cncel']))
@@ -308,6 +330,7 @@
                 session_destroy();
             }
             // Start the table and iterate through each day of the month
+            echo "<div id='cal_btns'>";
             echo "<table id='calendar'>";
             $dayCount = 1;
             $prevMonthDayCount = $daysInPrevMonth - $firstDayOfMonth + 2;
@@ -350,37 +373,39 @@
                     else 
                     {
                         $class = isset($_SESSION['addedCells'][$dayCount]) ? 'added' : '';
-                        echo "<td class='{$class}'>{$dayCount}</td>";
+                        echo "<td class='{$class}' id='td_cal'>{$dayCount}</td>";
                         $dayCount++;
                     }
                 }
                 echo "</tr>";
             }
             echo "</table>";
-            $myArrayJSON = json_encode($wee);
-        ?>
-        
-
-        <table>
+            echo "<table id='selectionTable'>
             <tr>
                 <td id='selection'>
                     <p>Vacation</p>
-                    <button id="btn" onclick="addDate()"><div class="square"></div>
+                    <button id='btn' onclick='addDate(`green`)'><div class='square'></div>
                 </td>
             </tr>
             <tr>
                 <td id='selection'>
                     <p>Parental Leave</p>
-                    <button id="btn" onclick="addDate2()"><div class="square2"></div>
+                    <button id='btn' onclick='addDate2()'><div class='square2'></div>
                 </td>
             </tr>
             <tr>
                 <td id='selection'>
                     <p>Sick Leave</p>
-                    <button id="btn" onclick="addDate3()"><div class="square3"></div>
+                    <button id='btn' onclick='addDate(`pink`)'><div class='square3'></div>
                 </td>
             </tr>
-        </table>   
+        </table>";
+            echo "</div>";
+            $myArrayJSON = json_encode($wee);
+        ?>
+        
+        <?php echo "<div><form method='get' id='form_left'><button class='btn1' id='floBtn' name='cncel' value=''>home</button><button class='btn1' id='floBtn' name='Mf' value='$t'>next</button><button class='btn1' id='floBtnB' name='Mb' value='$t' disabled>back</button></form></div>";?> 
+        <br>  
         <div >
             <p id="errorMsg">The date that you are asking is in the past.</p>
             <p id="scsMsg">The request has been send.</p>
@@ -390,13 +415,14 @@
         <div class="sidebar">
             <label id="label">This label is currently empty</label>
             <br>
-            <button id="cancel" name="cancel" onclick="cnlButton()">Cancel</button>
-            <button id="button" name="button" onclick="btnClicked()">Submit</button>
+            <button class='btn1' id="cancel" name="cancel" onclick="cnlButton()">Cancel</button>
+            <button class='btn1' id="button" name="button" onclick="btnClicked()">Submit</button>
         </div>
-
-        <form action="{{route('dashboard')}}">
-            <button>dashboard</button>
-        </form>   
+    </div>
+    <div id="div-right">
+        <form action="/action_page.php">
+            <input type="file" id="myFile" name="filename">
+        </form>
     </div>
  
     <script>
@@ -413,6 +439,8 @@
         var dayNumList = [];
         var dayWithoutWE = [];
         var num_WE = 0;
+
+        var clr1 = "";
 
         var M = <?php 
         if(isset($_SESSION['currentM']))
@@ -445,7 +473,7 @@
             btn1.disabled = false;
         }
 
-        function sendingDate(i, selected, len_selectedElements)
+        function sendingDate(i, selected, len_selectedElements, clr_var)
         {
             //$idNum = document.getElementById("label").textContent;
             <?php /*if(isset($_POST['idNum'])){$idNum = $_POST['idNum'];}*/?>
@@ -453,10 +481,12 @@
             // {
                 var dayNum = dayNumList[i]; 
                 var date_now = new Date();
+                var clr_str = '';
                 
                 var dateMonth = <?php if(isset($_SESSION['currentM'])){echo $_SESSION['currentM'];}else{ echo 0;} ?>;
                 var date2 = new Date("2024-" + dateMonth + "-" + dayNum);
                 var div2 = document.getElementById('errorMsg');
+                var divSick = document.getElementById('myFile');
                 // check if date is in the past
                 if (date_now > date2) 
                 {
@@ -467,10 +497,22 @@
                 else
                 {
                     div2.style.visibility='hidden'
-                    selected.classList.add("added");
-                    $color = 'green';
+                    if(clr_var == 'green')
+                    {
+                        selected.classList.add("added");
+                    }
+                    else if(clr_var == 'pink')
+                    {
+                        selected.classList.add("added3");
+                        divSick.style.visibility='visible'
+                        clr1 = clr_var;
+                    }
+                    
+                    //$color = 'green';
+                    clr_str = clr_var + '=';
+
                    
-                    countColor('green=', dayWithoutWE.length)
+                    countColor(clr_str, dayWithoutWE.length)
                 }
                 
 
@@ -505,7 +547,7 @@
 
 
 
-        function addDate() 
+        function addDate(clr_var) 
         {
             //const selected = document.querySelector(".selected");
             const selectedElements = document.querySelectorAll(".selected");
@@ -518,39 +560,48 @@
                 const selected = selectedElements[i];
                 if (selected) 
                 {
-                
-                    if(selected.classList.contains('prev-month') || selected.classList.contains('req-day') || selected.classList.contains('req-Acpt-day'))
+                    if(clr_var == 'green')
                     {
-
-                    }
-                    else if (selected.classList.contains('added'))
-                    {
-                        selected.classList.remove("added");
-                        //numGr--;
-                        // updateSession(selected.textContent, 'remove');
-                    }
-                    else
-                    {
-                       
-
-                        // console.log(arrWe);
-                        // console.log(dayNum);
-
-                       checkingDays(i, selected, len_selectedElements);
-
-
-                        if(i == selectedElements.length -1)
+                        if(selected.classList.contains('prev-month') || selected.classList.contains('req-day') || selected.classList.contains('req-Acpt-day'))
                         {
-                            // console.log("greenDays: " + len_selectedElements);
-                            sendingDate(i, selected, len_selectedElements);
-                        }
-                            
 
-                        
-                        //getDay();
-                        // updateSession(selected.textContent, 'add');
+                        }
+                        else if (selected.classList.contains('added'))
+                        {
+                            selected.classList.remove("added");
+                        }
+                        else
+                        {
+                            checkingDays(i, selected, len_selectedElements);
+
+                            if(i == selectedElements.length -1)
+                            {
+                                sendingDate(i, selected, len_selectedElements, clr_var);
+                            }
+                        }
                     }
+                    else if(clr_var == 'pink')
+                    {
+                        if(selected.classList.contains('prev-month') || selected.classList.contains('req-day') || selected.classList.contains('req-Acpt-day'))
+                        {
+
+                        }
+                        else if (selected.classList.contains('added3'))
+                        {
+                            selected.classList.remove("added3");
+                        }
+                        else
+                        {
+                            //TODO: check enough sickdays checkingDays(i, selected, len_selectedElements);
+
+                            if(i == selectedElements.length -1)
+                            {
+                                sendingDate(i, selected, len_selectedElements, clr_var);
+                            }
+                        }
+                    }  
                     selected.classList.remove("selected");
+                    
                 }
             }
         }
@@ -586,37 +637,37 @@
                 selected.classList.remove("selected");
             }
         }
-        function addDate3() 
-        {
-            const selected = document.querySelector(".selected");
+        // function addDate3() 
+        // {
+        //     const selected = document.querySelector(".selected");
     
-            if (selected) 
-            {
-                if(selected.classList.contains('prev-month'))
-                {
+        //     if (selected) 
+        //     {
+        //         if(selected.classList.contains('prev-month'))
+        //         {
 
-                }
-                else if (selected.classList.contains('added3'))
-                {
-                    selected.classList.remove("added3");
-                    // updateSession(selected.textContent, 'remove');
-                }
-                else
-                {
-                    selected.classList.add("added3");
-                    <?php if(isset($_POST['idNum'])){$idNum = $_POST['idNum'];}?>
-                    if(typeof $idNum !== 'undefined')
-                    {
-                        $coor = 'pink';
-                        //console.log($color + " " + $idNum);
-                        numPink++;
-                        countColor('pink=', numPink)
-                    }
-                    // updateSession(selected.textContent, 'add');
-                }
-                selected.classList.remove("selected3");
-            }
-        }
+        //         }
+        //         else if (selected.classList.contains('added3'))
+        //         {
+        //             selected.classList.remove("added3");
+        //             // updateSession(selected.textContent, 'remove');
+        //         }
+        //         else
+        //         {
+        //             selected.classList.add("added3");
+        //             <?php /*if(isset($_POST['idNum'])){$idNum = $_POST['idNum'];}*/?>
+        //             if(typeof $idNum !== 'undefined')
+        //             {
+        //                 $coor = 'pink';
+        //                 //console.log($color + " " + $idNum);
+        //                 numPink++;
+        //                 countColor('pink=', numPink)
+        //             }
+        //             // updateSession(selected.textContent, 'add');
+        //         }
+        //         selected.classList.remove("selected3");
+        //     }
+        // }
     
         // document.getElementById("calendar").addEventListener("click", function(e) 
         // {
@@ -727,6 +778,9 @@
                     {
                         // Handle the response from the server if needed
                         console.log(xhr.responseText);
+                        if(clr1 == 'pink')
+                            window.location.href = "{{route('sickLeaveReason')}}";
+                       
                     }
                 };
                 xhr.send(params);
@@ -838,6 +892,13 @@
     </script>
 
 
+                                        </div>
+
+            </div>
+        </div>
+    </div>
+
+</x-app-layout>
 
 </body>
 </html>

@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Jobs\MeterAllocation;
+use App\Jobs\MeterSchedule;
 use App\Models\CronJob;
 
 class Kernel extends ConsoleKernel
@@ -38,6 +40,16 @@ class Kernel extends ConsoleKernel
                 }
             }
         }
+    }
+
+    protected function meter_allocation(Schedule $schedule): void
+    {
+        $schedule->job(new MeterAllocation())->everyMinute();
+    }
+
+    protected function meter_schedule(Schedule $schedule): void
+    {
+        $schedule->job(new MeterSchedule())->everyMinute();
     }
 
     /**
