@@ -21,17 +21,17 @@
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <body>
                         <h1>Team Names</h1>
-                        <table>
-                            <thead>
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
-                                    <th>Team Name</th>
-                                    <th>Manager</th>
-                                    <th>View Members</th>
+                                    <th scope="col" class="px-6 py-3">Team Name</th>
+                                    <th scope="col" class="px-6 py-3">Manager</th>
+                                    <th scope="col" class="px-6 py-3">View Members</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($teamsWithManagers as $team)
-                                    <tr>
+                                    <tr class="bg-gray-600">
                                         <td>{{ $team->teamName }}</td>
                                         <td>{{ $team->first_name }} {{ $team->last_name }}</td>
                                         <td>
