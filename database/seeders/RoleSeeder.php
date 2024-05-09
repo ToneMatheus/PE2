@@ -12,7 +12,7 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         //$functions = ['Manager', 'Boss', 'Finance analyst', 'Executive Manager', 'Customer service', 'Customer', 'Field technician'];
-        $functions = ['Manager', 'Employee', 'Customer', 'Boss', 'Finance analyst'];
+        $functions = ['Manager', 'Employee', 'Customer', 'Boss', 'Finance analyst', 'Customer service'];
         $roles = [];
 
         for($i=1; $i <= count($functions); $i++){

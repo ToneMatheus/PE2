@@ -86,7 +86,7 @@ class TeamMembersSeeder extends Seeder
             'user_id' => 15,
             'team_id' => 4,
             'is_manager' => 0,
-        ],
+        ]
     ]);
     }
 }
