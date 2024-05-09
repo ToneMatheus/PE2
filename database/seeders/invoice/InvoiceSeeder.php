@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\Invoice;
 use Carbon\Carbon;
+use App\Services\StructuredCommunicationService;
 
 class InvoiceSeeder extends Seeder
 {
@@ -64,5 +65,17 @@ class InvoiceSeeder extends Seeder
             'meter_id' => 7,
             'type' => 'Monthly'
         ]);
+
+        $count = Invoice::count();
+
+        for ($i = 1; $i < $count; $i++)
+        {
+            $scService = new StructuredCommunicationService;
+            $sc = $scService->generate($i);
+
+            $invoice = Invoice::find($i);
+            $invoice->structured_communication = $sc;
+            $invoice->save();
+        }
     }
 }

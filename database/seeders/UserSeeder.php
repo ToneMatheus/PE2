@@ -28,6 +28,15 @@ class UserSeeder extends Seeder
             return $birthDate->toDateString();
         }
 
+        function generateIBAN() {
+            $iban = "BE";
+            $num = rand(1000000, 9999999);
+            $iban .= strval($num);
+            $num = rand(1000000, 9999999);
+            $iban .= strval($num);
+            return $iban;
+        }
+
         DB::table('users')->insert([
             [   //Employee
                 'id' => 1,
@@ -42,7 +51,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   //Employee
                 'id' => 2,
@@ -57,7 +67,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   //Employee who's Customer
                 'id' => 3,
@@ -72,7 +83,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   //Commercial Customer
                 'id' => 4,
@@ -87,7 +99,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   //Residential Customer
                 'id' => 5,
@@ -102,7 +115,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 6,
@@ -117,7 +131,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 7,
@@ -132,7 +147,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 8,
@@ -147,7 +163,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 9,
@@ -162,7 +179,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [
                 'id' => 1000,
@@ -177,7 +195,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Dutch',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
         ]);
     }

@@ -79,7 +79,7 @@ class ValidationJob implements ShouldQueue
                         ->whereNull("cc.end_date")
                         ->first();
 
-                        $startContract = Carbon::parse($customers['startContract']);
+                       
 
                         if(is_null($customers)){
                             // Check what error it is in the customer array.
@@ -100,6 +100,7 @@ class ValidationJob implements ShouldQueue
                                 Meter::where('id', $meter_id)->update(['has_validation_error' => 1]);
                             }
                         } else {
+                            $startContract = Carbon::parse($customers['startContract']);
                             // dd($customers);
                             // dd($startContract);
                             $lastYearlyInvoice = Invoice::where('type', '=', 'Annual')
