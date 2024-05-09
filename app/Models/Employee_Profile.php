@@ -23,7 +23,8 @@ class Employee_Profile extends Model
         'id',
         'job',
         'hire_date',
-        'notes'
+        'notes',
+        'line_number'
     ];
 
     protected $table = 'employee_profiles';
@@ -69,5 +70,10 @@ class Employee_Profile extends Model
     public function employee_tickets(): HasMany
     {
         return $this->hasMany(Employee_Ticket::class);
+    }
+
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class);
     }
 }
