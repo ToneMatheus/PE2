@@ -24,7 +24,8 @@ class Employee_Profile extends Model
         'job',
         'hire_date',
         'notes',
-        'line_number'
+        'line_number',
+        'score'
     ];
 
     public $timestamps = false;
