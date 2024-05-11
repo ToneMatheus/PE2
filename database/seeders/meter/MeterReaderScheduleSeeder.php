@@ -5,26 +5,28 @@ namespace Database\Seeders\Meter;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class MeterReaderScheduleSeeder extends Seeder
 {
     public function run(): void
     {
         $adds = [];
+        $today = Carbon::now()->toDateString();
 
-        for($i=1; $i <= 4; $i++){
+        for($i=3; $i <= 5; $i++){
             $adds[] = [
                 'employee_profile_id' => 1,
-                'reading_date' => '2024-03-21',
+                'reading_date' => $today,
                 'meter_id' => $i,
                 'status' => 'unread'
             ];
         }
 
-        for($i=5; $i <= 7; $i++){
+        for($i=6; $i <= 8; $i++){
             $adds[] = [
                 'employee_profile_id' => 2,
-                'reading_date' => '2024-03-21',
+                'reading_date' => $today,
                 'meter_id' => $i,
                 'status' => 'unread'
             ];

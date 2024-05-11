@@ -187,8 +187,18 @@ table{
   border: none;
 }
 
-
 h1, p
 {
   color: whitesmoke;
+}
+
+#div-right input
+{
+  margin-top: 20px;
+  color: white;
+}
+
+#myFile
+{
+  visibility: hidden;
 }

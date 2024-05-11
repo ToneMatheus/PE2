@@ -162,6 +162,10 @@ else if(isset($_POST['button']))
                 if($result2)
                 {
                     echo "\n\n works \n";
+                    if (isset($_SESSION['user']['pink']))
+                    {
+                        echo '<script>window.location.href = "{{route(`sickLeaveReason`)}}";</script>';
+                    }
                 }
             }
         }
@@ -247,6 +251,12 @@ else if(isset($_POST['button']))
                                     if($result2)
                                     {
                                         echo "\n\n works \n";
+                                        /*if($type == "Sick")
+                                            echo  `window.location.href = "{{route('sickLeaveReason')}}"`;*/
+                                        if (isset($_SESSION['user']['pink']))
+                                        {
+                                            echo '<script>window.location.href = "{{route(`sickLeaveReason`)}}";</script>';
+                                        }
                                     }
                                 }
                                 
@@ -306,6 +316,13 @@ else if(isset($_POST['button']))
                                     if($result2)
                                     {
                                         echo "\n\n works \n";
+                                        /*if($type == "Sick")
+                                            echo  `window.location.href = "{{route('sickLeaveReason')}}"`;*/
+                                        if (isset($_SESSION['user']['pink']))
+                                        {
+                                            echo '<script>window.location.href = "{{route(`sickLeaveReason`)}}";</script>';
+                                        }
+                                            
                                     }
                                 }
                             }

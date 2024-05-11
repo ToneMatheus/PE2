@@ -19,6 +19,10 @@ return new class extends Migration
             $table->float('max_salary');
             $table->bigInteger('role_id')->unsigned();
         });
+
+        Schema::table('salary_ranges', function (Blueprint $table) {
+            $table->foreign('role_id')->references('id')->on('roles');
+        });
     }
 
     /**

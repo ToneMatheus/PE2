@@ -19,6 +19,10 @@ return new class extends Migration
             $table->string('description');
             $table->bigInteger('role_id')->unsigned();
         });
+
+        Schema::table('employee_benefits', function (Blueprint $table) {
+            $table->foreign('role_id')->references('id')->on('roles');
+        });
     }
 
     /**

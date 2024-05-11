@@ -130,7 +130,7 @@
                 {
                     $reqDays[] = $i;
                 }
-                // print_r($reqDays);
+                //print_r($reqDays);
             } 
         }
     }
@@ -419,6 +419,11 @@
             <button class='btn1' id="button" name="button" onclick="btnClicked()">Submit</button>
         </div>
     </div>
+    <div id="div-right">
+        <form action="/action_page.php">
+            <input type="file" id="myFile" name="filename">
+        </form>
+    </div>
  
     <script>
         var visBool = false;
@@ -434,6 +439,8 @@
         var dayNumList = [];
         var dayWithoutWE = [];
         var num_WE = 0;
+
+        var clr1 = "";
 
         var M = <?php 
         if(isset($_SESSION['currentM']))
@@ -479,6 +486,7 @@
                 var dateMonth = <?php if(isset($_SESSION['currentM'])){echo $_SESSION['currentM'];}else{ echo 0;} ?>;
                 var date2 = new Date("2024-" + dateMonth + "-" + dayNum);
                 var div2 = document.getElementById('errorMsg');
+                var divSick = document.getElementById('myFile');
                 // check if date is in the past
                 if (date_now > date2) 
                 {
@@ -496,6 +504,8 @@
                     else if(clr_var == 'pink')
                     {
                         selected.classList.add("added3");
+                        divSick.style.visibility='visible'
+                        clr1 = clr_var;
                     }
                     
                     //$color = 'green';
@@ -627,37 +637,37 @@
                 selected.classList.remove("selected");
             }
         }
-        function addDate3() 
-        {
-            const selected = document.querySelector(".selected");
+        // function addDate3() 
+        // {
+        //     const selected = document.querySelector(".selected");
     
-            if (selected) 
-            {
-                if(selected.classList.contains('prev-month'))
-                {
+        //     if (selected) 
+        //     {
+        //         if(selected.classList.contains('prev-month'))
+        //         {
 
-                }
-                else if (selected.classList.contains('added3'))
-                {
-                    selected.classList.remove("added3");
-                    // updateSession(selected.textContent, 'remove');
-                }
-                else
-                {
-                    selected.classList.add("added3");
-                    <?php if(isset($_POST['idNum'])){$idNum = $_POST['idNum'];}?>
-                    if(typeof $idNum !== 'undefined')
-                    {
-                        $coor = 'pink';
-                        //console.log($color + " " + $idNum);
-                        numPink++;
-                        countColor('pink=', numPink)
-                    }
-                    // updateSession(selected.textContent, 'add');
-                }
-                selected.classList.remove("selected3");
-            }
-        }
+        //         }
+        //         else if (selected.classList.contains('added3'))
+        //         {
+        //             selected.classList.remove("added3");
+        //             // updateSession(selected.textContent, 'remove');
+        //         }
+        //         else
+        //         {
+        //             selected.classList.add("added3");
+        //             <?php /*if(isset($_POST['idNum'])){$idNum = $_POST['idNum'];}*/?>
+        //             if(typeof $idNum !== 'undefined')
+        //             {
+        //                 $coor = 'pink';
+        //                 //console.log($color + " " + $idNum);
+        //                 numPink++;
+        //                 countColor('pink=', numPink)
+        //             }
+        //             // updateSession(selected.textContent, 'add');
+        //         }
+        //         selected.classList.remove("selected3");
+        //     }
+        // }
     
         // document.getElementById("calendar").addEventListener("click", function(e) 
         // {
@@ -768,6 +778,9 @@
                     {
                         // Handle the response from the server if needed
                         console.log(xhr.responseText);
+                        if(clr1 == 'pink')
+                            window.location.href = "{{route('sickLeaveReason')}}";
+                       
                     }
                 };
                 xhr.send(params);

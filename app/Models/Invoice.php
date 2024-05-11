@@ -16,7 +16,8 @@ class Invoice extends Model
         'status',
         'customer_contract_id',
         'type',
-        'meter_id'
+        'meter_id',
+        'structured_communication'
     ];
 
     public $timestamps = false;
@@ -39,6 +40,11 @@ class Invoice extends Model
     public function meter(): BelongsTo
     {
         return $this->belongsTo(Meter::class);
+    }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
     }
 
     use HasFactory;

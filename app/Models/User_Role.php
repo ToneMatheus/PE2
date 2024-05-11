@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class User_Role extends Model
 {
 
-    public $timestamps = false;
-
     use HasFactory;
     protected $table = 'user_roles';
 
