@@ -22,6 +22,8 @@ use Illuminate\Support\MessageBag;
 use \Illuminate\Http\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\IndexValueEnteredByCustomer;
+use App\Mail\InvoiceLandlordMail;
+use App\Jobs\FinalSettlementJob;
 
 
 class MeterController extends Controller
@@ -426,6 +428,17 @@ class MeterController extends Controller
         ->get()
         ->first();
 
+        $contract_date = DB::table('users')
+        ->join('customer_contracts','users.id','=','customer_contracts.user_id')
+        ->join('customer_addresses','users.id','=','customer_addresses.user_id')
+        ->join('addresses','customer_addresses.id','=','addresses.id')
+        ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
+        ->join('meters','meter_addresses.meter_id','=','meters.id')
+        ->where('meters.id', '=', $meter_id)
+        ->select('customer_contracts.end_date', 'customer_contracts.start_date', 'users.id')
+        ->get()
+        ->first();
+
         if ($prev_index == null) {
             return redirect()->to('/enter_index_employee')->withErrors(['index_value_null'=>'No previous index value found - fatal error']);
         }
@@ -456,6 +469,12 @@ class MeterController extends Controller
             'current_index_id' => $current_index_id]
         );
 
+        if ($contract_date->end_date == $date) {
+            FinalSettlementJob::dispatchSync($meter_id);
+        }
+        if ($contract_date->start_date == $date) {
+            Mail::to('shresthaanshu555@gmail.com')->send(new InvoiceLandlordMail($contract_date->userID, $index_value, $date, $consumption_value));
+        }
 
         DB::table('meter_reader_schedules')
             ->where('meter_id', '=', $meter_id)
@@ -581,7 +600,7 @@ class MeterController extends Controller
         ->join('addresses','customer_addresses.id','=','addresses.id')
         ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
         ->join('meters','meter_addresses.meter_id','=','meters.id')
-        ->where('users.id', '=', 6)
+        ->where('users.id', '=', $userID)
         ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id')
         ->get();
 

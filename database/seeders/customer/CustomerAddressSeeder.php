@@ -42,7 +42,7 @@ class CustomerAddressSeeder extends Seeder
             ]
         ]);
 
-        for($i=5; $i <= 18; $i++) {
+        for($i=13; $i <= 18; $i++) {
             DB::table('customer_addresses')->insert([
                 [
                     'start_date' => '2024-01-01',

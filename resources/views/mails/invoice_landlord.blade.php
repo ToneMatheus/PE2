@@ -7,13 +7,17 @@
     <title>Two weeks missing warning</title>
 </head>
 <body>
-    <p>Hello {{ $user->first_name }},</p>
+    <p>Hello,</p>
     
     <p>You are receiving this invoice because you are registered as the landlord for the address {{ $user->address }}.
     <p>Since there was a gap between the end-of-contract date for your previous tenant, and the start-of-contract date for your
         new tenant in this address, the consumption of electricity and gas during those months has been invoiced to you.</p>
 
-    <div id="company">
+    <p>Entered index value: <b>{{$index_value}}</b></p>
+    <p>Consumption: <b>{{$consumption}}</b></p>
+    <p>Date: <b>{{$date}}</b></p>
+
+    {{-- <div id="company">
         <h2>Company</h2>
         <p>Business Address</p>
         <p>City</p>
@@ -67,6 +71,6 @@
         echo DNS2D::getBarcodeHTML($domain . "/pay/" . $invoice->id . "/" . $hash, 'QRCODE',5,5);
         ?>
     </p>
-    <p><br/>Scanning this QR code will bring you directly to a page where you can handle the payment of your invoice.</p>
+    <p><br/>Scanning this QR code will bring you directly to a page where you can handle the payment of your invoice.</p> --}}
 </body>
 </html>
