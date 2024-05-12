@@ -21,6 +21,7 @@ use App\Models\{
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 
 class EmployeeController extends Controller
@@ -109,13 +110,18 @@ class EmployeeController extends Controller
         $email = $request->input('firstName')[0] . $request->input('name')[0] . $employee->id . '@example.com';
 
         //new Employee_contract
+        // TODO: fix this rows
         Employee_contract::create([
             'employee_profile_id' => $employee->id,
             'start_date' => $request->input('startDate'),
             'end_date' => $request->input('endDate'),
             'type' => $request->input('type'),
             'status' => 'active',
-            'salary_per_month' => $request->input('salary')
+            /*'salary_per_month' => $request->input('salary'), this does not work tables have changed*/
+            // new rows
+            'role_id' => 1,
+            'salary_range_id' => 1,
+            'benefits_id' => 1
         ]);
 
         //new User
@@ -137,6 +143,22 @@ class EmployeeController extends Controller
 
         $role = Role::where('role_name', '=', $request->input('role'))
         ->first();
+
+        // create csv
+        $name = $request->input('name');
+        $firstName = $request->input('firstName');
+        //$email = $request->input('email');
+
+        $data = [
+            // ['Name', 'First Name', 'Email'],
+            [$name, $firstName, $email]
+        ];
+
+        $csv = implode(',', array_map(function($row) {
+            return implode(',', $row);
+        }, $data));
+
+        Storage::disk('local')->append('employee.csv', $csv);
 
         //new User_role
         User_Role::create([
