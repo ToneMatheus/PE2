@@ -22,6 +22,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UtilityController;
 use App\Http\Controllers\CronJobController;
 use App\Http\Controllers\EstimationController;
+use App\Http\Controllers\FlowchartAscaladeTicketController;
 
 use App\Http\Controllers\meterreading;
 use App\Models\MeterReading as ModelsMeterReading;
@@ -95,6 +96,7 @@ Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(function() {
+    Route::get('/ticket/Flowchart', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket');
 
 });
 
@@ -277,8 +279,6 @@ Route::get('/confirm-emailTEST/{token}/{email}', [RegisteredUserController::clas
 
 // verify email
 Route::get('/profile/email-changed', [ProfileController::class, 'emailChanged'])->name('profile.emailChanged');
-
-
 
 Route::get('/holidays', [HolidayController::class, 'index']);
 Route::controller(InvoiceController::class)->group(function () {
