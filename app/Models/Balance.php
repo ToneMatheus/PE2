@@ -16,7 +16,8 @@ class Balance extends Model
         'yearly_holiday_credit',
         'user_holiday_credit',
         'start_date',
-        'end_date'
+        'end_date',
+        'sick_days'
     ];
 
     public function employee_profile(): BelongsTo
