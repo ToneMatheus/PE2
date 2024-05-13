@@ -213,6 +213,9 @@ class ProfileController extends Controller
 
         $user->delete();
 
+        // $user->is_active =0
+        // $user->save();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
