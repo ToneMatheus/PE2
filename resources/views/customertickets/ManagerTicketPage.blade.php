@@ -1,10 +1,11 @@
 <x-app-layout>
 <div class="flex flex-col items-center w-full text-white">
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-200 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-200 dark:text-white leading-tight">
             {{ __('Tickets.TicketOverview') }}
+            <a href="{{ route('manager.showTickets') }}" class="ml-4 mt-2 text-sm text-gray-700 dark:text-white">Tickets Escalation Page</a>
         </h2>
-    </x-slot> 
+    </x-slot>
         <div class="flex justify-center space-x-4 mb-10">
             <div class="bg-gray-700 text-white p-6 rounded-lg shadow-lg w-128 mt-10">
                 <h2 class="text-2xl font-bold mb-2 text-center">Average Ticket Closing Time:</h2>
@@ -15,7 +16,7 @@
             <div class="bg-gray-700 text-white p-6 rounded-lg shadow-lg w-128 mt-10">
                 <h2 class="text-2xl font-bold mb-2 text-center">Average Team Ticket Closing Time:</h2>
                 <p class="text-lg text-center">
-                    {{ $averageClosingTime }} hours
+                    {{ $teamAverageClosingTime }} hours
                 </p>
             </div>
         </div>
@@ -151,7 +152,7 @@
                 <td class="p-2">{{ $teamMember->tickets[0]['count'] ?? 0 }}</td>
                 <td class="p-2">{{ $teamMember->tickets[1]['count'] ?? 0 }}</td>
                 <td class="p-2">{{ $teamMember->tickets[1]['unsolved'] ?? 0 }}</td>
-                <td class="p-2">{{ $averageClosingTime }} hours</td>
+                <td class="p-2">{{ $teamMember->averageClosingTime }} hours</td>
             </tr>
         @endforeach
     </tbody>

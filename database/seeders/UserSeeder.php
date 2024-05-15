@@ -80,7 +80,7 @@ class UserSeeder extends Seeder
                 'first_name' => 'Emily',
                 'last_name' => 'Doe',
                 'password' => Hash::make('emily'),
-                'employee_profile_id' => null,
+                'employee_profile_id' => 4,
                 'is_company' => 1,
                 'company_name' => 'ABC comp.',
                 'email' => 'emily@gmail.com',

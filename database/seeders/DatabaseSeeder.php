@@ -48,6 +48,9 @@ class DatabaseSeeder extends Seeder
 
             Invoice\InvoiceSeeder::class,
             Invoice\InvoiceLineSeeder::class,
+
+            TeamSeeder::class,
+            TeamMemberSeeder::class,
         ]);
     }
 }

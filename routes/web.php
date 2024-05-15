@@ -79,6 +79,9 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::get('/cron-jobs/get-job-runs', [CronJobController::class, 'getJobRuns'])->name('get.job.runs');
     Route::get('/cron-jobs/get-job-run-logs', [CronJobController::class, 'getJobRunLogs'])->name('get.job.run.logs');
     Route::get('/manager/TicketStatus', [TicketManagerPageController::class, 'index'])->name('manager.TicketStatus');
+    Route::get('/manager/showTickets', [TicketManagerPageController::class, 'showTickets'])->name('manager.showTickets');
+    Route::put('/manager/tickets/{id}', [TicketManagerPageController::class, 'update'])->name('manager.tickets.update');
+    Route::get('/manager/tickets/data', [TicketManagerPageController::class, 'getTicketsData'])->name('manager.tickets.data');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
