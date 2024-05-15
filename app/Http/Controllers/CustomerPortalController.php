@@ -43,9 +43,6 @@ class CustomerPortalController extends Controller
                   });
         }
 
-        $sentInvoicesSum = Invoice::where('customer_contract_id', $user->id)
-                          ->where('status', 'sent')
-                          ->sum('total_amount');
 
         if ($status) {
             $query->where('invoices.status', $status);
@@ -53,6 +50,14 @@ class CustomerPortalController extends Controller
 
         $query->orderBy('invoices.invoice_date', 'desc');
         $invoices = $query->paginate(10);
+
+        foreach ($invoices as $invoice) {
+            $invoice->hash = md5($invoice->id . $invoice->customer_contract_id . $invoice->meter_id);
+        }
+
+        $sentInvoicesSum = Invoice::where('customer_contract_id', $invoice->customer_contract_id)
+                          ->where('status', 'sent')
+                          ->sum('total_amount');
 
         $addresses = DB::table('addresses')
                ->join('meter_addresses', 'addresses.id', '=', 'meter_addresses.address_id')

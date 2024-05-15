@@ -63,7 +63,7 @@
                             <td class="p-2">{{ __('messages.' . $invoice->type) }}</td>
                             <td class="p-2">{{ $invoice->address }}</td>
                             <td class="p-2"><a href="{{ route('invoice.download', ['id' => $invoice->id]) }}" class="bg-gray-800 text-white rounded-lg px-2 py-1">{{ __('messages.download') }}</a></td>
-                            <td class="p-2"><a href="{{ route('invoice.download', ['id' => $invoice->id]) }}" class="{{ $invoice->status == 'paid' ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-800' }} text-white rounded-lg px-2 py-1"  {{ $invoice->status == 'paid' ? 'disabled' : '' }}> {{ __('messages.Pay') }} </a></td>
+                            <td class="p-2"><a href="{{ route('payment.show', ['id' => $invoice->id, 'hash' => $invoice->hash]) }}" class="bg-gray-800 text-white rounded-lg px-2 py-1">{{ __('messages.Pay') }}</a></td>
                         </tr>
                     @endforeach
                 </tbody>
