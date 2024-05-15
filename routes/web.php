@@ -142,6 +142,8 @@ Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("paymen
 Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 
 Route::get('/invoice-matching', [InvoiceMatchingController::class, 'startMatching'])->name("invoice_matching");
+Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');
+
 
 //QR code test
 Route::get('/code', function () {

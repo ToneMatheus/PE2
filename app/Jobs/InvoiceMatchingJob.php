@@ -13,6 +13,8 @@ use App\Traits\cronJobTrait;
 use App\Models\Payment;
 use App\Models\Invoice;
 use App\Models\User;
+use App\Models\Address;
+use App\Models\Customer_Address;
 
 class InvoiceMatchingJob implements ShouldQueue
 {
@@ -46,7 +48,8 @@ class InvoiceMatchingJob implements ShouldQueue
                 // 3) match on IBAN
                 if (!$this->matchOnIBAN($payment))
                 {
-                    //match on address?
+                    // 4) match on addres
+                    $this->matchOnAddress($payment);
                 }
             }
         }
@@ -80,6 +83,67 @@ class InvoiceMatchingJob implements ShouldQueue
         {
             //find invoice
             $userID = $userRecord->id;
+            $invoiceRecord = Invoice::leftJoin('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
+            ->where('customer_contracts.user_id', $userID)
+            ->where('invoices.total_amount', $payment->amount)
+            ->whereNotIn('invoices.status', ['paid', 'pending'])
+            ->first();
+
+            if (is_null($invoiceRecord)) //no matching invoices found for this user
+                return false;
+
+            $invoiceID = $invoiceRecord->id;
+            $editPayment = Payment::find($payment->id);
+            $editPayment->has_matched = 1;
+            $editPayment->invoice_id = $invoiceID;
+            $editPayment->save();
+            $this->setPaid($invoiceID);
+            return true;
+        }
+    }
+
+    private function matchOnAddress($payment)
+    {
+        if (empty($payment->address))
+        return false;
+
+        $parts = explode(" ", $payment->address);
+        $parts[1] = (int)$parts[1];
+
+        $query = Address::query();
+        $query->where('street', 'LIKE', $parts[0])
+            ->where('number', '=', $parts[1]);
+
+        if (count($parts) == 4) // no box in address
+        {
+            $parts[2] = (int)$parts[2];
+            $query->where('postal_code', '=', $parts[2])
+                ->where('city', 'LIKE', $parts[3]);
+        }
+        else if (count($parts) == 5)
+        {
+            $parts[2] = (int)$parts[2];
+            $parts[3] = (int)$parts[3];
+            $query->where('box', '=', $parts[2])
+                ->where('postal_code', '=', $parts[3])
+                ->where('city', 'LIKE', $parts[4]);
+        }
+
+        $address = $query->get()->first();
+
+        if (empty($address)) //no address found
+            return false;
+        else
+        {
+            //find userID
+            $userID = Customer_Address::select('user_id')
+                ->where('address_id', '=', $address->id)
+                ->whereNull('end_date')
+                ->distinct()
+                ->first()
+                ->value('user_id');
+
+            //find invoice
             $invoiceRecord = Invoice::leftJoin('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
             ->where('customer_contracts.user_id', $userID)
             ->where('invoices.total_amount', $payment->amount)
