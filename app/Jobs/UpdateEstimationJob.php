@@ -28,7 +28,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
 use App\Services\InvoiceFineService;
-use App\Traits\cronJobTrait;
 
 class UpdateEstimationJob implements ShouldQueue
 {
