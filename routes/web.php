@@ -88,6 +88,12 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::get('/cron-jobs/get-job-runs', [CronJobController::class, 'getJobRuns'])->name('get.job.runs');
     Route::get('/cron-jobs/get-job-run-logs', [CronJobController::class, 'getJobRunLogs'])->name('get.job.run.logs');
     
+    Route::get('/tariff', [TariffController::class, 'showTariff'])->name('tariff');
+    Route::get('/tariff/delete/{pID}/{tID}', [TariffController::class, 'inactivateTariff'])->name('tariff.delete');
+    Route::post('/tariff/add', [TariffController::class, 'processTariff'])->name('tariff.add');
+    Route::post('/tariff/edit/{pID}/{tID}', [TariffController::class, 'editTariff'])->name('tariff.edit');
+
+    Route::get('/tariff/products/{type}', [TariffController::class, 'getProductByType']);
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
