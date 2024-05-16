@@ -5,17 +5,17 @@
 </style>
 
 <script>
-    function check(index) {
-        var checkBox = document.getElementById('checkBox' + index);
-        var value = document.getElementById('check' + index);
-        var valueText = value.innerText;
+  function check(index) {
+      var checkBox = document.getElementById('checkBox' + index);
+      var value = document.getElementById('check' + index);
+      var valueText = value.innerText;
 
-        if (checkBox.checked) {
-            value.innerHTML = "<del>" + valueText + "</del>";
-        } else {
-            value.innerText = valueText;
-        }
-    }
+      if (checkBox.checked) {
+          value.innerHTML = "<del>" + valueText + "</del>";
+      } else {
+          value.innerHTML = valueText; // Changed from innerText to innerHTML
+      }
+  }
 </script>
 
 <div class="intranet" style="margin: 20px 30px 30px 0px; display: flex; justify-content: space-between;">
@@ -52,30 +52,22 @@
         <div class="tw=block flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4" style="margin-left: 40px">
             <span class="text-black-700 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2" style="font-size: 18px; font-weight: 900;">Daily tasks</span>
             <ul class="list-group" style="width: 280px">
-                <li class="list-group-item">
-                    <input class="form-check-input me-1" type="checkbox" value="" aria-label="..." id="checkBox1" onclick="check(1)">
-                    <span id="check1">First checkbox</span>
-                </li>
-                <li class="list-group-item">
+              <li class="list-group-item">
+                  <input class="form-check-input me-1" type="checkbox" value="" aria-label="..." id="checkBox1" onclick="check(1)">
+                  <span id="check1">First checkbox</span>
+              </li>
+              <li class="list-group-item">
                   <input class="form-check-input me-1" type="checkbox" value="" aria-label="..." id="checkBox2" onclick="check(2)">
                   <span id="check2">Second checkbox</span>
-                </li>
-                <li class="list-group-item">
-                  <input class="form-check-input me-1" type="checkbox" value="" aria-label="..." id="checkBox3" onclick="check(3)">
-                  <span id="check2">Third checkbox</span>
-                </li>
-                <li class="list-group-item">
-                  <input class="form-check-input me-1" type="checkbox" value="" aria-label="..." id="checkBox4" onclick="check(4)">
-                  <span id="check2">Fourth checkbox</span>
-                </li>
-                <li class="list-group-item">
-                  <input class="form-check-input me-1" type="checkbox" value="" aria-label="..." id="checkBox5" onclick="check(5)">
-                  <span id="check2">Fifth checkbox</span>
-                </li>
-              </ul>
+              </li>
+              <li class="list-group-item">
+                <input class="form-check-input me-1" type="checkbox" value="" aria-label="..." id="checkBox3" onclick="check(3)">
+                <span id="check3">Third checkbox</span>
+            </li>
+            </ul>
               
-              <div style="display: flex">
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <div style="display: flex; justify-content: space-between; margin-top: 30px">
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="margin-right: 20px">
                     Add task
                   </button>
                   <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
