@@ -42,17 +42,44 @@ class MeterAllocation implements ShouldQueue
     public function handle()
     {
         $now = Carbon::now()->toDateString();
-        $newMeters = Meter_Reader_Schedule::select('meter_id')
-            ->whereDate('reading_date', '=', $now)
-            ->get()
-            ->pluck('meter_id')
-            ->toArray();
+        
+        $total_meters = DB::table('meter_reader_schedules')
+                        ->where('employee_profile_id', 1000)
+                        ->count();
 
-        foreach ($newMeters as $newMeterID)
-        {
-            Meter_Reader_Schedule::where('meter_reader_schedules.employee_profile_id', 1000)
-            ->where('meter_reader_schedules.meter_id', $newMeterID)
-        ->update(['meter_reader_schedules.employee_profile_id' => 3]);
+        $total_employees = DB::table('users')
+                            ->whereNotNull('employee_profile_id')
+                            ->where('employee_profile_id', '!=', 1000)
+                            ->count();
+
+        $meters_per_employee = floor($total_meters / $total_employees);
+        $remaining_meters = $total_meters % $total_employees;
+
+        $metersToBeAllocated = DB::table('meter_reader_schedules')
+                                ->where('employee_profile_id', 1000)
+                                ->pluck('meter_id')
+                                ->toArray();
+
+        $employee_ids = DB::table('users')
+                        ->whereNotNull('employee_profile_id')
+                        ->where('employee_profile_id', '!=', 1000)
+                        ->pluck('employee_profile_id')
+                        ->toArray();
+
+        $slice_position = 0; // position from where assigned_meters array is sliced
+
+        foreach($employee_ids as $employee_id) {
+            $assigned_meters_count = $meters_per_employee + ($remaining_meters > 0 ? 1 : 0);
+
+            $assigned_meters = array_slice($metersToBeAllocated, $slice_position, $assigned_meters_count);
+
+            foreach ($assigned_meters as $meter_id) {
+                $query = 'UPDATE meter_reader_schedules SET employee_profile_id = '.$employee_id.' WHERE meter_id = '. $meter_id;
+                DB::update($query);
+            }
+
+            $slice_position += $assigned_meters_count;
+            $remaining_meters--;
         }
     }
 }
