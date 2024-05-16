@@ -18,6 +18,8 @@ use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\RelationsController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TariffController;
+use App\Http\Controllers\LeaveRequestController;
+
 use App\Http\Controllers\EvaluationController;
 
 use App\Http\Controllers\FAQController;
@@ -247,7 +249,7 @@ Route::get('/jobApply', [myController::class, 'jobApply'])->name('jobApply');
 Route::get('/documents', [myController::class, 'documents'])->name('documents');
 Route::get('/financialAnalyst', [myController::class, 'finance'])->name('financialAnalyst');
 Route::get('/weeklyActivity', [myController::class, 'weeklyActivity'])->name('weeklyActivity');
-Route::get('/sickLeaveReason', [myController::class, 'sickLeave'])->name('sickLeaveReason');
+
 // Route::get('/profileHR', [myController::class, 'profileHR'])->name('profileHR');
 // Route::get('/profileInvoice', [myController::class, 'profileInvoice'])->name('profileInvoice');
 // Route::get('/profileCustomers', [myController::class, 'profileCustomers'])->name('profileCustomers');

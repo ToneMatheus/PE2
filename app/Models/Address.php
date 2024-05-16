@@ -84,7 +84,7 @@ class Address extends Model
         'is_billing_address'
     ];
 
-    public $timestamps = false;
+    // public $timestamps = false;
 
     public static function validate(array $input): bool
     {

@@ -504,6 +504,7 @@
                     else if(clr_var == 'pink')
                     {
                         selected.classList.add("added3");
+                        // This is already in the sickleaverequest page
                         divSick.style.visibility='visible'
                         clr1 = clr_var;
                     }

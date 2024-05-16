@@ -125,10 +125,12 @@ else if(isset($_POST['button']))
             if(isset($_SESSION['user']['green']))
             {
                 $type = "Vacation";
+                $holidayType = 1;
             }
             else if (isset($_SESSION['user']['pink']))
             {
                 $type = "Sick";
+                $holidayType = 3;
             }
             
 
@@ -145,7 +147,7 @@ else if(isset($_POST['button']))
                 $request_date = mysqli_real_escape_string($link, $todayRequest);
                 $start_date = mysqli_real_escape_string($link, $thsDay);
                 $end_date = mysqli_real_escape_string($link, $scdDay);
-                $holiday_type_id = mysqli_real_escape_string($link, 1);
+                $holiday_type_id = mysqli_real_escape_string($link, $holidayType);
                 $reason = mysqli_real_escape_string($link, $type);
                 $fileLoc = mysqli_real_escape_string($link, "");
                 $manager_approval = mysqli_real_escape_string($link, 0);
@@ -164,7 +166,7 @@ else if(isset($_POST['button']))
                     echo "\n\n works \n";
                     if (isset($_SESSION['user']['pink']))
                     {
-                        echo '<script>window.location.href = "{{route(`sickLeaveReason`)}}";</script>';
+                        //echo '<script>window.location.href = "{{route(`sickLeaveReason`)}}";</script>';
                     }
                 }
             }
@@ -215,10 +217,12 @@ else if(isset($_POST['button']))
                                 if(isset($_SESSION['user']['green']))
                                 {
                                     $type = "Vacation";
+                                    $holidayType = 1;
                                 }
                                 else if (isset($_SESSION['user']['pink']))
                                 {
                                     $type = "Sick";
+                                    $holidayType = 3;
                                 }
 
                                 $date_now = new DateTime();
@@ -234,7 +238,7 @@ else if(isset($_POST['button']))
                                     $request_date = mysqli_real_escape_string($link, $todayRequest);
                                     $start_date = mysqli_real_escape_string($link, $thsDay);
                                     $end_date = mysqli_real_escape_string($link, $scdDay);
-                                    $holiday_type_id = mysqli_real_escape_string($link, 1);
+                                    $holiday_type_id = mysqli_real_escape_string($link, $holidayType);
                                     $reason = mysqli_real_escape_string($link, $type);
                                     $fileLoc = mysqli_real_escape_string($link, "");
                                     $manager_approval = mysqli_real_escape_string($link, 0);
@@ -255,7 +259,7 @@ else if(isset($_POST['button']))
                                             echo  `window.location.href = "{{route('sickLeaveReason')}}"`;*/
                                         if (isset($_SESSION['user']['pink']))
                                         {
-                                            echo '<script>window.location.href = "{{route(`sickLeaveReason`)}}";</script>';
+                                           // echo '<script>window.location.href = "{{route(`sickLeaveReason`)}}";</script>';
                                         }
                                     }
                                 }
@@ -280,10 +284,12 @@ else if(isset($_POST['button']))
                                 if(isset($_SESSION['user']['green']))
                                 {
                                     $type = "Vacation";
+                                    $holidayType = 1;
                                 }
                                 else if (isset($_SESSION['user']['pink']))
                                 {
                                     $type = "Sick";
+                                    $holidayType = 3;
                                 }
 
                                 $date_now = new DateTime();
@@ -299,7 +305,7 @@ else if(isset($_POST['button']))
                                     $request_date = mysqli_real_escape_string($link, $todayRequest);
                                     $start_date = mysqli_real_escape_string($link, $thsDay);
                                     $end_date = mysqli_real_escape_string($link, $scdDay);
-                                    $holiday_type_id = mysqli_real_escape_string($link, 1);
+                                    $holiday_type_id = mysqli_real_escape_string($link, $holidayType);
                                     $reason = mysqli_real_escape_string($link, $type);
                                     $fileLoc = mysqli_real_escape_string($link, "");
                                     $manager_approval = mysqli_real_escape_string($link, 0);
@@ -320,7 +326,7 @@ else if(isset($_POST['button']))
                                             echo  `window.location.href = "{{route('sickLeaveReason')}}"`;*/
                                         if (isset($_SESSION['user']['pink']))
                                         {
-                                            echo '<script>window.location.href = "{{route(`sickLeaveReason`)}}";</script>';
+                                            //echo '<script>window.location.href = "{{route(`sickLeaveReason`)}}";</script>';
                                         }
                                             
                                     }
