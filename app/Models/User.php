@@ -79,7 +79,8 @@ class User extends Authenticatable
         'changed_default',
         'index_method',
         'password_reset_token',
-        'is_landlord'
+        'is_landlord',
+        'IBAN'
     ];
 
     public static function validate(array $input): bool

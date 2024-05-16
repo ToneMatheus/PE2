@@ -13,7 +13,8 @@ class Employee_Ticket extends Model
 
     protected $fillable = [
         'employee_profile_id',
-        'ticket_id'
+        'ticket_id',
+        'assigned_date'
     ];
 
     use HasFactory;
