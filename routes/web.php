@@ -154,6 +154,7 @@ Route::post('/editEmployee/{eID}/personal', [EmployeeController::class, 'editPer
 Route::post('/editEmployee/{eID}/{aID}/{uID}/address', [EmployeeController::class, 'editAddressEmployee'])->name('employees.edit.address');
 Route::post('/editEmployee/{eID}/{uID}/contract', [EmployeeController::class, 'editContractEmployee'])->name('employees.edit.contract');
 Route::get('/evaluations', [EvaluationController::class, 'evaluations'])->name('evaluations');
+
 //Route::get('/evaluations', [EvaluationController::class, 'managerTicketPage'])->name('manager-tickets');
 
 //invoice query routes
@@ -249,7 +250,9 @@ Route::get('/jobApply', [myController::class, 'jobApply'])->name('jobApply');
 Route::get('/documents', [myController::class, 'documents'])->name('documents');
 Route::get('/financialAnalyst', [myController::class, 'finance'])->name('financialAnalyst');
 Route::get('/weeklyActivity', [myController::class, 'weeklyActivity'])->name('weeklyActivity');
-
+Route::get('/teamBenefits', [myController::class, 'teamBenefits'])->name('teamBenefits');
+Route::get('/teamWeeklyReports', [myController::class, 'weeklyReport'])->name('teamWeeklyReports');
+// Route::get('/sickLeaveReason', [myController::class, 'sickLeave'])->name('sickLeaveReason');
 // Route::get('/profileHR', [myController::class, 'profileHR'])->name('profileHR');
 // Route::get('/profileInvoice', [myController::class, 'profileInvoice'])->name('profileInvoice');
 // Route::get('/profileCustomers', [myController::class, 'profileCustomers'])->name('profileCustomers');

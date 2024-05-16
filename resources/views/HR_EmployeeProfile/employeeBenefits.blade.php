@@ -28,7 +28,10 @@
                 {{-- <div class="container-trui"> --}}
                     <div class="container" style="background-color: white; padding: 20px">
                         @foreach($benefits as $benefit)
-                        <h5 class="card-title">{{$benefit->benefit_name}}</h5>
+                        <div style="display: flex; align-items: center;">
+                            <h5 class="card-title" style="margin-right: 10px">{{$benefit->benefit_name}}</h5>
+                            <img src="{{$benefit->image}}" style="width: 35px;"/>
+                        </div>
                         <p class="card-text">{{$benefit->description}} </p>
                     @endforeach
                     </div>

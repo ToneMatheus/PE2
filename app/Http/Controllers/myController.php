@@ -344,11 +344,53 @@
         }
 
         public function weeklyActivity(){
-            return view('weeklyActivity');
+            $now = Carbon::now();
+            $weekStartDate = $now->startOfWeek()->format('Y-m-d');
+            $weekEndDate = $now->endOfWeek()->format('Y-m-d');
+
+            return view('weeklyActivity', compact('weekStartDate', 'weekEndDate'));
         }
 
         public function sickLeave(){
             return view('sickLeaveReason');
+        }
+
+        public function teamBenefits(){
+            $manager_id = Auth::id();
+
+            $manager_user = DB::select("select * from users where id = $manager_id");
+    
+            $team_members = [];
+            $manager_team = DB::select("select team_id from team_members where user_id = $manager_id");
+            $employee_manager_relation = DB::select("select * from team_members where team_id = " . $manager_team[0]->team_id . " and is_manager = 0");
+    
+            foreach ($employee_manager_relation as $relation) {
+                $team_member = DB::select("select * from users where id = $relation->user_id");
+                $team_members = array_merge($team_members, $team_member);
+            }
+
+            return view('teamBenefits', compact('team_members'));
+        }
+
+        public function weeklyReport(){
+            $manager_id = Auth::id();
+
+            $manager_user = DB::select("select * from users where id = $manager_id");
+    
+            $team_members = [];
+            $weekly_reports = [];
+            $manager_team = DB::select("select team_id from team_members where user_id = $manager_id");
+            $employee_manager_relation = DB::select("select * from team_members where team_id = " . $manager_team[0]->team_id . " and is_manager = 0");
+    
+            foreach ($employee_manager_relation as $relation) {
+                $team_member = DB::select("select * from users where id = $relation->user_id");
+                $reports = DB::select("select * from employee_weekly_reports where employee_profile_id = " . $team_member[0]->employee_profile_id);
+
+                $team_members = array_merge($team_members, $team_member);
+                $weekly_reports = array_merge($weekly_reports, $reports);
+            }
+
+            return view('teamWeeklyReports', compact('team_members', 'weekly_reports'));
         }
     }
 ?>
