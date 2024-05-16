@@ -69,19 +69,20 @@
                         <p>Meter ID: {{$detail->meter_id}}</p>
                         <div class="flex justify-between my-4">
                         <p>Last read on: <span class="text-white font-semibold">{{$detail->reading_date ? $detail->reading_date : 'Not read yet'}}</span></p>
-                        <p>Latest reading value: <span class="text-white font-semibold">{{$detail->latest_reading_value ? $detail->latest_reading_value : 'Not read yet'}}</span></p>
+                        <p>Latest reading value: <span class="text-white font-semibold" id="latest-{{$detail->meter_id}}">{{$detail->latest_reading_value ? $detail->latest_reading_value : 'Not read yet'}}</span></p>
                         </div>
                         <input type="hidden" name="index_values[{{$loop->index}}][user_id]" value="{{$detail->user_id}}"/>
                         <input type="hidden" name="index_values[{{$loop->index}}][EAN]" value="{{$detail->EAN}}"/>
                         <input type="hidden" name="index_values[{{$loop->index}}][meter_id]" value="{{$detail->meter_id}}"/>
                         @if ($detail->expecting_reading == 1)
                             <x-text-input class="block mt-1 w-full indexValue" type="text" name="index_values[{{$loop->index}}][new_index_value]" id="{{$detail->meter_id}}" required placeholder="Enter index value" autocomplete="off"/>
+                            <div id="validation-{{$detail->meter_id}}" class="mt-5"></div>
+                            <p class="float-right">Consumption: <span id="consumption-{{$detail->meter_id}}"></span></p>
                         @else
                             <div class="p-2 w-full bg-rose-200 dark:bg-rose-300 rounded-lg flex unneeded">
                                 <p class="ml-4 text-red-700">Not today!</p>
                             </div>
                         @endif
-                        <div id="validation-{{$detail->meter_id}}" class="mt-5"></div>
                     </div>
                 @endforeach
             </form>
@@ -98,6 +99,8 @@
         $(document).ready(function(){
             function indexValidate(meterID, indexValue){
                 var field = "#validation-" + meterID;
+                var consumption = "#consumption-" + meterID;
+                var latest = $("#latest-" + meterID).html();
                 var validation = document.querySelector(field);
                 $.ajax({
                     url:"{{ route('ValidateIndex') }}",
@@ -106,9 +109,28 @@
                     success:function(data)
                     {
                         $(validation).html(data);
+                        consumptionCalculator(indexValue, consumption, latest);
                         enableButton();
                     }
                 })
+            }
+
+            function consumptionCalculator(indexValue, consumption, latest) {
+                if (latest == 'Not read yet') {
+                    latestValue = 0;
+                }
+                else {
+                    latestValue = parseInt(latest);
+                }
+
+                consumptionValue = indexValue - latestValue;
+                
+                if (indexValue - latestValue > 0) {
+                    $(consumption).html(consumptionValue);
+                }
+                else{
+                    $(consumption).html('');
+                }
             }
 
             function enableButton() {
@@ -118,8 +140,6 @@
                 else {
                     $('#submit').prop('disabled', true);
                 }
-                console.log(document.getElementsByClassName("correct").length);
-                console.log(document.getElementsByClassName("meter").length);
             }
 
             $(document).on('keyup', '.indexValue', function(){

@@ -69,7 +69,7 @@ class EnterIndexCustomerJob implements ShouldQueue
                         $meter = Meter::find($meter->id);
                         $meter->expecting_reading = 1;
                         $meter->save();
-                Mail::to('shresthaanshu555@gmail.com')->send(new ReminderEnterIndexCustomerMail($user));
+                Mail::to('anu01872@gmail.com')->send(new ReminderEnterIndexCustomerMail($user));
             }
         }
     }
