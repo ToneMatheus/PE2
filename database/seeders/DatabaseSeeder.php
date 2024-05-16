@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder
             Invoice\ProductTariffSeeder::class,
             Invoice\ContractProductSeeder::class,
             Invoice\DiscountSeeder::class,
+            Invoice\PaymentSeeder::class,
 
             Meter\IndexValueSeeder::class,
             Meter\ConsumptionSeeder::class,

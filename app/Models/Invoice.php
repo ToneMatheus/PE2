@@ -42,5 +42,10 @@ class Invoice extends Model
         return $this->belongsTo(Meter::class);
     }
 
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
+    }
+
     use HasFactory;
 }

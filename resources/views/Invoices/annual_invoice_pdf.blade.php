@@ -137,12 +137,14 @@
         <p>Reduction on total amount of the next invoice.</p>
     @endif
 
-        <p>
+    <p>
         @php
         echo DNS2D::getBarcodeHTML($domain . "/pay/" . $invoice->id . "/" . $hash, 'QRCODE',5,5);
         @endphp
     </p>
 
     <p><br/>Scanning this QR code will bring you directly to a page where you can handle the payment of your invoice.</p>
+
+    <p>If you pay by bank transfer, mention: {{ $invoice->structured_communication }}</p>
 </body>
 </html>

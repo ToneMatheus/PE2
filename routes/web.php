@@ -10,6 +10,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
 use App\Http\Controllers\InvoiceRemindersController;
+use App\Http\Controllers\InvoiceMatchingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
@@ -22,6 +23,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UtilityController;
 use App\Http\Controllers\CronJobController;
 use App\Http\Controllers\EstimationController;
+use App\Http\Controllers\FlowchartAscaladeTicketController;
 
 use App\Http\Controllers\meterreading;
 use App\Models\MeterReading as ModelsMeterReading;
@@ -37,6 +39,7 @@ use App\Http\Controllers\PayoutsController;
 use App\Http\Controllers\RelationsController;
 use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
+use App\Http\Controllers\ManualInvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +66,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update.profile');
     Route::patch('/profile/address', [ProfileController::class, 'updateAddress'])->name('profile.update.address');
     Route::patch('/profile/address/billing', [ProfileController::class, 'updateBillingAddress'])->name('profile.update.address.billing');
+    Route::patch('/profile/address/add', [ProfileController::class, 'addAddress'])->name('profile.add.address');
+
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -80,6 +85,12 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::get('/cron-jobs/get-job-run-logs', [CronJobController::class, 'getJobRunLogs'])->name('get.job.run.logs');
     Route::post('/cron-jobs/update-log-level/{jobName}', [CronJobController::class, 'updateLogLevel'])->name('update.log.level');
     
+
+    Route::get('/payouts', [PayoutsController::class, 'showPayouts'])->name('payouts');
+    Route::get('/payouts/{id}', [PayoutsController::class, 'processPayout'])->name('payouts.pay');
+
+    Route::get('/manualInvoice', [ManualInvoiceController::class, 'showManualInvoice'])->name('manualInvoice');
+    Route::post('/manualInvoice', [ManualInvoiceController::class, 'processManualInvoice'])->name('manualInvoice.process');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
@@ -87,8 +98,6 @@ Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(function() {
-    Route::get('/payouts', [PayoutsController::class, 'showPayouts'])->name('payouts');
-    Route::get('/payouts/{id}', [PayoutsController::class, 'processPayout'])->name('payouts.pay');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group(function() {
@@ -96,6 +105,7 @@ Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(function() {
+    Route::get('/ticket/Flowchart', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket');
 
 });
 
@@ -136,6 +146,10 @@ Route::get('/test-qr-monthly', [InvoiceRemindersController::class, 'monthly'])->
 //invoice payment
 Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
 Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
+
+Route::get('/invoice-matching', [InvoiceMatchingController::class, 'startMatching'])->name("invoice_matching");
+Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');
+
 
 //QR code test
 Route::get('/code', function () {
@@ -277,7 +291,8 @@ Route::controller(InvoiceController::class)->group(function () {
 Route::get('/confirm-email/{encryptedUserID}/{email}', [ProfileController::class, 'confirmEmail'])->name('activate.account');
 Route::get('/confirm-emailTEST/{token}/{email}', [RegisteredUserController::class, 'confirmEmail'])->name('email-confirmation-registration');
 
-
+// verify email
+Route::get('/profile/email-changed', [ProfileController::class, 'emailChanged'])->name('profile.emailChanged');
 
 Route::get('/holidays', [HolidayController::class, 'index']);
 Route::controller(InvoiceController::class)->group(function () {

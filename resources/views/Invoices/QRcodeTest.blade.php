@@ -8,19 +8,10 @@
 <body>
     <!--Page for testing purposes only-->
     <?php 
-    $domain = "http://127.0.0.1:8000";
-    $invoiceID = "1";
-    echo DNS2D::getBarcodeHTML($domain . "/pay/" . $invoiceID, 'QRCODE',3,3);
-    echo DNS2D::getBarcodeSVG($domain . "/pay/" . $invoiceID, 'QRCODE',10,10);
+    $domain = "http://127.0.0.1:8000";  //change to webserver ip *10.64.0.100*
+    $invoiceID = "1";                   //edit to invoice you want
+    $QRService = app()->make('App\Services\QRCodeService');
+    $hash = $QRService->getHash($invoiceID);
+    echo DNS2D::getBarcodeHTML($domain . "/pay/" . $invoiceID . "/" . $hash, 'QRCODE',5,5);
     ?>
-
-<table cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#ffffff">
-    <tr>
-        <td align="center" style="padding: 20px;">
-            <?php 
-            echo DNS2D::getBarcodeHTML($domain . "/pay/" . $invoiceID, 'QRCODE',3,3);
-            ?>
-        </td>
-    </tr>
-</table>
 </body>

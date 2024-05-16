@@ -24,4 +24,11 @@ class QRCodeService
 
         return $pdf->output();
     }
+
+    public function getHash($invoiceID)
+    {
+        $invoice = Invoice::findOrFail($invoiceID);
+        $hash = md5($invoice->id . $invoice->customer_contract_id . $invoice->meter_id);
+        return $hash;
+    }
 }
