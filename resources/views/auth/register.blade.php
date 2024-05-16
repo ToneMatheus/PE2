@@ -1,34 +1,53 @@
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
+        <!-- TODO als de type huis op appartement staat moet je de huisbaas ook in zetten. dit is met een checkbox. -->
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialiseer de checkbox en het company_name veld
-            var checkbox = document.getElementById("is_company");
+            var checkboxCompany = document.getElementById("is_company");
             var companyField = document.getElementById("company_name_div");
             var businessRadioDiv = document.getElementById("business_div");
             var businessRadio = document.getElementById("business");
             var houseRadio = document.getElementById("house");
+            var appartmentRadio = document.getElementById("appartment");
+            var Landlord = document.getElementById("is_landlord_div");
 
-            //CH als is company is aangevinkt en je refreshed dan is business radio button weg
+            //CH als is company is aangevinkt en je refreshed dan is business radio button weg en idem voor landlord
 
             function toggleFields() {
-            if (checkbox.checked) {
+
+            if (checkboxCompany.checked) {
                 companyField.style.display = "block";
+                Landlord.style.display = "block";
                 businessRadioDiv.style.visibility = "visible";
                 businessRadio.checked = true;
                 houseRadio.checked = false;
             } else {
                 companyField.style.display = "none";
+                Landlord.style.display = "none";
                 businessRadioDiv.style.visibility = "hidden";
                 businessRadio.checked = false;
                 houseRadio.checked = true;
             }
         }
 
-        toggleFields();
+        function toggleLandlord(){
+            if(appartmentRadio.checked  || businessRadio.checked ){
+                Landlord.style.display = "block";
+            } else {
+                Landlord.style.display = "none";
+            }
+        }
 
-        checkbox.addEventListener('change', toggleFields);
+        toggleFields();
+        toggleLandlord();
+
+        houseRadio.addEventListener('change', toggleLandlord);
+        appartmentRadio.addEventListener('change', toggleLandlord);
+        businessRadio.addEventListener('change', toggleLandlord);
+
+        checkboxCompany.addEventListener('change', toggleFields);
         });
     </script>
 
@@ -142,12 +161,17 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <!-- TODO nationality bij zetten -->
+         <!-- nationality -->
+         <div class="mt-4">
+            <x-input-label for="nationality" :value="__('Nationality')" />
+            <x-text-input id="nationality" class="block mt-1 w-full" type="text" name="nationality" :value="old('nationality')" autofocus autocomplete="nationality" />
+            <x-input-error :messages="$errors->get('nationality')" class="mt-2" />
+        </div>
 
         <!--for company -->
         <div class="mt-4">
             <x-input-label for="is_company" :value="__('Is Company')" />
-            <input type="checkbox" id="is_company" name="is_company" @if(old('isCompany')) checked @endif>
+            <input type="checkbox" id="is_company" name="is_company" @if(old('is_company')) checked @endif>
             <x-input-error class="mt-2" :messages="$errors->get('is_company')" />
         </div>
 
@@ -229,6 +253,13 @@
                 <input type="radio" name="type" id="business" value="business">
             </div>
             <x-input-error class="mt-2" :messages="$errors->get('type')" />
+        </div>
+
+        <!--for landlord -->
+        <div class="mt-4" id="is_landlord_div">
+            <x-input-label for="is_landlord" :value="__('Is Landlord')" />
+            <input type="checkbox" id="is_landlord" name="is_landlord" @if(old('is_landlord')) checked @endif>
+            <x-input-error class="mt-2" :messages="$errors->get('is_landlord')" />
         </div>
 
 

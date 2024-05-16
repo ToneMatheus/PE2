@@ -22,6 +22,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UtilityController;
 use App\Http\Controllers\CronJobController;
 use App\Http\Controllers\EstimationController;
+use App\Http\Controllers\FlowchartAscaladeTicketController;
 
 use App\Http\Controllers\meterreading;
 use App\Models\MeterReading as ModelsMeterReading;
@@ -32,8 +33,10 @@ use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\GasElectricityController;
 use App\Http\Controllers\RelationsController;
-use App\Http\Controllers\StatisticsController;
+use App\Models\ElectricityConnection;
+use App\Http\Controllers\IndexValueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +63,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update.profile');
     Route::patch('/profile/address', [ProfileController::class, 'updateAddress'])->name('profile.update.address');
     Route::patch('/profile/address/billing', [ProfileController::class, 'updateBillingAddress'])->name('profile.update.address.billing');
+    Route::patch('/profile/address/add', [ProfileController::class, 'addAddress'])->name('profile.add.address');
+
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -67,11 +72,11 @@ require __DIR__.'/auth.php';
 
 Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
     //cronjobs
-    Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+    //Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
     Route::get('/cron-jobs/schedule/edit/{job}', [CronJobController::class, 'edit_schedule'])->name('edit-schedule-cron-job');
     Route::post('/cron-jobs/schedule/store{job}', [CronJobController::class, 'store_schedule'])->name('store-schedule-cron-job');
     Route::post('/cron-jobs/schedule/toggle{job}', [CronJobController::class, 'toggle_schedule'])->name('toggle-schedule-cron-job');
-    Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
+    // Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
     Route::get('/cron-jobs/history', [CronJobController::class, 'showHistory'])->name('job.history');
     Route::get('/cron-jobs/get-job-runs', [CronJobController::class, 'getJobRuns'])->name('get.job.runs');
     Route::get('/cron-jobs/get-job-run-logs', [CronJobController::class, 'getJobRunLogs'])->name('get.job.run.logs');
@@ -83,15 +88,16 @@ Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(function() {
-    
+
 });
 
 Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group(function() {
-    
+
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(function() {
-    
+    Route::get('/ticket/Flowchart', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket');
+
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function() {
@@ -104,11 +110,13 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
-    
+
+
 });
 
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
-
+Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
 
 Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
 Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
@@ -138,14 +146,35 @@ Route::get('/code', function () {
 
 
 //Meters Group
-Route::get('/meters_dashboard/meters', [MeterController::class, 'viewScheduledMeters']);
-Route::get('/all_meters_dashboard', [MeterController::class, 'viewAllMeters']);
-Route::put('/all_meters_dashboard', [MeterController::class, 'assignment'])->name("assignment_change");
 
-Route::get('/enterIndexEmployee', [MeterController::class, 'enterIndex']);
-Route::post('/enterIndexEmployee', [MeterController::class, 'submitIndex'])->name("submitIndex");
-Route::get('/dashboardEmployee', function () {
-    return view('Meters/employeeDashboard');
+//employee-specific dashboard
+Route::get('/meter_dashboard', [MeterController::class, 'viewScheduledMeters']);
+
+//all meters dashboard
+Route::controller(MeterController::class)->group(function () {
+    Route::get('/all_meters_dashboard', 'all_meters_index')->name("viewAllMeters");
+    Route::get('/all_meters_dashboard_search', 'search')->name("search");
+    Route::post('/assignment_change', 'assignment');
+    Route::post('/bulk_assignment_change', 'bulk_assignment');
+});
+
+//page for employees to enter index values
+Route::controller(MeterController::class)->group(function () {
+    Route::get('/enter_index_employee', function() {return view('Meters/enterIndexEmployee');});
+    Route::get('/enter_index_employee_search', 'searchIndex')->name("searchIndex");
+    Route::get('/fetchEAN/{meterID}', 'fetchEAN');
+    Route::post('/index_value_entered','submitIndex')->name("submitIndex");
+
+    Route::get('/enter_index_paper', function() {return view('Meters/enterIndexPaper');});
+    Route::get('/enter_index_paper_search', 'searchIndexPaper')->name("searchIndexPaper");
+    Route::get('/fetchEAN/{meterID}', 'fetchEAN');
+
+    Route::get('/fetchIndex/{meterID}', 'fetchIndex');
+    Route::post('/index_value_entered_customer','submitIndexCustomer')->name("submitIndexCustomer");
+});
+
+Route::get('/meter_group_dashboard', function() {
+    return view('Meters/MeterGroupDashboard');
 });
 
 Route::get('meters', [MeterController::class,'showMeters']);
@@ -156,10 +185,11 @@ Route::post('meters/add', [MeterController::class,'addMeters']);
 Route::get('/consumption', function () {
     return view('Meters/consumption');
 });
-
-Route::get('/Meter_History', [MeterController::class, 'showMeterHistory'])->name('Meter_History');
-
-Route::get('/Consumption_Readings', [MeterController::class, 'showConsumptionReading'])->name('Consumption_Reading');
+//aryan
+Route::controller(MeterController::class)->group(function () {
+    Route::get('/Consumption_Dashboard', 'showConsumptionDashboard');
+    Route::get('/Meter_History', 'GasElectricity');
+});
 
 
 // Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -247,7 +277,8 @@ Route::controller(InvoiceController::class)->group(function () {
 Route::get('/confirm-email/{encryptedUserID}/{email}', [ProfileController::class, 'confirmEmail'])->name('activate.account');
 Route::get('/confirm-emailTEST/{token}/{email}', [RegisteredUserController::class, 'confirmEmail'])->name('email-confirmation-registration');
 
-
+// verify email
+Route::get('/profile/email-changed', [ProfileController::class, 'emailChanged'])->name('profile.emailChanged');
 
 Route::get('/holidays', [HolidayController::class, 'index']);
 Route::controller(InvoiceController::class)->group(function () {
