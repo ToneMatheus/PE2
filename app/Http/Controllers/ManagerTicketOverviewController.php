@@ -18,6 +18,6 @@ class ManagerTicketOverviewController extends Controller
 
         // Your controller logic here
         $tickets = ManagerTicketOverview::all();
-        return view('managerticketoverview.index', compact('tickets'));
+        return view('tickets.ManagerTicketOverview', compact('tickets'));
     }
 }
