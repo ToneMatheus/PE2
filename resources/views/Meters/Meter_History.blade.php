@@ -3,11 +3,10 @@
 <head>
     <title>Meter History</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   
 </head>
 <body> --}}
 <x-app-layout title="Meter history">
-    <h1>Meter History</h1>
     @if (count($errors) > 0)
         <div class="alert alert-danger">
             <ul>
@@ -50,49 +49,78 @@
             Hello, {{$details[0]->first_name}}
         </h2>
     </x-slot>
-    <div class="py-8 dark:text-white">
-        <h1>Your meters</h1>
-        @foreach ($details as $detail)
-            <div class="meter">
-                <div class="meterLeft">
-                    <p>EAN code: <span style="color:red">{{$detail->EAN}}</span></p>
-                    <p>Type: <span style="color:red">{{$detail->type}}</span></p>
-                    <p>Address: {{$detail->street}} {{$detail->number}}, {{$detail->city}}</span></p>
-                    <p>Meter ID: {{$detail->meter_id}}</p>
+    <div class="py-8 max-w-7xl mx-auto dark:text-white grid grid-cols-2 gap-4">
+        <div class="sm:px-6 lg:px-8 space-y-6">
+            <h1 class="font-semibold text-3xl text-gray-800 dark:text-gray-200 leading-tight">Meter History</h1>
+            <form method="POST" action="{{ route('submitIndexCustomer') }}">
+                @csrf
+                @method('POST')
+                <div  class="flex justify-between">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Your meters</h2>
+                <x-primary-button type="submit" class="w-auto dark:bg-red-700 dark:text-white" id="submit" :disabled="true">
+                    {{ __('Submit values') }}
+                </x-primary-button>
                 </div>
-                <div class="meterRight">
-                    <button type="button" class="modalOpener" value="{{$detail->meter_id}}">Add index value</button>
-                </div>
-            </div>
-        @endforeach
+                @foreach ($details as $detail)
+                    <div class="p-4 my-3 sm:p-8 bg-white dark:bg-gray-800 shadow rounded-lg text-gray-500 dark:text-gray-400 meter">
+                        <p>EAN code: <span class="text-white font-semibold">{{$detail->EAN}}</span></p>
+                        <p>Type: <span class="text-white font-semibold">{{$detail->type}}</span></p>
+                        <p>Address: <span class="text-white font-semibold">{{$detail->street}} {{$detail->number}}, {{$detail->postal_code}} {{$detail->city}}</span></p>
+                        <p>Meter ID: {{$detail->meter_id}}</p>
+                        <div class="flex justify-between my-4">
+                        <p>Last read on: <span class="text-white font-semibold">{{$detail->reading_date ? $detail->reading_date : 'Not read yet'}}</span></p>
+                        <p>Latest reading value: <span class="text-white font-semibold">{{$detail->latest_reading_value ? $detail->latest_reading_value : 'Not read yet'}}</span></p>
+                        </div>
+                        <input type="hidden" name="index_values[{{$loop->index}}][user_id]" value="{{$detail->user_id}}"/>
+                        <input type="hidden" name="index_values[{{$loop->index}}][EAN]" value="{{$detail->EAN}}"/>
+                        <input type="hidden" name="index_values[{{$loop->index}}][meter_id]" value="{{$detail->meter_id}}"/>
+                        <x-text-input class="block mt-1 w-full indexValue" type="text" name="index_values[{{$loop->index}}][new_index_value]" id="{{$detail->meter_id}}" required placeholder="Enter index value"/>
+                        <div id="validation-{{$detail->meter_id}}" class="mt-5"></div>
+                    </div>
+                @endforeach
+            </form>
+        </div>
+        
+        <div>
+            <p>chart</p>
+        </div> 
+    </div>
     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        $(document).on('click', '.modalOpener', function (e) {
-            $('#indexValue').val('');
-            $('#indexModal').modal('show');
-            var $meterID = $(this).val();
-
+        $(document).ready(function(){
+            function indexValidate(meterID, indexValue){
+                var field = "#validation-" + meterID;
+                var validation = document.querySelector(field);
                 $.ajax({
-                    url: "/fetchIndex/" + $meterID,
+                    url:"{{ route('ValidateIndex') }}",
                     method:'GET',
-                    success:function(response)
+                    data:{meterID:meterID, indexValue:indexValue},
+                    success:function(data)
                     {
-                        if (response.status == 404) {
-                            $('#message').addClass('alert alert-success');
-                            $('#message').text(response.message);
-                            $('#indexModal').modal('hide');
-                        }
-                        else {
-                            $('#meter_id').val($meterID);
-                            $('#prev').html(response.prev_index.reading_value);
-                            $('#EAN').val(response.meter.EAN);
-                            $('#modalEAN').html(response.meter.EAN);
-                        }
+                        $(validation).html(data);
+                        enableButton();
                     }
                 })
+            }
+
+            function enableButton() {
+                if(document.getElementsByClassName("correct").length == document.getElementsByClassName("meter").length) {
+                    $('#submit').prop('disabled', false);
+                }
+                else {
+                    $('#submit').prop('disabled', true);
+                }
+                console.log(document.getElementsByClassName("correct").length);
+                console.log(document.getElementsByClassName("meter").length);
+            }
+
+            $(document).on('keyup', '.indexValue', function(){
+                indexValidate(this.id, this.value);
             })
-        </script>
+        })
+    </script>
         {{-- <div class="content">
             <h1>Energy Consumption History</h1>
             <canvas id="consumptionChart"></canvas>

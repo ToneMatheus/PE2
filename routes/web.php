@@ -188,6 +188,7 @@ Route::get('/consumption', function () {
 Route::controller(MeterController::class)->group(function () {
     Route::get('/Consumption_Dashboard', 'showConsumptionDashboard');
     Route::get('/Meter_History/{userID}', 'GasElectricity');
+    Route::get('/Meter_History_Validate', 'ValidateIndex')->name("ValidateIndex");
 });
 
 

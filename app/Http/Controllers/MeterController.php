@@ -595,16 +595,83 @@ class MeterController extends Controller
 
     public function GasElectricity($userID)
     {
-        $query =  DB::table('users')
-        ->join('customer_addresses','users.id','=','customer_addresses.user_id')
-        ->join('addresses','customer_addresses.id','=','addresses.id')
-        ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
-        ->join('meters','meter_addresses.meter_id','=','meters.id')
-        ->where('users.id', '=', $userID)
-        ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id')
-        ->get();
+        $query = 'SELECT t1.user_id, t1.first_name, t1.last_name, t1.street, t1.number, t1.postal_code, t1.city, t1.EAN, t1.type, t1.meter_id, t2.reading_date, t2.latest_reading_value FROM 
+        (SELECT users.id AS user_id, users.first_name, users.last_name, addresses.street, addresses.number, addresses.postal_code, addresses.city, meters.EAN, meters.type, meters.id AS meter_id FROM `users`
+        JOIN customer_addresses on users.id = customer_addresses.user_id
+        JOIN addresses on customer_addresses.address_id = addresses.id
+        JOIN meter_addresses on addresses.id = meter_addresses.address_id
+        JOIN meters on meter_addresses.meter_id = meters.id
+        WHERE users.id = '.$userID.' ) AS t1
+        LEFT JOIN
+        (SELECT index_values.meter_id, index_values.reading_date, index_values.reading_value AS latest_reading_value
+        FROM index_values
+        WHERE (index_values.meter_id, index_values.reading_value) IN (
+            SELECT index_values.meter_id, MAX(index_values.reading_value) FROM index_values
+            GROUP BY index_values.meter_id
+        )) AS t2 ON t1.meter_id = t2.meter_id;';
 
-        return view('Meters/Meter_History', ['details' => $query]);
+        $result =  DB::select($query);
+
+        return view('Meters/Meter_History', ['details' => $result]);
+    }
+
+    public function ValidateIndex(Request $request) {
+        if($request->ajax())
+        {
+            $meterID = $request->get('meterID');
+            $indexValue = $request->get('indexValue');
+
+            if ($indexValue != '') {
+                $prev_index = DB::table('index_values')
+                ->join('consumptions', 'consumptions.current_index_id', '=', 'index_values.id')
+                ->where('index_values.meter_id', '=', $meterID)
+                ->select('index_values.id', 'index_values.reading_value', 'index_values.reading_date')
+                ->orderBy('consumptions.id', 'desc')
+                ->get()
+                ->first();
+
+                if ($prev_index == null) {
+                    $prev_index_value = 0;
+                }
+                else {
+                    $prev_index_value = $prev_index->reading_value;
+                }
+
+                if (!is_numeric($indexValue)) {
+                    echo '<div class="p-2 w-full bg-rose-200 dark:bg-rose-300 rounded-lg flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#be123c" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                    <p class="ml-4 text-red-700">Please enter a valid number.</p>
+                                </div>';
+                }
+                elseif ($indexValue < $prev_index_value) {
+                    echo '<div class="p-2 w-full bg-rose-200 dark:bg-rose-300 rounded-lg flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#be123c" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                    <p class="ml-4 text-red-700">New index value can\'t be lower than previous index value.</p>
+                                </div>';
+                }
+                else {
+                    echo '<div class="p-2 w-full bg-green-200 dark:bg-green-300 rounded-lg flex correct">
+                            
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#15803d" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                    <p class="ml-4 text-green-700">All correct!</p>
+                                </div>';
+                }
+            }
+            else {
+                echo '<div class="p-2 w-full bg-rose-200 dark:bg-rose-300 rounded-lg flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#be123c" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                    <p class="ml-4 text-red-700">Please enter a value.</p>
+                                </div>';
+            }
+        }
     }
 
     public function fetchIndex($meterID) {
@@ -628,59 +695,69 @@ class MeterController extends Controller
     }
 
     public function submitIndexCustomer(Request $request) {
-        $errors = new MessageBag();
-        $request->validate([
-            'meter_id' => 'required',
-            'EAN' => 'required',
-            'index_value' => 'required|integer'
-        ],
-        [
-            'meter_id.required' => 'Meter ID inclusion failed for unknown reasons.',
-            'index_value.required' => 'Please enter an index value!',
-            'index_value.integer' => 'You have to type in a number for the index value.'
-        ]);
-
         $date = Carbon::now()->toDateString();
-        $meter_id = $request->input('meter_id');
-        $EAN = $request->input('EAN');
-        $index_value = $request->input('index_value');
 
-        $prev_index = DB::table('index_values')
-        ->join('consumptions', 'consumptions.current_index_id', '=', 'index_values.id')
-        ->where('index_values.meter_id', '=', $meter_id)
-        ->select('index_values.id', 'index_values.reading_value', 'index_values.reading_date')
-        ->orderBy('consumptions.id', 'desc')
-        ->get()
-        ->first();
+        $index_values = $request->input('index_values');
 
-        if ($prev_index == null) {
-            return redirect()->to('/Meter_History')->withErrors(['index_value_null'=>'No previous index value found - fatal error']);
+        foreach($index_values as $index_value) {
+            $meter_id = $index_value['meter_id'];
+            $new_index_value = $index_value['new_index_value'];
+            $EAN = $index_value['EAN'];
+
+            $prev_index = DB::table('index_values')
+                            ->join('consumptions', 'consumptions.current_index_id', '=', 'index_values.id')
+                            ->where('index_values.meter_id', '=', $meter_id)
+                            ->select('index_values.id', 'index_values.reading_value', 'index_values.reading_date')
+                            ->orderBy('consumptions.id', 'desc')
+                            ->get()
+                            ->first();
+
+            if ($prev_index == null) {
+                $prev_index_value = 0;
+
+                $current_index_id = DB::table('index_values')->insertGetId(
+                    ['reading_date' => $date, 'meter_id' => $meter_id, 'reading_value' => $new_index_value]
+                );
+
+                $consumption_value = $new_index_value - $prev_index_value;
+
+                $installation_date = DB::table('meters')
+                                    ->where('id', '=', $meter_id)
+                                    ->select('installation_date')
+                                    ->get()
+                                    ->first();
+
+                DB::table('consumptions')->insert(
+                    ['start_date' => $installation_date->installation_date,
+                    'end_date' => $date,
+                    'consumption_value' => $consumption_value,
+                    'prev_index_id' => null,
+                    'current_index_id' => $current_index_id]
+                );
+            }
+            else {
+                $prev_index_id = $prev_index->id;
+                $prev_index_value = $prev_index->reading_value;
+                $start_date = $prev_index->reading_date;
+
+                $current_index_id = DB::table('index_values')->insertGetId(
+                    ['reading_date' => $date, 'meter_id' => $meter_id, 'reading_value' => $new_index_value]
+                );
+
+                $consumption_value = $new_index_value - $prev_index_value;
+
+                DB::table('consumptions')->insert(
+                    ['start_date' => $start_date,
+                    'end_date' => $date,
+                    'consumption_value' => $consumption_value,
+                    'prev_index_id' => $prev_index_id,
+                    'current_index_id' => $current_index_id]
+                );
+            }
+
+            Mail::to('anu01872@gmail.com')->send(new IndexValueEnteredByCustomer($EAN, $new_index_value, $date, $consumption_value));
         }
-
-        $prev_index_id = $prev_index->id;
-        $prev_index_value = $prev_index->reading_value;
-        $start_date = $prev_index->reading_date;
-
-        if ($index_value < $prev_index_value) {
-            return redirect()->to('/Meter_History')->withErrors(['index_value_error'=>'Please enter an index number higher than previous value']);
-        }
-
-        $current_index_id = DB::table('index_values')->insertGetId(
-            ['reading_date' => $date, 'meter_id' => $meter_id, 'reading_value' => $index_value]
-        );
-
-        $consumption_value = $index_value - $prev_index_value;
-
-        DB::table('consumptions')->insert(
-            ['start_date' => $start_date,
-            'end_date' => $date,
-            'consumption_value' => $consumption_value,
-            'prev_index_id' => $prev_index_id,
-            'current_index_id' => $current_index_id]
-        );
-
-        Mail::to('anu01872@gmail.com')->send(new IndexValueEnteredByCustomer($EAN, $index_value, $date, $consumption_value));
-        return redirect('Meter_History');
+        return redirect('Meter_History/'.$index_values[0]['user_id']);
     }
 
     public function customerId($customerId)
