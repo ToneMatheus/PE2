@@ -48,6 +48,14 @@
                             </div>
                         </a>
                     @endif
+                    @if($roleId == config('roles.CUSTOMER_SERVICE'))
+                        <a href="{{ route('ticket_dashboard') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket dashboard</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View everything about the tickets</p>
+                            </div>
+                        </a>
+                    @endif
                     @if($roleId == config('roles.CUSTOMER'))
                         <a href="{{ route('customer.invoiceStatus') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">

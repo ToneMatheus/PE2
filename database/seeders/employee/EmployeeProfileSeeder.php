@@ -42,6 +42,18 @@ class EmployeeProfileSeeder extends Seeder
                 'line_number' => 1,
             ],
             [
+                'id' => 4,
+                'hire_date' => '2024-01-01',
+            ],
+            [
+                'id' => 5,
+                'hire_date' => '2024-01-01',
+            ],
+            [
+                'id' => 6,
+                'hire_date' => '2024-01-01',
+            ],
+            [
                 'id' => 1000,
                 'hire_date' => '1970-01-01',
                 'job' => null,

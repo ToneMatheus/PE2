@@ -47,7 +47,7 @@
         appartmentRadio.addEventListener('change', toggleLandlord);
         businessRadio.addEventListener('change', toggleLandlord);
 
-        checkboxCompany.addEventListener('change', toggleFields);
+        checkbox.addEventListener('change', toggleFields);
         });
     </script>
 

@@ -37,6 +37,7 @@ use App\Http\Controllers\GasElectricityController;
 use App\Http\Controllers\RelationsController;
 use App\Http\Controllers\ManagerTicketOverviewController;
 use App\Http\Controllers\TicketManagerPageController;
+use App\Http\Controllers\TicketDashboardController;
 use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
 use App\Http\Controllers\TicketOverviewController;
@@ -102,6 +103,7 @@ Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(function() {
+    Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
     Route::get('/ticket/Flowchart', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket');
 
 });
@@ -110,9 +112,10 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function
     Route::get('/customer/invoiceStatus', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoiceStatus');
     Route::post('/customer/change-locale', [CustomerPortalController::class, 'changeLocale'])->name('customer.change-locale');
     Route::post('/customer/chatbot', [CustomerPortalController::class, 'chatbot'])->name('customer.chatbot');
-    Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
-    Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
+    
     //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
+    Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
+    Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');    
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
@@ -121,6 +124,12 @@ Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(
 });
 
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
+Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
+Route::post('/ticket_dashboard/assign/{id}', [TicketDashboardController::class, 'assignTicket'])->name('assign_ticket');
+Route::post('/ticket_dashboard/unassign/{id}', [TicketDashboardController::class, 'unassignTicket'])->name('unassign_ticket');
+Route::get('/ticket_dashboard/filter', [TicketDashboardController::class, 'filter'])->name('filter_tickets');
+
+
 Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
 Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
 

@@ -89,13 +89,13 @@ class UserSeeder extends Seeder
                 'nationality' => 'Belgian',
                 'changed_default' => 1
             ],
-            [   //Residential Customer
+            [   //Employee who is customer service line 1
                 'id' => 5,
                 'username' => 'ann',
                 'first_name' => 'Ann',
                 'last_name' => 'Doe',
                 'password' => Hash::make('ann'),
-                'employee_profile_id' => null,
+                'employee_profile_id' => 4,
                 'is_company' => 0,
                 'company_name' => null,
                 'email' => 'ann@gmail.com',
@@ -104,13 +104,13 @@ class UserSeeder extends Seeder
                 'nationality' => 'Belgian',
                 'changed_default' => 1
             ],
-            [   
+            [   //Employee who is customer service line 2
                 'id' => 6,
                 'username' => 'marie',
                 'first_name' => 'Marie',
                 'last_name' => 'Doe',
                 'password' => Hash::make('marie'),
-                'employee_profile_id' => null,
+                'employee_profile_id' => 5,
                 'is_company' => 0,
                 'company_name' => null,
                 'email' => 'marie@gmail.com',
@@ -119,13 +119,13 @@ class UserSeeder extends Seeder
                 'nationality' => 'Belgian',
                 'changed_default' => 1
             ],
-            [   
+            [   //Employee who is customer service line 3
                 'id' => 7,
                 'username' => 'mark',
                 'first_name' => 'Mark',
                 'last_name' => 'Doe',
                 'password' => Hash::make('mark'),
-                'employee_profile_id' => null,
+                'employee_profile_id' => 6,
                 'is_company' => 0,
                 'company_name' => null,
                 'email' => 'mark@gmail.com',
