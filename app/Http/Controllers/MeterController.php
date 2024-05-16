@@ -595,8 +595,8 @@ class MeterController extends Controller
 
     public function GasElectricity($userID)
     {
-        $query = 'SELECT t1.user_id, t1.first_name, t1.last_name, t1.street, t1.number, t1.postal_code, t1.city, t1.EAN, t1.type, t1.meter_id, t2.reading_date, t2.latest_reading_value FROM 
-        (SELECT users.id AS user_id, users.first_name, users.last_name, addresses.street, addresses.number, addresses.postal_code, addresses.city, meters.EAN, meters.type, meters.id AS meter_id FROM `users`
+        $query = 'SELECT t1.user_id, t1.first_name, t1.last_name, t1.street, t1.number, t1.postal_code, t1.city, t1.EAN, t1.expecting_reading, t1.type, t1.meter_id, t2.reading_date, t2.latest_reading_value FROM 
+        (SELECT users.id AS user_id, users.first_name, users.last_name, addresses.street, addresses.number, addresses.postal_code, addresses.city, meters.EAN, meters.expecting_reading, meters.type, meters.id AS meter_id FROM `users`
         JOIN customer_addresses on users.id = customer_addresses.user_id
         JOIN addresses on customer_addresses.address_id = addresses.id
         JOIN meter_addresses on addresses.id = meter_addresses.address_id
@@ -735,6 +735,10 @@ class MeterController extends Controller
                     'prev_index_id' => null,
                     'current_index_id' => $current_index_id]
                 );
+
+                $meter = Meter::find($meter_id);
+                $meter->expecting_reading = 0;
+                $meter->save();
             }
             else {
                 $prev_index_id = $prev_index->id;
@@ -754,6 +758,10 @@ class MeterController extends Controller
                     'prev_index_id' => $prev_index_id,
                     'current_index_id' => $current_index_id]
                 );
+
+                $meter = Meter::find($meter_id);
+                $meter->expecting_reading = 0;
+                $meter->save();
             }
 
             Mail::to('anu01872@gmail.com')->send(new IndexValueEnteredByCustomer($user_id, $EAN, $new_index_value, $date, $consumption_value));

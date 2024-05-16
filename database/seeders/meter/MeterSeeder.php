@@ -16,6 +16,8 @@ class MeterSeeder extends Seeder
         $twoYearsDate = Carbon::now()->subYears(2)->toDateString();
         $threeYearsDate = Carbon::now()->subYears(3)->toDateString();
 
+        $expecting_reading = 0;
+
         for($i = 1; $i <= 6; $i++){
             DB::table('meters')->insert([
                 'id' => $i,
@@ -23,7 +25,8 @@ class MeterSeeder extends Seeder
                 'type' => 'Electricity',
                 'installation_date' => '2024-01-01',
                 'status' => 'Installed',
-                'is_smart' => 0
+                'is_smart' => 0,
+                'expecting_reading' => $expecting_reading
             ]);
         }
 
@@ -34,7 +37,8 @@ class MeterSeeder extends Seeder
                 'type' => 'Electricity',
                 'installation_date' => $oneYearDate,
                 'status' => 'Installed',
-                'is_smart' => 0
+                'is_smart' => 0,
+                'expecting_reading' => $expecting_reading
             ]);
         }
 
@@ -44,7 +48,8 @@ class MeterSeeder extends Seeder
             'type' => 'Electricity',
             'installation_date' => '2024-01-01',
             'status' => 'Installed',
-            'is_smart' => 0
+            'is_smart' => 0,
+            'expecting_reading' => $expecting_reading
         ]);
 
         for($i = 11; $i <= 17; $i++){
@@ -54,7 +59,8 @@ class MeterSeeder extends Seeder
                 'type' => 'Electricity',
                 'installation_date' => $oneYearDate,
                 'status' => 'Installed',
-                'is_smart' => 0
+                'is_smart' => 0,
+                'expecting_reading' => $expecting_reading
             ]);
         }
     }

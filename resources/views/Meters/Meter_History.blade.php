@@ -74,7 +74,13 @@
                         <input type="hidden" name="index_values[{{$loop->index}}][user_id]" value="{{$detail->user_id}}"/>
                         <input type="hidden" name="index_values[{{$loop->index}}][EAN]" value="{{$detail->EAN}}"/>
                         <input type="hidden" name="index_values[{{$loop->index}}][meter_id]" value="{{$detail->meter_id}}"/>
-                        <x-text-input class="block mt-1 w-full indexValue" type="text" name="index_values[{{$loop->index}}][new_index_value]" id="{{$detail->meter_id}}" required placeholder="Enter index value" autocomplete="off"/>
+                        @if ($detail->expecting_reading == 1)
+                            <x-text-input class="block mt-1 w-full indexValue" type="text" name="index_values[{{$loop->index}}][new_index_value]" id="{{$detail->meter_id}}" required placeholder="Enter index value" autocomplete="off"/>
+                        @else
+                            <div class="p-2 w-full bg-rose-200 dark:bg-rose-300 rounded-lg flex unneeded">
+                                <p class="ml-4 text-red-700">Not today!</p>
+                            </div>
+                        @endif
                         <div id="validation-{{$detail->meter_id}}" class="mt-5"></div>
                     </div>
                 @endforeach
@@ -106,7 +112,7 @@
             }
 
             function enableButton() {
-                if(document.getElementsByClassName("correct").length == document.getElementsByClassName("meter").length) {
+                if(document.getElementsByClassName("correct").length == document.getElementsByClassName("meter").length - document.getElementsByClassName("unneeded").length) {
                     $('#submit').prop('disabled', false);
                 }
                 else {
