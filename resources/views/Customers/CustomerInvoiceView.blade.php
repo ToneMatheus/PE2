@@ -73,7 +73,7 @@
             <nav class="flex items-center justify-between">
                 <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                     <div>
-                        <p class="text-sm text-gray-700 leading-5">
+                        <p class="text-sm dark:text-white leading-5">
                             {!! __('pagination.Showing') !!}
                             <span class="font-medium">{{ $invoices->firstItem() }}</span>
                             {!! __('pagination.to') !!}
@@ -83,7 +83,6 @@
                             {!! __('pagination.results') !!}
                         </p>
                     </div>
-
                     <div>
                         <span class="relative z-0 inline-flex shadow-sm ml-2">
                             @if ($invoices->onFirstPage())

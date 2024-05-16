@@ -55,9 +55,15 @@ class CustomerPortalController extends Controller
             $invoice->hash = md5($invoice->id . $invoice->customer_contract_id . $invoice->meter_id);
         }
 
-        $sentInvoicesSum = Invoice::where('customer_contract_id', $invoice->customer_contract_id)
-                          ->where('status', 'sent')
-                          ->sum('total_amount');
+        $customerContractId = $user->customerContracts ? $user->customerContracts->first()->id : null;
+
+        if ($customerContractId) {
+            $sentInvoicesSum = Invoice::where('customer_contract_id', $customerContractId)
+                              ->where('status', 'sent')
+                              ->sum('total_amount');
+        } else {
+            $sentInvoicesSum = 0;
+        }
 
         $addresses = DB::table('addresses')
                ->join('meter_addresses', 'addresses.id', '=', 'meter_addresses.address_id')
