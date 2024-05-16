@@ -581,7 +581,7 @@ class MeterController extends Controller
         ->join('addresses','customer_addresses.id','=','addresses.id')
         ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
         ->join('meters','meter_addresses.meter_id','=','meters.id')
-        ->where('users.id', '=', 6)
+        ->where('users.id', '=', $userID)
         ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id')
         ->get();
 

@@ -7,8 +7,9 @@
     <title>Enter index value</title>
 </head>
 <body>
-    <p>Hello, there!</p>
-    <a href="http://localhost:8000/Meter_History/{{$userID}}">Enter your index value here</a>
-    </p>
+    <div>
+        <p> Please log in to our website or click on the link below to access your profile </p>
+        <a href="http://127.0.0.1:8000/Meter_History{{$userID}}">My Profile</a>
+    </div>
 </body>
 </html>

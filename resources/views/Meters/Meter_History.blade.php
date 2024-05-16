@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Meter History</title>
+<x-app-layout>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-</head>
-<body>
-
     <h1>Meter History</h1>
     @if (count($errors) > 0)
         <div class="alert alert-danger">
@@ -89,8 +83,8 @@
                     }
                 })
             })
-        </script> --}}
-        <div class="content">
+        </script>
+        {{-- <div class="content">
             <h1>Energy Consumption History</h1>
             <canvas id="consumptionChart"></canvas>
         </div>
@@ -100,9 +94,6 @@
         <script src="/js/consumptionChart.js"></script>
         <button onclick="fetchData('week')">Week</button>
         <button onclick="fetchData('month')">Month</button>
-        <button onclick="fetchData('year')">Year</button>
-    </body>
-    </html>
-
-
+        <button onclick="fetchData('year')">Year</button> --}}
+    </x-app-layout>
 
