@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\JobDispatched;
 use App\Http\Controllers\EstimationController;
 use App\Models\{
     User, 
@@ -138,7 +139,8 @@ class InvoiceRunJob implements ShouldQueue
                     ->update(['expecting_reading' => 0]);
                 }//Reminder index values 1 week prior invoice run
                 elseif($invoiceDate->copy()->subWeek() == $now){
-                    MeterReadingReminderJob::dispatch($customer->uID, $customer->mID);
+                    event(new JobDispatched($this->JobRunId, "MeterReadingReminderJob"));
+                    MeterReadingReminderJob::dispatch($this->JobRunId, $customer->uID, $customer->mID);
                 } //Check if needs an invoice now
                 elseif($invoiceDate->copy() == $now){
                     $this->generateYearlyInvoice($customer, $lastInvoiceDate, $invoiceDate->copy()->addYear());
@@ -279,7 +281,8 @@ class InvoiceRunJob implements ShouldQueue
             $this->sendAnnualMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
             EstimationController::UpdateEstimation($customer->mID);  
         } else {
-            dispatch(new MissingMeterReadingJob($customer->uID, $customer->mID));
+            event(new JobDispatched($this->JobRunId, "MissingMeterReadingJob"));
+            dispatch(new MissingMeterReadingJob($this->JobRunId, $customer->uID, $customer->mID));
         }
     }
 

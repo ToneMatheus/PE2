@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\JobCompleted;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,8 +24,9 @@ class MissingMeterReadingJob implements ShouldQueue
     protected $customeruID;
     protected $customermID;
 
-    public function __construct($customeruID, $customermID, $logLevel = null)
+    public function __construct($jobRunId, $customeruID, $customermID, $logLevel = null)
     {
+        $this->JobRunId = $jobRunId;
         $this->LoggingLevel = $logLevel;
         $this->customeruID = $customeruID;
         $this->customermID = $customermID;
@@ -44,12 +46,13 @@ class MissingMeterReadingJob implements ShouldQueue
             Meter::where('id', $this->customermID)->update(['expecting_reading' => 1]);
 
             if ($user) {
-                Mail::to('shaunypersy10@gmail.com')->send(new MissingMeterReading($user));
+                $this->sendMailInBackground("customer@mail.com", MissingMeterReading::class, [$user]);
             } else {
                 Log::error('User not found for MeterReadingReminderJob');
             }
         } catch (\Exception $e) {
             Log::error("Error occurred while processing MeterReadingReminderJob: {$e->getMessage()}");
         }
+        event(new JobCompleted($this->JobRunId, $this->__getShortClassName()));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\JobCompleted;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -57,5 +58,6 @@ class _SendMailJob implements ShouldQueue
         else{
             $this->logInfo($this->invoiceID , "Succesfully sent mail.");
         }
+        event(new JobCompleted($this->JobRunId, $this->__getShortClassName()));
     }
 }

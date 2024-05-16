@@ -1,6 +1,9 @@
 <?php
 namespace App\Traits;
 
+use App\Events\JobCompleted;
+use App\Events\JobDispatched;
+use App\Events\JobStarted;
 use Carbon\Carbon;
 use App\Models\CronJobRun;
 use App\Models\CronJobRunLog;
@@ -11,6 +14,12 @@ trait cronJobTrait
 {
     private $JobRunId;
     private $LoggingLevel;
+
+    private function __getShortClassName(){
+        $className = get_class($this);
+        $classNameParts = explode('\\', $className);
+        return end($classNameParts);
+    }
 
     private function __Log($logLevel, $invoiceId, $message) {
         $logLevelMap = [
@@ -38,18 +47,11 @@ trait cronJobTrait
         }
     }
 
-    private function __getShortClassName(){
-        $className = get_class($this);
-        $classNameParts = explode('\\', $className);
-        return end($classNameParts);
-    }
-
     private function jobStart(){
         // Log that the job execution has started
+        if ($this->JobRunId != null) return;
 
         try {
-            Log::info('Job: '.$this->__getShortClassName().' execution started.');
-    
             // Create new JobRun in the database
             $jobRun = CronJobRun::create([
                 'name' => class_basename($this),
@@ -59,30 +61,14 @@ trait cronJobTrait
             ]);
     
             $this->JobRunId = $jobRun->id;
+            event(new JobDispatched($this->JobRunId, $this->__getShortClassName()));
         } catch (\Exception $e) {
             Log::error("Error occurred while starting the job: " . $e->getMessage());
         }
     }
 
     private function jobCompletion($message){
-        // Log that the job execution has completed
-        try {
-            Log::info('Job: '.$this->__getShortClassName().' execution completed.');
-    
-            $job = CronJobRun::find($this->JobRunId);
-            $job->ended_at = now();
-    
-            if (empty($job->error_message)) {
-                $job->status = 'Completed';
-                $job->error_message = $message;
-            } else {
-                $job->status = 'Failed';
-            }
-    
-            $job->save();
-        } catch (\Exception $e) {
-            Log::error("Error occurred while completing the job: " . $e->getMessage());
-        }
+        event(new JobCompleted($this->JobRunId, $this->__getShortClassName(), $message));
     }
 
     private function jobException($errorMessage){
@@ -128,6 +114,8 @@ trait cronJobTrait
             Log::info("Dispatching mail job");
         }
         
+        Log::info($this->JobRunId);
+        event(new JobDispatched($this->JobRunId, "_SendMailJob"));
         _SendMailJob::dispatch($mailTo, $mailableClass, serialize($mailableClassParams), null, null, $this->JobRunId, $invoiceID);
     }
 
@@ -138,6 +126,7 @@ trait cronJobTrait
             Log::info("Dispatching mail job");
         }
         
+        event(new JobDispatched($this->JobRunId, "_SendMailJob"));
         _SendMailJob::dispatch($mailTo, $mailableClass, serialize($mailableClassParams), $pdfView, serialize($pdfParams), $this->JobRunId, $invoiceID, $this->LoggingLevel);
     }
 
