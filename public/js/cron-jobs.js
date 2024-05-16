@@ -141,3 +141,16 @@ function showToast(toastid, message, duration = 5000) {
         toast.classList.add('hidden');
     }, duration);
 }
+
+function toggleDetails(element) {
+    const row = element.parentNode;
+    const nextRow = row.nextElementSibling;
+    const arrowIcon = element.querySelector('svg');
+    if (nextRow.classList.contains('hidden')) {
+        nextRow.classList.remove('hidden');
+        arrowIcon.classList.add("rotate-180");
+    } else {
+        nextRow.classList.add('hidden');
+        arrowIcon.classList.remove("rotate-180");
+    }
+}
