@@ -17,6 +17,7 @@ class Employee_Ticket extends Model
     ];
 
     use HasFactory;
+    public $timestamps = false;
 
     public function employee_profile(): BelongsTo
     {

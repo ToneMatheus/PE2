@@ -115,6 +115,10 @@ Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(
 
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
 Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
+Route::post('/ticket_dashboard/assign/{id}', [TicketDashboardController::class, 'assignTicket'])->name('assign_ticket');
+Route::post('/ticket_dashboard/unassign/{id}', [TicketDashboardController::class, 'unassignTicket'])->name('unassign_ticket');
+Route::get('/ticket_dashboard/filter', [TicketDashboardController::class, 'filter'])->name('filter_tickets');
+
 
 Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
 Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
