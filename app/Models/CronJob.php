@@ -11,7 +11,8 @@ class CronJob extends Model
         'scheduled_day',
         'scheduled_month',
         'scheduled_time',
-        'is_enabled'
+        'is_enabled',
+        'log_level'
     ];
 
     protected $attributes = [

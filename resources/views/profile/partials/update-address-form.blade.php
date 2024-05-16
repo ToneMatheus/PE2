@@ -2,6 +2,9 @@
 
 <!-- CH enkel billing address aan passen. en niet alles.-->
 <!-- CH adres niet kunnen aanpassen -->
+
+<!-- TODO als de type huis op appartement staat moet je de huisbaas ook in zetten. dit is met een checkbox. -->
+    <!-- TODO deze checkbox kan ook aangepast worden-->
 <section>
     @php
         $aantal = 0;
