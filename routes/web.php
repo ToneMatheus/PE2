@@ -36,6 +36,7 @@ use App\Http\Controllers\RelationsController;
 
 
 
+use App\Http\Controllers\TicketOverviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -209,6 +210,10 @@ Route::post('/employee/invoices', [InvoiceController::class, 'rerunValidation'])
 //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
 Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
 Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
+
+Route::get('/ticket_overview', [TicketOverviewController::class, 'index'])->name('ticket_overview');
+
+Route::get('/managerticketoverview', [ManagerTicketOverviewController::class, 'index'])->name('managerticketoverview');
 
 
 Route::get('/test', function () {
