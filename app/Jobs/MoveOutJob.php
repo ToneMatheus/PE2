@@ -72,6 +72,7 @@ class MoveOutJob implements ShouldQueue
                         'meter_id' => $out_meter->id,
                         'reading_date' => $end_date,
                         'status' => 'unread',
+                        'priority' => 1
                         ]);
                 }
             }
