@@ -21,7 +21,7 @@ trait cronJobTrait
         return end($classNameParts);
     }
 
-    private function __Log($logLevel, $invoiceId, $message) {
+    private function __Log($logLevel, $invoiceId, $message, $detailedMessage) {
         $logLevelMap = [
             0 => "Debug",
             1 => "Info",
@@ -40,6 +40,7 @@ trait cronJobTrait
                 'cron_job_run_id' => $this->JobRunId,
                 'invoice_id' => $invoiceId,
                 'log_level' => $logLevelString,
+                'detailed_message' => $detailedMessage,
                 'message' => $message,
             ]);
         } catch (\Exception $e) {
@@ -87,24 +88,24 @@ trait cronJobTrait
         }
     }
 
-    public function logDebug($invoiceId, $message){
-        $this->__Log(0, $invoiceId, $message);
+    public function logDebug($invoiceId, $message, $detailedMessage = null){
+        $this->__Log(0, $invoiceId, $message, $detailedMessage);
     }
 
-    public function logInfo($invoiceId, $message){
-        $this->__Log(1, $invoiceId, $message);
+    public function logInfo($invoiceId, $message, $detailedMessage = null){
+        $this->__Log(1, $invoiceId, $message, $detailedMessage);
     }
 
-    public function logWarning($invoiceId, $message){
-        $this->__Log(2, $invoiceId, $message);
+    public function logWarning($invoiceId, $message, $detailedMessage = null){
+        $this->__Log(2, $invoiceId, $message, $detailedMessage);
     }
 
-    public function logCritical($invoiceId, $message){
-        $this->__Log(3, $invoiceId, $message);
+    public function logCritical($invoiceId, $message, $detailedMessage = null){
+        $this->__Log(3, $invoiceId, $message, $detailedMessage);
     }
 
-    public function logError($invoiceId, $message){
-        $this->__Log(4, $invoiceId, $message);
+    public function logError($invoiceId, $message, $detailedMessage = null){
+        $this->__Log(4, $invoiceId, $message, $detailedMessage);
     }
 
     public function sendMailInBackground($mailTo, $mailableClass, $mailableClassParams, $invoiceID = null){
