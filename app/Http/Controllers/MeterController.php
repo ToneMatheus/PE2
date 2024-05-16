@@ -703,6 +703,7 @@ class MeterController extends Controller
             $meter_id = $index_value['meter_id'];
             $new_index_value = $index_value['new_index_value'];
             $EAN = $index_value['EAN'];
+            $user_id = $index_value['user_id'];
 
             $prev_index = DB::table('index_values')
                             ->join('consumptions', 'consumptions.current_index_id', '=', 'index_values.id')
@@ -755,7 +756,7 @@ class MeterController extends Controller
                 );
             }
 
-            Mail::to('anu01872@gmail.com')->send(new IndexValueEnteredByCustomer($EAN, $new_index_value, $date, $consumption_value));
+            Mail::to('anu01872@gmail.com')->send(new IndexValueEnteredByCustomer($user_id, $EAN, $new_index_value, $date, $consumption_value));
         }
         return redirect('Meter_History/'.$index_values[0]['user_id']);
     }

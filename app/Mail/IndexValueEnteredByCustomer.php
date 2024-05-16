@@ -20,6 +20,7 @@ class IndexValueEnteredByCustomer extends Mailable
      */
     //$name so I can check the mailaddress
     public function __construct(
+        public $user_id,
         public $EAN,
         public $index_value,
         public $date,
