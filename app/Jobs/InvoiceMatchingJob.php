@@ -18,7 +18,9 @@ use App\Models\Customer_Address;
 
 class InvoiceMatchingJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
+    use Dispatchable, InteractsWithQueue, SerializesModels, cronJobTrait;
+
+    public $connection = 'sync';
 
     /**
      * Create a new job instance.
@@ -136,30 +138,39 @@ class InvoiceMatchingJob implements ShouldQueue
         else
         {
             //find userID
-            $userID = Customer_Address::select('user_id')
+            $userIDs = Customer_Address::select('user_id')
                 ->where('address_id', '=', $address->id)
                 ->whereNull('end_date')
                 ->distinct()
-                ->first()
-                ->value('user_id');
+                ->get()
+                ->pluck('user_id')
+                ->toArray();
 
-            //find invoice
-            $invoiceRecord = Invoice::leftJoin('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
-            ->where('customer_contracts.user_id', $userID)
-            ->where('invoices.total_amount', $payment->amount)
-            ->whereNotIn('invoices.status', ['paid', 'pending'])
-            ->first();
-
-            if (is_null($invoiceRecord)) //no matching invoices found for this user
+            if (count($userIDs) == 0) //no user found
                 return false;
 
-            $invoiceID = $invoiceRecord->id;
-            $editPayment = Payment::find($payment->id);
-            $editPayment->has_matched = 1;
-            $editPayment->invoice_id = $invoiceID;
-            $editPayment->save();
-            $this->setPaid($invoiceID);
-            return true;
+            foreach ($userIDs as $userID)
+            {
+                //find invoice
+                $invoiceRecord = Invoice::leftJoin('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
+                ->where('customer_contracts.user_id', $userID)
+                ->where('invoices.total_amount', $payment->amount)
+                ->whereNotIn('invoices.status', ['paid', 'pending'])
+                ->first();
+
+                if (!is_null($invoiceRecord)) //a matching invoice found
+                {
+                    $invoiceID = $invoiceRecord->id;
+                    $editPayment = Payment::find($payment->id);
+                    $editPayment->has_matched = 1;
+                    $editPayment->invoice_id = $invoiceID;
+                    $editPayment->save();
+                    $this->setPaid($invoiceID);
+                    return true;
+                }
+            }
+            
+            return false; //no matching invoices found
         }
     }
 
