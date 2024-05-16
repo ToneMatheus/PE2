@@ -156,6 +156,36 @@ class IndexValueSeeder extends Seeder
                 'reading_value' => 10800,
                 'meter_id' => 9
             ],
+            [
+                'id' => 13,
+                'reading_date' => '2025-01-01',
+                'reading_value' => 11700,
+                'meter_id' => 9
+            ],
+            [
+                'id' => 14,
+                'reading_date' => '2025-02-01',
+                'reading_value' => 12600,
+                'meter_id' => 9
+            ],
+            [
+                'id' => 15,
+                'reading_date' => '2025-03-01',
+                'reading_value' => 13500,
+                'meter_id' => 9
+            ],
+            [
+                'id' => 16,
+                'reading_date' => '2025-04-01',
+                'reading_value' => 14400,
+                'meter_id' => 9
+            ],
+            [
+                'id' => 17,
+                'reading_date' => '2025-05-01',
+                'reading_value' => 15300,
+                'meter_id' => 9
+            ],
         ]);
     }
 }
