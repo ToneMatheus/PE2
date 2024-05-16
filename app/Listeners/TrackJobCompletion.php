@@ -2,11 +2,13 @@
 
 namespace App\Listeners;
 
+use App\Mail\JobDoneNotification;
 use App\Models\CronJobRun;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class TrackJobCompletion
 {
@@ -58,6 +60,7 @@ class TrackJobCompletion
         }
         $job->save();
         
+        Mail::to(env("MAIL_DEBUG"))->send(new JobDoneNotification($job->name));
         Log::info("I am done with all the subjobs sending out notification.");
     }
 }
