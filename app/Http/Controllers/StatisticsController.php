@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Charts\IncomeChart;
+use App\Models\Customer_contracts;
 use App\Models\Invoice;
 use App\Models\Invoice_line;
-use ArielMejiaDev\LarapexCharts\LarapexChart;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -52,6 +52,65 @@ class StatisticsController extends Controller
         $ratioPaidUnpaid =  100-($invoicesUnpaid/$invoicesTotalCount*100); // Calculate the ratio between paid and unpaid invoices
         $totalSoldElectricity = $invoice_lines->collapse()->where('type', 'Electricity')->sum('amount');
 
-        return view('statistics.index', ['chart' => $chart->build($labels, $values, $startDate, $endDate)], compact('totalGrossIncome', 'totalPotentialGrossIncome', 'amountDue', 'ratioPaidUnpaid', 'totalSoldElectricity', 'startDate', 'endDate'));
+        //CREDIT SCORE CALCULATIONS
+        function calculateLatePaymentPenalty($days_overdue) {
+            // Calculate the penalty points based on the number of days overdue
+            return min(floor($days_overdue / 14), 6) * 3;
+        }
+
+        // Load all customer contracts with their invoices and payments, and include the user
+        $contracts = Customer_contracts::with(['invoices.payments', 'user'])->get();
+        $userCreditScores = collect();
+
+        foreach ($contracts as $contract) {
+            $user = $contract->user;
+            if (!$user) {
+                continue; // Skip if the contract has no associated user
+            }
+
+            // Initialize credit score for each user once
+            if (!$userCreditScores->contains('user.id', $user->id)) {
+                $userCreditScores->push(['user' => $user, 'credit_score' => 100]);
+            }
+            // Calculate the penalty for this contract
+            $penalty = 0;
+
+            foreach ($contract->invoices as $invoice) {
+                // Check for late payments
+                foreach ($invoice->payments as $payment) {
+                    if ($payment->payment_date > $invoice->due_date) {
+                        $due_date = Carbon::parse($invoice->due_date);
+                        $payment_date = Carbon::parse($payment->payment_date);
+                        $days_overdue = $payment_date->diffInDays($due_date, true);
+                        $penalty += calculateLatePaymentPenalty($days_overdue);
+                    }
+                }
+
+                // Check for overdue invoices without payments
+                if ($invoice->payments->isEmpty() && Carbon::parse($invoice->due_date)->isPast()) {
+                    $due_date = Carbon::parse($invoice->due_date);
+                    $days_overdue = Carbon::now()->diffInDays($due_date, true);
+                    $penalty += calculateLatePaymentPenalty($days_overdue);
+                }
+            }
+
+            // Update the user's credit score in the collection
+            $userCreditScores = $userCreditScores->map(function ($item) use ($user, $penalty) {
+                if ($item['user']->id == $user->id) {
+                    $item['credit_score'] = max(0, $item['credit_score'] - $penalty); // Ensure the credit score does not go below 0
+                }
+                return $item;
+            });
+        }
+
+        // Sort the collection by credit score, from low to high
+        $userCreditScores = $userCreditScores->sortBy('credit_score');
+
+        // Optionally, you can reset the keys to get a simple array of sorted results
+        $userCreditScores = $userCreditScores->values();
+
+
+
+        return view('statistics.index', ['chart' => $chart->build($labels, $values, $startDate, $endDate)], compact('totalGrossIncome', 'totalPotentialGrossIncome', 'amountDue', 'ratioPaidUnpaid', 'totalSoldElectricity', 'startDate', 'endDate', 'userCreditScores'));
     }
 }

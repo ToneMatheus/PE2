@@ -37,6 +37,7 @@ use App\Http\Controllers\GasElectricityController;
 use App\Http\Controllers\RelationsController;
 use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
+use App\Http\Controllers\StatisticsController;
 
 /*
 |--------------------------------------------------------------------------

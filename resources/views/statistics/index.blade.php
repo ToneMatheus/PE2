@@ -43,6 +43,35 @@
         <div class="bg-white shadow-md rounded-lg p-4 mt-8">
             {!! $chart->container() !!}
         </div>
+        {{-- Credit score container --}}
+        <div class="container mx-auto px-4 py-8">
+            <h1 class="text-3xl font-bold mb-6">Customer scores</h1>
+            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                <table class="w-full table-auto">
+                    <thead class="bg-gray-200">
+                        <tr>
+                            <th class="w-1/4 text-left py-2 px-4">Username</th>
+                            <th class="w-1/4 text-left py-2 px-4">Name</th>
+                            <th class="w-1/4 text-left py-2 px-4">Email</th>
+                            <th class="w-1/4 text-left py-2 px-4">Nationality</th>
+                            <th class="w-1/4 text-left py-2 px-4">Credit Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($userCreditScores as $userCredit)
+                            <tr class="{{ $loop->even ? 'bg-gray-100' : '' }}">
+                                <td class="py-2 px-4">{{ $userCredit['user']->username }}</td>
+                                <td class="py-2 px-4">{{ $userCredit['user']->first_name }} {{ $userCredit['user']->last_name }}</td>
+                                <td class="py-2 px-4">{{ $userCredit['user']->email }}</td>
+                                <td class="py-2 px-4">{{ $userCredit['user']->nationality }}</td>
+                                <td class="py-2 px-4">{{ $userCredit['credit_score'] }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
     <script>
         function formatYAxisDecimal() {
