@@ -20,7 +20,7 @@ class ReminderEnterIndexCustomerMail extends Mailable
      */
     //$name so I can check the mailaddress
     public function __construct(
-        public $userID
+        public $user
     )
     {}
 
@@ -33,7 +33,7 @@ class ReminderEnterIndexCustomerMail extends Mailable
     {
         return new Envelope(
             from: new Address('energysupplier@gmail.com', 'Energy Supplier'),
-            subject: 'Enter',
+            subject: 'Enter index value for your meters',
         );
     }
 

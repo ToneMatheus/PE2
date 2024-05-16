@@ -56,23 +56,17 @@ class EnterIndexCustomerJob implements ShouldQueue
             $diff = $install->diffInYears($now);
 
             if ($diff > 0 && $diff % 3 <= 2) {
-                $userID = DB::table('users')
+                $user = DB::table('users')
                         ->join('customer_addresses','users.id','=','customer_addresses.user_id')
                         ->join('addresses','customer_addresses.id','=','addresses.id')
                         ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
                         ->join('meters','meter_addresses.meter_id','=', 'meters.id')
                         ->where('meters.id', '=', $meter->id)
-                        ->select('users.id', 'users.first_name')
+                        ->select('users.id', 'users.first_name', 'users.last_name')
                         ->get()
                         ->toArray();
 
-                         //SELECT users.id FROM users
-                        // RIGHT JOIN customer_addresses ON users.id = customer_addresses.user_id
-                        // RIGHT JOIN addresses on customer_addresses.id = addresses.id
-                        // RIGHT JOIN meter_addresses on addresses.id = meter_addresses.address_id
-                        // RIGHT JOIN meters on meter_addresses.meter_id = meters.id
-                        // WHERE meters.id = 6;
-                Mail::to('shresthaanshu555@gmail.com')->send(new ReminderEnterIndexCustomerMail($userID[0]->id));
+                Mail::to('anu01872@gmail.com')->send(new ReminderEnterIndexCustomerMail($user));
             }
         }
     }

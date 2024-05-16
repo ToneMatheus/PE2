@@ -1,12 +1,12 @@
-<!DOCTYPE html>
+{{-- <!DOCTYPE html>
 <html>
 <head>
     <title>Meter History</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
-<body>
-
+<body> --}}
+<x-app-layout title="Meter history">
     <h1>Meter History</h1>
     @if (count($errors) > 0)
         <div class="alert alert-danger">
@@ -17,9 +17,8 @@
             </ul>
         </div>
     @endif
-
-    <h1>Hello, {{$details[0]->first_name}}</h1>
-    <div class="modal fade" id="indexModal" tabindex="-1" aria-labelledby="indexModalLabel" aria-hidden="true">
+    
+    {{-- <div class="modal fade" id="indexModal" tabindex="-1" aria-labelledby="indexModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -45,9 +44,13 @@
                 </form>
             </div>
         </div>
-    </div>
-
-    <div>
+    </div> --}}
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            Hello, {{$details[0]->first_name}}
+        </h2>
+    </x-slot>
+    <div class="py-8 dark:text-white">
         <h1>Your meters</h1>
         @foreach ($details as $detail)
             <div class="meter">
@@ -101,8 +104,8 @@
         <button onclick="fetchData('week')">Week</button>
         <button onclick="fetchData('month')">Month</button>
         <button onclick="fetchData('year')">Year</button> --}}
-    </body>
-    </html>
-
+    {{-- </body>
+    </html> --}}
+    </x-app-layout>
 
 

@@ -219,10 +219,10 @@ class MeterController extends Controller
                 {
                     $output .= '
                     <tr>
-                    <td>'.$i.'</td>
-                    <td>'.$row->first_name.' '.$row->last_name.'</td>
+                    <td class="text-center">'.$i.'</td>
+                    <td class="font-bold">'.$row->first_name.' '.$row->last_name.'</td>
                     <td>'.$row->street.' '.$row->number.', '.$row->city.'</td>
-                    <td>'.$row->assigned_to.'</td>';
+                    <td class="text-center">'.$row->assigned_to.'</td>';
 
                     $output .= '
                     <td>
