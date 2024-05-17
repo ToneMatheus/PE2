@@ -48,7 +48,8 @@
         </div>
     </div>
     
-    <a href="#" class="block">
+    <div>
+      <a href="#" class="block">
         <div class="tw=block flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4" style="margin-left: 40px">
             <span class="text-black-700 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2" style="font-size: 18px; font-weight: 900;">Daily tasks</span>
             <ul class="list-group" style="width: 280px">
@@ -77,5 +78,11 @@
         </div>
     </a>
 
-    
+      <diV class="tw=block flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4" style="margin-left: 40px; margin-top: 30px">
+        <h3 class="card-title h3" style=" font-weight: 900; font-size: 18px">Weekly reports</h3>
+        <p>What have you done this week?</p>
+        <img src='/images/weekly-report.png' style="width: 200px"/>
+        <p>Click <a href="{{ route('weeklyActivity') }}" class="text-blue-500" style=" font-weight: 900;">here</a> to submit weekly report</p>
+      </diV>
+    </div>
 </div>

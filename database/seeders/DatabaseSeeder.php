@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             Employee\HolidaySeeder::class,
             Employee\TeamsSeeder::class,
             Employee\TeamMembersSeeder::class,
+            WeeklyActivitySeeder::class,
 
             Customer\CustomerContractSeeder::class,
             Customer\CustomerAddressSeeder::class,
