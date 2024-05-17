@@ -49,7 +49,7 @@ class PaymentController extends Controller
         $rules = [
             'amount' => 'required|numeric',
             'payment_date' => 'required|date',
-            'address' => 'regex:/^\w+\s+\d+\s+(?:[A-Za-z0-9]+\s+)?\d*\s*\w+\s+\w+$/'
+            'address' => ['nullable', 'regex:/^\w+\s+\d+\s+(?:[A-Za-z0-9]+\s+)?\d*\s*\w+\s+\w+$/']
         ];
 
         $messages = [
