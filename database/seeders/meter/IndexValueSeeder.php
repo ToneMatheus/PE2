@@ -83,7 +83,6 @@ class IndexValueSeeder extends Seeder
                 'reading_value' => 3100,
                 'meter_id' => 4
             ],
-        
             [
                 'id' => 13,
                 'reading_date' => '2024-01-01',
@@ -157,31 +156,31 @@ class IndexValueSeeder extends Seeder
                 'meter_id' => 9
             ],
             [
-                'id' => 13,
+                'id' => 25,
                 'reading_date' => '2025-01-01',
                 'reading_value' => 11700,
                 'meter_id' => 9
             ],
             [
-                'id' => 14,
+                'id' => 26,
                 'reading_date' => '2025-02-01',
                 'reading_value' => 12600,
                 'meter_id' => 9
             ],
             [
-                'id' => 15,
+                'id' => 27,
                 'reading_date' => '2025-03-01',
                 'reading_value' => 13500,
                 'meter_id' => 9
             ],
             [
-                'id' => 16,
+                'id' => 28,
                 'reading_date' => '2025-04-01',
                 'reading_value' => 14400,
                 'meter_id' => 9
             ],
             [
-                'id' => 17,
+                'id' => 29,
                 'reading_date' => '2025-05-01',
                 'reading_value' => 15300,
                 'meter_id' => 9
