@@ -7,6 +7,8 @@ use App\Models\Invoice;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
+use App\Models\Payment;
+
 class PaymentController extends Controller
 {
     public function show($id, $hash)
@@ -35,5 +37,26 @@ class PaymentController extends Controller
         $invoice->update(['status' => 'paid']);
 
         return redirect()->back()->with('success', 'Invoice successfully paid.');
+    }
+
+    public function create()
+    {
+        return view('Invoices.add_payment');
+    }
+
+    public function add(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric',
+            'payment_date' => 'required|date',
+            'IBAN' => 'required|string',
+            'name' => 'nullable|string',
+            'address' => 'nullable|string',
+            'structured_communication' => 'required|string'
+        ]);
+
+        Payment::create($request->all());
+
+        return redirect()->route('payment.create')->with('success', 'Payment successfully added.');
     }
 }
