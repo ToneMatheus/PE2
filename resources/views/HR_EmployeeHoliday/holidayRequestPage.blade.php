@@ -583,7 +583,7 @@
             //}
         }
 
-        function checkingDays(i, selected, len_selectedElements)
+        function checkingDays(i, selected, len_selectedElements, clr_var)
         {
             var testW = len_selectedElements;
             var dayNum = dayNumList[i]; 
@@ -599,12 +599,17 @@
                 div2.style.visibility='visible'
                 console.log("<?php echo $credit; ?>")
             }
-            else
+            else if(clr_var == 'green')
             {
                 div2.style.visibility='hidden'
                 selected.classList.add("added");
             
                 console.log("len: " + testW);
+            }
+            else if(clr_var == 'pink')
+            {
+                div2.style.visibility='hidden'
+                selected.classList.add("added3");
             }
             
         }
@@ -636,7 +641,7 @@
                         }
                         else
                         {
-                            checkingDays(i, selected, len_selectedElements);
+                            checkingDays(i, selected, len_selectedElements, clr_var);
 
                             if(i == selectedElements.length -1)
                             {
@@ -656,7 +661,8 @@
                         }
                         else
                         {
-                            //TODO: check enough sickdays checkingDays(i, selected, len_selectedElements);
+                            //TODO: check enough sickdays 
+                            checkingDays(i, selected, len_selectedElements, clr_var);
 
                             if(i == selectedElements.length -1)
                             {
