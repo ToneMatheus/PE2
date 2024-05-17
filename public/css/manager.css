@@ -15,8 +15,8 @@
 }
 
 table {
-    width: 100%;
     border-collapse: collapse;
+    min-width: max-content;
 }
 
 th, td {
@@ -35,6 +35,33 @@ tr:nth-child(even) {
 
 .legend{
     background-color: white;
-    width: 20%;
+    width: 50%;
     padding: 20px;
+}
+
+.col-10{
+    margin: auto;
+}
+
+#chart {
+    float: right;
+    padding: 30px;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+.requests {
+    /* background-color: white; */
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+.holiday-overview {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+.employee-table th {
+    width: 120px;
 }
