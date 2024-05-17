@@ -140,13 +140,18 @@
             if (!(in_array($e_dayReq, $reqDays))) 
             {
                 $reqDays[] = $e_dayReq;
-                for ($i = $reqDays[0]; $i <= $reqDays[1]; $i++) 
+                // for ($i = $reqDays[0]; $i <= $reqDays[1]; $i++) 
+                // {
+                //     $reqDays[] = $i;
+                // }
+                for($j = $dayReq; $j < $e_dayReq; $j++)
                 {
-                    $reqDays[] = $i;
+                    $reqDays[] = $j;
                 }
                 //print_r($reqDays);
             } 
         }
+        //print_r($reqDays);
     }
 
     while ($row = mysqli_fetch_array($result3))
@@ -170,9 +175,13 @@
             if (!(in_array($e_dayReq, $reqDays))) 
             {
                 $reqAcptDays[] = $e_dayReq;
-                for ($i = $reqDays[0]; $i <= $reqDays[1]; $i++) 
+                // for ($i = $reqDays[0]; $i <= $reqDays[1]; $i++) 
+                // {
+                //     $reqDays[] = $i;
+                // }
+                for($j = $dayReq; $j < $e_dayReq; $j++)
                 {
-                    $reqDays[] = $i;
+                    $reqDays[] = $j;
                 }
                 // print_r($reqDays);
             } 
