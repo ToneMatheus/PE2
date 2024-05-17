@@ -40,7 +40,6 @@ class DatabaseSeeder extends Seeder
             Invoice\ProductTariffSeeder::class,
             Invoice\ContractProductSeeder::class,
             Invoice\DiscountSeeder::class,
-            Invoice\PaymentSeeder::class,
 
             Meter\IndexValueSeeder::class,
             Meter\ConsumptionSeeder::class,
@@ -48,6 +47,7 @@ class DatabaseSeeder extends Seeder
             Invoice\InvoiceSeeder::class,
             Invoice\InvoiceLineSeeder::class,
             Invoice\CreditNoteSeeder::class,
+            Invoice\PaymentSeeder::class,
         ]);
     }
 }
