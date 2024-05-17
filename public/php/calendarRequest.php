@@ -96,6 +96,7 @@ else if(isset($_POST['pink']) && isset($_POST['dayNum']))
 else if(isset($_POST['button']))
 {
     $monthTest = $_SESSION['currentM'];
+    $reasonT = $_POST['reason'];
     
     // TODO: send the month (and maybe year) to the request
     if(isset($_SESSION['user']['green']) || isset($_SESSION['user']['pink']))
@@ -143,13 +144,26 @@ else if(isset($_POST['button']))
             }
             else
             {
-                $employee_profile_id = mysqli_real_escape_string($link, $user_id);
+                if(isset($_POST['person']) && $holidayType == 3)
+                {
+                    $person = $_POST['person'];
+                    //echo "$person";
+                    $employee_profile_id = mysqli_real_escape_string($link, $person);
+                    $fName = $_POST['fileName'];
+                    $fName1 = "public/$fName";
+                    $fileLoc = mysqli_real_escape_string($link, $fName);
+
+                }
+                else
+                {
+                    $employee_profile_id = mysqli_real_escape_string($link, $user_id);
+                    $fileLoc = mysqli_real_escape_string($link, "");
+                }
                 $request_date = mysqli_real_escape_string($link, $todayRequest);
                 $start_date = mysqli_real_escape_string($link, $thsDay);
                 $end_date = mysqli_real_escape_string($link, $scdDay);
                 $holiday_type_id = mysqli_real_escape_string($link, $holidayType);
-                $reason = mysqli_real_escape_string($link, $type);
-                $fileLoc = mysqli_real_escape_string($link, "");
+                $reason = mysqli_real_escape_string($link, $reasonT);
                 $manager_approval = mysqli_real_escape_string($link, 0);
                 $boss_approval = mysqli_real_escape_string($link, 0);
                 $is_active = mysqli_real_escape_string($link, 1);
@@ -234,13 +248,25 @@ else if(isset($_POST['button']))
                                 }
                                 else
                                 {
-                                    $employee_profile_id = mysqli_real_escape_string($link, $user_id);
+                                    if(isset($_POST['person']) && $holidayType == 3)
+                                    {
+                                        $person = $_POST['person'];
+                                        //echo "$person";
+                                        $employee_profile_id = mysqli_real_escape_string($link, $person);
+                                        $fName = $_POST['fileName'];
+                                        $fName1 = "public/$fName";
+                                        $fileLoc = mysqli_real_escape_string($link, $fName);
+                                    }
+                                    else
+                                    {
+                                        $employee_profile_id = mysqli_real_escape_string($link, $user_id);
+                                        $fileLoc = mysqli_real_escape_string($link, "");
+                                    }
                                     $request_date = mysqli_real_escape_string($link, $todayRequest);
                                     $start_date = mysqli_real_escape_string($link, $thsDay);
                                     $end_date = mysqli_real_escape_string($link, $scdDay);
                                     $holiday_type_id = mysqli_real_escape_string($link, $holidayType);
-                                    $reason = mysqli_real_escape_string($link, $type);
-                                    $fileLoc = mysqli_real_escape_string($link, "");
+                                    $reason = mysqli_real_escape_string($link, $reasonT);
                                     $manager_approval = mysqli_real_escape_string($link, 0);
                                     $boss_approval = mysqli_real_escape_string($link, 0);
                                     $is_active = mysqli_real_escape_string($link, 1);
@@ -301,13 +327,25 @@ else if(isset($_POST['button']))
                                 }
                                 else
                                 {
-                                    $employee_profile_id = mysqli_real_escape_string($link, $user_id);
+                                    if(isset($_POST['person']) && $holidayType == 3)
+                                    {
+                                        $person = $_POST['person'];
+                                        //echo "$person";
+                                        $employee_profile_id = mysqli_real_escape_string($link, $person);
+                                        $fName = $_POST['fileName'];
+                                        $fName1 = "public/$fName";
+                                        $fileLoc = mysqli_real_escape_string($link, $fName);
+                                    }
+                                    else
+                                    {
+                                        $employee_profile_id = mysqli_real_escape_string($link, $user_id);
+                                        $fileLoc = mysqli_real_escape_string($link, "");
+                                    }
                                     $request_date = mysqli_real_escape_string($link, $todayRequest);
                                     $start_date = mysqli_real_escape_string($link, $thsDay);
                                     $end_date = mysqli_real_escape_string($link, $scdDay);
                                     $holiday_type_id = mysqli_real_escape_string($link, $holidayType);
-                                    $reason = mysqli_real_escape_string($link, $type);
-                                    $fileLoc = mysqli_real_escape_string($link, "");
+                                    $reason = mysqli_real_escape_string($link, $reasonT);
                                     $manager_approval = mysqli_real_escape_string($link, 0);
                                     $boss_approval = mysqli_real_escape_string($link, 0);
                                     $is_active = mysqli_real_escape_string($link, 1);
@@ -410,6 +448,7 @@ else if(isset($_POST['button']))
     //     echo("Add successful!</br>");
     // }
     */
+    
 } 
 else if(isset($_POST['cancel']))
 {

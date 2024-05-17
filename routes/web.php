@@ -28,6 +28,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UtilityController;
 use App\Http\Controllers\CronJobController;
 use App\Http\Controllers\EstimationController;
+use App\Http\Controllers\FlowchartAscaladeTicketController;
 
 use App\Http\Controllers\meterreading;
 use App\Models\MeterReading as ModelsMeterReading;
@@ -43,6 +44,7 @@ use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
 use App\Http\Controllers\NewEmployeeController;
 use App\Http\Controllers\holidayRequest;
+use App\Http\Controllers\UploadController;
 
 
 /*
@@ -74,6 +76,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update.profile');
     Route::patch('/profile/address', [ProfileController::class, 'updateAddress'])->name('profile.update.address');
     Route::patch('/profile/address/billing', [ProfileController::class, 'updateBillingAddress'])->name('profile.update.address.billing');
+    Route::patch('/profile/address/add', [ProfileController::class, 'addAddress'])->name('profile.add.address');
+
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -111,6 +115,7 @@ Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(function() {
+    Route::get('/ticket/Flowchart', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket');
 
 });
 
@@ -276,7 +281,7 @@ Route::post('/relations/update', [RelationsController::class, 'updateRelation'])
 //Route::get('/holidayRequest', function() {  return view('holidayRequest');  })->name('request');
 
 Route::get('/holidayRequest', [holidayRequest::class, 'index'])->name('request');
-
+Route::post('/upload', [UploadController::class, 'uploadFile'])->name('upload.file'); 
 // Route::get('/holidayRequest', function(){
 //     return view('holidayRequestPage');
 // })->name('request');
@@ -340,7 +345,8 @@ Route::controller(InvoiceController::class)->group(function () {
 Route::get('/confirm-email/{encryptedUserID}/{email}', [ProfileController::class, 'confirmEmail'])->name('activate.account');
 Route::get('/confirm-emailTEST/{token}/{email}', [RegisteredUserController::class, 'confirmEmail'])->name('email-confirmation-registration');
 
-
+// verify email
+Route::get('/profile/email-changed', [ProfileController::class, 'emailChanged'])->name('profile.emailChanged');
 
 Route::get('/holidays', [HolidayController::class, 'index']);
 Route::controller(InvoiceController::class)->group(function () {

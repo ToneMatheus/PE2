@@ -49,6 +49,20 @@
         
     }
 
+    $queryU = "SELECT * FROM `users`";
+    $resultU = $link->query($queryU) or die("Error: an error has occurred while executing the query.");
+
+    while ($row = mysqli_fetch_array($resultU))
+    {
+        $fName = $row['first_name'];
+        $lName = $row['last_name'];
+        $empID = $row['id'];
+
+        $usersCompany[] = "$fName  $lName";
+        $empIdList[] = "$empID";
+        
+    }
+
     if(!(isset($_SESSION['currentM'])) && !(isset($_GET['Mf'])))
     {
         $_SESSION['currentM'] = date('n');
@@ -126,13 +140,18 @@
             if (!(in_array($e_dayReq, $reqDays))) 
             {
                 $reqDays[] = $e_dayReq;
-                for ($i = $reqDays[0]; $i <= $reqDays[1]; $i++) 
+                // for ($i = $reqDays[0]; $i <= $reqDays[1]; $i++) 
+                // {
+                //     $reqDays[] = $i;
+                // }
+                for($j = $dayReq; $j < $e_dayReq; $j++)
                 {
-                    $reqDays[] = $i;
+                    $reqDays[] = $j;
                 }
                 //print_r($reqDays);
             } 
         }
+        //print_r($reqDays);
     }
 
     while ($row = mysqli_fetch_array($result3))
@@ -156,9 +175,13 @@
             if (!(in_array($e_dayReq, $reqDays))) 
             {
                 $reqAcptDays[] = $e_dayReq;
-                for ($i = $reqDays[0]; $i <= $reqDays[1]; $i++) 
+                // for ($i = $reqDays[0]; $i <= $reqDays[1]; $i++) 
+                // {
+                //     $reqDays[] = $i;
+                // }
+                for($j = $dayReq; $j < $e_dayReq; $j++)
                 {
-                    $reqDays[] = $i;
+                    $reqAcptDays[] = $j;
                 }
                 // print_r($reqDays);
             } 
@@ -420,9 +443,23 @@
         </div>
     </div>
     <div id="div-right">
-        <form action="/action_page.php">
-            <input type="file" id="myFile" name="filename">
-        </form>
+       
+        <input type="file" id="myFile" name="filename">
+        <button type="submit" onclick="sendFile()" id="myFile1">Upload File</button>
+        <br>
+        
+        <label for="reason" id='reason1'>Reason:</label>
+        <br>
+        <textarea id="reason" name="reason" rows="4" cols="50"></textarea>
+        <br>
+        <select name="cars" id="people">
+            <?php
+                for($i = 0; $i < count($usersCompany); $i++)
+                {
+                    echo "<option value='$empIdList[$i]'>$usersCompany[$i]</option>";
+                }
+            ?>
+        </select>
     </div>
  
     <script>
@@ -473,6 +510,28 @@
             btn1.disabled = false;
         }
 
+        function sendFile()
+        {
+            var fileInput = document.getElementById('myFile');
+            var file = fileInput.files[0];
+
+            var xhr = new XMLHttpRequest();
+            var formData = new FormData();
+            formData.append('filename', file);
+
+            var url =  "{{ route('upload.file') }}";
+
+            xhr.open('POST', url, true);
+            xhr.onload = function() {
+                if (xhr.readyState == 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    console.log(response.path);
+                }
+            };
+
+            xhr.send(formData);
+        }
+
         function sendingDate(i, selected, len_selectedElements, clr_var)
         {
             //$idNum = document.getElementById("label").textContent;
@@ -487,6 +546,11 @@
                 var date2 = new Date("2024-" + dateMonth + "-" + dayNum);
                 var div2 = document.getElementById('errorMsg');
                 var divSick = document.getElementById('myFile');
+                var divSick1 = document.getElementById('myFile1');
+                var divSick2 = document.getElementById('people');
+                var divSick3 = document.getElementById('reason1');
+                var divSick4 = document.getElementById('reason');
+                var emilyHR = <?php if($user_id == 4){echo 1;}else{echo 0;}?>;
                 // check if date is in the past
                 if (date_now > date2) 
                 {
@@ -505,7 +569,15 @@
                     {
                         selected.classList.add("added3");
                         // This is already in the sickleaverequest page
-                        divSick.style.visibility='visible'
+                        divSick.style.visibility='visible';
+                        divSick1.style.visibility='visible';
+                        divSick3.style.visibility='visible';
+                        divSick4.style.visibility='visible';
+                        if(emilyHR)
+                        {
+                            divSick2.style.visibility='visible';
+                        }
+                           
                         clr1 = clr_var;
                     }
                     
@@ -520,7 +592,7 @@
             //}
         }
 
-        function checkingDays(i, selected, len_selectedElements)
+        function checkingDays(i, selected, len_selectedElements, clr_var)
         {
             var testW = len_selectedElements;
             var dayNum = dayNumList[i]; 
@@ -536,12 +608,17 @@
                 div2.style.visibility='visible'
                 console.log("<?php echo $credit; ?>")
             }
-            else
+            else if(clr_var == 'green')
             {
                 div2.style.visibility='hidden'
                 selected.classList.add("added");
             
                 console.log("len: " + testW);
+            }
+            else if(clr_var == 'pink')
+            {
+                div2.style.visibility='hidden'
+                selected.classList.add("added3");
             }
             
         }
@@ -573,7 +650,7 @@
                         }
                         else
                         {
-                            checkingDays(i, selected, len_selectedElements);
+                            checkingDays(i, selected, len_selectedElements, clr_var);
 
                             if(i == selectedElements.length -1)
                             {
@@ -593,7 +670,8 @@
                         }
                         else
                         {
-                            //TODO: check enough sickdays checkingDays(i, selected, len_selectedElements);
+                            //TODO: check enough sickdays 
+                            checkingDays(i, selected, len_selectedElements, clr_var);
 
                             if(i == selectedElements.length -1)
                             {
@@ -779,8 +857,6 @@
                     {
                         // Handle the response from the server if needed
                         console.log(xhr.responseText);
-                        if(clr1 == 'pink')
-                            window.location.href = "{{route('sickLeaveReason')}}";
                        
                     }
                 };
@@ -823,6 +899,14 @@
         function btnClicked()
         {
             var cre = "<?php echo $credit; ?>";
+            var emilyHR = <?php if($user_id == 4){echo 1;}else{echo 0;}?>;
+            const textarea = document.getElementById('reason');
+            const textVal = textarea.value;
+            const select = document.getElementById('people');
+            const selectedOption = select.value;
+            const myF = document.getElementById('myFile');
+            const myFileName = myF.value;
+
             if(visBool)
             {
                 cnlButton();
@@ -848,6 +932,8 @@
                 {
                     var url = "{{ asset('php/calendarRequest.php') }}";
                     var params = "button"; // Send $idNum value as a POST parameter
+                    if(emilyHR)
+                        var params = "button" + "&" + "reason=" + encodeURIComponent(textVal) + "&" + "person=" + encodeURIComponent(selectedOption) + "&" + "fileName=" +  encodeURIComponent(myFileName);
                     //params += "color=" + $color;
                     xhr.open("POST", url, true);
                     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
