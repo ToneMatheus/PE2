@@ -13,8 +13,10 @@ class CustomerContractSeeder extends Seeder
     public function run(): void
     {
         $today = Carbon::now()->toDateString();
-        $dayGap = Carbon::now()->addDay()->toDateString();
-        $weekGap = Carbon::now()->addWeek()->toDateString();
+        $twoWeekCooldown = Carbon::now()->addWeeks(2)->toDateString();
+        $newContractBegin = Carbon::now()->addWeeks(2)->addDay()->toDateString();
+        $newContractBeginGap = Carbon::now()->addWeeks(3)->toDateString();
+
         for($i=1; $i <= 9; $i++){
             DB::table('customer_contracts')->insert([
                 'id' => $i,
@@ -32,7 +34,7 @@ class CustomerContractSeeder extends Seeder
                 'id' => 10,
                 'user_id' => 12,
                 'start_date' => '2022-01-01',
-                'end_date' => $today,
+                'end_date' => $twoWeekCooldown,
                 'type' => 'Standard',
                 'price' => 1000,
                 'status' => 'Active'
@@ -55,7 +57,7 @@ class CustomerContractSeeder extends Seeder
             [
                 'id' => 17,
                 'user_id' => 19,
-                'start_date' => $dayGap,
+                'start_date' => $newContractBegin,
                 'end_date' => null,
                 'type' => 'Standard',
                 'price' => 1000,

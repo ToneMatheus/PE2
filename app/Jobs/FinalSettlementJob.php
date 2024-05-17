@@ -29,11 +29,7 @@ use App\Http\Controllers\EstimationController;
 use Illuminate\Support\Facades\Log;
 use App\Traits\cronJobTrait;
 
-//not finished yet: logging still needed
-//this job calculates data for the final settlement invoice and stores it in database
-//the job only handles the final settlement invoice of 1 leaving customer
-//how do we tell the job which meter?
-class FinalSettlementJob implements ShouldQueue
+class FinalSettlementJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 

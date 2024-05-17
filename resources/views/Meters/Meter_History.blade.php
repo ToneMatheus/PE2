@@ -12,8 +12,7 @@
         </div>
     @endif
 
-    <h1>Hello, {{$details[0]->first_name}}</h1>
-    <div class="modal fade" id="indexModal" tabindex="-1" aria-labelledby="indexModalLabel" aria-hidden="true">
+    {{-- <div class="modal fade" id="indexModal" tabindex="-1" aria-labelledby="indexModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -39,35 +38,70 @@
                 </form>
             </div>
         </div>
+    </div> --}}
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            Hello, {{$details[0]->first_name}}
+        </h2>
+    </x-slot>
+    <div class="py-8 max-w-7xl mx-auto dark:text-white grid grid-cols-2 gap-4">
+        <div class="sm:px-6 lg:px-8 space-y-6">
+            <h1 class="font-semibold text-3xl text-gray-800 dark:text-gray-200 leading-tight">Meter History</h1>
+            <form method="POST" action="{{ route('submitIndexCustomer') }}">
+                @csrf
+                @method('POST')
+                <div  class="flex justify-between">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Your meters</h2>
+                <x-primary-button type="submit" class="w-auto dark:bg-red-700 dark:text-white" id="submit" :disabled="true">
+                    {{ __('Submit values') }}
+                </x-primary-button>
+                </div>
+                @foreach ($details as $detail)
+                    <div class="p-4 my-3 sm:p-8 bg-white dark:bg-gray-800 shadow rounded-lg text-gray-500 dark:text-gray-400 meter">
+                        <p>EAN code: <span class="text-white font-semibold">{{$detail->EAN}}</span></p>
+                        <p>Type: <span class="text-white font-semibold">{{$detail->type}}</span></p>
+                        <p>Address: <span class="text-white font-semibold">{{$detail->street}} {{$detail->number}}, {{$detail->postal_code}} {{$detail->city}}</span></p>
+                        <p>Meter ID: {{$detail->meter_id}}</p>
+                        <div class="flex justify-between my-4">
+                        <p>Last read on: <span class="text-white font-semibold">{{$detail->reading_date ? $detail->reading_date : 'Not read yet'}}</span></p>
+                        <p>Latest reading value: <span class="text-white font-semibold" id="latest-{{$detail->meter_id}}">{{$detail->latest_reading_value ? $detail->latest_reading_value : 'Not read yet'}}</span></p>
+                        </div>
+                        <input type="hidden" name="index_values[{{$loop->index}}][user_id]" value="{{$detail->user_id}}"/>
+                        <input type="hidden" name="index_values[{{$loop->index}}][EAN]" value="{{$detail->EAN}}"/>
+                        <input type="hidden" name="index_values[{{$loop->index}}][meter_id]" value="{{$detail->meter_id}}"/>
+                        @if ($detail->expecting_reading == 1)
+                            <x-text-input class="block mt-1 w-full indexValue" type="text" name="index_values[{{$loop->index}}][new_index_value]" id="{{$detail->meter_id}}" required placeholder="Enter index value" autocomplete="off"/>
+                            <div id="validation-{{$detail->meter_id}}" class="mt-5"></div>
+                            <p class="float-right">Consumption: <span id="consumption-{{$detail->meter_id}}"></span></p>
+                        @else
+                            <div class="p-2 w-full bg-rose-200 dark:bg-rose-300 rounded-lg flex unneeded">
+                                <p class="ml-4 text-red-700">Not today!</p>
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
+            </form>
+        </div>
+
+        <div>
+            <p>chart</p>
+        </div>
+    </div>
     </div>
 
-    <div>
-        <h1>Your meters</h1>
-        @foreach ($details as $detail)
-            <div class="meter">
-                <div class="meterLeft">
-                    <p>EAN code: <span style="color:red">{{$detail->EAN}}</span></p>
-                    <p>Type: <span style="color:red">{{$detail->type}}</span></p>
-                    <p>Address: {{$detail->street}} {{$detail->number}}, {{$detail->city}}</span></p>
-                    <p>Meter ID: {{$detail->meter_id}}</p>
-                </div>
-                <div class="meterRight">
-                    <button type="button" class="modalOpener" value="{{$detail->meter_id}}">Add index value</button>
-                </div>
-            </div>
-        @endforeach
-    </div>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        $(document).on('click', '.modalOpener', function (e) {
-            $('#indexValue').val('');
-            $('#indexModal').modal('show');
-            var $meterID = $(this).val();
-
+        $(document).ready(function(){
+            function indexValidate(meterID, indexValue){
+                var field = "#validation-" + meterID;
+                var consumption = "#consumption-" + meterID;
+                var latest = $("#latest-" + meterID).html();
+                var validation = document.querySelector(field);
                 $.ajax({
-                    url: "/fetchIndex/" + $meterID,
+                    url:"{{ route('ValidateIndex') }}",
                     method:'GET',
-                    success:function(response)
+                    data:{meterID:meterID, indexValue:indexValue},
+                    success:function(data)
                     {
                         if (response.status == 404) {
                             $('#message').addClass('alert alert-success');

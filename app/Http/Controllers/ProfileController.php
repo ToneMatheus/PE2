@@ -1,5 +1,6 @@
 <?php
 /* profile */
+// TODO landlord opslaan
 
 namespace App\Http\Controllers;
 
@@ -56,14 +57,20 @@ class ProfileController extends Controller
         $request->user()->fill($request->validated());
         $user = $request->user(); 
 
+        // TODO username na kijken dat dit uniek is en geen scheldwoorden kan zijn.
+
         $email = $user->email;
-        $user->email = $user->getOriginal('email');
+        $original = $user->getOriginal('email');
+        $user->email = $original;
         $user->save();
         $user->email = $email;
 
         //START start mail server ga naar C:\Users\HEYVA\Downloads\mailpit-windows-amd64 (1) en voer mailpit.exe uit
         if ($request->user()->isDirty('email')) {
+            $user->email = $original;
             $request->user()->email_verified_at = null;
+            $request->user()->save();
+            $user->email = $email;
 
             $id = Crypt::encrypt($user->id);
             $emailEncrypt = Crypt::encrypt($user->email);
@@ -71,8 +78,10 @@ class ProfileController extends Controller
 
             Mail::to($user->email)->send(new ConfirmationMailRegistration($id, $emailEncrypt, $to));
 
-            //TODO naar een nieuwe pagina herleiden.
-            return Redirect::route('profile.edit')->with('verify_email_message', 'Please verify your email address.');
+            session()->put('from_tekst', 'You have made a change of your email');
+            session()->put('from', Crypt::encrypt("profile"));
+            return Redirect::route('profile.emailChanged');
+
         }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
@@ -86,28 +95,27 @@ class ProfileController extends Controller
 
         $user = User::find($id);
 
-        $user->email_verified_at = now();
-        $user->updated_at = now();
+        $user->email_verified_at = now()->timezone('Europe/Brussels');
+        $user->updated_at = now()->timezone('Europe/Brussels');
         $user->email = $email;
 
         $user->save();
 
         $request->session()->forget('verify_email_message');
 
+        session()->forget('from');
+        session()->forget('from_tekst');
+
     return redirect()->route('profile.edit')->with('status', 'Profile updated.');
 
     }
 
-    // ! van hier
-    /**
-     * Update the user address
-     */
-    public function updateAddress(AddressUpdateRequest $request): RedirectResponse
+    public function emailChanged()
     {
-        dd($request->Address());
-
+        $from = session('from');
+        return view('auth.verify-email', compact('from'));
     }
-    // ! tot hier mag weg
+
 
     /**
      * Update the user billing address
@@ -131,7 +139,63 @@ class ProfileController extends Controller
             $adres->save();
         }
 
+        // Landlord updaten
+        $is_landlord = $request->input('is_landlord');
+        $user = User::find($userId);
+        if($is_landlord == true){
+            $user->is_landlord = 1;
+        }else{
+            $user->is_landlord = 0;
+        }
+        $user->save();
+
         return redirect()->route('profile.edit')->with('status', 'billing address is updated.');
+    }
+
+    /**
+     * add a new address to the user
+     */
+    public function addAddress(AddressUpdateRequest $request): RedirectResponse
+    {
+        $addressRequest = [
+            'street' => $request->street,
+            'number' => $request->number,
+            'box' => $request->box,
+            'province' => $request->province,
+            'city' => $request->city,
+            'country' => $request->country,
+            'type' => $request->type,
+            'is_billing_address' => 0,
+            'postal_code' => $request->postal_code,
+        ];
+
+
+        $userId = Auth::id();
+        $address = Address::create($addressRequest);
+        
+        $user = User::find($userId);
+
+        if($user->is_landlord != 1)
+        {
+            if($request->is_landlord == true){
+                $user->is_landlord = 1;
+            }else{
+                $user->is_landlord = 0;
+            }
+        }
+        $user->updated_at = now()->timezone('Europe/Brussels');
+
+        $user->save();
+
+        $customerAddressData = [
+            'start_date' => now()->timezone('Europe/Brussels'),
+            'user_id' => $user->id,
+            'address_id' => $address->id,
+        ];
+
+        $test =Customer_Address::create($customerAddressData);
+
+        return redirect()->route('profile.edit')->with('status', 'New adres has been added.');
     }
 
     /**
@@ -148,6 +212,9 @@ class ProfileController extends Controller
         Auth::logout();
 
         $user->delete();
+
+        // $user->is_active =0
+        // $user->save();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

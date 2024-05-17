@@ -13,7 +13,11 @@
     <p>Since there was a gap between the end-of-contract date for your previous tenant, and the start-of-contract date for your
         new tenant in this address, the consumption of electricity and gas during those months has been invoiced to you.</p>
 
-    <div id="company">
+    <p>Entered index value: <b>{{$index_value}}</b></p>
+    <p>Consumption: <b>{{$consumption}}</b></p>
+    <p>Date: <b>{{$date}}</b></p>
+
+    {{-- <div id="company">
         <h2>Company</h2>
         <p>Business Address</p>
         <p>City</p>
@@ -72,5 +76,6 @@
         <p> Please log in to our website or click on the link below to access your profile </p>
         <a href="http://127.0.0.1:8000/Meter_History{{$userID}}">My Profile</a>
     </div>
+    <p><br/>Scanning this QR code will bring you directly to a page where you can handle the payment of your invoice.</p> --}}
 </body>
 </html>
