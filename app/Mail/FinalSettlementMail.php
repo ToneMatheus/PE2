@@ -27,16 +27,12 @@ class FinalSettlementMail extends Mailable
     protected $monthlyInvoices;
     protected $interval;
 
-    public function __construct($pdfData, Invoice $invoice, $user, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices, $interval)
+    public function __construct($pdfData, Invoice $invoice, $user, $consumption, $newInvoiceLine, $interval)
     {
         $this->invoice = $invoice;
         $this->user = $user;
         $this->consumption = $consumption;
-        $this->estimation = $estimation;
         $this->newInvoiceLine = $newInvoiceLine;
-        $this->meterReadings = $meterReadings;
-        $this->discounts = $discounts;
-        $this->monthlyInvoices = $monthlyInvoices;
         $this->pdfData = $pdfData;
         $this->interval = $interval;
     }
@@ -56,11 +52,7 @@ class FinalSettlementMail extends Mailable
                         'user' => $this->user,
                         'invoice' => $this->invoice,
                         'consumptions' => $this->consumption,
-                        'estimation' => $this->estimation,
                         'newInvoiceLine' => $this->newInvoiceLine,
-                        'meterReadings' => $this->meterReadings,
-                        'discounts' => $this->discounts,
-                        'monthlyInvoices' => $this->monthlyInvoices,
                         'interval' => $this->interval
                     ])
                     ->attachData($this->pdfData, 'invoice.pdf', [

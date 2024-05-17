@@ -11,10 +11,19 @@ use App\Models\{
     Address,
     Consumption,
     Meter_Addresses,
+    Invoice,
+    Contract_product,
+    Invoice_line,
+    CreditNote,
+    Estimation,
+    Discount,
+    Index_Value
 };
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Contracts\Bus\Dispatcher;
 use app\http\Controllers\CustomerController;
 use illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Model;
@@ -23,7 +32,12 @@ use \Illuminate\Http\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\IndexValueEnteredByCustomer;
 use App\Mail\InvoiceLandlordMail;
+use Illuminate\Support\Facades\Log;
 use App\Jobs\FinalSettlementJob;
+use App\Services\InvoiceFineService;
+use App\Services\StructuredCommunicationService;
+use App\Mail\FinalSettlementMail;
+use App\Http\Controllers\EstimationController;
 
 
 class MeterController extends Controller
@@ -310,8 +324,10 @@ class MeterController extends Controller
                             ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                             ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
                             ->where('meter_reader_schedules.reading_date','=', $today)
-                            ->where('meter_reader_schedules.employee_profile_id','=',1)
-                            ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
+                            ->where('meter_reader_schedules.employee_profile_id','=', 1)
+                            ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code',
+                                    'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id',
+                                    'meter_reader_schedules.priority', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
                             ->orderBy('users.id');
 
                 // searching with multiple parameters
@@ -342,7 +358,9 @@ class MeterController extends Controller
                         ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
                         ->where('meter_reader_schedules.reading_date','=', $today)
                         ->where('meter_reader_schedules.employee_profile_id','=',1)
-                        ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
+                        ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code',
+                                'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id',
+                                'meter_reader_schedules.priority', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
                         ->orderBy('users.id');
             }
 
@@ -352,6 +370,10 @@ class MeterController extends Controller
                 foreach($data as $row)
                 {
                     $output .= '<div class="searchResult';
+                    
+                    if($row->priority == 1) {
+                        $output .= ' priority ';
+                    }
 
                     if ($row->status == "read") {
                         $output .= ' readMeter">';
@@ -370,8 +392,14 @@ class MeterController extends Controller
                                 <p>Status:<br>
                                     <span style="font-size:30px;color:';
                                     if ($row->status == "unread") {
-                                        $output .= 'red;font-weight:bold;">'.ucfirst($row->status).'</span></p>
-                                        <p>
+                                        if($row->priority == 1) {
+                                            $output .= 'white;font-weight:bold;">'.ucfirst($row->status).'</span></p>';
+                                        }
+                                        else {
+                                            $output .= 'red;font-weight:bold;">'.ucfirst($row->status).'</span></p>';
+                                        }
+                                        
+                                        $output .= '<p>
                                             <button type="button" class="modalOpener" value='.$row->meter_id.'>Add index value</button>
                                         </p>';
                                     }
@@ -412,6 +440,8 @@ class MeterController extends Controller
         ]);
 
         $date = Carbon::now()->toDateString();
+        $testDate = Carbon::now()->addDays(14)->toDateString();
+        $testDateIn = Carbon::now()->addDays(15)->toDateString();
         $meter_id = $request->input('meter_id');
         $index_value = $request->input('index_value');
 
@@ -435,7 +465,7 @@ class MeterController extends Controller
         ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
         ->join('meters','meter_addresses.meter_id','=','meters.id')
         ->where('meters.id', '=', $meter_id)
-        ->select('customer_contracts.end_date', 'customer_contracts.start_date', 'users.id')
+        ->select('customer_contracts.end_date', 'customer_contracts.start_date', 'users.id as user_id')
         ->get()
         ->first();
 
@@ -461,7 +491,7 @@ class MeterController extends Controller
 
         $consumption_value = $index_value - $prev_index_value;
 
-        DB::table('consumptions')->insert(
+        $consumptionID = DB::table('consumptions')->insertGetId(
             ['start_date' => $start_date,
             'end_date' => $date,
             'consumption_value' => $consumption_value,
@@ -469,17 +499,294 @@ class MeterController extends Controller
             'current_index_id' => $current_index_id]
         );
 
-        if ($contract_date->end_date == $date) {
-            FinalSettlementJob::dispatchSync($meter_id);
-        }
-        if ($contract_date->start_date == $date) {
-            Mail::to('shresthaanshu555@gmail.com')->send(new InvoiceLandlordMail($contract_date->userID, $index_value, $date, $consumption_value));
-        }
+        DB::table('meters')
+            ->where('id', '=', $meter_id)
+            ->update(['expecting_reading' => '0']);
 
         DB::table('meter_reader_schedules')
             ->where('meter_id', '=', $meter_id)
             ->update(['status' => 'read']);
+
+        if ($contract_date->end_date == $testDate) {
+            DB::table('customer_contracts')
+            ->where('user_id', '=', $contract_date->user_id)
+            ->update(['status' => 'inactive']);
+
+            DB::table('users')
+            ->where('id', '=', $contract_date->user_id)
+            ->update(['is_active' => '0']);
+
+            $this->finalSettlementJob($meter_id, $consumptionID, $consumption_value);
+        }
+        if ($contract_date->start_date == $testDateIn) {
+            Mail::to('shresthaanshu555@gmail.com')->send(new InvoiceLandlordMail($contract_date->userID, $index_value, $date, $consumption_value));
+        }
+
+        
         return redirect()->back();
+    }
+
+    public function finalSettlementJobAlt($meter_id) {
+        Log::debug("Final settlement sent to meter " . $meter_id);
+    }
+
+    public function finalSettlementJob($meter_id, $consumptionID, $consumption_value) {
+        $domain = "http://127.0.0.1:8000";
+        $now = Carbon::now()->toDateString();
+        $month = Carbon::now()->month;
+        $year = Carbon::now()->year;
+        $due = Carbon::now()->addWeeks(2)->toDateString();
+
+        $consumptionData = DB::table('consumptions')->where('id', '=', $consumptionID)->get()->first();
+        try
+        {
+            $meter = Meter::findOrFail($meter_id);
+        }
+        catch (\Exception $e)
+        {
+            Log::error("Unable to find meter record of with meterID " . $meter_id);
+        }
+        
+        try
+        {
+            $result = Meter::select('cc.id', 'cc.user_id')
+                ->leftJoin('contract_products as cp', 'meters.id', '=', 'cp.meter_id')
+                ->leftJoin('customer_contracts as cc', 'cp.customer_contract_id', '=', 'cc.id')
+                ->where('meters.id', $meter_id)
+                ->first();
+
+            $ccID = $result->id;
+            $userID = $result->user_id;
+        }
+        catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) 
+        {
+            // no result found
+            Log::error("Unable to retrieve customerContractID and userID");
+        }
+
+        try
+        {
+
+            //get estimation for this meter
+            $estimation = Estimation::where('meter_id', $meter_id)->value('estimation_total');
+
+            if (is_null($estimation))
+            {
+                throw new \Exception("Couldn't find estimation.");
+            }
+
+            //discounts
+            $discounts = Discount::rightJoin('contract_products as cp', 'cp.id', '=', 'discounts.contract_product_id')
+                ->where('cp.meter_id', '=', $meter_id)
+                ->whereDate('discounts.end_date', '>=', $now)
+                ->get();
+
+            //get tariff rate
+            $tariffRate = Contract_product::leftJoin('products as p', 'contract_products.product_id', '=', 'p.id')
+                ->leftJoin('product_tariffs as pt', 'p.id', '=', 'pt.product_id')
+                ->leftJoin('tariffs as t', 'pt.tariff_id', '=', 't.id')
+                ->whereNull('pt.end_date')
+                ->where('contract_products.customer_contract_id', $ccID)
+                ->where('contract_products.meter_id', $meter_id)
+                ->orderByDesc('contract_products.start_date')
+                ->value('t.rate');
+
+            if (is_null($tariffRate))
+            {
+                throw new \Exception("Couldn't find tariff rate.");
+            }
+
+            //get meter readings
+            $meterReadings = Index_Value::where('meter_id', $meter_id)
+            ->orderByDesc('reading_date')
+            ->limit(1)
+            ->first();
+
+            if (is_null($meterReadings))
+            {
+                throw new \Exception("Couldn't find meter readings.");
+            }
+        }
+        catch (\Exception $e) 
+        {
+            Log::error("Unable to find information for meter " . $meter_id . " in database. " . $e->getMessage());
+            exit();
+        }
+
+        //calculate discounts
+        $extraAmount = 0;
+
+        if(!is_null($discounts)){
+            for ($i = 1; $i <= 12; $i++) {
+                $discountRate = 0;
+            
+                foreach ($discounts as $discount) {
+                    $startMonth = (new Carbon($discount->start_date))->format('m');
+                    $endMonth = (new Carbon($discount->end_date))->format('m');
+            
+                    if ($i >= $startMonth && $i <= $endMonth) {
+                        $discountRate = $discount->rate;
+                        break;
+                    }
+                }
+
+                $monthlyExtraAmount = ($consumption_value) * $tariffRate;
+
+                if ($discountRate > 0) {
+                    $monthlyExtraAmount -= ($monthlyExtraAmount * $discountRate);
+                }
+            
+                $extraAmount += $monthlyExtraAmount;
+            }
+        } else {
+            $extraAmount = ($consumption_value) ? $consumption_value * $tariffRate : 0;
+        }
+
+        //calculate
+        $monthlyInvoices = $this->getMonthlyInvoices($year, $ccID, $meter_id);
+
+        if($extraAmount > 0){                   //Invoice
+            $invoiceData = [
+                'invoice_date' => $now,
+                'due_date' => $due,
+                'total_amount' => $extraAmount,
+                'status' => 'sent',
+                'customer_contract_id' => $ccID,
+                'meter_id' => $meter_id,
+                'type' => 'Final'
+            ];
+
+        } else{                              //Credit note
+            $invoiceData = [
+                'invoice_date' => $now,
+                'due_date' => $due,
+                'total_amount' => $extraAmount,
+                'status' => 'paid',
+                'customer_contract_id' => $ccID,
+                'meter_id' => $meter->id,
+                'type' => 'Final'
+            ];
+        }
+
+        // 3) store in database
+        try
+        {
+            $invoice = Invoice::create($invoiceData);
+            $lastInserted = $invoice->id;
+
+            $scService = new StructuredCommunicationService;
+            $strCom = $scService->generate($lastInserted);
+            $scService->addStructuredCommunication($strCom, $lastInserted);
+
+            if ($extraAmount <= 0) {
+                CreditNote::create([
+                    'invoice_id' => $lastInserted,
+                    'type' => 'credit note',
+                    'amount' => $extraAmount,
+                    'user_id' => $userID,
+                    'status' => 1
+                ]);
+            }
+
+            Invoice_line::create([
+                'type' => 'Electricity',
+                'unit_price' => $tariffRate,
+                'amount' => $extraAmount,
+                'consumption_id' => $consumptionID,
+                'invoice_id' => $lastInserted
+            ]);
+
+            $fineService = new InvoiceFineService;
+            $fineService->unpaidInvoiceFine($lastInserted);
+        }
+        catch (\Exception $e)
+        {
+            Log::error("Unable to store final settlement invoice for meter " . $meter_id . " in database.");
+        }
+        
+        $newInvoiceLine = Invoice_line::where('invoice_id', '=', $lastInserted)->first();
+        EstimationController::UpdateEstimation($meter_id);
+
+        $lastAnnual = Invoice::where('invoices.type', '=', 'Annual')
+            ->orderByDesc('invoices.invoice_date')
+            ->limit(1)
+            ->first();
+
+        $interval = array((new Carbon($lastAnnual->invoice_date))->format('m'), $month);
+        // 4) send mail
+        $user = User::findOrFail($userID);
+
+        // Generate PDF
+        $hash = md5($invoice->id . $invoice->customer_contract_id . $invoice->meter_id);
+
+        $pdfData = [
+            'invoice' => $invoice,
+            'user' => $user,
+            'consumption' => $consumptionData,
+            'estimation' => $estimation,
+            'newInvoiceLine' => $newInvoiceLine,
+            'meterReadings' => $meterReadings,
+            'discounts' => $discounts,
+            'monthlyInvoices' => $monthlyInvoices,
+            'domain' => $domain,
+            'hash' => $hash,
+            'interval' => $interval
+        ];
+
+        $mailParams = [
+            $invoice, 
+            $user, 
+            $pdfData, 
+            $consumptionData,
+            $estimation, 
+            $newInvoiceLine, 
+            $meterReadings, 
+            $discounts, 
+            $monthlyInvoices,
+            $interval
+        ];
+        Log::info("QR code generated with link: " . $domain . "/pay/" . $invoice->id . "/" . $hash);
+
+        if (is_null($user->employee_profile_id))
+            $mailAddress = $user->email;
+        else
+            $mailAddress = $user->personal_email;
+
+        //Send email with PDF attachment
+        $this->sendFinalEmail('shresthaanshu555@gmail.com', FinalSettlementMail::class, $mailParams, 'Invoices.final_invoice_pdf', $pdfData, $invoice->id);
+    }
+
+    public function sendFinalEmail($mailTo, $mailableClass, $mailableClassParams, $pdfView, $pdfParams, $invoiceID) {
+        $pdf = Pdf::loadView($pdfView, [
+            ...$pdfParams
+        ], [], 'utf-8');
+        $pdfData = $pdf->output();
+
+        Mail::to($mailTo)->send(new $mailableClass($pdfData, ...$mailableClassParams));
+    }
+
+    public function getMonthlyInvoices($year, $ccID, $meter_id) //(function copied from InvoiceRunJob)
+    {
+        // Query monthly invoices and their lines for the given customer and the current year
+        $monthlyInvoices = Invoice::join('customer_contracts as cc', 'invoices.customer_contract_id', '=', 'cc.id')
+            ->join('users as u', 'cc.user_id', '=', 'u.id')
+            ->join('invoice_lines as il', 'invoices.id', '=', 'il.invoice_id')
+            ->where('cc.id', $ccID)
+            ->where('invoices.meter_id', '=', $meter_id)
+            ->where('invoices.type', 'Monthly')
+            ->whereYear('invoices.invoice_date', $year)
+            ->orderBy('invoices.invoice_date')
+            ->select('invoices.*', 'il.*')
+            ->get();
+
+        // Organize the data by grouping lines by invoice (month)
+        $monthlyInvoicesData = [];
+        foreach ($monthlyInvoices as $monthlyInvoice) {
+            $month = Carbon::createFromFormat('Y-m-d', $monthlyInvoice->invoice_date)->format('F');
+            $monthlyInvoicesData[$month][] = $monthlyInvoice;
+        }
+
+        return $monthlyInvoicesData;
     }
 
     public function searchIndexPaper(Request $request)  {

@@ -47,6 +47,7 @@ class MoveOutJob implements ShouldQueue
 
         foreach ($contracts as $contract)
         {
+            $today = Carbon::today()->toDateString();
             $start_date = Carbon::parse($contract->start_date)->startOfDay();
             $tenant_out = '';
             $tenant_in = '';
@@ -67,13 +68,19 @@ class MoveOutJob implements ShouldQueue
                     ->get();
     
                     foreach($out_meters as $out_meter)
-                    DB::table('meter_reader_schedules')->insert(
-                        ['employee_profile_id' => 1000,
-                        'meter_id' => $out_meter->id,
-                        'reading_date' => $end_date,
-                        'status' => 'unread',
-                        'priority' => 1
+                    {
+                        DB::table('meter_reader_schedules')->insert(
+                            ['employee_profile_id' => 1000,
+                            'meter_id' => $out_meter->id,
+                            'reading_date' => $today,
+                            'status' => 'unread',
+                            'priority' => 1
                         ]);
+
+                        $meter = Meter::find($out_meter->id);
+                        $meter->expecting_reading = 1;
+                        $meter->save();
+                    }
                 }
             }
         }
