@@ -78,4 +78,9 @@ class Employee_Profile extends Model
     {
         return $this->hasMany(Ticket::class);
     }
+
+    public function employee_weekly_reports(): HasMany
+    {
+        return $this->hasMany(EmployeeWeeklyReports::class);
+    }
 }
