@@ -16,6 +16,14 @@
                 </div>
             @endif
 
+            @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                <div class="bg-red-200 text-red-800 border border-red-600 px-4 py-2 rounded mb-4">
+                    {{ $error }}
+                </div>
+            @endforeach
+            @endif
+
             <form action="{{ route('payment.add') }}" method="POST">
                 @csrf
                 <div class="mb-4">
@@ -30,7 +38,7 @@
                 
                 <div class="mb-4">
                     <label for="IBAN" class="block text-gray-700">IBAN</label>
-                    <input type="text" name="IBAN" id="IBAN" class="mt-1 block w-full border border-gray-300 rounded-md" required/>
+                    <input type="text" name="IBAN" id="IBAN" class="mt-1 block w-full border border-gray-300 rounded-md"/>
                 </div>
                 
                 <div class="mb-4">
@@ -45,7 +53,7 @@
                 
                 <div class="mb-4">
                     <label for="structured_communication" class="block text-gray-700">Structured Communication</label>
-                    <input type="text" name="structured_communication" id="structured_communication" class="mt-1 block w-full border border-gray-300 rounded-md" required/>
+                    <input type="text" name="structured_communication" id="structured_communication" class="mt-1 block w-full border border-gray-300 rounded-md"/>
                 </div>
                 
                 <button type="submit" class="bg-blue-400 hover:bg-blue-600 text-white font-bold py-1 px-4 rounded">

@@ -46,14 +46,19 @@ class PaymentController extends Controller
 
     public function add(Request $request)
     {
-        $request->validate([
+        $rules = [
             'amount' => 'required|numeric',
             'payment_date' => 'required|date',
-            'IBAN' => 'required|string',
-            'name' => 'nullable|string',
-            'address' => 'nullable|string',
-            'structured_communication' => 'required|string'
-        ]);
+            'address' => 'regex:/^\w+\s+\d+\s+(?:[A-Za-z0-9]+\s+)?\d*\s*\w+\s+\w+$/'
+        ];
+
+        $messages = [
+            'amount.required' => 'Fill in the paid amount.',
+            'payment_date.required' => 'Fill in the date of the payment.',
+            'address.regex' => 'The address format must be "Street Number [Box] PostalCode City".',
+        ];
+
+        $request->validate($rules, $messages);
 
         Payment::create($request->all());
 
