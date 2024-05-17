@@ -392,5 +392,25 @@
 
             return view('teamWeeklyReports', compact('team_members', 'weekly_reports'));
         }
+
+        public function storeWeeklyReports(Request $request)
+        {
+            $request->validate([
+                'summary' => 'required|string',
+                'tasks_completed' => 'required|string',
+                'upcoming_tasks' => 'required|string',
+                'challenges' => 'required|string',
+            ]);
+    
+            $summary = $request->input('summary');
+            $tasks_completed = $request->input('tasks_completed');
+            $upcoming_tasks = $request->input('upcoming_tasks');
+            $issues = $request->input('challenges');
+            $submission = Carbon::now()->format('d-m-Y');
+
+            DB::insert('insert into employee_weekly_reports (summary, tasks_completed, upcoming_tasks, challenges, submission_date) values (?, ?, ?, ?, ?)', [$summary, $tasks_completed, $upcoming_tasks, $issues, $submission]);
+    
+            return redirect('/weeklyActivity')->with('success', 'Report submitted successfully!');
+        }
     }
 ?>

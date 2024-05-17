@@ -39,7 +39,7 @@
         </div>
 
         <div class="card" style="display: flex; width: 800px; border-radius: 5px; margin-top: 20px; height: 180px">
-            <img class="card-img" src="/images/care.png" alt="Card image" style="width: 35%; border-top-left-radius: 5px; border-bottom-left-radius: 5px;">
+            <img class="card-img" id="img" src="/images/benefit.png" alt="Card image" style="width: 35%; border-top-left-radius: 5px; border-bottom-left-radius: 5px;">
             <div class="card-body" style="background-color: rgb(242, 240, 240); padding: 35px; border-top-right-radius: 5px; border-bottom-right-radius: 5px;">
               <h4 class="card-title h4" style=" font-weight: 900; font-size: 18px">Benefits and compensation</h4>
               <p class="card-text text-sm" style="padding: 8px 0px;">We care about our workers. See the many benefits we provide as a company</p>
