@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->float('amount', 10, 2);
             $table->date('payment_date');
-            $table->string('IBAN');
+            $table->string('IBAN')->nullable();
             $table->string('name')->nullable();
             $table->string('address')->nullable();
-            $table->string('structured_communication');
+            $table->string('structured_communication')->nullable();
             $table->unsignedTinyInteger('has_matched')->default(0);
             $table->bigInteger('invoice_id')->unsigned()->nullable();
             $table->timestamps();
