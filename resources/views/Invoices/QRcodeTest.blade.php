@@ -8,7 +8,7 @@
 <body>
     <!--Page for testing purposes only-->
     <?php 
-    $domain = "http://192.168.0.115:8000"; //"http://127.0.0.1:8000";  //change to webserver ip *10.64.0.100* 
+    $domain = config('app.host_domain');
     $invoiceID = "49";                   //edit to invoice you want
     $QRService = app()->make('App\Services\QRCodeService');
     $hash = $QRService->getHash($invoiceID);

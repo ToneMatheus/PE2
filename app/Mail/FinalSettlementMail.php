@@ -15,7 +15,7 @@ class FinalSettlementMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $domain = "http://127.0.0.1:8000"; //change later
+    protected $domain;
     protected $invoice;
     protected $user;
     protected $consumption;
@@ -39,6 +39,7 @@ class FinalSettlementMail extends Mailable
         $this->monthlyInvoices = $monthlyInvoices;
         $this->pdfData = $pdfData;
         $this->interval = $interval;
+        $this->domain = config('app.host_domain');
     }
 
     public function envelope()

@@ -37,7 +37,7 @@ class InvoiceRunJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 
-    protected $domain = "http://127.0.0.1:8000"; //change later
+    protected $domain;
     protected $now;
     protected $year;
     protected $month;
@@ -47,6 +47,7 @@ class InvoiceRunJob implements ShouldQueue
         $this->now = config('app.now');
         $this->month = $this->now->format('m');
         $this->year = $this->now->format('Y');
+        $this->domain = config('app.host_domain');
     }
 
     public function handle()
