@@ -34,6 +34,8 @@ use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\RelationsController;
 use App\Http\Controllers\ManagerTicketOverviewController;
+use App\Http\Controllers\EditController;
+
 
 
 
@@ -216,6 +218,9 @@ Route::get('/ticket_overview', [TicketOverviewController::class, 'index'])->name
 
 Route::get('/managerticketoverview', [ManagerTicketOverviewController::class, 'index'])->name('managerticketoverview');
 
+Route::get('/Edit', [EditController::class, 'index'])->name('Edit');
+
+Route::put('/Edit/{id}', [EditController::class, 'update'])->name('edit.update');
 
 Route::get('/test', function () {
     return view('test');

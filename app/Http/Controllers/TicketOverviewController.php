@@ -12,12 +12,14 @@ class TicketOverviewController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('SetLocale');
+
     }
 
     public function index()
     {
-        $tickets = TicketOverview::all();
-        return view('ticketoverview.index', compact('tickets'));
+        $user_id = Auth::id();
+        $tickets = TicketOverview::where('user_id', $user_id)->get();
+
+        return view('Tickets.ticketoverview', compact('tickets'));
     }
 }
