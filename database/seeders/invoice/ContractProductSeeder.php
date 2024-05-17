@@ -61,6 +61,13 @@ class ContractProductSeeder extends Seeder
                 'product_id' => 1,
                 'meter_id' => 7,
             ],
-            ]);
+            [
+                'id' => 8,
+                'start_date' => '2024-12-04',
+                'customer_contract_id' => 10,
+                'product_id' => 1,
+                'meter_id' => 10,
+            ],
+        ]);
     }
 }

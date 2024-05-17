@@ -190,9 +190,9 @@ Route::get('/consumption', function () {
 });
 //aryan
 Route::controller(MeterController::class)->group(function () {
-    Route::get('Meters/Meter_History/{userID}', 'GasElectricity');
-    Route::get('Meters/Meter_History/{timeframe?}', [MeterController::class, 'showConsumptionHistory'])->name('consumption.history');
-    Route::get('Meters/Meter_History', [MeterController::class, 'showConsumptionPage'])->name('consumption.page');
+    Route::get('/Consumption_Dashboard', 'showConsumptionDashboard');
+    Route::get('/Meter_History/{userID}', 'GasElectricity');
+    Route::get('/Meter_History_Validate', 'ValidateIndex')->name("ValidateIndex");
 });
 
 

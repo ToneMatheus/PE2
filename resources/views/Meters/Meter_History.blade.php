@@ -1,7 +1,12 @@
-<x-app-layout>
+{{-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Meter History</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <h1>Meter History</h1>
+
+</head>
+<body> --}}
+<x-app-layout title="Meter history">
     @if (count($errors) > 0)
         <div class="alert alert-danger">
             <ul>
@@ -103,21 +108,45 @@
                     data:{meterID:meterID, indexValue:indexValue},
                     success:function(data)
                     {
-                        if (response.status == 404) {
-                            $('#message').addClass('alert alert-success');
-                            $('#message').text(response.message);
-                            $('#indexModal').modal('hide');
-                        }
-                        else {
-                            $('#meter_id').val($meterID);
-                            $('#prev').html(response.prev_index.reading_value);
-                            $('#EAN').val(response.meter.EAN);
-                            $('#modalEAN').html(response.meter.EAN);
-                        }
+                        $(validation).html(data);
+                        consumptionCalculator(indexValue, consumption, latest);
+                        enableButton();
                     }
                 })
+            }
+
+            function consumptionCalculator(indexValue, consumption, latest) {
+                if (latest == 'Not read yet') {
+                    latestValue = 0;
+                }
+                else {
+                    latestValue = parseInt(latest);
+                }
+
+                consumptionValue = indexValue - latestValue;
+
+                if (indexValue - latestValue > 0) {
+                    $(consumption).html(consumptionValue);
+                }
+                else{
+                    $(consumption).html('');
+                }
+            }
+
+            function enableButton() {
+                if(document.getElementsByClassName("correct").length == document.getElementsByClassName("meter").length - document.getElementsByClassName("unneeded").length) {
+                    $('#submit').prop('disabled', false);
+                }
+                else {
+                    $('#submit').prop('disabled', true);
+                }
+            }
+
+            $(document).on('keyup', '.indexValue', function(){
+                indexValidate(this.id, this.value);
             })
-        </script>
+        })
+    </script>
         {{-- <div class="content">
             <h1>Energy Consumption History</h1>
             <canvas id="consumptionChart"></canvas>
@@ -129,5 +158,8 @@
         <button onclick="fetchData('week')">Week</button>
         <button onclick="fetchData('month')">Month</button>
         <button onclick="fetchData('year')">Year</button> --}}
+    {{-- </body>
+    </html> --}}
     </x-app-layout>
+
 

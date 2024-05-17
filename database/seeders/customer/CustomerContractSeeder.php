@@ -17,6 +17,9 @@ class CustomerContractSeeder extends Seeder
         $newContractBegin = Carbon::now()->addWeeks(2)->addDay()->toDateString();
         $newContractBeginGap = Carbon::now()->addWeeks(3)->toDateString();
 
+        $testContractBegin = Carbon::now()->addDays(1)->toDateString();
+        $testContractBeginGap = Carbon::now()->addDays(14)->toDateString();
+
         for($i=1; $i <= 9; $i++){
             DB::table('customer_contracts')->insert([
                 'id' => $i,

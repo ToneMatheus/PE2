@@ -38,11 +38,10 @@ class FinalSettlementJob
     protected $year;
     protected $month;
 
-    protected $meterID;
     protected $ccID;
     protected $userID;
 
-    public function __construct($meterID)
+    public function __construct(public int $meterID)
     {
         $this->now = config('app.now');
         $this->month = $this->now->format('m');
@@ -50,10 +49,10 @@ class FinalSettlementJob
         $this->meterID = $meterID;
     }
 
-    public function handle($mID)
+    public function handle($meterID)
     {
         //$meterID = $this->meterID;
-        $this->meterID = $mID;
+        $this->meterID = $meterID;
         $meterID = $this->meterID;
 
         try
@@ -335,7 +334,7 @@ class FinalSettlementJob
             $mailAddress = $user->personal_email;
 
         //Send email with PDF attachment
-        $this->sendMailInBackgroundWithPDF($mailAddress, FinalSettlementMail::class, $mailParams, 'Invoices.final_invoice_pdf', $pdfData, $invoice->id);
+        $this->sendMailInBackgroundWithPDF('shresthaanshu555@gmail.com', FinalSettlementMail::class, $mailParams, 'Invoices.final_invoice_pdf', $pdfData, $invoice->id);
 
     }
 }

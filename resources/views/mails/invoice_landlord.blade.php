@@ -7,7 +7,7 @@
     <title>Two weeks missing warning</title>
 </head>
 <body>
-    <p>Hello {{ $user->first_name }},</p>
+    <p>Hello,</p>
 
     <p>You are receiving this invoice because you are registered as the landlord for the address {{ $user->address }}.
     <p>Since there was a gap between the end-of-contract date for your previous tenant, and the start-of-contract date for your
@@ -71,11 +71,6 @@
         echo DNS2D::getBarcodeHTML($domain . "/pay/" . $invoice->id . "/" . $hash, 'QRCODE',5,5);
         ?>
     </p>
-    <p><br/>Scanning this QR code will bring you directly to a page where you can handle the payment of your invoice.</p>
-    <div>
-        <p> Please log in to our website or click on the link below to access your profile </p>
-        <a href="http://127.0.0.1:8000/Meter_History{{$userID}}">My Profile</a>
-    </div>
     <p><br/>Scanning this QR code will bring you directly to a page where you can handle the payment of your invoice.</p> --}}
 </body>
 </html>

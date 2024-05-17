@@ -10,7 +10,7 @@ class InvoiceLineSeeder extends Seeder
 {
     public function run(): void
     {
-        for($i = 1; $i <= 11; $i++){
+        for($i = 1; $i <= 17; $i++){
             DB::table('invoice_lines')->insert([
                 'type' => 'Electricity',
                 'unit_price' => 0.25,
@@ -36,7 +36,7 @@ class InvoiceLineSeeder extends Seeder
             ]);
         }
 
-        for($i = 12; $i <= 23; $i++){
+        for($i = 18; $i <= 28; $i++){
             DB::table('invoice_lines')->insert([
                 'type' => 'Electricity',
                 'unit_price' => 0.28,
@@ -62,7 +62,7 @@ class InvoiceLineSeeder extends Seeder
             ]);
         }
 
-        for($i = 24; $i <= 36; $i++){
+        for($i = 29; $i <= 39; $i++){
             DB::table('invoice_lines')->insert([
                 'type' => 'Electricity',
                 'unit_price' => 0.25,
@@ -88,7 +88,7 @@ class InvoiceLineSeeder extends Seeder
             ]);
         }
 
-        for($i = 37; $i <= 48; $i++){
+        for($i = 40; $i <= 175; $i++){
             DB::table('invoice_lines')->insert([
                 'type' => 'Electricity',
                 'unit_price' => 0.25,
@@ -119,7 +119,7 @@ class InvoiceLineSeeder extends Seeder
             'unit_price' => 0.25,
             'amount' => 79.8,
             'consumption_id' => null,
-            'invoice_id' => 49,
+            'invoice_id' => 176,
         ]);
 
         DB::table('invoice_lines')->insert([
@@ -127,7 +127,7 @@ class InvoiceLineSeeder extends Seeder
             'unit_price' => 10,
             'amount' => 10,
             'consumption_id' => null,
-            'invoice_id' => 49,
+            'invoice_id' => 176,
         ]);
 
         DB::table('invoice_lines')->insert([
@@ -135,7 +135,7 @@ class InvoiceLineSeeder extends Seeder
             'unit_price' => 10,
             'amount' => 10,
             'consumption_id' => null,
-            'invoice_id' => 49,
+            'invoice_id' => 176,
         ]);
 
         DB::table('invoice_lines')->insert([
@@ -143,7 +143,7 @@ class InvoiceLineSeeder extends Seeder
             'unit_price' => 0.25,
             'amount' => 79.8,
             'consumption_id' => null,
-            'invoice_id' => 50,
+            'invoice_id' => 177,
         ]);
 
         DB::table('invoice_lines')->insert([
@@ -151,7 +151,7 @@ class InvoiceLineSeeder extends Seeder
             'unit_price' => 10,
             'amount' => 10,
             'consumption_id' => null,
-            'invoice_id' => 50,
+            'invoice_id' => 177,
         ]);
 
         DB::table('invoice_lines')->insert([
@@ -159,7 +159,7 @@ class InvoiceLineSeeder extends Seeder
             'unit_price' => 10,
             'amount' => 10,
             'consumption_id' => null,
-            'invoice_id' => 50,
+            'invoice_id' => 177,
         ]);
     }
 }

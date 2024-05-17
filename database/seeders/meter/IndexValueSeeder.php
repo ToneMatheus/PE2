@@ -32,6 +32,11 @@ class IndexValueSeeder extends Seeder
                 'meter_id' => 7
             ],
             [
+                'reading_date' => '2023-01-01',
+                'reading_value' => 2000,
+                'meter_id' => 10
+            ],
+            [
                 'reading_date' => '2024-01-01',
                 'reading_value' => 3300,
                 'meter_id' => 4
@@ -50,6 +55,11 @@ class IndexValueSeeder extends Seeder
                 'reading_date' => '2024-01-01',
                 'reading_value' => 3700,
                 'meter_id' => 5
+            ],
+            [
+                'reading_date' => '2024-01-01',
+                'reading_value' => 3700,
+                'meter_id' => 10
             ],
             [
                 'reading_date' => '2025-01-01',
@@ -71,7 +81,12 @@ class IndexValueSeeder extends Seeder
                 'reading_value' => 2100,
                 'meter_id' => 7
             ],
-            
+            [
+                'reading_date' => '2025-01-01',
+                'reading_value' => 5100,
+                'meter_id' => 10
+            ]
+
         ]);
     }
 }

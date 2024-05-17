@@ -19,8 +19,14 @@
     </style>
 </head>
 <body>
-    <p>Hello, there!</p>
-    <a href="http://localhost:8000/Meter_History/{{$userID}}">Enter your index value here</a>
+    <h1>Hello, {{$user[0]->first_name}} {{$user[0]->last_name}}!</h1>
+
+    <p>You are receiving this e-mail because today is the <b>first or second year</b> since your meters were installed, or an employee was sent to your place to examine the index values.</br>
+        Therefore, we ask you to enter the index value(s) by clicking on the link below.</p>
+    
+    <p>Please be sure to enter your index values(s) as soon as possible!</p>
+    <p><a href="http://localhost:8000/Meter_History/{{$user[0]->id}}" style="color:white;">Enter your index value here</a></p>
     </p>
+    <p>Thank you for using our service! </p>
 </body>
 </html>
