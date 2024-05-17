@@ -43,6 +43,7 @@ use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
 use App\Http\Controllers\NewEmployeeController;
 use App\Http\Controllers\holidayRequest;
+use App\Http\Controllers\UploadController;
 
 
 /*
@@ -268,7 +269,7 @@ Route::post('/relations/update', [RelationsController::class, 'updateRelation'])
 //Route::get('/holidayRequest', function() {  return view('holidayRequest');  })->name('request');
 
 Route::get('/holidayRequest', [holidayRequest::class, 'index'])->name('request');
-
+Route::post('/upload', [UploadController::class, 'uploadFile'])->name('upload.file'); 
 // Route::get('/holidayRequest', function(){
 //     return view('holidayRequestPage');
 // })->name('request');

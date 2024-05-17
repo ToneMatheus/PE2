@@ -3,8 +3,8 @@
   padding: 2px;
   margin: 4px;
   margin-top: 0;
-  color: whitesmoke;
-  border: 1px solid whitesmoke;
+  color: black;
+  border: 1px solid black;
 }
 #cal_btns
 {
@@ -107,7 +107,7 @@ th, td
   
   border-radius: 15px;
   padding: 20px;
-  border: 2px solid white;
+  border: 2px solid gray;
 }
 .table-container table {
   display: inline-block; 
@@ -189,16 +189,36 @@ table{
 
 h1, p
 {
-  color: whitesmoke;
+  color: black;
 }
 
 #div-right input
 {
   margin-top: 20px;
-  color: white;
+  color: black;
+  display: block;
+  padding: 30px;
 }
 
-#myFile
+#myFile, #myFile1, #people, #reason, #reason1
 {
   visibility: hidden;
+}
+
+#myFile1{
+  background-color: gray; /* Green */
+  color: #ffffff; /* White */
+  padding: 10px 20px; /* Add some padding */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Add some curvature */
+  cursor: pointer; /* Change cursor shape on hover */
+}
+
+#myFile1:hover {
+  background-color: black; /* Darker green on hover */
+}
+
+#people
+{
+  
 }
