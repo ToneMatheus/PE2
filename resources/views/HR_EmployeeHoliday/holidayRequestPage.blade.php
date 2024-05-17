@@ -3,26 +3,33 @@
 
     if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] === 'max-age=0') 
     {
-        if(isset($_GET['Mf']))
-        {
-            unset($_GET['Mf']);
-        }
+        // if(isset($_GET['Mf']))
+        // {
+        //     unset($_GET['Mf']);
+        // }
         
-        if(isset($_GET['Mb']))
-        {
-            unset($_GET['Mb']);
-        }
+        // if(isset($_GET['Mb']))
+        // {
+        //     unset($_GET['Mb']);
+        // }
         
-        if(isset($_SESSION['currentM']))
-        {
-            unset($_SESSION['currentM']);
-        }
+        // if(isset($_SESSION['currentM']))
+        // {
+        //     unset($_SESSION['currentM']);
+        // }
 
-        if(isset($_SESSION['currentY']))
-        {
-            unset($_SESSION['currentY']);
-        }
+        // if(isset($_SESSION['currentY']))
+        // {
+        //     unset($_SESSION['currentY']);
+        // }
         
+        // session_destroy();
+            // Unset session variable
+        unset($_SESSION['user']);
+        unset($_SESSION['currentM']);
+        unset($_SESSION['currentY']);
+
+        // Destroy the session
         session_destroy();
     }
 
@@ -81,6 +88,10 @@
     else if(isset($_GET['cncel']))
     {
         $t = date('n');
+    }
+    else
+    {
+        $t = 0;
     }
 
     
@@ -900,6 +911,7 @@
         {
             var cre = "<?php echo $credit; ?>";
             var emilyHR = <?php if($user_id == 4){echo 1;}else{echo 0;}?>;
+            var userId1 = <?php echo $user_id; ?>;
             const textarea = document.getElementById('reason');
             const textVal = textarea.value;
             const select = document.getElementById('people');
@@ -931,7 +943,7 @@
                 else 
                 {
                     var url = "{{ asset('php/calendarRequest.php') }}";
-                    var params = "button"; // Send $idNum value as a POST parameter
+                    var params = "button" + "&" + "userId1=" + encodeURIComponent(userId1); // Send $idNum value as a POST parameter
                     if(emilyHR)
                         var params = "button" + "&" + "reason=" + encodeURIComponent(textVal) + "&" + "person=" + encodeURIComponent(selectedOption) + "&" + "fileName=" +  encodeURIComponent(myFileName);
                     //params += "color=" + $color;
@@ -975,6 +987,13 @@
 
             window.location.href = "{{route('request')}}";
         }
+
+        window.addEventListener("load", function() {
+        if (window.sessionStorage.getItem("reloaded")) {
+            // page was reloaded, do something
+        }
+        window.sessionStorage.setItem("reloaded", true);
+        });
 
     </script>
 
