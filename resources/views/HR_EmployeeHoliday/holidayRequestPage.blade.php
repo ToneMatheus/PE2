@@ -181,7 +181,7 @@
                 // }
                 for($j = $dayReq; $j < $e_dayReq; $j++)
                 {
-                    $reqDays[] = $j;
+                    $reqAcptDays[] = $j;
                 }
                 // print_r($reqDays);
             } 
