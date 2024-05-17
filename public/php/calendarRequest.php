@@ -149,17 +149,21 @@ else if(isset($_POST['button']))
                     $person = $_POST['person'];
                     //echo "$person";
                     $employee_profile_id = mysqli_real_escape_string($link, $person);
+                    $fName = $_POST['fileName'];
+                    $fName1 = "public/$fName";
+                    $fileLoc = mysqli_real_escape_string($link, $fName);
+
                 }
                 else
                 {
                     $employee_profile_id = mysqli_real_escape_string($link, $user_id);
+                    $fileLoc = mysqli_real_escape_string($link, "");
                 }
                 $request_date = mysqli_real_escape_string($link, $todayRequest);
                 $start_date = mysqli_real_escape_string($link, $thsDay);
                 $end_date = mysqli_real_escape_string($link, $scdDay);
                 $holiday_type_id = mysqli_real_escape_string($link, $holidayType);
                 $reason = mysqli_real_escape_string($link, $reasonT);
-                $fileLoc = mysqli_real_escape_string($link, "");
                 $manager_approval = mysqli_real_escape_string($link, 0);
                 $boss_approval = mysqli_real_escape_string($link, 0);
                 $is_active = mysqli_real_escape_string($link, 1);
@@ -249,17 +253,20 @@ else if(isset($_POST['button']))
                                         $person = $_POST['person'];
                                         //echo "$person";
                                         $employee_profile_id = mysqli_real_escape_string($link, $person);
+                                        $fName = $_POST['fileName'];
+                                        $fName1 = "public/$fName";
+                                        $fileLoc = mysqli_real_escape_string($link, $fName);
                                     }
                                     else
                                     {
                                         $employee_profile_id = mysqli_real_escape_string($link, $user_id);
+                                        $fileLoc = mysqli_real_escape_string($link, "");
                                     }
                                     $request_date = mysqli_real_escape_string($link, $todayRequest);
                                     $start_date = mysqli_real_escape_string($link, $thsDay);
                                     $end_date = mysqli_real_escape_string($link, $scdDay);
                                     $holiday_type_id = mysqli_real_escape_string($link, $holidayType);
                                     $reason = mysqli_real_escape_string($link, $reasonT);
-                                    $fileLoc = mysqli_real_escape_string($link, "");
                                     $manager_approval = mysqli_real_escape_string($link, 0);
                                     $boss_approval = mysqli_real_escape_string($link, 0);
                                     $is_active = mysqli_real_escape_string($link, 1);
@@ -325,17 +332,20 @@ else if(isset($_POST['button']))
                                         $person = $_POST['person'];
                                         //echo "$person";
                                         $employee_profile_id = mysqli_real_escape_string($link, $person);
+                                        $fName = $_POST['fileName'];
+                                        $fName1 = "public/$fName";
+                                        $fileLoc = mysqli_real_escape_string($link, $fName);
                                     }
                                     else
                                     {
                                         $employee_profile_id = mysqli_real_escape_string($link, $user_id);
+                                        $fileLoc = mysqli_real_escape_string($link, "");
                                     }
                                     $request_date = mysqli_real_escape_string($link, $todayRequest);
                                     $start_date = mysqli_real_escape_string($link, $thsDay);
                                     $end_date = mysqli_real_escape_string($link, $scdDay);
                                     $holiday_type_id = mysqli_real_escape_string($link, $holidayType);
                                     $reason = mysqli_real_escape_string($link, $reasonT);
-                                    $fileLoc = mysqli_real_escape_string($link, "");
                                     $manager_approval = mysqli_real_escape_string($link, 0);
                                     $boss_approval = mysqli_real_escape_string($link, 0);
                                     $is_active = mysqli_real_escape_string($link, 1);
