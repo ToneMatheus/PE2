@@ -94,9 +94,13 @@ else if(isset($_POST['pink']) && isset($_POST['dayNum']))
     print_r($_SESSION['numCal']);
 }
 else if(isset($_POST['button']))
-{
-    $monthTest = $_SESSION['currentM'];
+{   
+    if(isset($_SESSION['currentM']))
+        $monthTest = $_SESSION['currentM'];
+    else
+        $monthTest = date('n');
     $reasonT = $_POST['reason'];
+    $user_id =  $_POST['userId1'];
     
     // TODO: send the month (and maybe year) to the request
     if(isset($_SESSION['user']['green']) || isset($_SESSION['user']['pink']))
@@ -450,7 +454,7 @@ else if(isset($_POST['button']))
     */
     
 } 
-else if(isset($_POST['cancel']))
+else if(isset($_POST['cancel']) || isset($_GET['testCancel']))
 {
     // Unset session variable
     unset($_SESSION['user']);
