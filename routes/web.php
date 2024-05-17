@@ -89,6 +89,12 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
 
     Route::get('/manualInvoice', [ManualInvoiceController::class, 'showManualInvoice'])->name('manualInvoice');
     Route::post('/manualInvoice', [ManualInvoiceController::class, 'processManualInvoice'])->name('manualInvoice.process');
+
+    //payments management
+    Route::get('/pay/create', [PaymentController::class, 'create'])->name('payment.create');
+    Route::post('/pay', [PaymentController::class, 'add'])->name('payment.add');
+    Route::get('/invoice-matching', [InvoiceMatchingController::class, 'startMatching'])->name("invoice_matching");
+    Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
@@ -114,6 +120,9 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function
     Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
     Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
     //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
+
+    Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
+    Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
@@ -132,7 +141,7 @@ Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'
 Route::get('/tariff/products/{type}', [EmployeeController::class, 'getProductByType']);
 
 
-//invoice query routes
+//invoice query routes: DEPRECATED
 Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
 Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
 
@@ -142,13 +151,13 @@ Route::get('/reminders', [InvoiceRemindersController::class, 'index'])->name("in
 Route::get('/test-qr-monthly', [InvoiceRemindersController::class, 'monthly'])->name("qr-monthly");
 
 //invoice payment
-Route::get('/pay/create', [PaymentController::class, 'create'])->name('payment.create');
+/*Route::get('/pay/create', [PaymentController::class, 'create'])->name('payment.create');
 Route::post('/pay', [PaymentController::class, 'add'])->name('payment.add');
 Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
 Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 
 Route::get('/invoice-matching', [InvoiceMatchingController::class, 'startMatching'])->name("invoice_matching");
-Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');
+Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');*/
 
 
 //QR code test
@@ -330,9 +339,9 @@ Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'
 
 
 //test route
-Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList1');
+/*Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
 Route::get('/addInvoiceExtraForm', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('addInvoiceExtraForm');
-Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');
+Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');*/
 
 
 //Customer Portal
