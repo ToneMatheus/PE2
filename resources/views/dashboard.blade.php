@@ -19,6 +19,12 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">Manage schedule of cron jobs</p>
                             </div>
                         </a>
+                        <a href="{{ route('Support_Pages.flowchart.Flowchart-ascalade-ticket') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Flowchart</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Flowchart for ticket escalation</p>
+                            </div>
+                        </a>
                     @endif
                     @if($roleId == config('roles.BOSS'))
                         <a href="{{ route('submitted-ticket') }}" class="block">
