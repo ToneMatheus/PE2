@@ -88,11 +88,11 @@ require __DIR__.'/auth.php';
 
 Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
     //cronjobs
-    //Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+    Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
     Route::get('/cron-jobs/schedule/edit/{job}', [CronJobController::class, 'edit_schedule'])->name('edit-schedule-cron-job');
     Route::post('/cron-jobs/schedule/store{job}', [CronJobController::class, 'store_schedule'])->name('store-schedule-cron-job');
     Route::post('/cron-jobs/schedule/toggle{job}', [CronJobController::class, 'toggle_schedule'])->name('toggle-schedule-cron-job');
-    // Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
+    Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
     Route::get('/cron-jobs/history', [CronJobController::class, 'showHistory'])->name('job.history');
     Route::get('/cron-jobs/get-job-runs', [CronJobController::class, 'getJobRuns'])->name('get.job.runs');
     Route::get('/cron-jobs/get-job-run-logs', [CronJobController::class, 'getJobRunLogs'])->name('get.job.run.logs');
@@ -156,8 +156,8 @@ Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function
 });
 
 Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function() {
-    Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
-    Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
+    // Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+    // Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
 
     Route::get('/tariff', [TariffController::class, 'showTariff'])->name('tariff');
     Route::get('/tariff/delete/{pID}/{tID}', [TariffController::class, 'inactivateTariff'])->name('tariff.delete');
