@@ -190,26 +190,43 @@ class InvoiceController extends Controller
         $amount = floatval($amount);
         DB::table('credit_notes')->insert(array(
             'type' => $type,
+            'status' => 1,
             'amount' => $amount,
+            'invoice_id' => 1,
             'user_id' => $userID,
             'is_credit' => 0,
             'is_active' => 1));
-        $users = DB::table('users as u')
-        ->join('customer_contracts as cc', 'cc.user_id', '=', 'u.id')
-        ->get();
-        return view('Invoices.TestUserList', compact('users'));
-    }
-    //test
-    public function showTestUserList()
-    {
-        $users = DB::table('users as u')
-        ->join('customer_contracts as cc', 'cc.user_id', '=', 'u.id')
-        ->get();
-        return view('Invoices.TestUserList', compact('users'));
-    }
-    public function showTestEmployeeList()
-    {
-        return view('Invoices.CustomerInvoicesOverview');
+
+        $request->validate([
+            'search' => 'nullable|max:255',
+            'sort' => 'nullable|alpha_dash',
+            'direction' => 'nullable|in:asc,desc',
+        ]);
+    
+        $sort = $request->get('sort');
+        $direction = $request->get('direction', 'asc');
+        $search = $request->get('search');
+        $query = DB::table('users')
+                    ->join('customer_contracts', 'users.id', '=', 'customer_contracts.user_id')
+                    ->select('users.id', 'users.username', 'users.first_name', 'users.last_name', 'users.phone_nbr', 'users.is_company', 'users.company_name', 'users.email', 'users.birth_date', 'users.is_active', 'customer_contracts.start_date', 'customer_contracts.end_date', 'customer_contracts.type', 'customer_contracts.price', 'customer_contracts.status');
+    
+            if ($search) {
+                     $query->where('users.first_name', 'like', "%{$search}%")
+                           ->orWhere('users.last_name', 'like', "%{$search}%")
+                           ->orWhere('users.company_name', 'like', "%{$search}%")
+                           ->orWhere('users.id', 'like', "%{$search}%")
+                           ->orWhere('users.email', 'like', "%{$search}%");
+                }
+    
+                if (!empty($sort)) {
+                    $query->orderBy($sort, $direction);
+                } else {
+                    $query->orderBy('users.id', $direction);
+                }
+    
+        $customers = $query->paginate(10);
+    
+        return view('Customers/CustomerGridView', ['customers' => $customers, 'sort' => $sort, 'direction' => $direction]);
     }
 
     public function showAllInvoices(Request $request){

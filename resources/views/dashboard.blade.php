@@ -33,6 +33,19 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">Generate an invoice for a customer</p>
                             </div>
                         </a>
+
+                        <a href="{{ route('payment.create') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Add Payment</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Add an incoming payment</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('invoice_matching') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Invoice Matchings</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View invoice matchings of external payments</p>
+                            </div>
+                        </a>
                     @endif
                     @if($roleId == config('roles.BOSS'))
                         <a href="{{ route('submitted-ticket') }}" class="block">
