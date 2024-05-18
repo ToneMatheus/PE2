@@ -81,7 +81,7 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::get('/cron-jobs/history', [CronJobController::class, 'showHistory'])->name('job.history');
     Route::get('/cron-jobs/get-job-runs', [CronJobController::class, 'getJobRuns'])->name('get.job.runs');
     Route::get('/cron-jobs/get-job-run-logs', [CronJobController::class, 'getJobRunLogs'])->name('get.job.run.logs');
-    
+
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
@@ -196,8 +196,6 @@ Route::controller(MeterController::class)->group(function () {
 });
 
 
-Route::get('Meters/Meter_History/{timeframe?}', [MeterController::class, 'showConsumptionHistory'])->name('consumption.history');
-Route::get('Meters/Consumption_Page', [MeterController::class, 'showConsumptionPage'])->name('consumption.page');
 
 // Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 // Route::post('login', [LoginController::class, 'login']);

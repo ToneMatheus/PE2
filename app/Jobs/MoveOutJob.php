@@ -60,7 +60,7 @@ class MoveOutJob implements ShouldQueue
                 $diff = $end_date->diffInDays($now);
                 if ($diff % 14 == 0) {
                     $tenant_out = $contract->user_id;
-    
+
                     $out_meters = DB::table('users')
                     ->join('customer_addresses','users.id','=','customer_addresses.user_id')
                     ->join('addresses','customer_addresses.id','=','addresses.id')
@@ -69,7 +69,7 @@ class MoveOutJob implements ShouldQueue
                     ->where('users.id', '=', $tenant_out)
                     ->select('meters.id')
                     ->get();
-    
+
                     foreach($out_meters as $out_meter)
                     {
                         DB::table('meter_reader_schedules')->insert(

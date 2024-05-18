@@ -8,7 +8,7 @@
 </head>
 <body>
     <p>Hello,</p>
-    
+
     <p>You are receiving this invoice because you are registered as the landlord for the address {{ $user->address }}.
     <p>Since there was a gap between the end-of-contract date for your previous tenant, and the start-of-contract date for your
         new tenant in this address, the consumption of electricity and gas during those months has been invoiced to you.</p>
@@ -64,10 +64,10 @@
         @endforeach
     </table>
 
-    <h2>Total Amount: {{ round($invoice->total_amount, 2) }}</h2> 
+    <h2>Total Amount: {{ round($invoice->total_amount, 2) }}</h2>
 
     <p>
-        <?php 
+        <?php
         echo DNS2D::getBarcodeHTML($domain . "/pay/" . $invoice->id . "/" . $hash, 'QRCODE',5,5);
         ?>
     </p>

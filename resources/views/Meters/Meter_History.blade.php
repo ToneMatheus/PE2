@@ -42,7 +42,7 @@
                 @endforeach
             </form>
         </div>
-        
+
         <div>
             <div class="content">
                 <h1>Energy Consumption History</h1>
@@ -90,7 +90,7 @@
                 }
 
                 consumptionValue = indexValue - latestValue;
-                
+
                 if (indexValue - latestValue > 0) {
                     $(consumption).html(consumptionValue);
                 }

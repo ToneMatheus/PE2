@@ -86,7 +86,7 @@ class IndexValueSeeder extends Seeder
                 'reading_value' => 5100,
                 'meter_id' => 10
             ]
-            
+
         ]);
     }
 }

@@ -8,7 +8,7 @@ use Carbon\Carbon;
 class ConsumptionSeeder extends Seeder
 {
     public function run()
-    { 
+    {
         for($i = 1; $i <= 20; $i++){
             $indexValues = DB::table('index_values')->where('meter_id', '=', $i)->get();
 
@@ -17,7 +17,7 @@ class ConsumptionSeeder extends Seeder
                     if ($key > 0) {
                         $prevIndexValue = $indexValues[$key - 1];
                         $consumptionValue = $indexValue->reading_value - $prevIndexValue->reading_value;
-        
+
                         DB::table('consumptions')->insert([
                             'start_date' => $prevIndexValue->reading_date,
                             'end_date' => $indexValue->reading_date,
