@@ -11,6 +11,7 @@ use App\Models\{
     Consumption,
     Meter_Addresses,
 };
+use App\Traits\cronJobTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Bus\Queueable;
@@ -22,16 +23,16 @@ use Illuminate\Queue\SerializesModels;
 
 class MeterSchedule implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($logLevel = null)
     {
-        //
+        $this->LoggingLevel = $logLevel;
     }
 
     /**

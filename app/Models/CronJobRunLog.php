@@ -14,6 +14,8 @@ class CronJobRunLog extends Model
         'cron_job_run_id',
         'invoice_id',
         'log_level',
+        'detailed_message',
+        'job_name',
         'message',
     ];
 

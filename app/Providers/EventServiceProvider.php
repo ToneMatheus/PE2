@@ -20,6 +20,12 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        'App\Events\JobDispatched' => [
+            'App\Listeners\TrackJobDispatch',
+        ],
+        'App\Events\JobCompleted' => [
+            'App\Listeners\TrackJobCompletion',
+        ],
         NewEmployeeRegistered::class => [
             SendWelcomeMail::class,
         ],

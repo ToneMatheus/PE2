@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\JobDispatched;
 use App\Http\Controllers\EstimationController;
 use App\Models\{
     User, 
@@ -37,16 +38,18 @@ class InvoiceRunJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 
-    protected $domain = "http://127.0.0.1:8000"; //change later
+    protected $domain;
     protected $now;
     protected $year;
     protected $month;
 
-    public function __construct()
+    public function __construct($logLevel = null)
     {
+        $this->LoggingLevel = $logLevel;
         $this->now = config('app.now');
         $this->month = $this->now->format('m');
         $this->year = $this->now->format('Y');
+        $this->domain = config('app.host_domain');
     }
 
     public function handle()
@@ -63,13 +66,28 @@ class InvoiceRunJob implements ShouldQueue
         ->join('Addresses as a', 'ca.Address_id', '=', 'a.id')
         ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
         ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
-        ->where('users.id', '=', 6)
+        ->where('m.type', '=', 'Electricity')
+        ->where('m.status', '=', 'Installed')
+        ->where('m.is_smart', '=', '0')
+        ->where('m.has_validation_error', '=', '0')
         ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
         ->get();
-
-        dispatch(new WeekAdvanceReminderJob);
-        dispatch(new InvoiceFinalWarningJob);
-
+        $customersWithValidationError = User::join('Customer_contracts as cc', 'users.id', '=', 'cc.user_id') // Meters tied to customers that have no contract don't show up. They are marked with a validation error and not displayed through this.
+        ->join('Customer_addresses as ca', 'users.id', '=', 'ca.user_id')
+        ->join('Addresses as a', 'ca.Address_id', '=', 'a.id')
+        ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
+        ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
+        ->where('m.type', '=', 'Electricity')
+        ->where('m.status', '=', 'Installed')
+        ->where('m.is_smart', '=', '0')
+        ->where('m.has_validation_error', '=', '1')
+        ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
+        ->get();
+        // dd($customersWithValidationError);
+        foreach($customersWithValidationError as $customerWithValidationError){
+            $meter_id = $customerWithValidationError->mID;
+            $this->logError(null, "The meter with id: $meter_id still has an active validation error. Mail is not generating for this meter.");
+        }
         //Check if monthly or annual
         foreach($customers as $customer){
             $startContract = Carbon::parse($customer->startContract);
@@ -106,41 +124,27 @@ class InvoiceRunJob implements ShouldQueue
                 }
 
             } else { //Yearly
-                //New Customer
-                if($startContract->year == $year){
+                $invoiceDate = $startContract->addYear()->addWeeks(2);
+                $lastInvoiceDate = $invoiceDate->copy()->setYear($year-1);
 
-                    //Reminder index values 1 week prior invoice run
-                    if($startContract->copy()->addYear()->addWeeks(2)->subWeek() == $now){
-                        MeterReadingReminderJob::dispatch($customer->uID, $customer->mID);
-                    }
+                $invoiceDate->setYear($year);
+                $invoiceDate->setMonth($month);
+                $invoiceDate->setTimezone('Europe/Berlin');
 
-                    //Check if needs an invoice now
-                    if($startContract->copy()->addYear()->addWeeks(2) == $now){
-                        $this->generateYearlyInvoice($customer, $startContract->start_date, $startContract->copy()->addYear()->addWeeks(2));
-                    }
+                $missing = Meter::where('id', '=', $customer->mID)->first();
 
-                } else { //old Customer
-                    $invoiceDate = $startContract->addYear()->addWeeks(2);
-                    $lastInvoiceDate = $invoiceDate->copy()->setYear($year-1);
-
-                    $invoiceDate->setYear($year);
-                    $invoiceDate->setMonth($month);
-                    $invoiceDate->setTimezone('Europe/Berlin');
-
-                    $missing = Meter::where('id', '=', $customer->mID)->first();
-
-                    //Rerun missing meter reading
-                    if($invoiceDate->copy()->addWeek() == $now && $missing->expecting_reading){
-                        $this->generateYearlyInvoice($customer, $lastInvoiceDate, $now->copy());
-                        Meter::where('id', '=', $customer->mID)
-                        ->update(['expecting_reading' => 0]);
-                    }//Reminder index values 1 week prior invoice run
-                    elseif($invoiceDate->copy()->subWeek() == $now){
-                        MeterReadingReminderJob::dispatch($customer->uID, $customer->mID);
-                    } //Check if needs an invoice now
-                    elseif($invoiceDate->copy() == $now){
-                        $this->generateYearlyInvoice($customer, $lastInvoiceDate, $invoiceDate->copy()->addYear());
-                    }
+                //Rerun missing meter reading
+                if($invoiceDate->copy()->addWeek() == $now && $missing->expecting_reading){
+                    $this->generateYearlyInvoice($customer, $lastInvoiceDate, $now->copy());
+                    Meter::where('id', '=', $customer->mID)
+                    ->update(['expecting_reading' => 0]);
+                }//Reminder index values 1 week prior invoice run
+                elseif($invoiceDate->copy()->subWeek() == $now){
+                    event(new JobDispatched($this->JobRunId, "MeterReadingReminderJob"));
+                    MeterReadingReminderJob::dispatch($this->JobRunId, $customer->uID, $customer->mID);
+                } //Check if needs an invoice now
+                elseif($invoiceDate->copy() == $now){
+                    $this->generateYearlyInvoice($customer, $lastInvoiceDate, $invoiceDate->copy()->addYear());
                 }
             } 
         }
@@ -278,7 +282,8 @@ class InvoiceRunJob implements ShouldQueue
             $this->sendAnnualMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
             EstimationController::UpdateEstimation($customer->mID);  
         } else {
-            dispatch(new MissingMeterReadingJob($customer->uID, $customer->mID));
+            event(new JobDispatched($this->JobRunId, "MissingMeterReadingJob"));
+            dispatch(new MissingMeterReadingJob($this->JobRunId, $customer->uID, $customer->mID));
         }
     }
 

@@ -18,40 +18,57 @@
     </caption>
     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
         <tr>
-            <th scope="col" class="px-6 py-3">Invoice ID:</th>
-            <th scope="col" class="px-6 py-3">
-                <div class="flex items-center">
-                    Log Level:
-                </div>
-            </th>
+            <th scope="col" class="px-6 py-3">Log Level:</th>
             <th scope="col" class="px-6 py-3">Message:</th>
+            <th scope="col" class="px-6 py-3"></th>
         </tr>
     </thead>
     <tbody>
         @if (!$jobLogs->isEmpty())
         @foreach ($jobLogs as $jobLog)
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-            <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                @if ($jobLog->invoice_id != null)
-                    {{ $jobLog->invoice_id }}
-                @else
-                    N/A
-                @endif    
-            </td>
-            <td class="px-6 py-4">
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                 {{ $jobLog->log_level }}
             </td>
             <td class="px-6 py-4">
                 {{ $jobLog->message }}
             </td>
+            <td class="px-4 py-4 cursor-pointer" onclick="toggleDetails(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+                </svg>
+            </td>
+        </tr>
+        <tr class="hidden bg-gray-100 dark:bg-gray-700">
+            <td colspan="3" class="px-4 py-2">
+                <p><strong>Invoice ID:</strong> 
+                @if ($jobLog->invoice_id != null)
+                    {{ $jobLog->invoice_id }}
+                @else
+                    N/A
+                @endif
+                </p>
+                <p>
+                    <strong>Logged by:</strong> 
+                    {{ $jobLog->job_name }}
+                </p>
+                @if ($jobLog->detailed_message != null)
+                    <p>
+                        <strong>Detailed Message:</strong> 
+                        {{ $jobLog->detailed_message }}
+                    </p>
+                @endif
+                
+            </td>
         </tr>
         @endforeach
         @else
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-            <td rowspan="3" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            <td colspan="4" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                 There are no logs for this run.
             </td>
         </tr>
+        
         @endif
     </tbody>
 </table>

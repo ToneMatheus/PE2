@@ -16,7 +16,9 @@ return [
     |
     */
 
-    'now' => Carbon\Carbon::create(2025, 1, 14),
+    'host_domain' => 'http://10.76.250.100:8000',
+
+    'now' => Carbon\Carbon::create(2025, 2, 15),
 
     'providers' => [
         LaravelProfane\ProfaneServiceProvider::class,

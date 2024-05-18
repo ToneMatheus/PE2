@@ -16,7 +16,7 @@
         <p>Postal</p>
     </div>
 
-    <h1>Monthly Electrical Invoice</h1>
+    <h1>Smart Electrical Invoice</h1>
 
     <div id="user" class="row">
         <div class="col">
@@ -64,7 +64,5 @@
     </p>
 
     <p><br/>Scanning this QR code will bring you directly to a page where you can handle the payment of your invoice.</p>
-
-    <p>If you pay by bank transfer, mention: {{ $invoice->structured_communication }}</p>
 </body>
 </html>

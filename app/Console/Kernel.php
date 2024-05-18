@@ -29,13 +29,13 @@ class Kernel extends ConsoleKernel
                 
                 switch ($cronjob->interval) {
                     case 'daily':
-                        $schedule->job(new $jobClass())->dailyAt($hour . ':' . $minute);
+                        $schedule->job(new $jobClass($cronjob->log_level))->dailyAt($hour . ':' . $minute);
                         break;
                     case 'monthly':
-                        $schedule->job(new $jobClass())->monthlyOn($cronjob->scheduled_day, $hour . ':' . $minute);
+                        $schedule->job(new $jobClass($cronjob->log_level))->monthlyOn($cronjob->scheduled_day, $hour . ':' . $minute);
                         break;
                     case 'yearly':
-                        $schedule->job(new $jobClass())->yearlyOn($cronjob->scheduled_month, $cronjob->scheduled_day, $hour . ':' . $minute);
+                        $schedule->job(new $jobClass($cronjob->log_level))->yearlyOn($cronjob->scheduled_month, $cronjob->scheduled_day, $hour . ':' . $minute);
                         break;
                 }
             }

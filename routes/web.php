@@ -10,6 +10,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
 use App\Http\Controllers\InvoiceRemindersController;
+use App\Http\Controllers\InvoiceMatchingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
@@ -39,10 +40,11 @@ use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
-use App\Http\Controllers\PayoutsController;
 use App\Http\Controllers\GasElectricityController;
+use App\Http\Controllers\PayoutsController;
 use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
+use App\Http\Controllers\ManualInvoiceController;
 use App\Http\Controllers\NewEmployeeController;
 use App\Http\Controllers\holidayRequest;
 use App\Http\Controllers\UploadController;
@@ -94,7 +96,20 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::get('/cron-jobs/history', [CronJobController::class, 'showHistory'])->name('job.history');
     Route::get('/cron-jobs/get-job-runs', [CronJobController::class, 'getJobRuns'])->name('get.job.runs');
     Route::get('/cron-jobs/get-job-run-logs', [CronJobController::class, 'getJobRunLogs'])->name('get.job.run.logs');
+    Route::post('/cron-jobs/update-log-level/{jobName}', [CronJobController::class, 'updateLogLevel'])->name('update.log.level');
     
+
+    Route::get('/payouts', [PayoutsController::class, 'showPayouts'])->name('payouts');
+    Route::get('/payouts/{id}', [PayoutsController::class, 'processPayout'])->name('payouts.pay');
+
+    Route::get('/manualInvoice', [ManualInvoiceController::class, 'showManualInvoice'])->name('manualInvoice');
+    Route::post('/manualInvoice', [ManualInvoiceController::class, 'processManualInvoice'])->name('manualInvoice.process');
+
+    //payments management
+    Route::get('/pay/create', [PaymentController::class, 'create'])->name('payment.create');
+    Route::post('/pay', [PaymentController::class, 'add'])->name('payment.add');
+    Route::get('/invoice-matching', [InvoiceMatchingController::class, 'startMatching'])->name("invoice_matching");
+    Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');
     Route::get('/tariff', [TariffController::class, 'showTariff'])->name('tariff');
     Route::get('/tariff/delete/{pID}/{tID}', [TariffController::class, 'inactivateTariff'])->name('tariff.delete');
     Route::post('/tariff/add', [TariffController::class, 'processTariff'])->name('tariff.add');
@@ -108,8 +123,6 @@ Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(function() {
-    Route::get('/payouts', [PayoutsController::class, 'showPayouts'])->name('payouts');
-    Route::get('/payouts/{id}', [PayoutsController::class, 'processPayout'])->name('payouts.pay');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group(function() {
@@ -128,6 +141,9 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function
     Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
     Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
     //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
+
+    Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
+    Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
@@ -165,7 +181,8 @@ Route::get('/evaluations', [EvaluationController::class, 'evaluations'])->name('
 
 //Route::get('/evaluations', [EvaluationController::class, 'managerTicketPage'])->name('manager-tickets');
 
-//invoice query routes
+
+//invoice query routes: DEPRECATED
 Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
 Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
 
@@ -175,8 +192,14 @@ Route::get('/reminders', [InvoiceRemindersController::class, 'index'])->name("in
 Route::get('/test-qr-monthly', [InvoiceRemindersController::class, 'monthly'])->name("qr-monthly");
 
 //invoice payment
+/*Route::get('/pay/create', [PaymentController::class, 'create'])->name('payment.create');
+Route::post('/pay', [PaymentController::class, 'add'])->name('payment.add');
 Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
 Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
+
+Route::get('/invoice-matching', [InvoiceMatchingController::class, 'startMatching'])->name("invoice_matching");
+Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');*/
+
 
 //QR code test
 Route::get('/code', function () {
@@ -403,9 +426,9 @@ Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'
 
 
 //test route
-Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList1');
-Route::post('/TestUserList', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('TestUserList');
-Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');
+/*Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
+Route::get('/addInvoiceExtraForm', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('addInvoiceExtraForm');
+Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');*/
 
 
 //Customer Portal
