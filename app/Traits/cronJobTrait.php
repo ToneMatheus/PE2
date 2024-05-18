@@ -41,6 +41,7 @@ trait cronJobTrait
                 'invoice_id' => $invoiceId,
                 'log_level' => $logLevelString,
                 'detailed_message' => $detailedMessage,
+                'job_name' => $this->__getShortClassName(),
                 'message' => $message,
             ]);
         } catch (\Exception $e) {
@@ -73,6 +74,7 @@ trait cronJobTrait
     }
 
     private function jobException($errorMessage){
+        event(new JobCompleted($this->JobRunId, $this->__getShortClassName(), $errorMessage));
         // Log the crash that happened
         try {
             Log::info('Job: '.$this->__getShortClassName().' had an exception');

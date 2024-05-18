@@ -48,6 +48,10 @@
                     N/A
                 @endif
                 </p>
+                <p>
+                    <strong>Logged by:</strong> 
+                    {{ $jobLog->job_name }}
+                </p>
                 @if ($jobLog->detailed_message != null)
                     <p>
                         <strong>Detailed Message:</strong> 
