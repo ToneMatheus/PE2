@@ -37,7 +37,7 @@
                         @if ($jobRuns->count() > 0)
                         <x-select id="JobRun" name="JobRun" onchange="onApplyFilters()">
                             @foreach ($jobRuns->reverse() as $index => $jobRun)
-                            <option value="{{ $jobRun->id }}">Run: {{ $index + 1 }} - {{ $jobRun->started_at }}</option>
+                            <option value="{{ $jobRun->id }}">Run: {{ $index + 1 }} - {{ \Carbon\Carbon::parse($jobRun->started_at)->format('d-m-Y H:i') }}</option>
                             @endforeach
                         </x-select>
                         @else
