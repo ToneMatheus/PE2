@@ -1,49 +1,4 @@
-{{-- <!DOCTYPE html>
-<html>
-<head>
-    <title>Meter History</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-   
-</head>
-<body> --}}
 <x-app-layout title="Meter history">
-    @if (count($errors) > 0)
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-    
-    {{-- <div class="modal fade" id="indexModal" tabindex="-1" aria-labelledby="indexModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="indexModalLabel">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
-                </div>
-                <form method="POST" action="{{ route('submitIndexCustomer') }}">
-                    <div class="modal-body">
-                        <div class="form-group mb-3">
-                            @csrf
-                            @method('POST')
-                            <p>Previous index value = <span id="prev"></span></p>
-                            <input id="meter_id" name="meter_id" type="hidden">
-                            <input id="EAN" name="EAN" type="hidden">
-                            <label for="index_value">Enter index value for meter <span id="modalEAN" class="modalEAN"></span></label>
-                            <input id="index_value" name="index_value" type="text" required class="name form-control">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="enter">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div> --}}
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             Hello, {{$details[0]->first_name}}
@@ -89,12 +44,23 @@
         </div>
         
         <div>
-            <p>chart</p>
+            <div class="content">
+                <h1>Energy Consumption History</h1>
+                <canvas id="consumptionChart"></canvas>
+            </div>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                var consumptionData = @json($consumptionData);
+            </script>
+            <script src="/js/consumptionChart.js"></script>
+            <button onclick="fetchData('week')">Week</button>
+            <button onclick="fetchData('month')">Month</button>
+            <button onclick="fetchData('year')">Year</button>
         </div> 
     </div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function(){
             function indexValidate(meterID, indexValue){
@@ -147,19 +113,6 @@
             })
         })
     </script>
-        {{-- <div class="content">
-            <h1>Energy Consumption History</h1>
-            <canvas id="consumptionChart"></canvas>
-        </div>
-        <script>
-            var consumptionData = @json($consumptionData);
-        </script>
-        <script src="/js/consumptionChart.js"></script>
-        <button onclick="fetchData('week')">Week</button>
-        <button onclick="fetchData('month')">Month</button>
-        <button onclick="fetchData('year')">Year</button> --}}
-    {{-- </body>
-    </html> --}}
     </x-app-layout>
 
 

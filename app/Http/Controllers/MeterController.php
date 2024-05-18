@@ -325,6 +325,7 @@ class MeterController extends Controller
                             ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
                             ->where('meter_reader_schedules.reading_date','=', $today)
                             ->where('meter_reader_schedules.employee_profile_id','=', 1)
+                            ->where('users.is_active','=', 1)
                             ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code',
                                     'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id',
                                     'meter_reader_schedules.priority', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
@@ -358,6 +359,7 @@ class MeterController extends Controller
                         ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
                         ->where('meter_reader_schedules.reading_date','=', $today)
                         ->where('meter_reader_schedules.employee_profile_id','=',1)
+                        ->where('users.is_active','=', 1)
                         ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code',
                                 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id',
                                 'meter_reader_schedules.priority', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
@@ -505,16 +507,27 @@ class MeterController extends Controller
 
         DB::table('meter_reader_schedules')
             ->where('meter_id', '=', $meter_id)
+            ->limit(1)
             ->update(['status' => 'read']);
 
         if ($contract_date->end_date == $testDate) {
             DB::table('customer_contracts')
             ->where('user_id', '=', $contract_date->user_id)
-            ->update(['status' => 'inactive']);
+            ->update(['status' => 'Inactive']);
 
             DB::table('users')
             ->where('id', '=', $contract_date->user_id)
             ->update(['is_active' => '0']);
+
+            DB::table('users')
+                        ->join('customer_addresses','users.id','=','customer_addresses.user_id')
+                        ->join('customer_contracts','users.id','=','customer_contracts.user_id')
+                        ->join('addresses','customer_addresses.address_id','=','addresses.id')
+                        ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
+                        ->join('meters','meter_addresses.meter_id','=','meters.id')
+                        ->where('customer_contracts.start_date', '>', $contract_date->end_date)
+                        ->where('meters.id', '=', $meter_id)
+                        ->update(['users.is_active' => '1', 'customer_contracts.status' => 'Active']);
 
             $this->finalSettlementJob($meter_id, $consumptionID, $consumption_value);
         }
@@ -1130,9 +1143,9 @@ class MeterController extends Controller
     $consumptionData = $query->get();
 
     // If you want to return JSON response
-    return response()->json(['consumptionData' => $consumptionData]);
+    //return response()->json(['consumptionData' => $consumptionData]);
 
-    // return view('Meters/Meter_History', ['consumptionData' => $consumptionData]);
+    return view('Meters/Meter_History', ['consumptionData' => $consumptionData]);
 }
 
     public function showConsumptionPage()

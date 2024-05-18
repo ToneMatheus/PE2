@@ -241,7 +241,7 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'is_active' => 0,
+                'is_active' => 1,
                 'is_landlord' => 0,
                 'index_method' => 'website'
             ],
@@ -367,7 +367,7 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'is_active' => 1,
+                'is_active' => 0,
                 'is_landlord' => 0,
                 'index_method' => 'website'
             ],

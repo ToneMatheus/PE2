@@ -19,6 +19,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+
 
 class MoveOutJob implements ShouldQueue
 {
@@ -48,6 +50,7 @@ class MoveOutJob implements ShouldQueue
         foreach ($contracts as $contract)
         {
             $today = Carbon::today()->toDateString();
+            $todayOne = Carbon::today()->addDay()->toDateString();
             $start_date = Carbon::parse($contract->start_date)->startOfDay();
             $tenant_out = '';
             $tenant_in = '';
@@ -78,6 +81,28 @@ class MoveOutJob implements ShouldQueue
                         ]);
 
                         $meter = Meter::find($out_meter->id);
+                        $meter->expecting_reading = 1;
+                        $meter->save();
+
+                        $in_meter = DB::table('users')
+                                    ->join('customer_addresses','users.id','=','customer_addresses.user_id')
+                                    ->join('customer_contracts','users.id','=','customer_contracts.user_id')
+                                    ->join('addresses','customer_addresses.address_id','=','addresses.id')
+                                    ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
+                                    ->join('meters','meter_addresses.meter_id','=','meters.id')
+                                    ->where('customer_contracts.start_date', '>', $end_date)
+                                    ->select('meters.id as meter_id')
+                                    ->get()->first();
+                        
+                        DB::table('meter_reader_schedules')->insert(
+                            ['employee_profile_id' => 1000,
+                            'meter_id' => $in_meter->meter_id,
+                            'reading_date' => $todayOne,
+                            'status' => 'unread',
+                            'priority' => 1
+                        ]);
+
+                        $meter = Meter::find($in_meter->meter_id);
                         $meter->expecting_reading = 1;
                         $meter->save();
                     }

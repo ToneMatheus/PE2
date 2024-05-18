@@ -18,7 +18,7 @@ class MeterSeeder extends Seeder
 
         $exampleInstallation = '2021-01-01';
 
-        $expecting_reading = 0;
+        $expecting_reading = 1;
 
         for($i = 1; $i <= 6; $i++){
             DB::table('meters')->insert([
@@ -32,7 +32,7 @@ class MeterSeeder extends Seeder
             ]);
         }
 
-        for($i = 7; $i <= 9; $i++){
+        for($i = 7; $i <= 8; $i++){
             DB::table('meters')->insert([
                 'id' => $i,
                 'EAN' => sprintf("%018d", rand(0, 999999999999999999)),
@@ -43,6 +43,16 @@ class MeterSeeder extends Seeder
                 'expecting_reading' => $expecting_reading
             ]);
         }
+
+        DB::table('meters')->insert([
+            'id' => 9,
+            'EAN' => sprintf("%018d", rand(0, 999999999999999999)),
+            'type' => 'Electricity',
+            'installation_date' => $oneYearDate,
+            'status' => 'Installed',
+            'is_smart' => 1,
+            'expecting_reading' => $expecting_reading
+        ]);
 
         DB::table('meters')->insert([
             'id' => 10,
