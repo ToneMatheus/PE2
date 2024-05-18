@@ -66,6 +66,15 @@ class CustomerAddressSeeder extends Seeder
             [
                 'start_date' => '2024-01-01',
                 'end_date' => null,
+                'user_id' => 20,
+                'address_id' => 16
+            ]
+        ]);
+
+        DB::table('customer_addresses')->insert([
+            [
+                'start_date' => '2024-01-01',
+                'end_date' => null,
                 'user_id' => 10,
                 'address_id' => 21
             ]
