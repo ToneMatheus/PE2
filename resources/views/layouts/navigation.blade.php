@@ -49,7 +49,7 @@ use Illuminate\Support\Facades\DB;
                             </x-slot>
     
                             <x-slot name="content">
-                                <x-dropdown-link :href="route('profile.edit')">
+                                <x-dropdown-link :href="route('profile')">
                                     {{ __('Profile') }}
                                 </x-dropdown-link>
     
