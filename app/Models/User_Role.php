@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class User_Role extends Model
 {
 
-    public $timestamps = false;
-
     use HasFactory;
     protected $table = 'user_roles';
 
@@ -20,6 +18,8 @@ class User_Role extends Model
         'role_id',
         'is_active'
     ];
+
+    public $timestamps = false;
 
     public function user(): BelongsTo
     {

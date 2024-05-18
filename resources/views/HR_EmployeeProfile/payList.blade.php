@@ -16,7 +16,7 @@
             <div>
                 <h1><u>Your payslips</u></h1>
                 @php
-                    $userID = 1;//To be replaced by the real ID!
+                   $userID = Auth::id();
 
                     $payslipInfo = DB::select("select * from payslips where employee_profile_id = $userID");//fetching payslip plus contract information
                     $numRows = count($payslipInfo);
@@ -31,6 +31,8 @@
                                 $hours = htmlspecialchars($info->total_hours);
                                 $amountPerHour = htmlspecialchars($info->amount_per_hour);
                                 $totalAmount = $hours * $amountPerHour;
+                                $taxAmount = $totalAmount * 0.21;
+                                $totalAmount = $totalAmount - $taxAmount;
 
                                 echo("                       
                                 <span style=\"margin-left: 85px\">Created on $issued </span><br/>

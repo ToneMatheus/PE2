@@ -13,7 +13,7 @@ class PayslipSeeder extends Seeder
     {
         $payslips = [];
 
-        for($i = 1; $i <= 3; $i++){
+        for($i = 1; $i <= 15; $i++){
             $payslips[] = [
                 'employee_profile_id' => $i,
                 'start_date' => '2024-01-01',

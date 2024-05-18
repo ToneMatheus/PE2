@@ -6,17 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+
 class Team extends Model
 {
+    protected $fillable = [
+        'id',
+        'team_name',
+    ];
     use HasFactory;
 
-    protected $fillable = [
-        'team_name'
-    ];
-
-    public function team_members(): HasMany
+    public $timestamps = false;
+    
+    public function teamMember(): HasMany
     {
-        return $this->hasMany(Team_Member::class);
+        return $this->hasMany(teamMember::class);
     }
 
     public function team_user_roles(): HasMany
