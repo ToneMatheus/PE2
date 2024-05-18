@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use App\Models\CronJob;
 use App\Models\CronJobRun;
 use App\Models\CronJobRunLog;
+use Illuminate\Support\Facades\Log;
 
 class CronJobController extends Controller
 {
@@ -21,7 +22,7 @@ class CronJobController extends Controller
                 $filename = pathinfo($file, PATHINFO_FILENAME);
                 if (Str::endsWith($file, '.php') && !Str::startsWith($filename, '_')) {
                     // Check if the job is already in the database
-                    if (!CronJob::where('name', $filename)->exists()) {
+                    if (CronJob::where('name', $filename)->doesntExist()) {
                         $newJob = new CronJob();
                         $newJob->name = $filename;
                         $newJob->is_enabled = false;
