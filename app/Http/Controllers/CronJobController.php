@@ -125,7 +125,7 @@ class CronJobController extends Controller
             $files = File::files($jobPath);
             foreach ($files as $file) {
                 $filename = pathinfo($file, PATHINFO_FILENAME);
-                if (Str::endsWith($file, '.php') && !Str::startsWith($filename, '.')) {
+                if (Str::endsWith($file, '.php') && !Str::startsWith($filename, '_')) {
                     $jobs[] = $filename;
                 }
             }
