@@ -17,8 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('benefit_name');
             $table->string('description');
-            $table->string('image');
-            $table->string('premium');
             $table->bigInteger('role_id')->unsigned();
         });
 

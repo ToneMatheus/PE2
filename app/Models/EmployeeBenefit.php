@@ -14,8 +14,6 @@ class EmployeeBenefit extends Model
     protected $fillable = [
         'benefit_name',
         'description',
-        'image',
-        'premium',
         'role_id'
     ];
 

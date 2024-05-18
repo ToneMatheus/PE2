@@ -95,19 +95,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(CreditNote::class);
     }
-
-    public function teamMember(): HasMany
-    {
-        return $this->hasMany(teamMember::class);
-    }
-
-
-    //! de onderstaande functie zou moeten toe gevoegd worden. afhenkelijk van wat er gedaan wordt met het role systeem.
-    // public function hasRole($role)
-    // {
-    //     return $this->role === $role;
-    // }
-
+    
     public function team_members(): HasMany
     {
         return $this->hasMany(Team_Member::class);

@@ -3,8 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Auth\Events\Registered;
-use App\Events\NewEmployeeRegistered as NewEmployeeRegistered;
-use App\Listeners\SendWelcomeEmail as SendWelcomeMail;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
@@ -25,9 +23,6 @@ class EventServiceProvider extends ServiceProvider
         ],
         'App\Events\JobCompleted' => [
             'App\Listeners\TrackJobCompletion',
-        ],
-        NewEmployeeRegistered::class => [
-            SendWelcomeMail::class,
         ],
     ];
 

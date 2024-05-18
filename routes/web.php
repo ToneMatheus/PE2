@@ -16,12 +16,6 @@ use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\HolidayController;
-use App\Http\Controllers\RelationsController;
-use App\Http\Controllers\TeamController;
-use App\Http\Controllers\TariffController;
-use App\Http\Controllers\LeaveRequestController;
-
-use App\Http\Controllers\EvaluationController;
 
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
@@ -46,12 +40,6 @@ use App\Http\Controllers\RelationsController;
 use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
 use App\Http\Controllers\ManualInvoiceController;
-use App\Models\ElectricityConnection;
-use App\Http\Controllers\IndexValueController;
-use App\Http\Controllers\NewEmployeeController;
-use App\Http\Controllers\holidayRequest;
-use App\Http\Controllers\UploadController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -67,10 +55,6 @@ use App\Http\Controllers\UploadController;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/temp', function () {
-    return view('welcome_temp');
-});
-
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -113,12 +97,6 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::post('/pay', [PaymentController::class, 'add'])->name('payment.add');
     Route::get('/invoice-matching', [InvoiceMatchingController::class, 'startMatching'])->name("invoice_matching");
     Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');
-    Route::get('/tariff', [TariffController::class, 'showTariff'])->name('tariff');
-    Route::get('/tariff/delete/{pID}/{tID}', [TariffController::class, 'inactivateTariff'])->name('tariff.delete');
-    Route::post('/tariff/add', [TariffController::class, 'processTariff'])->name('tariff.add');
-    Route::post('/tariff/edit/{pID}/{tID}', [TariffController::class, 'editTariff'])->name('tariff.edit');
-
-    Route::get('/tariff/products/{type}', [TariffController::class, 'getProductByType']);
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
@@ -154,34 +132,15 @@ Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(
 
 });
 
-Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function() {
-    
-});
-
-Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function() {
-    Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
-    Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
-
-    Route::get('/tariff', [TariffController::class, 'showTariff'])->name('tariff');
-    Route::get('/tariff/delete/{pID}/{tID}', [TariffController::class, 'inactivateTariff'])->name('tariff.delete');
-    Route::post('/tariff/add', [TariffController::class, 'processTariff'])->name('tariff.add');
-    Route::post('/tariff/edit/{pID}/{tID}', [TariffController::class, 'editTariff'])->name('tariff.edit');
-
-    Route::get('/tariff/products/{type}', [TariffController::class, 'getProductByType']);
-});
-
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
+Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
 
-//
-Route::get('/employeeOverview', [EmployeeController::class, 'showEmployees'])->name('employees');
-Route::post('/employeeOverview/add', [EmployeeController::class, 'processEmployee'])->name('employees.add');
-Route::get('/editEmployee/{eID}', [EmployeeController::class, 'editEmployee'])->name('employees.edit');
-Route::post('/editEmployee/{eID}/personal', [EmployeeController::class, 'editPersonalEmployee'])->name('employees.edit.personal');
-Route::post('/editEmployee/{eID}/{aID}/{uID}/address', [EmployeeController::class, 'editAddressEmployee'])->name('employees.edit.address');
-Route::post('/editEmployee/{eID}/{uID}/contract', [EmployeeController::class, 'editContractEmployee'])->name('employees.edit.contract');
-Route::get('/evaluations', [EvaluationController::class, 'evaluations'])->name('evaluations');
-
-//Route::get('/evaluations', [EvaluationController::class, 'managerTicketPage'])->name('manager-tickets');
+Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
+Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
+Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add');
+Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
+Route::get('/tariff/products/{type}', [EmployeeController::class, 'getProductByType']);
 
 
 //invoice query routes: DEPRECATED
@@ -264,37 +223,15 @@ Route::controller(MeterController::class)->group(function () {
 //to download the pdf of the contract and salary pages
 Route::get('/downloadPayslip', [DomPDFController::class, 'getPaySlipPDF'])->name('downloadPayslip');
 Route::get('/downloadContract', [DomPDFController::class, 'getContractPDF'])->name('downloadContract');
-Route::get('/downloadBenefits', [DomPDFController::class, 'getBenefitsPDF'])->name('downloadBenefits');
 
-//the routes to most of the hr pages
+//the routes to the pages
 Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
 Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
-Route::get('/profileEmployee/{id?}', [myController::class, 'profile'])->name('profile');
+Route::get('/profileEmployee', [myController::class, 'profile'])->name('profile');
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
 Route::get('/managerList', [myController::class, 'managerList'])->name('managerList');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
-Route::get('/employeeBenefits', [myController::class, 'benefits'])->name('employeeBenefits');
-//Route::post('/profileEmployee/{id}', [myController::class, 'store'])->name('storeTaskData');
-Route::get('/hiringManger', [myController::class, 'hiringManager'])->name('hiringManager');
-Route::get('/jobOffers', [myController::class, 'jobs'])->name('jobs');
-Route::get('/jobDescription', [myController::class, 'jobDescription'])->name('jobDescription');
-Route::get('/jobApply', [myController::class, 'jobApply'])->name('jobApply');
-Route::get('/documents', [myController::class, 'documents'])->name('documents');
-Route::get('/financialAnalyst', [myController::class, 'finance'])->name('financialAnalyst');
-Route::get('/weeklyActivity', [myController::class, 'weeklyActivity'])->name('weeklyActivity');
-Route::get('/teamBenefits', [myController::class, 'teamBenefits'])->name('teamBenefits');
-Route::get('/teamWeeklyReports', [myController::class, 'weeklyReport'])->name('teamWeeklyReports');
-// Route::get('/report', function () {
-//     return view('report', ['weekStartDate' => now()->startOfWeek()->toDateString(), 'weekEndDate' => now()->endOfWeek()->toDateString()]);
-// });
-Route::post('/submit-report', [myController::class, 'storeWeeklyReports']);
-
-// Route::get('/sickLeaveReason', [myController::class, 'sickLeave'])->name('sickLeaveReason');
-// Route::get('/profileHR', [myController::class, 'profileHR'])->name('profileHR');
-// Route::get('/profileInvoice', [myController::class, 'profileInvoice'])->name('profileInvoice');
-// Route::get('/profileCustomers', [myController::class, 'profileCustomers'])->name('profileCustomers');
-// Route::get('/profileMeters', [myController::class, 'profileMeters'])->name('profileMeters');
 
 // routes for relations controlelr
 Route::get('/relations', [RelationsController::class, 'fetchRelations']);
@@ -308,11 +245,9 @@ Route::post('/relations/update', [RelationsController::class, 'updateRelation'])
 
 //Route::get('/holidayRequest', function() {  return view('holidayRequest');  })->name('request');
 
-Route::get('/holidayRequest', [holidayRequest::class, 'index'])->name('request');
-Route::post('/upload', [UploadController::class, 'uploadFile'])->name('upload.file'); 
-// Route::get('/holidayRequest', function(){
-//     return view('holidayRequestPage');
-// })->name('request');
+Route::get('/holidayRequest', function(){
+    return view('holidayRequestPage');
+})->name('request');
 
 Route::get('/welcome', function() {
     return view('welcome');
@@ -320,12 +255,6 @@ Route::get('/welcome', function() {
 Route::get('/roles', function () {
     return view('roleOverview');
 });
-Route::get('/teamOverview', [TeamController::class, 'index']);
-Route::post('/add-team', [TeamController::class, 'addTeam'])->name('add.team');
-Route::get('/teams', [TeamController::class, 'showTeams'])->name('teams.show');
-Route::get('/teams/members/{teamId}', [App\Http\Controllers\TeamController::class, 'getTeamMembers'])->name('team.members');
-Route::get('/users/not-in-team', [TeamController::class, 'getUsersNotInTeam'])->name('users.not-in-team');
-Route::post('/teams/add-member', [TeamController::class, 'addMemberToTeam'])->name('teams.add-member');
 
 Route::get('/employee/invoices', [InvoiceController::class, 'showAllInvoices'])->name('invoices.show');;
 Route::post('/employee/invoices', [InvoiceController::class, 'rerunValidation'])->name('invoices.rerunValidation');;

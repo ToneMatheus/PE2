@@ -20,8 +20,6 @@ class Employee_contract extends Model
         'benefits_id'
     ];
 
-    public $timestamps = false;
-
     use HasFactory;
 
     public function employee_profile(): BelongsTo
