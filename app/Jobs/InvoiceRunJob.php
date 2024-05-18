@@ -69,6 +69,7 @@ class InvoiceRunJob implements ShouldQueue
         ->where('m.has_validation_error', '=', '0')
         ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
         ->get();
+        
         $customersWithValidationError = User::join('Customer_contracts as cc', 'users.id', '=', 'cc.user_id') // Meters tied to customers that have no contract don't show up. They are marked with a validation error and not displayed through this.
         ->join('Customer_addresses as ca', 'users.id', '=', 'ca.user_id')
         ->join('Addresses as a', 'ca.Address_id', '=', 'a.id')
@@ -135,10 +136,7 @@ class InvoiceRunJob implements ShouldQueue
                     $this->generateYearlyInvoice($customer, $lastInvoiceDate, $now->copy());
                     Meter::where('id', '=', $customer->mID)
                     ->update(['expecting_reading' => 0]);
-                }//Reminder index values 1 week prior invoice run
-                elseif($invoiceDate->copy()->subWeek() == $now){
-                    MeterReadingReminderJob::dispatch($customer->uID, $customer->mID);
-                } //Check if needs an invoice now
+                }
                 elseif($invoiceDate->copy() == $now){
                     $this->generateYearlyInvoice($customer, $lastInvoiceDate, $invoiceDate->copy()->addYear());
                 }
@@ -277,8 +275,6 @@ class InvoiceRunJob implements ShouldQueue
            
             $this->sendAnnualMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
             EstimationController::UpdateEstimation($customer->mID);  
-        } else {
-            dispatch(new MissingMeterReadingJob($customer->uID, $customer->mID));
         }
     }
 
