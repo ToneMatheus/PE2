@@ -48,7 +48,9 @@ class MeterAllocation implements ShouldQueue
                         ->count();
 
         $total_employees = DB::table('users')
-                            ->whereNotNull('employee_profile_id')
+                            ->join('team_members', 'team_members.user_id', '=', 'users.id')
+                            ->where('team_members.team_id', '=', 3)
+                            ->where('team_members.is_manager', '=', 0)
                             ->where('employee_profile_id', '!=', 1000)
                             ->count();
 
@@ -61,7 +63,9 @@ class MeterAllocation implements ShouldQueue
                                 ->toArray();
 
         $employee_ids = DB::table('users')
-                        ->whereNotNull('employee_profile_id')
+                        ->join('team_members', 'team_members.user_id', '=', 'users.id')
+                        ->where('team_members.team_id', '=', 3)
+                        ->where('team_members.is_manager', '=', 0)
                         ->where('employee_profile_id', '!=', 1000)
                         ->pluck('employee_profile_id')
                         ->toArray();

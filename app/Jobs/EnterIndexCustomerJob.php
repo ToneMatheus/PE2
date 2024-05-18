@@ -22,6 +22,8 @@ use Illuminate\Queue\SerializesModels;
 use App\Http\Controllers\MeterController;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ReminderEnterIndexCustomerMail;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 
 
 
@@ -69,7 +71,20 @@ class EnterIndexCustomerJob implements ShouldQueue
                         $meter = Meter::find($meter->id);
                         $meter->expecting_reading = 1;
                         $meter->save();
-                Mail::to('anu01872@gmail.com')->send(new ReminderEnterIndexCustomerMail($user));
+
+                $userID = $user[0]->id; // Example user ID
+                Log::info("userid = ", ['userID' => $userID]);
+
+                $a = 5897;
+                $b = 95471;
+                $c = 42353;
+                $tempUserID = (($userID * $a) / $b) + $c;
+                Log::info("tempuserID = ", ['tempuserID' => $tempUserID]);
+
+                $encryptedTempUserId = Crypt::encrypt($tempUserID);
+                Log::info("tempuserID = ", ['enc' => $encryptedTempUserId]);
+
+                Mail::to('shresthaanshu555@gmail.com')->send(new ReminderEnterIndexCustomerMail($user, $encryptedTempUserId));
             }
         }
     }

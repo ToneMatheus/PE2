@@ -86,11 +86,11 @@ require __DIR__.'/auth.php';
 
 Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
     //cronjobs
-    //Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+    Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
     Route::get('/cron-jobs/schedule/edit/{job}', [CronJobController::class, 'edit_schedule'])->name('edit-schedule-cron-job');
     Route::post('/cron-jobs/schedule/store{job}', [CronJobController::class, 'store_schedule'])->name('store-schedule-cron-job');
     Route::post('/cron-jobs/schedule/toggle{job}', [CronJobController::class, 'toggle_schedule'])->name('toggle-schedule-cron-job');
-    // Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
+    Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
     Route::get('/cron-jobs/history', [CronJobController::class, 'showHistory'])->name('job.history');
     Route::get('/cron-jobs/get-job-runs', [CronJobController::class, 'getJobRuns'])->name('get.job.runs');
     Route::get('/cron-jobs/get-job-run-logs', [CronJobController::class, 'getJobRunLogs'])->name('get.job.run.logs');
@@ -152,7 +152,8 @@ Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function
 });
 
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
-
+Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
 //
 Route::get('/employeeOverview', [EmployeeController::class, 'showEmployees'])->name('employees');
 Route::post('/employeeOverview/add', [EmployeeController::class, 'processEmployee'])->name('employees.add');
@@ -183,7 +184,21 @@ Route::get('/code', function () {
 });
 
 // Meters branch
+Route::controller(MeterController::class)->group(function () {
+    Route::get('/enter_index_employee', function() {
+        return view('Meters/enterIndexEmployee');
+    })->name("enter_index_employee");
+    Route::get('/enter_index_employee_search', 'searchIndex')->name("searchIndex");
+    Route::get('/fetchEAN/{meterID}', 'fetchEAN');
+    Route::post('/index_value_entered','submitIndex')->name("submitIndex");
 
+    Route::get('/enter_index_paper', function() {return view('Meters/enterIndexPaper');});
+    Route::get('/enter_index_paper_search', 'searchIndexPaper')->name("searchIndexPaper");
+    Route::get('/fetchEAN/{meterID}', 'fetchEAN');
+
+    Route::get('/fetchIndex/{meterID}', 'fetchIndex');
+    Route::post('/index_value_entered_customer','submitIndexCustomer')->name("submitIndexCustomer");
+});
 
 //Meters Group
 
@@ -199,19 +214,19 @@ Route::controller(MeterController::class)->group(function () {
 });
 
 //page for employees to enter index values
-Route::controller(MeterController::class)->group(function () {
-    Route::get('/enter_index_employee', function() {return view('Meters/enterIndexEmployee');});
-    Route::get('/enter_index_employee_search', 'searchIndex')->name("searchIndex");
-    Route::get('/fetchEAN/{meterID}', 'fetchEAN');
-    Route::post('/index_value_entered','submitIndex')->name("submitIndex");
+// Route::controller(MeterController::class)->group(function () {
+//     Route::get('/enter_index_employee', function() {return view('Meters/enterIndexEmployee');});
+//     Route::get('/enter_index_employee_search', 'searchIndex')->name("searchIndex");
+//     Route::get('/fetchEAN/{meterID}', 'fetchEAN');
+//     Route::post('/index_value_entered','submitIndex')->name("submitIndex");
 
-    Route::get('/enter_index_paper', function() {return view('Meters/enterIndexPaper');});
-    Route::get('/enter_index_paper_search', 'searchIndexPaper')->name("searchIndexPaper");
-    Route::get('/fetchEAN/{meterID}', 'fetchEAN');
+//     Route::get('/enter_index_paper', function() {return view('Meters/enterIndexPaper');});
+//     Route::get('/enter_index_paper_search', 'searchIndexPaper')->name("searchIndexPaper");
+//     Route::get('/fetchEAN/{meterID}', 'fetchEAN');
 
-    Route::get('/fetchIndex/{meterID}', 'fetchIndex');
-    Route::post('/index_value_entered_customer','submitIndexCustomer')->name("submitIndexCustomer");
-});
+//     Route::get('/fetchIndex/{meterID}', 'fetchIndex');
+//     Route::post('/index_value_entered_customer','submitIndexCustomer')->name("submitIndexCustomer");
+// });
 
 Route::get('/meter_group_dashboard', function() {
     return view('Meters/MeterGroupDashboard');
@@ -228,7 +243,7 @@ Route::get('/consumption', function () {
 //aryan
 Route::controller(MeterController::class)->group(function () {
     Route::get('/Consumption_Dashboard', 'showConsumptionDashboard');
-    Route::get('/Meter_History/{userID}', 'GasElectricity');
+    Route::get('/Meter_History', 'GasElectricity');
     Route::get('/Meter_History_Validate', 'ValidateIndex')->name("ValidateIndex");
 });
 

@@ -44,7 +44,7 @@
         </div>
 
         <div>
-            <div class="content">
+            {{-- <div class="content">
                 <h1>Energy Consumption History</h1>
                 <canvas id="consumptionChart"></canvas>
             </div>
@@ -57,7 +57,8 @@
             <button onclick="fetchData('week')">Week</button>
             <button onclick="fetchData('month')">Month</button>
             <button onclick="fetchData('year')">Year</button>
-        </div> 
+        </div>  --}}
+        chart
     </div>
     </div>
 

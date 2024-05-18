@@ -157,7 +157,21 @@
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Your profile</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View your profile information</p>
                             </div>
-                        </a> 
+                        </a>
+
+                        <a href="{{ route('viewAllMeters') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">All meters dashboard</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View all meters to be read</p>
+                            </div>
+                        </a>
+
+                        <a href="{{ route('enter_index_employee') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Enter index values</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Enter index values</p>
+                            </div>
+                        </a>
 
 
                         @include('intranet.employeeIntranet');

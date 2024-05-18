@@ -22,6 +22,7 @@ use App\Models\{
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Bus\Dispatcher;
 use app\http\Controllers\CustomerController;
@@ -38,24 +39,19 @@ use App\Services\InvoiceFineService;
 use App\Services\StructuredCommunicationService;
 use App\Mail\FinalSettlementMail;
 use App\Http\Controllers\EstimationController;
+use Illuminate\Support\Facades\Crypt;
 
 
 class MeterController extends Controller
 {
-    //https://stackoverflow.com/a/19890444
-    /*function generateEAN($number)
+    protected $auth_user;
+    protected $auth_userID;
+
+    public function __construct()
     {
-    $code = '54' . str_pad($number, 15, '0', STR_PAD_LEFT);
-    $weightflag = true;
-    $sum = 0;
-    for ($i = strlen($code) - 1; $i >= 0; $i--)
-    {
-        $sum += (int)$code[$i] * ($weightflag?3:1);
-        $weightflag = !$weightflag;
+        $this->auth_user = Auth::user();
+        $this->auth_userID = Auth::id();
     }
-    $code .= (10 - ($sum % 10)) % 10;
-    return $code;
-    }*/
 
     public function showMeters()
     {
@@ -116,7 +112,7 @@ class MeterController extends Controller
                     ->join('meters','meter_addresses.meter_id','=','meters.id')
                     ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                     ->where('meter_reader_schedules.reading_date','=', $today)
-                    ->where('meter_reader_schedules.employee_profile_id','=',1)
+                    ->where('meter_reader_schedules.employee_profile_id','=', $this->auth_userID)
                     ->where('meter_reader_schedules.status','=','unread')
                     ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.id', 'meters.type', 'meter_reader_schedules.priority')
                     ->get();
@@ -155,7 +151,9 @@ class MeterController extends Controller
 
     public function all_meters_index() {
         $employees = DB::table('users as u')
-                        ->whereNotNull('u.employee_profile_id')
+                        ->join('team_members', 'team_members.user_id', '=', 'u.id')
+                        ->where('team_members.team_id', '=', 3)
+                        ->where('team_members.is_manager', '=', 0)
                         ->select('u.first_name', 'u.employee_profile_id as employee_id')
                         ->get();
 
@@ -324,7 +322,7 @@ class MeterController extends Controller
                             ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                             ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
                             ->where('meter_reader_schedules.reading_date','=', $today)
-                            ->where('meter_reader_schedules.employee_profile_id','=', 1)
+                            ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
                             ->where('users.is_active','=', 1)
                             ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code',
                                     'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id',
@@ -358,7 +356,7 @@ class MeterController extends Controller
                         ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                         ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
                         ->where('meter_reader_schedules.reading_date','=', $today)
-                        ->where('meter_reader_schedules.employee_profile_id','=',1)
+                        ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
                         ->where('users.is_active','=', 1)
                         ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code',
                                 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id',
@@ -823,7 +821,7 @@ class MeterController extends Controller
                             ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
                             ->where('users.index_method', '=', 'paper')
                             ->where('meter_reader_schedules.reading_date','=', $today)
-                            ->where('meter_reader_schedules.employee_profile_id','=',1)
+                            ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
                             ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
                             ->orderBy('users.id');
 
@@ -855,7 +853,7 @@ class MeterController extends Controller
                         ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
                         ->where('users.index_method', '=', 'paper')
                         ->where('meter_reader_schedules.reading_date','=', $today)
-                        ->where('meter_reader_schedules.employee_profile_id','=',1)
+                        ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
                         ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
                         ->orderBy('users.id');
             }
@@ -913,26 +911,47 @@ class MeterController extends Controller
         }
     }
 
-    public function GasElectricity($userID)
+    public function GasElectricity(Request $request)
     {
-        $query = 'SELECT t1.user_id, t1.first_name, t1.last_name, t1.street, t1.number, t1.postal_code, t1.city, t1.EAN, t1.expecting_reading, t1.type, t1.meter_id, t2.reading_date, t2.latest_reading_value FROM 
-        (SELECT users.id AS user_id, users.first_name, users.last_name, addresses.street, addresses.number, addresses.postal_code, addresses.city, meters.EAN, meters.expecting_reading, meters.type, meters.id AS meter_id FROM `users`
-        JOIN customer_addresses on users.id = customer_addresses.user_id
-        JOIN addresses on customer_addresses.address_id = addresses.id
-        JOIN meter_addresses on addresses.id = meter_addresses.address_id
-        JOIN meters on meter_addresses.meter_id = meters.id
-        WHERE users.id = '.$userID.' ) AS t1
-        LEFT JOIN
-        (SELECT index_values.meter_id, index_values.reading_date, index_values.reading_value AS latest_reading_value
-        FROM index_values
-        WHERE (index_values.meter_id, index_values.reading_value) IN (
-            SELECT index_values.meter_id, MAX(index_values.reading_value) FROM index_values
-            GROUP BY index_values.meter_id
-        )) AS t2 ON t1.meter_id = t2.meter_id;';
+        try {
+            $tempUserID = Crypt::decrypt($request->token);
+            Log::info('Decrypted temp user ID: ', ['userID' => $tempUserID]);
+            $a = 5897;
+            $b = 95471;
+            $c = 42353;
+            $originalUserIDstr = ($b * ($tempUserID - $c)) / $a;
+            $originalUserID = (int) round((float) $originalUserIDstr);
 
-        $result =  DB::select($query);
+        } catch (\Exception $e) {
+            Log::error('Decryption failed: ', ['error' => $e->getMessage()]);
+        }
 
-        return view('Meters/Meter_History', ['details' => $result]);
+        try {
+            $user = User::findOrFail($originalUserID);
+            Auth::login($user);
+            Log::info('Logged in');
+        }   catch (\Exception $e) {
+            Log::error('Login failed');
+        }
+
+            $query = 'SELECT t1.user_id, t1.first_name, t1.last_name, t1.street, t1.number, t1.postal_code, t1.city, t1.EAN, t1.expecting_reading, t1.type, t1.meter_id, t2.reading_date, t2.latest_reading_value FROM 
+            (SELECT users.id AS user_id, users.first_name, users.last_name, addresses.street, addresses.number, addresses.postal_code, addresses.city, meters.EAN, meters.expecting_reading, meters.type, meters.id AS meter_id FROM `users`
+            JOIN customer_addresses on users.id = customer_addresses.user_id
+            JOIN addresses on customer_addresses.address_id = addresses.id
+            JOIN meter_addresses on addresses.id = meter_addresses.address_id
+            JOIN meters on meter_addresses.meter_id = meters.id
+            WHERE users.id = '.Auth::id().' ) AS t1
+            LEFT JOIN
+            (SELECT index_values.meter_id, index_values.reading_date, index_values.reading_value AS latest_reading_value
+            FROM index_values
+            WHERE (index_values.meter_id, index_values.reading_value) IN (
+                SELECT index_values.meter_id, MAX(index_values.reading_value) FROM index_values
+                GROUP BY index_values.meter_id
+            )) AS t2 ON t1.meter_id = t2.meter_id;';
+
+            $result =  DB::select($query);
+
+            return view('Meters/Meter_History', ['details' => $result]);
     }
 
     public function ValidateIndex(Request $request) {

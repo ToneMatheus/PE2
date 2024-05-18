@@ -20,7 +20,8 @@ class ReminderEnterIndexCustomerMail extends Mailable
      */
     //$name so I can check the mailaddress
     public function __construct(
-        public $user
+        public $user,
+        public $encryptedTempUserId
     )
     {}
 
