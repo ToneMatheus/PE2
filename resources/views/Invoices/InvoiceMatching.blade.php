@@ -32,6 +32,7 @@
                 <th class="border-collapse border border-gray-200 px-5">Date of Payment</th>
                 <th class="border-collapse border border-gray-200 px-5">Name</th>
                 <th class="border-collapse border border-gray-200 px-5">IBAN</th>
+                <th class="border-collapse border border-gray-200 px-5">Structured Communication</th>
                 <th class="border-collapse border border-gray-200 px-5">Matched</th>
                 <th class="border-collapse border border-gray-200 px-5">Matched Invoice ID</th>
             </tr>
@@ -41,7 +42,16 @@
                 <td class="border-collapse border border-gray-200 px-5">{{ $row->id }}</td>
                 <td class="border-collapse border border-gray-200 px-5">{{ $row->payment_date }}</td>
                 <td class="border-collapse border border-gray-200 px-5">{{ $row->name }}</td>
-                <td class="border-collapse border border-gray-200 px-5">{{ $row->IBAN }}</td>
+                @if (empty($row->IBAN))
+                    <td class="border-collapse border border-gray-200 px-5">N/A</td>
+                @else
+                    <td class="border-collapse border border-gray-200 px-5">{{ $row->IBAN }}</td>
+                @endif
+                @if (empty($row->structured_communication))
+                    <td class="border-collapse border border-gray-200 px-5">N/A</td>
+                @else
+                    <td class="border-collapse border border-gray-200 px-5">{{ $row->structured_communication }}</td>
+                @endif
                 @if ($row->has_matched == 1)
                     <td class="border-collapse border border-gray-200 px-5 bg-green-200 text-green-800">matched</td>
                     <td class="border-collapse border border-gray-200 px-5">{{ $row->invoice_id }}</td>

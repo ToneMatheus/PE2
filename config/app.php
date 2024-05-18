@@ -16,6 +16,8 @@ return [
     |
     */
 
+    'host_domain' => 'http://10.76.250.100:8000',
+
     'now' => Carbon\Carbon::create(2025, 2, 15),
     //1 8
     //1 15
