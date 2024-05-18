@@ -195,7 +195,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 11,
@@ -210,7 +211,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 12,
@@ -225,7 +227,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 13,
@@ -240,7 +243,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 14,
@@ -255,7 +259,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 15,
@@ -270,7 +275,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 16,
@@ -285,7 +291,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 17,
@@ -300,7 +307,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 18,
@@ -315,7 +323,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 19,
@@ -330,7 +339,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 20,
@@ -345,7 +355,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [
                 'id' => 1000,
