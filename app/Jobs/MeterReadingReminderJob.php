@@ -44,7 +44,7 @@ class MeterReadingReminderJob implements ShouldQueue
                 ->first();
 
             if ($user) {
-                $this->sendMailInBackground("ToCustomer@mail.com", MeterReadingReminder::class, [$user]);
+                $this->sendMailInBackground($user->email, MeterReadingReminder::class, [$user]);
                 $this->jobCompletion("Mail sent for user with ID: {$user->id}");
             } else {
                 Log::error('User not found for MeterReadingReminderJob');

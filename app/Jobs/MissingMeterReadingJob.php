@@ -46,7 +46,7 @@ class MissingMeterReadingJob implements ShouldQueue
             Meter::where('id', $this->customermID)->update(['expecting_reading' => 1]);
 
             if ($user) {
-                $this->sendMailInBackground("customer@mail.com", MissingMeterReading::class, [$user]);
+                $this->sendMailInBackground($user->email, MissingMeterReading::class, [$user]);
             } else {
                 Log::error('User not found for MeterReadingReminderJob');
             }
