@@ -113,8 +113,10 @@ trait cronJobTrait
     public function sendMailInBackground($mailTo, $mailableClass, $mailableClassParams, $invoiceID = null){
         if (env('APP_DEBUG')) {
             // Debug mode is enabled so use debugging mail instead of provided mail
+            $debugMail = env("MAIL_DEBUG");
+            Log::debug("Dispatching mail job");
+            $this->logDebug(null, "Dispatching mail job to Debug Mail" , "Since laravel is set to debug mode in the config. The mail is being sent to $debugMail instead of the customer mail which is $mailTo");
             $mailTo = env("MAIL_DEBUG");
-            Log::info("Dispatching mail job");
         }
         
         Log::info($this->JobRunId);
@@ -125,8 +127,10 @@ trait cronJobTrait
     public function sendMailInBackgroundWithPDF($mailTo, $mailableClass, $mailableClassParams, $pdfView, $pdfParams ,$invoiceID = null){
         if (env('APP_DEBUG')) {
             // Debug mode is enabled so use debugging mail instead of provided mail
+            $debugMail = env("MAIL_DEBUG");
+            Log::debug("Dispatching mail job");
+            $this->logDebug(null, "Dispatching mail job to Debug Mail" , "Since laravel is set to debug mode in the config. The mail is being sent to $debugMail instead of the customer mail which is $mailTo");
             $mailTo = env("MAIL_DEBUG");
-            Log::info("Dispatching mail job");
         }
         
         event(new JobDispatched($this->JobRunId, "_SendMailJob"));
