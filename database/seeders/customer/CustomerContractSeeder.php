@@ -20,7 +20,49 @@ class CustomerContractSeeder extends Seeder
         $testContractBegin = Carbon::now()->addDays(1)->toDateString();
         $testContractBeginGap = Carbon::now()->addDays(14)->toDateString();
 
-        for($i=1; $i <= 9; $i++){
+        for($i=1; $i <= 3; $i++){
+            DB::table('customer_contracts')->insert([
+                'id' => $i,
+                'user_id' => $i + 2,
+                'start_date' => '2022-01-01',
+                'end_date' => null,
+                'type' => 'Standard',
+                'price' => 1000,
+                'status' => 'Active'
+            ]);
+        }
+
+        DB::table('customer_contracts')->insert([
+            'id' => 4,
+            'user_id' => 6,
+            'start_date' => '2025-01-01',
+            'end_date' => null,
+            'type' => 'Standard',
+            'price' => 1000,
+            'status' => 'Active'
+        ]);
+
+        DB::table('customer_contracts')->insert([
+            'id' => 5,
+            'user_id' => 7,
+            'start_date' => '2024-12-25',
+            'end_date' => null,
+            'type' => 'Standard',
+            'price' => 1000,
+            'status' => 'Active'
+        ]);
+
+        DB::table('customer_contracts')->insert([
+            'id' => 6,
+            'user_id' => 8,
+            'start_date' => '2024-12-04',
+            'end_date' => null,
+            'type' => 'Standard',
+            'price' => 1000,
+            'status' => 'Active'
+        ]);
+
+        for($i=7; $i <= 9; $i++){
             DB::table('customer_contracts')->insert([
                 'id' => $i,
                 'user_id' => $i + 2,

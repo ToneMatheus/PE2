@@ -107,7 +107,7 @@ class MeterController extends Controller
 
         $results = DB::table('users')
                     ->join('customer_addresses','users.id','=','customer_addresses.user_id')
-                    ->join('addresses','customer_addresses.id','=','addresses.id')
+                    ->join('addresses','customer_addresses.address_id','=','addresses.id')
                     ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
                     ->join('meters','meter_addresses.meter_id','=','meters.id')
                     ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
@@ -174,7 +174,7 @@ class MeterController extends Controller
             if($queryName != '' || $queryCity != '' || $queryStreet != '' || $queryNumber != '' || $queryAssigned != '') { // getting all the required data for the table
                 $query = DB::table('users')
                             ->join('customer_addresses','users.id','=','customer_addresses.user_id')
-                            ->join('addresses','customer_addresses.id','=','addresses.id')
+                            ->join('addresses','customer_addresses.address_id','=','addresses.id')
                             ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
                             ->join('meters','meter_addresses.meter_id','=','meters.id')
                             ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
@@ -206,7 +206,7 @@ class MeterController extends Controller
             else {
             $query = DB::table('users')
                         ->join('customer_addresses','users.id','=','customer_addresses.user_id')
-                        ->join('addresses','customer_addresses.id','=','addresses.id')
+                        ->join('addresses','customer_addresses.address_id','=','addresses.id')
                         ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
                         ->join('meters','meter_addresses.meter_id','=','meters.id')
                         ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
@@ -316,7 +316,7 @@ class MeterController extends Controller
             if($queryName != '' || $queryEAN != '' || $queryCity != '' || $queryStreet != '' || $queryNumber != '') { // getting all the required data for the table
                 $query = DB::table('users')
                             ->join('customer_addresses','users.id','=','customer_addresses.user_id')
-                            ->join('addresses','customer_addresses.id','=','addresses.id')
+                            ->join('addresses','customer_addresses.address_id','=','addresses.id')
                             ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
                             ->join('meters','meter_addresses.meter_id','=','meters.id')
                             ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
@@ -350,7 +350,7 @@ class MeterController extends Controller
             else {
             $query = DB::table('users')
                         ->join('customer_addresses','users.id','=','customer_addresses.user_id')
-                        ->join('addresses','customer_addresses.id','=','addresses.id')
+                        ->join('addresses','customer_addresses.address_id','=','addresses.id')
                         ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
                         ->join('meters','meter_addresses.meter_id','=','meters.id')
                         ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
@@ -371,7 +371,7 @@ class MeterController extends Controller
                 {
                     $output .= '<div class="searchResult';
                     
-                    if($row->priority == 1) {
+                    if($row->priority == 1 && $row->status == "unread") {
                         $output .= ' priority ';
                     }
 
@@ -461,7 +461,7 @@ class MeterController extends Controller
         $contract_date = DB::table('users')
         ->join('customer_contracts','users.id','=','customer_contracts.user_id')
         ->join('customer_addresses','users.id','=','customer_addresses.user_id')
-        ->join('addresses','customer_addresses.id','=','addresses.id')
+        ->join('addresses','customer_addresses.address_id','=','addresses.id')
         ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
         ->join('meters','meter_addresses.meter_id','=','meters.id')
         ->where('meters.id', '=', $meter_id)
@@ -814,7 +814,7 @@ class MeterController extends Controller
             if($queryName != '' || $queryEAN != '' || $queryCity != '' || $queryStreet != '' || $queryNumber != '') { // getting all the required data for the table
                 $query = DB::table('users')
                             ->join('customer_addresses','users.id','=','customer_addresses.user_id')
-                            ->join('addresses','customer_addresses.id','=','addresses.id')
+                            ->join('addresses','customer_addresses.address_id','=','addresses.id')
                             ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
                             ->join('meters','meter_addresses.meter_id','=','meters.id')
                             ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
@@ -846,7 +846,7 @@ class MeterController extends Controller
             else {
             $query = DB::table('users')
                         ->join('customer_addresses','users.id','=','customer_addresses.user_id')
-                        ->join('addresses','customer_addresses.id','=','addresses.id')
+                        ->join('addresses','customer_addresses.address_id','=','addresses.id')
                         ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
                         ->join('meters','meter_addresses.meter_id','=','meters.id')
                         ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')

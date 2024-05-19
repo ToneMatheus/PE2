@@ -91,6 +91,7 @@ class MoveOutJob implements ShouldQueue
                                     ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
                                     ->join('meters','meter_addresses.meter_id','=','meters.id')
                                     ->where('customer_contracts.start_date', '>', $end_date)
+                                    ->where('meters.id', '=', $out_meter->id)
                                     ->select('meters.id as meter_id')
                                     ->get()->first();
                         

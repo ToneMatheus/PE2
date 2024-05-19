@@ -271,7 +271,7 @@ class UserSeeder extends Seeder
                 'username' => 'jeraldine',
                 'first_name' => 'Jeraldine',
                 'last_name' => 'Doe',
-                'password' => Hash::make('jane'),
+                'password' => Hash::make('jeraldine'),
                 'employee_profile_id' => 13,
                 'is_company' => 0,
                 'company_name' => null,
