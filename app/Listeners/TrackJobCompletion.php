@@ -33,14 +33,14 @@ class TrackJobCompletion
         $jobRunId = $event->jobRunId;
         $jobName = $event->jobName;
 
-        Cache::decrement("job_count_$jobRunId");
+        Cache::decrement("job_".$jobRunId."_count");
 
         if (config('app.debug')){
-            Log::debug("event: $jobName completed id:$jobRunId count:". Cache::get("job_count_$jobRunId"));
+            Log::debug("event: $jobName completed id:$jobRunId count:". Cache::get("job_".$jobRunId."_count"));
         }
 
-        if (Cache::get("job_count_$jobRunId") <= 0) {
-            cache::forget("job_count_$jobRunId");
+        if (Cache::get("job_".$jobRunId."_count") <= 0) {
+            cache::forget("job_".$jobRunId."_count");
            
             $this->jobCompletion($jobRunId, $event->jobCompletionMessage);
         }

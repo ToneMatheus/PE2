@@ -32,10 +32,10 @@ class TrackJobDispatch
         $jobName = $event->jobName;
         
         // Increment the count of jobs with this identifier in the queue
-        Cache::increment("job_count_$jobRunId");
+        Cache::increment("job_".$jobRunId."_count");
 
         if (config('app.debug')){
-            Log::debug("event: $jobName dispatched id:$jobRunId count:". Cache::get("job_count_$jobRunId"));
+            Log::debug("event: $jobName dispatched id:$jobRunId count:". Cache::get("job_".$jobRunId."_count"));
         }
     }
 }
