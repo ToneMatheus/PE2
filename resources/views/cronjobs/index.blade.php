@@ -11,21 +11,21 @@
         <!-- Toast message content will be added here dynamically -->
         </div>
         <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-            <div class="max-w-xl">
+            <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <caption class="p-2 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
                         Scheduled Jobs
                     </caption>
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th scope="col" class="px-6 py-3">Name:</th>
-                            <th scope="col" class="px-6 py-3">Time Interval</th>
-                            <th scope="col" class="px-6 py-3">Scheduled Day</th>
-                            <th scope="col" class="px-6 py-3">Scheduled Month</th>
-                            <th scope="col" class="px-6 py-3">Scheduled Time</th>
-                            <th scope="col" class="px-6 py-3">Log level</th>
-                            <th scope="col" class="px-6 py-3">Is Enabled</th>
-                            <th scope="col" class="px-6 py-3">Actions</th>
+                            <th scope="col" class="px-4 py-3">Name:</th>
+                            <th scope="col" class="px-4 py-3">Time Interval:</th>
+                            <th scope="col" class="px-4 py-3">Scheduled Day:</th>
+                            <th scope="col" class="px-4 py-3">Scheduled Month:</th>
+                            <th scope="col" class="px-4 py-3">Scheduled Time:</th>
+                            <th scope="col" class="px-4 py-3">Log level:</th>
+                            <th scope="col" class="px-4 py-3">Is Enabled:</th>
+                            <th scope="col" class="px-4 py-3">Actions:</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,7 +56,7 @@
                                 </td>
                                 <td class="px-2 py-2 border dark:border-gray-700">{{ $job->is_enabled ? 'Yes' : 'No' }}</td>
                                 <td class="px-2 py-2 border dark:border-gray-700">
-                                    <div class="flex gap-2">
+                                    <div class="flex gap-1">
                                         <x-primary-anchor-button href="{{ route('job.history', ['job' => $job->name]) }}" class="ml-1">
                                             {{ __('View History') }}
                                         </x-primary-anchor-button>
@@ -74,12 +74,12 @@
                                         <form method="POST" action="{{ route('toggle-schedule-cron-job', ['job' => $job->name]) }}">
                                             @csrf
                                             @if ($job->is_enabled)
-                                                <x-primary-button class="ml-1 dark:hover:bg-red-500 dark:bg-red-700 dark:text-white">
+                                                <x-danger-button class="ml-1 h-12">
                                                     {{ __('Disable') }}
-                                                </x-primary-button>
+                                                </x-danger-button>
                                             @else
-                                                <x-primary-button class="ml-1">
-                                                    {{ __('Enable') }}
+                                                <x-primary-button class="ml-1 h-12">
+                                                    {{ __('Enable ') }}
                                                 </x-primary-button>
                                             @endif
                                         </form>
@@ -129,7 +129,7 @@
                                 </select>
                                 </td>
                                 <td class="px-2 py-2 border dark:border-gray-700">
-                                    <div class="flex gap-2">
+                                    <div class="flex gap-1">
                                         
                                     <x-primary-anchor-button href="{{ route('job.history', ['job' => $job->name]) }}" class="ml-1">
                                         {{ __('View History') }}
