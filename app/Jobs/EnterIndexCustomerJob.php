@@ -84,7 +84,7 @@ class EnterIndexCustomerJob implements ShouldQueue
                 $encryptedTempUserId = Crypt::encrypt($tempUserID);
                 Log::info("tempuserID = ", ['enc' => $encryptedTempUserId]);
 
-                Mail::to('shresthaanshu555@gmail.com')->send(new ReminderEnterIndexCustomerMail($user, $encryptedTempUserId));
+                Mail::to('anu01872@gmail.com')->send(new ReminderEnterIndexCustomerMail($user, $encryptedTempUserId));
             }
         }
     }

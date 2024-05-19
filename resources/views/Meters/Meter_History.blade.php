@@ -18,13 +18,13 @@
                 </div>
                 @foreach ($details as $detail)
                     <div class="p-4 my-3 sm:p-8 bg-white dark:bg-gray-800 shadow rounded-lg text-gray-500 dark:text-gray-400 meter">
-                        <p>EAN code: <span class="text-white font-semibold">{{$detail->EAN}}</span></p>
-                        <p>Type: <span class="text-white font-semibold">{{$detail->type}}</span></p>
-                        <p>Address: <span class="text-white font-semibold">{{$detail->street}} {{$detail->number}}, {{$detail->postal_code}} {{$detail->city}}</span></p>
+                        <p>EAN code: <span class="text-gray-800 dark:text-white font-semibold">{{$detail->EAN}}</span></p>
+                        <p>Type: <span class="text-gray-800 dark:text-white font-semibold">{{$detail->type}}</span></p>
+                        <p>Address: <span class="text-gray-800 dark:text-white font-semibold">{{$detail->street}} {{$detail->number}}, {{$detail->postal_code}} {{$detail->city}}</span></p>
                         <p>Meter ID: {{$detail->meter_id}}</p>
                         <div class="flex justify-between my-4">
-                        <p>Last read on: <span class="text-white font-semibold">{{$detail->reading_date ? $detail->reading_date : 'Not read yet'}}</span></p>
-                        <p>Latest reading value: <span class="text-white font-semibold" id="latest-{{$detail->meter_id}}">{{$detail->latest_reading_value ? $detail->latest_reading_value : 'Not read yet'}}</span></p>
+                        <p>Last read on: <span class="text-gray-800 dark:text-white font-semibold">{{$detail->reading_date ? $detail->reading_date : 'Not read yet'}}</span></p>
+                        <p>Latest reading value: <span class="text-gray-800 dark:text-white font-semibold" id="latest-{{$detail->meter_id}}">{{$detail->latest_reading_value ? $detail->latest_reading_value : 'Not read yet'}}</span></p>
                         </div>
                         <input type="hidden" name="index_values[{{$loop->index}}][user_id]" value="{{$detail->user_id}}"/>
                         <input type="hidden" name="index_values[{{$loop->index}}][EAN]" value="{{$detail->EAN}}"/>
@@ -43,8 +43,8 @@
             </form>
         </div>
 
-        <div>
-            {{-- <div class="content">
+        {{-- <div>
+            <div class="content">
                 <h1>Energy Consumption History</h1>
                 <canvas id="consumptionChart"></canvas>
             </div>
@@ -57,11 +57,10 @@
             <button onclick="fetchData('week')">Week</button>
             <button onclick="fetchData('month')">Month</button>
             <button onclick="fetchData('year')">Year</button>
-        </div>  --}}
-        chart
-    </div>
+        </div> --}}
     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function(){
             function indexValidate(meterID, indexValue){

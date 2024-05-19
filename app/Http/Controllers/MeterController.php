@@ -46,11 +46,14 @@ class MeterController extends Controller
 {
     protected $auth_user;
     protected $auth_userID;
+    protected $domain;
 
     public function __construct()
     {
         $this->auth_user = Auth::user();
         $this->auth_userID = Auth::id();
+        $this->domain = 'http://127.0.0.1:8000';
+        // $this->domain = 'http://127.0.0.1:8000';
     }
 
     public function showMeters()
@@ -533,7 +536,7 @@ class MeterController extends Controller
         }
         if ($contract_date->start_date == $testDateIn) {
             Log::info("Contract:", ["contract"=>$contract_date]);
-            Mail::to('shresthaanshu555@gmail.com')->send(new InvoiceLandlordMail($contract_date, $index_value, $date, $consumption_value));
+            Mail::to('shresthaanshu555@gmail.com')->send(new InvoiceLandlordMail($this->domain, $contract_date, $index_value, $date, $consumption_value));
         }
 
         
@@ -1110,9 +1113,9 @@ class MeterController extends Controller
                 $meter->save();
             }
 
-            Mail::to('anu01872@gmail.com')->send(new IndexValueEnteredByCustomer($user_id, $EAN, $new_index_value, $date, $consumption_value));
+            Mail::to('anu01872@gmail.com')->send(new IndexValueEnteredByCustomer($this->domain, $user_id, $EAN, $new_index_value, $date, $consumption_value));
         }
-        return redirect('Meter_History/'.$index_values[0]['user_id']);
+        return redirect()->back();
     }
 
     public function customerId($customerId)

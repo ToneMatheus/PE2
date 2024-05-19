@@ -9,6 +9,6 @@
     <p>Entered index value: <b>{{$index_value}}</b></p>
     <p>Consumption: <b>{{$consumption}}</b></p>
     <p>Date: <b>{{$date}}</b></p>
-    <a href="http://127.0.0.1:8000/Meter_History/{{$user_id}}">See your data here</a>
+    <a href="{{$domain}}/Meter_History?token={{$token}}">See your data here</a>
 </body>
 </html>
