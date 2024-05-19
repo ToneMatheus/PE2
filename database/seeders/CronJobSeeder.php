@@ -47,7 +47,7 @@ class CronJobSeeder extends Seeder
                 'log_level' => 1,
             ],
             [
-                'name' => 'InvoicerunJob',
+                'name' => 'InvoiceRunJob',
                 'interval' => 'daily',
                 'log_level' => 3,
                 'scheduled_day' => 15,
