@@ -36,9 +36,11 @@
                 {{ $jobLog->message }}
             </td>
             <td class="px-4 py-4 cursor-pointer" onclick="toggleDetails(this)">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
-                </svg>
+                <div class="flex justify-end">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+                    </svg>
+                </div>
             </td>
         </tr>
         <tr class="hidden bg-gray-100 dark:bg-gray-700">
