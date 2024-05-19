@@ -20,7 +20,7 @@ class InvoiceLandlordMail extends Mailable
      */
     //$name so I can check the mailaddress
     public function __construct(
-        public $userID,
+        public $user,
         public $index_value,
         public $date,
         public $consumption

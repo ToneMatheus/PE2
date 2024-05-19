@@ -464,8 +464,9 @@ class MeterController extends Controller
         ->join('addresses','customer_addresses.address_id','=','addresses.id')
         ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
         ->join('meters','meter_addresses.meter_id','=','meters.id')
+        ->where('users.is_active', '=', 1)
         ->where('meters.id', '=', $meter_id)
-        ->select('customer_contracts.end_date', 'customer_contracts.start_date', 'users.id as user_id')
+        ->select('customer_contracts.end_date', 'customer_contracts.start_date', 'addresses.*', 'users.first_name', 'users.last_name')
         ->get()
         ->first();
 
@@ -505,6 +506,7 @@ class MeterController extends Controller
 
         DB::table('meter_reader_schedules')
             ->where('meter_id', '=', $meter_id)
+            ->where('status', '=', 'unread')
             ->limit(1)
             ->update(['status' => 'read']);
 
@@ -530,11 +532,16 @@ class MeterController extends Controller
             $this->finalSettlementJob($meter_id, $consumptionID, $consumption_value);
         }
         if ($contract_date->start_date == $testDateIn) {
-            Mail::to('shresthaanshu555@gmail.com')->send(new InvoiceLandlordMail($contract_date->userID, $index_value, $date, $consumption_value));
+            Log::info("Contract:", ["contract"=>$contract_date]);
+            Mail::to('shresthaanshu555@gmail.com')->send(new InvoiceLandlordMail($contract_date, $index_value, $date, $consumption_value));
         }
 
         
         return redirect()->back();
+    }
+
+    public function landlordSettlement() {
+
     }
 
     public function finalSettlementJobAlt($meter_id) {
