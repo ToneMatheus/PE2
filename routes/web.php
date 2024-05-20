@@ -215,7 +215,9 @@ Route::controller(MeterController::class)->group(function () {
     Route::get('/fetchEAN/{meterID}', 'fetchEAN');
     Route::post('/index_value_entered','submitIndex')->name("submitIndex");
 
-    Route::get('/enter_index_paper', function() {return view('Meters/enterIndexPaper');});
+    Route::get('/enter_index_paper', function() {
+        return view('Meters/enterIndexPaper');
+    })->name("enter_index_paper");
     Route::get('/enter_index_paper_search', 'searchIndexPaper')->name("searchIndexPaper");
     Route::get('/fetchEAN/{meterID}', 'fetchEAN');
 

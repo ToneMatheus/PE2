@@ -16,7 +16,11 @@ return [
     |
     */
 
-    'host_domain' => 'http://10.76.250.100:8000',
+    //'host_domain' => 'http://127.0.0.1:8000',
+    //'host_domain' => 'http://10.76.250.100:8000',
+    'host_domain' => 'http://localhost:8000',
+
+    'email' => 'shresthaanshu555@gmail.com',
 
     'now' => Carbon\Carbon::create(2025, 2, 15),
 

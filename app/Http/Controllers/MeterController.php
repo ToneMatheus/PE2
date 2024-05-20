@@ -53,7 +53,7 @@ class MeterController extends Controller
         $this->auth_user = Auth::user();
         $this->auth_userID = Auth::id();
         $this->domain = 'http://127.0.0.1:8000';
-        // $this->domain = 'http://127.0.0.1:8000';
+        // $this->domain = config('app.host_domain');
     }
 
     public function showMeters()
@@ -115,13 +115,13 @@ class MeterController extends Controller
                     ->join('meters','meter_addresses.meter_id','=','meters.id')
                     ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                     ->where('meter_reader_schedules.reading_date','=', $today)
-                    ->where('meter_reader_schedules.employee_profile_id','=', $this->auth_userID)
+                    ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
                     ->where('meter_reader_schedules.status','=','unread')
                     ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.id', 'meters.type', 'meter_reader_schedules.priority')
                     ->get();
 
         $employeeName = DB::table('users')
-                        ->where('users.employee_profile_id', '=', 1)
+                        ->where('users.id', '=', $request->user()->id)
                         ->select('users.first_name')
                         ->get();
 
@@ -221,7 +221,9 @@ class MeterController extends Controller
             }
 
             $employees = DB::table('users as u')
-                        ->whereNotNull('u.employee_profile_id')
+                        ->join('team_members', 'team_members.user_id', '=', 'u.id')
+                        ->where('team_members.team_id', '=', 3)
+                        ->where('team_members.is_manager', '=', 0)
                         ->select('u.first_name', 'u.employee_profile_id as employee_id')
                         ->get();
 
@@ -234,13 +236,13 @@ class MeterController extends Controller
                 {
                     $output .= '
                     <tr>
-                    <td class="text-center">'.$i.'</td>
-                    <td class="font-bold">'.$row->first_name.' '.$row->last_name.'</td>
-                    <td>'.$row->street.' '.$row->number.', '.$row->city.'</td>
-                    <td class="text-center">'.$row->assigned_to.'</td>';
+                    <td class="text-center px-2 border dark:border-gray-700">'.$i.'</td>
+                    <td class="font-bold px-2 border dark:border-gray-700">'.$row->first_name.' '.$row->last_name.'</td>
+                    <td class="border px-2 dark:border-gray-700">'.$row->street.' '.$row->number.', '.$row->city.'</td>
+                    <td class="text-center px-2 border dark:border-gray-700">'.$row->assigned_to.'</td>';
 
                     $output .= '
-                    <td>
+                    <td class="border px-2 text-center dark:border-gray-700">
                         <form method="POST" action="/assignment_change">
                         <input type="hidden" name="_token" value="' . csrf_token() . '">
                         <input type=\'hidden\' name=\'meter_id\' class="meter_id" value='.$row->meter_id.'>
@@ -260,7 +262,7 @@ class MeterController extends Controller
                     }
 
                     $output .= '</select>
-                    <button type="submit">Apply changes</button>
+                    <button type="submit" onmouseover="this.style.color=\'red\';" onmouseout="this.style.color=\'white\';" style="background-color:#000000;color:white;padding:5px 10px;border-radius:10px;margin-left:10px;">Apply changes</button>
                     </form>
                     </td>
                     ';
@@ -326,6 +328,7 @@ class MeterController extends Controller
                             ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
                             ->where('meter_reader_schedules.reading_date','=', $today)
                             ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
+                            ->where('users.index_method', '=', 'website')
                             ->where('users.is_active','=', 1)
                             ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code',
                                     'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id',
@@ -360,6 +363,7 @@ class MeterController extends Controller
                         ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
                         ->where('meter_reader_schedules.reading_date','=', $today)
                         ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
+                        ->where('users.index_method', '=', 'website')
                         ->where('users.is_active','=', 1)
                         ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code',
                                 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id',
@@ -535,7 +539,7 @@ class MeterController extends Controller
         }
         if ($contract_date->start_date == $testDateIn) {
             Log::info("Contract:", ["contract"=>$contract_date]);
-            Mail::to('shresthaanshu555@gmail.com')->send(new InvoiceLandlordMail($this->domain, $contract_date, $index_value, $date, $consumption_value));
+            Mail::to(config('app.email'))->send(new InvoiceLandlordMail($this->domain, $contract_date, $index_value, $date, $consumption_value));
         }
 
         
@@ -773,7 +777,7 @@ class MeterController extends Controller
             $mailAddress = $user->personal_email;
 
         //Send email with PDF attachment
-        $this->sendFinalEmail('shresthaanshu555@gmail.com', FinalSettlementMail::class, $mailParams, 'Invoices.final_invoice_pdf', $pdfData, $invoice->id);
+        $this->sendFinalEmail(config('app.email'), FinalSettlementMail::class, $mailParams, 'Invoices.final_invoice_pdf', $pdfData, $invoice->id);
     }
 
     public function sendFinalEmail($mailTo, $mailableClass, $mailableClassParams, $pdfView, $pdfParams, $invoiceID) {
@@ -828,10 +832,13 @@ class MeterController extends Controller
                             ->join('meters','meter_addresses.meter_id','=','meters.id')
                             ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                             ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
-                            ->where('users.index_method', '=', 'paper')
                             ->where('meter_reader_schedules.reading_date','=', $today)
                             ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
-                            ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
+                            ->where('users.index_method', '=', 'paper')
+                            ->where('users.is_active','=', 1)
+                            ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code',
+                                    'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id',
+                                    'meter_reader_schedules.priority', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
                             ->orderBy('users.id');
 
                 // searching with multiple parameters
@@ -860,10 +867,13 @@ class MeterController extends Controller
                         ->join('meters','meter_addresses.meter_id','=','meters.id')
                         ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                         ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
-                        ->where('users.index_method', '=', 'paper')
                         ->where('meter_reader_schedules.reading_date','=', $today)
                         ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
-                        ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
+                        ->where('users.index_method', '=', 'paper')
+                        ->where('users.is_active','=', 1)
+                        ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code',
+                                'addresses.city', 'meters.EAN', 'meters.type', 'meters.ID as meter_id', 'meter_reader_schedules.id',
+                                'meter_reader_schedules.priority', 'meter_reader_schedules.status', 'e.first_name as assigned_to')
                         ->orderBy('users.id');
             }
 
@@ -872,7 +882,11 @@ class MeterController extends Controller
             if($total_row > 0){
                 foreach($data as $row)
                 {
-                    $output .= '<div class="searchResult';
+                    $output .= '<div class="p-4 my-3 sm:p-8 bg-white dark:bg-gray-800 shadow rounded-lg text-gray-500 dark:text-gray-400 grid grid-cols-2 gap-4 searchResult';
+                    
+                    if($row->priority == 1 && $row->status == "unread") {
+                        $output .= ' priority ';
+                    }
 
                     if ($row->status == "read") {
                         $output .= ' readMeter">';
@@ -881,27 +895,32 @@ class MeterController extends Controller
                     if ($row->status == "unread") {
                         $output .= '">';
                     }
-                    $output .= '<div class="searchResultLeft">
+                    $output .= '<div class="searchResultLeft text-2xl">
                                 <p>Name: <span class="text-gray-800 dark:text-white font-semibold">'.$row->first_name.' '.$row->last_name.'</span></p>
                                 <p>EAN code: <span class="text-gray-800 dark:text-white font-semibold">'.$row->EAN.'</span></p>
                                 <p>Type: <span class="text-gray-800 dark:text-white font-semibold">'.$row->type.'</span></p>
                                 <p>Address: '.$row->street.' '.$row->number.', '.$row->city.'</span></p>
                             </div>
-                            <div class="searchResultRight">
-                                <p>Status:<br>
-                                    <span style="font-size:30px;color:';
+                            <div class="searchResultRight text-right text-2xl ">
+                                <span>Status:</span><br>
+                                    <span class="my-2" style="font-size:50px;color:';
                                     if ($row->status == "unread") {
-                                        $output .= 'red;font-weight:bold;">'.ucfirst($row->status).'</span></p>
-                                        <p>
-                                            <button type="button" class="modalOpener" value='.$row->meter_id.'>Add index value</button>
-                                        </p>';
+                                        if($row->priority == 1) {
+                                            $output .= 'white;font-weight:bold;">'.ucfirst($row->status).'</span>';
+                                        }
+                                        else {
+                                            $output .= 'red;font-weight:bold;">'.ucfirst($row->status).'</span>';
+                                        }
+                                        
+                                        $output .= '
+                                            <p><button type="button" class="modalOpener bg-gray-800 dark:bg-gray-800 text-white text-xl p-2 shadow rounded-lg" value='.$row->meter_id.'>Add index value</button></p>
+                                        ';
                                     }
                                     else {
-                                        $output .= 'white;font-weight:bold;">'.ucfirst($row->status).'</span></p>';
+                                        $output .= 'green;font-weight:bold;">'.ucfirst($row->status).'</span>';
                                     }
 
                         $output .= '
-                                </p>
                             </div>
                         </div>';
                 }
@@ -1128,7 +1147,7 @@ class MeterController extends Controller
                 $meter->save();
             }
 
-            Mail::to('anu01872@gmail.com')->send(new IndexValueEnteredByCustomer($this->domain, $user_id, $EAN, $new_index_value, $date, $consumption_value));
+            Mail::to(config('app.email'))->send(new IndexValueEnteredByCustomer($this->domain, $user_id, $EAN, $new_index_value, $date, $consumption_value));
         }
         return redirect()->back();
     }
