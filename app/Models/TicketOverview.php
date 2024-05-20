@@ -11,5 +11,5 @@ class TicketOverview extends Model
 {
     protected $table = 'tickets';
 
-    protected $fillable = ['name', 'email', 'issue', 'description'];
+    protected $fillable = ['name', 'email', 'issue', 'description', 'active'];
 }

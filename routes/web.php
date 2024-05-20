@@ -43,6 +43,9 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\GasElectricityController;
 use App\Http\Controllers\PayoutsController;
 use App\Http\Controllers\ManagerTicketOverviewController;
+use App\Http\Controllers\EditController;
+use App\Http\Controllers\DetailsController;
+
 use App\Http\Controllers\TicketManagerPageController;
 use App\Http\Controllers\TicketDashboardController;
 use App\Models\ElectricityConnection;
@@ -352,6 +355,18 @@ Route::get('/contract_overview/{id}/download', [ContractController::class, 'down
 Route::get('/ticket_overview', [TicketOverviewController::class, 'index'])->name('ticket_overview');
 
 Route::get('/managerticketoverview', [ManagerTicketOverviewController::class, 'index'])->name('managerticketoverview');
+
+Route::get('/Edit', [EditController::class, 'index'])->name('Edit');
+
+// web.php (routes file)
+Route::get('/tickets/{id}/edit', [EditController::class, 'index'])->name('edit');
+Route::put('/tickets/{id}', [EditController::class, 'update'])->name('edit.update');
+
+Route::get('/details/{id}', [DetailsController::class, 'index'])->name('details');
+
+// routes/web.php
+
+Route::get('/closeticket/{id}', [ManagerTicketOverviewController::class, 'closeTicket'])->name('closeticket');
 
 
 Route::get('/test', function () {
