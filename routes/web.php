@@ -220,7 +220,14 @@ Route::get('/managerticketoverview', [ManagerTicketOverviewController::class, 'i
 
 Route::get('/Edit', [EditController::class, 'index'])->name('Edit');
 
-Route::put('/Edit/{id}', [EditController::class, 'update'])->name('edit.update');
+// web.php (routes file)
+Route::get('/tickets/{id}/edit', [EditController::class, 'index'])->name('edit');
+Route::put('/tickets/{id}', [EditController::class, 'update'])->name('edit.update');
+
+// routes/web.php
+
+Route::get('/closeticket/{id}', [ManagerTicketOverviewController::class, 'closeTicket'])->name('closeticket');
+
 
 Route::get('/test', function () {
     return view('test');

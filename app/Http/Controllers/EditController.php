@@ -13,12 +13,10 @@ use App\Models\Ticket;
 class EditController extends Controller
 {
 
-    public function index()
+    public function index($id) // Accept the $id parameter
     {
-        $user_id = Auth::id();
-        $tickets = Edit::where('user_id', $user_id)->get();
-
-        return view('Tickets.edit', compact('tickets'));
+        $ticket = Ticket::findOrFail($id); // Fetch the ticket with the given ID
+        return view('tickets.edit', compact('ticket'));
     }
 
     public function update(Request $request, $id)

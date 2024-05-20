@@ -10,10 +10,6 @@ use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 
 class TicketOverviewController extends Controller
 {
-    public function __construct()
-    {
-
-    }
 
     public function index()
     {
