@@ -11,13 +11,13 @@ class Payslips extends Model
     use HasFactory;
     protected $fillable = [
         'employee_profile_id',
-        'start_date',
-        'end_date',
-        'creation_date',
-        'nbr_days_worked',
-        'total_hours',
+        'startDate',
+        'endDate',
+        'creationDate',
+        'nrDaysWorked',
+        'totalHours',
         'IBAN',
-        'amount_per_hour'
+        'amountPerHour',
     ];
 
     public function employee_profile(): BelongsTo

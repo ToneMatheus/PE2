@@ -10,11 +10,18 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
 use App\Http\Controllers\InvoiceRemindersController;
+use App\Http\Controllers\InvoiceMatchingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\RelationsController;
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TariffController;
+use App\Http\Controllers\LeaveRequestController;
+
+use App\Http\Controllers\EvaluationController;
 
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
@@ -34,13 +41,18 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\GasElectricityController;
-use App\Http\Controllers\RelationsController;
+use App\Http\Controllers\PayoutsController;
 use App\Http\Controllers\ManagerTicketOverviewController;
 use App\Http\Controllers\TicketManagerPageController;
 use App\Http\Controllers\TicketDashboardController;
 use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
 use App\Http\Controllers\TicketOverviewController;
+use App\Http\Controllers\ManualInvoiceController;
+use App\Http\Controllers\NewEmployeeController;
+use App\Http\Controllers\holidayRequest;
+use App\Http\Controllers\UploadController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +68,10 @@ use App\Http\Controllers\TicketOverviewController;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/temp', function () {
+    return view('welcome_temp');
+});
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -76,14 +92,34 @@ require __DIR__.'/auth.php';
 
 Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function() {
     //cronjobs
-    //Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+    Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
     Route::get('/cron-jobs/schedule/edit/{job}', [CronJobController::class, 'edit_schedule'])->name('edit-schedule-cron-job');
     Route::post('/cron-jobs/schedule/store{job}', [CronJobController::class, 'store_schedule'])->name('store-schedule-cron-job');
     Route::post('/cron-jobs/schedule/toggle{job}', [CronJobController::class, 'toggle_schedule'])->name('toggle-schedule-cron-job');
-    // Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
+    Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
     Route::get('/cron-jobs/history', [CronJobController::class, 'showHistory'])->name('job.history');
     Route::get('/cron-jobs/get-job-runs', [CronJobController::class, 'getJobRuns'])->name('get.job.runs');
     Route::get('/cron-jobs/get-job-run-logs', [CronJobController::class, 'getJobRunLogs'])->name('get.job.run.logs');
+    Route::post('/cron-jobs/update-log-level/{jobName}', [CronJobController::class, 'updateLogLevel'])->name('update.log.level');
+    
+
+    Route::get('/payouts', [PayoutsController::class, 'showPayouts'])->name('payouts');
+    Route::get('/payouts/{id}', [PayoutsController::class, 'processPayout'])->name('payouts.pay');
+
+    Route::get('/manualInvoice', [ManualInvoiceController::class, 'showManualInvoice'])->name('manualInvoice');
+    Route::post('/manualInvoice', [ManualInvoiceController::class, 'processManualInvoice'])->name('manualInvoice.process');
+
+    //payments management
+    Route::get('/pay/create', [PaymentController::class, 'create'])->name('payment.create');
+    Route::post('/pay', [PaymentController::class, 'add'])->name('payment.add');
+    Route::get('/invoice-matching', [InvoiceMatchingController::class, 'startMatching'])->name("invoice_matching");
+    Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');
+    Route::get('/tariff', [TariffController::class, 'showTariff'])->name('tariff');
+    Route::get('/tariff/delete/{pID}/{tID}', [TariffController::class, 'inactivateTariff'])->name('tariff.delete');
+    Route::post('/tariff/add', [TariffController::class, 'processTariff'])->name('tariff.add');
+    Route::post('/tariff/edit/{pID}/{tID}', [TariffController::class, 'editTariff'])->name('tariff.edit');
+
+    Route::get('/tariff/products/{type}', [TariffController::class, 'getProductByType']);
     Route::get('/ticket/Flowchart2', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket2');
 
     Route::get('/manager/TicketStatus', [TicketManagerPageController::class, 'index'])->name('manager.TicketStatus');
@@ -97,7 +133,6 @@ Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(function() {
-
 });
 
 Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group(function() {
@@ -118,11 +153,30 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function
     //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
     Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
     Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');    
+
+    Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
+    Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
 
 
+});
+
+Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function() {
+    
+});
+
+Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function() {
+    // Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+    // Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
+
+    Route::get('/tariff', [TariffController::class, 'showTariff'])->name('tariff');
+    Route::get('/tariff/delete/{pID}/{tID}', [TariffController::class, 'inactivateTariff'])->name('tariff.delete');
+    Route::post('/tariff/add', [TariffController::class, 'processTariff'])->name('tariff.add');
+    Route::post('/tariff/edit/{pID}/{tID}', [TariffController::class, 'editTariff'])->name('tariff.edit');
+
+    Route::get('/tariff/products/{type}', [TariffController::class, 'getProductByType']);
 });
 
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
@@ -132,16 +186,20 @@ Route::post('/ticket_dashboard/unassign/{id}', [TicketDashboardController::class
 Route::get('/ticket_dashboard/filter', [TicketDashboardController::class, 'filter'])->name('filter_tickets');
 
 
-Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
-Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
 
-Route::get('/tariff', [EmployeeController::class, 'showTariff'])->name('tariff');
-Route::get('/tariff/delete/{pID}/{tID}', [EmployeeController::class, 'inactivateTariff'])->name('tariff.delete');
-Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('tariff.add');
-Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
-Route::get('/tariff/products/{type}', [EmployeeController::class, 'getProductByType']);
+//
+Route::get('/employeeOverview', [EmployeeController::class, 'showEmployees'])->name('employees');
+Route::post('/employeeOverview/add', [EmployeeController::class, 'processEmployee'])->name('employees.add');
+Route::get('/editEmployee/{eID}', [EmployeeController::class, 'editEmployee'])->name('employees.edit');
+Route::post('/editEmployee/{eID}/personal', [EmployeeController::class, 'editPersonalEmployee'])->name('employees.edit.personal');
+Route::post('/editEmployee/{eID}/{aID}/{uID}/address', [EmployeeController::class, 'editAddressEmployee'])->name('employees.edit.address');
+Route::post('/editEmployee/{eID}/{uID}/contract', [EmployeeController::class, 'editContractEmployee'])->name('employees.edit.contract');
+Route::get('/evaluations', [EvaluationController::class, 'evaluations'])->name('evaluations');
 
-//invoice query routes
+//Route::get('/evaluations', [EvaluationController::class, 'managerTicketPage'])->name('manager-tickets');
+
+
+//invoice query routes: DEPRECATED
 Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
 Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
 
@@ -151,8 +209,14 @@ Route::get('/reminders', [InvoiceRemindersController::class, 'index'])->name("in
 Route::get('/test-qr-monthly', [InvoiceRemindersController::class, 'monthly'])->name("qr-monthly");
 
 //invoice payment
+/*Route::get('/pay/create', [PaymentController::class, 'create'])->name('payment.create');
+Route::post('/pay', [PaymentController::class, 'add'])->name('payment.add');
 Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
 Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
+
+Route::get('/invoice-matching', [InvoiceMatchingController::class, 'startMatching'])->name("invoice_matching");
+Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');*/
+
 
 //QR code test
 Route::get('/code', function () {
@@ -215,15 +279,37 @@ Route::controller(MeterController::class)->group(function () {
 //to download the pdf of the contract and salary pages
 Route::get('/downloadPayslip', [DomPDFController::class, 'getPaySlipPDF'])->name('downloadPayslip');
 Route::get('/downloadContract', [DomPDFController::class, 'getContractPDF'])->name('downloadContract');
+Route::get('/downloadBenefits', [DomPDFController::class, 'getBenefitsPDF'])->name('downloadBenefits');
 
-//the routes to the pages
+//the routes to most of the hr pages
 Route::get('/payslip', [myController::class, 'payslip'])->name('payslip');
 Route::get('/payList', [myController::class, 'payList'])->name('payList');
 Route::get('/contract', [myController::class, 'contract'])->name('contract');
-Route::get('/profileEmployee', [myController::class, 'profile'])->name('profile');
+Route::get('/profileEmployee/{id?}', [myController::class, 'profile'])->name('profile');
 Route::get('/managerPage', [myController::class, 'manager'])->name('managerPage');
 Route::get('/managerList', [myController::class, 'managerList'])->name('managerList');
 Route::get('/employeeList', [myController::class, 'employeeList'])->name('employeeList');
+Route::get('/employeeBenefits', [myController::class, 'benefits'])->name('employeeBenefits');
+//Route::post('/profileEmployee/{id}', [myController::class, 'store'])->name('storeTaskData');
+Route::get('/hiringManger', [myController::class, 'hiringManager'])->name('hiringManager');
+Route::get('/jobOffers', [myController::class, 'jobs'])->name('jobs');
+Route::get('/jobDescription', [myController::class, 'jobDescription'])->name('jobDescription');
+Route::get('/jobApply', [myController::class, 'jobApply'])->name('jobApply');
+Route::get('/documents', [myController::class, 'documents'])->name('documents');
+Route::get('/financialAnalyst', [myController::class, 'finance'])->name('financialAnalyst');
+Route::get('/weeklyActivity', [myController::class, 'weeklyActivity'])->name('weeklyActivity');
+Route::get('/teamBenefits', [myController::class, 'teamBenefits'])->name('teamBenefits');
+Route::get('/teamWeeklyReports', [myController::class, 'weeklyReport'])->name('teamWeeklyReports');
+// Route::get('/report', function () {
+//     return view('report', ['weekStartDate' => now()->startOfWeek()->toDateString(), 'weekEndDate' => now()->endOfWeek()->toDateString()]);
+// });
+Route::post('/submit-report', [myController::class, 'storeWeeklyReports']);
+
+// Route::get('/sickLeaveReason', [myController::class, 'sickLeave'])->name('sickLeaveReason');
+// Route::get('/profileHR', [myController::class, 'profileHR'])->name('profileHR');
+// Route::get('/profileInvoice', [myController::class, 'profileInvoice'])->name('profileInvoice');
+// Route::get('/profileCustomers', [myController::class, 'profileCustomers'])->name('profileCustomers');
+// Route::get('/profileMeters', [myController::class, 'profileMeters'])->name('profileMeters');
 
 // routes for relations controlelr
 Route::get('/relations', [RelationsController::class, 'fetchRelations']);
@@ -237,9 +323,11 @@ Route::post('/relations/update', [RelationsController::class, 'updateRelation'])
 
 //Route::get('/holidayRequest', function() {  return view('holidayRequest');  })->name('request');
 
-Route::get('/holidayRequest', function(){
-    return view('holidayRequestPage');
-})->name('request');
+Route::get('/holidayRequest', [holidayRequest::class, 'index'])->name('request');
+Route::post('/upload', [UploadController::class, 'uploadFile'])->name('upload.file'); 
+// Route::get('/holidayRequest', function(){
+//     return view('holidayRequestPage');
+// })->name('request');
 
 Route::get('/welcome', function() {
     return view('welcome');
@@ -247,6 +335,12 @@ Route::get('/welcome', function() {
 Route::get('/roles', function () {
     return view('roleOverview');
 });
+Route::get('/teamOverview', [TeamController::class, 'index']);
+Route::post('/add-team', [TeamController::class, 'addTeam'])->name('add.team');
+Route::get('/teams', [TeamController::class, 'showTeams'])->name('teams.show');
+Route::get('/teams/members/{teamId}', [App\Http\Controllers\TeamController::class, 'getTeamMembers'])->name('team.members');
+Route::get('/users/not-in-team', [TeamController::class, 'getUsersNotInTeam'])->name('users.not-in-team');
+Route::post('/teams/add-member', [TeamController::class, 'addMemberToTeam'])->name('teams.add-member');
 
 Route::get('/employee/invoices', [InvoiceController::class, 'showAllInvoices'])->name('invoices.show');;
 Route::post('/employee/invoices', [InvoiceController::class, 'rerunValidation'])->name('invoices.rerunValidation');;
@@ -337,9 +431,9 @@ Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'
 
 
 //test route
-Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList1');
-Route::post('/TestUserList', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('TestUserList');
-Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');
+/*Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
+Route::get('/addInvoiceExtraForm', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('addInvoiceExtraForm');
+Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');*/
 
 
 //Customer Portal

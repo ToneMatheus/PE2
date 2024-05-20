@@ -190,26 +190,43 @@ class InvoiceController extends Controller
         $amount = floatval($amount);
         DB::table('credit_notes')->insert(array(
             'type' => $type,
+            'status' => 1,
             'amount' => $amount,
+            'invoice_id' => 1,
             'user_id' => $userID,
             'is_credit' => 0,
             'is_active' => 1));
-        $users = DB::table('users as u')
-        ->join('customer_contracts as cc', 'cc.user_id', '=', 'u.id')
-        ->get();
-        return view('Invoices.TestUserList', compact('users'));
-    }
-    //test
-    public function showTestUserList()
-    {
-        $users = DB::table('users as u')
-        ->join('customer_contracts as cc', 'cc.user_id', '=', 'u.id')
-        ->get();
-        return view('Invoices.TestUserList', compact('users'));
-    }
-    public function showTestEmployeeList()
-    {
-        return view('Invoices.CustomerInvoicesOverview');
+
+        $request->validate([
+            'search' => 'nullable|max:255',
+            'sort' => 'nullable|alpha_dash',
+            'direction' => 'nullable|in:asc,desc',
+        ]);
+    
+        $sort = $request->get('sort');
+        $direction = $request->get('direction', 'asc');
+        $search = $request->get('search');
+        $query = DB::table('users')
+                    ->join('customer_contracts', 'users.id', '=', 'customer_contracts.user_id')
+                    ->select('users.id', 'users.username', 'users.first_name', 'users.last_name', 'users.phone_nbr', 'users.is_company', 'users.company_name', 'users.email', 'users.birth_date', 'users.is_active', 'customer_contracts.start_date', 'customer_contracts.end_date', 'customer_contracts.type', 'customer_contracts.price', 'customer_contracts.status');
+    
+            if ($search) {
+                     $query->where('users.first_name', 'like', "%{$search}%")
+                           ->orWhere('users.last_name', 'like', "%{$search}%")
+                           ->orWhere('users.company_name', 'like', "%{$search}%")
+                           ->orWhere('users.id', 'like', "%{$search}%")
+                           ->orWhere('users.email', 'like', "%{$search}%");
+                }
+    
+                if (!empty($sort)) {
+                    $query->orderBy($sort, $direction);
+                } else {
+                    $query->orderBy('users.id', $direction);
+                }
+    
+        $customers = $query->paginate(10);
+    
+        return view('Customers/CustomerGridView', ['customers' => $customers, 'sort' => $sort, 'direction' => $direction]);
     }
 
     public function showAllInvoices(Request $request){
@@ -255,91 +272,9 @@ class InvoiceController extends Controller
                 $invoicesQuery->where('invoices.status', 'unpaid');
             } elseif ($selectedStatus === 'sent') {
                 $invoicesQuery->where('invoices.status', 'sent');
-            } elseif ($selectedStatus === 'validation ok') {
-                $invoicesQuery->where('invoices.status', 'validation ok');
-            } elseif ($selectedStatus === 'validation error') {
-                $invoicesQuery->where('invoices.status', 'validation error 1')
-                ->orWhere('invoices.status', 'validation error 2')
-                ->orWhere('invoices.status', 'validation error 3');
             }
         }
 
-        $invoices = $invoicesQuery->get();
-        // dd($invoices);
-        return view('Invoices/EmployeeInvoicesOverview', compact('invoices', 'filterYears', 'selectedYear', 'selectedStatus'));
-    }
-    public function rerunValidation(Request $request){
-        
-        $now = Carbon::now();
-        $month = $now->format('m');
-        $year = $now->format('Y');
-
-        $invoiceID = $request->input('invoice_id');
-        // dd($invoiceID);
-        $invoices = Invoice::join('customer_contracts as cc', 'cc.id', "=", 'invoices.customer_contract_id')
-                    ->select('invoices.id as invoice_id', 'invoices.invoice_date', 'invoices.due_date', 'invoices.total_amount', 'invoices.status', 'invoices.customer_contract_id', 'invoices.type', 'invoices.meter_id', 'cc.user_id')
-                    ->where('invoices.id', '=', $invoiceID)
-                    ->get()->toArray();
-        // dd($invoices);
-        foreach($invoices as $invoice){
-            // dd($invoice['type']);
-            if ($invoice['type'] == "Monthly" || $invoice['type'] == "monthly"){
-                // Estimation validation
-                // Can i find the estimation
-                if(sizeof(Estimation::get()->where('meter_id', '=', $invoice['meter_id'])->toArray()) == 0){
-                    // did not find the estimation
-                    $meter_id = $invoice['meter_id'];
-                    $invoice_id = $invoice['invoice_id'];
-                    Log::error('Exception caught: ' . "Validation Error Code 1: No monthly estimation found for meter with id: $meter_id");
-                    Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 1']);
-                }elseif(Estimation::select('estimation_total')->where('meter_id', '=', $invoice['meter_id'])->pluck('estimation_total')->toArray() <= 0){
-                    // estimation is 0 of lager
-                    $meter_id = $invoice['meter_id'];
-                    $invoice_id = $invoice['invoice_id'];
-                    Log::error('Exception caught: ' . "Validation Error Code 2: Monthly estimation found to be 0 or lower for meter with id: $meter_id");
-                    Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 2']);
-                }else{
-                    $meter_id = $invoice['meter_id'];
-                    $invoice_id = $invoice['invoice_id'];
-                    // estimation gevonden en hoger dan 0
-                    Log::error("No validation error for meter with id: $meter_id.");
-                    Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
-                }
-            }elseif($invoice['type'] == "Yearly" || $invoice['type'] == "yearly" || $invoice['type'] == "Annual" || $invoice['type'] == "annual"){
-                // Consumption validation
-                $meter_id = $invoice['meter_id'];
-                $invoice_id = $invoice['invoice_id'];
-                $consumptions = Index_Value::where('meter_id', '=', $meter_id)
-                ->whereyear('reading_date', '=', $year)
-                ->get()->toArray();
-                if (sizeof($consumptions) == 0) {
-                    // no consumption found
-                    Log::error('Exception caught: ' . "Validation Error Code 3: No consumption found for meter with id: $meter_id.");
-                    Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation error 3']);
-                }
-                else {
-                    // consumption found
-                    Log::error("No validation error for meter with id: $meter_id.");
-                    Invoice::where('id', '=', $invoice_id)->update(['status' => 'validation ok']);
-                }
-            }
-        }
-        $invoices = Invoice::select('invoice_date')
-                   ->groupBy('invoice_date')
-                   ->get()->toArray();
-        $filterYears = [];
-        foreach($invoices as $invoice){
-            $invoiceYearMonth = date('Y-M', strtotime($invoice['invoice_date']));
-            if (!in_array($invoiceYearMonth, $filterYears)){
-                array_push($filterYears, $invoiceYearMonth);
-            }
-        } 
-        $selectedYear = "";
-        $selectedStatus = "";
-        $invoicesQuery = Invoice::query()
-            ->join('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
-            ->join('users', 'customer_contracts.user_id', '=', 'users.id')
-            ->select('invoices.id', 'invoices.meter_id', 'users.first_name', 'users.last_name', 'invoices.invoice_date', 'invoices.due_date', 'invoices.type', 'invoices.status')->orderby('invoices.id');
         $invoices = $invoicesQuery->get();
         // dd($invoices);
         return view('Invoices/EmployeeInvoicesOverview', compact('invoices', 'filterYears', 'selectedYear', 'selectedStatus'));

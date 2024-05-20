@@ -22,10 +22,6 @@ return new class extends Migration
             $table->text('challenges')->nullable();
             $table->date('submission_date')->nullable();
         });
-
-        Schema::table('employee_weekly_reports', function (Blueprint $table) {
-            $table->foreign('employee_profile_id')->references('id')->on('employee_profiles');
-        });
     }
 
     /**

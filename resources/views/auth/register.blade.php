@@ -50,6 +50,13 @@
         checkbox.addEventListener('change', toggleFields);
         });
     </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJxVIJtLGU0anxCft7GRMVblVKBByiTj8&libraries=places"></script>
+    <script src="/js/address-autocomplete.js"></script>
+    <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                initAutocomplete();
+            });
+    </script>
 
 <!-- CH een extra pagina maken om een mail opnieuw te sturen en op gestuurd te worden als dit moet -->
     @if (session('top_message'))
