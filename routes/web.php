@@ -35,6 +35,7 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\RelationsController;
 use App\Http\Controllers\ManagerTicketOverviewController;
 use App\Http\Controllers\EditController;
+use App\Http\Controllers\DetailsController;
 
 
 
@@ -223,6 +224,8 @@ Route::get('/Edit', [EditController::class, 'index'])->name('Edit');
 // web.php (routes file)
 Route::get('/tickets/{id}/edit', [EditController::class, 'index'])->name('edit');
 Route::put('/tickets/{id}', [EditController::class, 'update'])->name('edit.update');
+
+Route::get('/details/{id}', [DetailsController::class, 'index'])->name('details');
 
 // routes/web.php
 
