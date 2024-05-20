@@ -923,45 +923,61 @@ class MeterController extends Controller
 
     public function GasElectricity(Request $request)
     {
-        try {
-            $tempUserID = Crypt::decrypt($request->token);
-            Log::info('Decrypted temp user ID: ', ['userID' => $tempUserID]);
-            $a = 5897;
-            $b = 95471;
-            $c = 42353;
-            $originalUserIDstr = ($b * ($tempUserID - $c)) / $a;
-            $originalUserID = (int) round((float) $originalUserIDstr);
-
-        } catch (\Exception $e) {
-            Log::error('Decryption failed: ', ['error' => $e->getMessage()]);
+        if ($request->token)
+        {
+            try {
+                $tempUserID = Crypt::decrypt($request->token);
+                Log::info('Decrypted temp user ID: ', ['userID' => $tempUserID]);
+                $a = 5897;
+                $b = 95471;
+                $c = 42353;
+                $originalUserIDstr = ($b * ($tempUserID - $c)) / $a;
+                $originalUserID = (int) round((float) $originalUserIDstr);
+            }
+            catch (\Exception $e) {
+                Log::error('Decryption failed: ', ['error' => $e->getMessage()]);
+            }
+    
+            try {
+                $user = User::findOrFail($originalUserID);
+                Auth::login($user);
+                Log::info('Logged in');
+            }
+            catch (\Exception $e) {
+                Log::error('Login failed');
+            }
         }
 
-        try {
-            $user = User::findOrFail($originalUserID);
-            Auth::login($user);
-            Log::info('Logged in');
-        }   catch (\Exception $e) {
-            Log::error('Login failed');
+        $query = 'SELECT t1.user_id, t1.first_name, t1.last_name, t1.street, t1.number, t1.postal_code, t1.city, t1.EAN, t1.expecting_reading, t1.type, t1.meter_id, t2.reading_date, t2.latest_reading_value FROM 
+        (SELECT users.id AS user_id, users.first_name, users.last_name, addresses.street, addresses.number, addresses.postal_code, addresses.city, meters.EAN, meters.expecting_reading, meters.type, meters.id AS meter_id FROM `users`
+        JOIN customer_addresses on users.id = customer_addresses.user_id
+        JOIN addresses on customer_addresses.address_id = addresses.id
+        JOIN meter_addresses on addresses.id = meter_addresses.address_id
+        JOIN meters on meter_addresses.meter_id = meters.id
+        WHERE users.id = '.Auth::id().' ) AS t1
+        LEFT JOIN
+        (SELECT index_values.meter_id, index_values.reading_date, index_values.reading_value AS latest_reading_value
+        FROM index_values
+        WHERE (index_values.meter_id, index_values.reading_value) IN (
+            SELECT index_values.meter_id, MAX(index_values.reading_value) FROM index_values
+            GROUP BY index_values.meter_id
+        )) AS t2 ON t1.meter_id = t2.meter_id;';
+
+        $result =  DB::select($query);
+
+        $index_values = [];
+
+        foreach($result as $row) {
+            $index_value = DB::table('index_values')
+                            ->join('meters', 'meters.id', '=', 'index_values.meter_id')
+                            ->where('index_values.meter_id', $row->meter_id)
+                            ->select('index_values.*', 'meters.EAN')
+                            ->get()
+                            ->toArray();
+
+            $index_values[] = $index_value;
         }
-
-            $query = 'SELECT t1.user_id, t1.first_name, t1.last_name, t1.street, t1.number, t1.postal_code, t1.city, t1.EAN, t1.expecting_reading, t1.type, t1.meter_id, t2.reading_date, t2.latest_reading_value FROM 
-            (SELECT users.id AS user_id, users.first_name, users.last_name, addresses.street, addresses.number, addresses.postal_code, addresses.city, meters.EAN, meters.expecting_reading, meters.type, meters.id AS meter_id FROM `users`
-            JOIN customer_addresses on users.id = customer_addresses.user_id
-            JOIN addresses on customer_addresses.address_id = addresses.id
-            JOIN meter_addresses on addresses.id = meter_addresses.address_id
-            JOIN meters on meter_addresses.meter_id = meters.id
-            WHERE users.id = '.Auth::id().' ) AS t1
-            LEFT JOIN
-            (SELECT index_values.meter_id, index_values.reading_date, index_values.reading_value AS latest_reading_value
-            FROM index_values
-            WHERE (index_values.meter_id, index_values.reading_value) IN (
-                SELECT index_values.meter_id, MAX(index_values.reading_value) FROM index_values
-                GROUP BY index_values.meter_id
-            )) AS t2 ON t1.meter_id = t2.meter_id;';
-
-            $result =  DB::select($query);
-
-            return view('Meters/Meter_History', ['details' => $result]);
+        return view('Meters/Meter_History', ['details' => $result, 'index_values' => $index_values]);
     }
 
     public function ValidateIndex(Request $request) {
