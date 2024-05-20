@@ -66,7 +66,7 @@ class IndexValueEnteredByCustomer extends Mailable
                         'user_id' => $this->user_id,
                         'token'=> $encryptedTempUserId,
                         'EAN' => $this->EAN,
-                        'index_value' => $this->consumption,
+                        'index_value' => $this->index_value,
                         'date' => $this->date,
                         'consumption' => $this->consumption
                     ]);

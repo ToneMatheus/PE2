@@ -1,54 +1,9 @@
-{{-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link href="/css/all_meters_dashboard.css" rel="stylesheet" type="text/css"/>
-    <title>All meters dashboard</title>
-</head>
-<body> --}}
 <x-app-layout title="All meters dashboard">
-    <h1>All meters</h1>
-    {{-- <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="employeeModalLabel">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
-                </div>
-                <form method="POST" action="/bulk_assignment_change">
-                <div class="modal-body">
-                    <div class="form-group mb-3">
-                        @csrf
-                        @method('POST')
-                        <p>Change assignment of 
-                            <select class="previous_employee" id="previous_employee" name="previous_employee">
-                                <option selected value="">Select</option>
-                                @foreach($employees as $employee)
-                                    <option value={{$employee->employee_id}}>{{ $employee->first_name }}</option>
-                                @endforeach
-                            </select>
-                             to 
-                             <select class="next_employee" id="next_employee" name="next_employee">
-                                <option selected value="">Select</option>
-                                @foreach($employees as $employee)
-                                    <option value={{$employee->employee_id}}>{{ $employee->first_name }}</option>
-                                @endforeach
-                            </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" id="enter">Save</button>
-                </div>
-                </form>
-            </div>
-        </div>
-    </div> --}}
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            All meters
+        </h2>
+    </x-slot>
     <div id="modal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-lg w-2/5">
             <div class="border-b p-4 flex justify-between items-center">
@@ -104,9 +59,7 @@
                 <option value={{$employee->first_name}}>{{ $employee->first_name }}</option>
             @endforeach
         </select>
-        <button type="button" id="modalOpener">Bulk assignment</button>
-        {{-- <x-input-label for="searchBar" :value="__('Username')" />
-        <x-text-input id="searchBar" class="block mt-1 w-full" type="text" name="searchBar" /> --}}
+        <x-primary-button type="button" id="modalOpener">Bulk assignment</x-primary-button>
     </form>
     
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

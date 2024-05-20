@@ -372,7 +372,7 @@ class MeterController extends Controller
             if($total_row > 0){
                 foreach($data as $row)
                 {
-                    $output .= '<div class="searchResult';
+                    $output .= '<div class="p-4 my-3 sm:p-8 bg-white dark:bg-gray-800 shadow rounded-lg text-gray-500 dark:text-gray-400 grid grid-cols-2 gap-4 searchResult';
                     
                     if($row->priority == 1 && $row->status == "unread") {
                         $output .= ' priority ';
@@ -385,33 +385,32 @@ class MeterController extends Controller
                     if ($row->status == "unread") {
                         $output .= '">';
                     }
-                    $output .= '<div class="searchResultLeft">
-                                <p>Name: <span class="highlighted">'.$row->first_name.' '.$row->last_name.'</span></p>
-                                <p>EAN code: <span class="highlighted">'.$row->EAN.'</span></p>
-                                <p>Type: <span class="highlighted">'.$row->type.'</span></p>
+                    $output .= '<div class="searchResultLeft text-2xl">
+                                <p>Name: <span class="text-gray-800 dark:text-white font-semibold">'.$row->first_name.' '.$row->last_name.'</span></p>
+                                <p>EAN code: <span class="text-gray-800 dark:text-white font-semibold">'.$row->EAN.'</span></p>
+                                <p>Type: <span class="text-gray-800 dark:text-white font-semibold">'.$row->type.'</span></p>
                                 <p>Address: '.$row->street.' '.$row->number.', '.$row->city.'</span></p>
                             </div>
-                            <div class="searchResultRight">
-                                <p>Status:<br>
-                                    <span style="font-size:30px;color:';
+                            <div class="searchResultRight text-right text-2xl ">
+                                <span>Status:</span><br>
+                                    <span class="my-2" style="font-size:50px;color:';
                                     if ($row->status == "unread") {
                                         if($row->priority == 1) {
-                                            $output .= 'white;font-weight:bold;">'.ucfirst($row->status).'</span></p>';
+                                            $output .= 'white;font-weight:bold;">'.ucfirst($row->status).'</span>';
                                         }
                                         else {
-                                            $output .= 'red;font-weight:bold;">'.ucfirst($row->status).'</span></p>';
+                                            $output .= 'red;font-weight:bold;">'.ucfirst($row->status).'</span>';
                                         }
                                         
-                                        $output .= '<p>
-                                            <button type="button" class="modalOpener" value='.$row->meter_id.'>Add index value</button>
-                                        </p>';
+                                        $output .= '
+                                            <p><button type="button" class="modalOpener bg-gray-800 dark:bg-gray-800 text-white text-xl p-2 shadow rounded-lg" value='.$row->meter_id.'>Add index value</button></p>
+                                        ';
                                     }
                                     else {
-                                        $output .= 'white;font-weight:bold;">'.ucfirst($row->status).'</span></p>';
+                                        $output .= 'green;font-weight:bold;">'.ucfirst($row->status).'</span>';
                                     }
 
                         $output .= '
-                                </p>
                             </div>
                         </div>';
                 }
@@ -883,9 +882,9 @@ class MeterController extends Controller
                         $output .= '">';
                     }
                     $output .= '<div class="searchResultLeft">
-                                <p>Name: <span class="highlighted">'.$row->first_name.' '.$row->last_name.'</span></p>
-                                <p>EAN code: <span class="highlighted">'.$row->EAN.'</span></p>
-                                <p>Type: <span class="highlighted">'.$row->type.'</span></p>
+                                <p>Name: <span class="text-gray-800 dark:text-white font-semibold">'.$row->first_name.' '.$row->last_name.'</span></p>
+                                <p>EAN code: <span class="text-gray-800 dark:text-white font-semibold">'.$row->EAN.'</span></p>
+                                <p>Type: <span class="text-gray-800 dark:text-white font-semibold">'.$row->type.'</span></p>
                                 <p>Address: '.$row->street.' '.$row->number.', '.$row->city.'</span></p>
                             </div>
                             <div class="searchResultRight">
