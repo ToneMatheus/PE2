@@ -27,7 +27,6 @@ class EditController extends Controller
             'email' => 'required|email',
             'issue' => 'required|string',
             'description' => 'required|string',
-            'is_solved' => 'required|int'
         ]);
 
         // Find the ticket by its ID
@@ -39,7 +38,6 @@ class EditController extends Controller
             'email' => $request->input('email'),
             'issue' => $request->input('issue'),
             'description' => $request->input('description'),
-            'is_solved' => $request->input('solved')
         ]);
 
         // Redirect back with a success message

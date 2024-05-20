@@ -11,7 +11,7 @@
                                 <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Email</th>
                                 <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Issue</th>
                                 <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Description</th>
-                                <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Solved</th>
+                                <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Status</th>
                             </tr>
                         </thead>
                         <tbody>

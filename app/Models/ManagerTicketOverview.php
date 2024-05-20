@@ -11,5 +11,5 @@ class ManagerTicketOverview extends Model
 {
     protected $table = 'tickets';
 
-    protected $fillable = ['name', 'email', 'issue', 'description', 'is_solved', 'active'];
+    protected $fillable = ['name', 'email', 'issue', 'description', 'active'];
 }

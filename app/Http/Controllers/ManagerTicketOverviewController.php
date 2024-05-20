@@ -35,8 +35,11 @@ class ManagerTicketOverviewController extends Controller
     
         // Update the ticket to mark it as solved
         $ticket->update([
-            'is_solved' => 1
+            'active' => 0
         ]);
+    
+        // Refresh the ticket instance to get the updated values
+        $ticket->refresh();
     
         // Log the updated value of is_solved
         Log::info('Updated value of is_solved: ' . $ticket->is_solved);
@@ -47,6 +50,7 @@ class ManagerTicketOverviewController extends Controller
         // Redirect back to the previous page
         return redirect()->back();
     }
+    
     
     
     
