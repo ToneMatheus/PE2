@@ -20,7 +20,6 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserRoleSeeder::class,
             Employee\SalaryRangesSeeder::class,
-            CronJobSeeder::class,
 
             Employee\EmployeeBenefitsSeeder::class,
             Employee\SalaryRangesSeeder::class,

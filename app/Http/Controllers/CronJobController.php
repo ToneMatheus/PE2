@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 use App\Models\CronJob;
 use App\Models\CronJobRun;
 use App\Models\CronJobRunLog;
+use Illuminate\Support\Facades\Log;
+use ReflectionClass;
 
 class CronJobController extends Controller
 {
@@ -19,26 +21,45 @@ class CronJobController extends Controller
             $files = File::files($jobPath);
             foreach ($files as $file) {
                 $filename = pathinfo($file, PATHINFO_FILENAME);
+                $className = 'App\\Jobs\\' . $filename;
                 if (Str::endsWith($file, '.php') && !Str::startsWith($filename, '_')) {
                     // Check if the job is already in the database
-                    if (!CronJob::where('name', $filename)->exists()) {
-                        $newJob = new CronJob();
-                        $newJob->name = $filename;
-                        $newJob->is_enabled = false;
-                        $newJob->log_level = 2;
-                        $newJob->scheduled_time = "00:00:00";
-                        $newJob->save();
+                    if (CronJob::where('name', $filename)->doesntExist()) {
+                        // Use reflection to check if the class has a constructor with required parameters
+                        if (class_exists($className)) {
+                            $reflection = new ReflectionClass($className);
+                            $constructor = $reflection->getConstructor();
+                            $hasRequiredParams = false;
+                            if ($constructor) {
+                                foreach ($constructor->getParameters() as $param) {
+                                    if (!$param->isOptional()) {
+                                        $hasRequiredParams = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // Skip jobs with required constructor parameters
+                            if ($hasRequiredParams) {
+                                continue;
+                            }
+
+                            $newJob = new CronJob();
+                            $newJob->name = $filename;
+                            $newJob->is_enabled = false;
+                            $newJob->log_level = 2;
+                            $newJob->scheduled_time = "00:00:00";
+                            $newJob->save();
+                        }
                     }
                 }
             }
         }
 
-        $scheduledJobs = [];
-        $unscheduledJobs = [];
         $scheduledJobs = CronJob::whereNotNull('interval')->get();
         $unscheduledJobs = CronJob::whereNull('interval')->get();
 
-        return view('cronjobs/index', compact('scheduledJobs', 'unscheduledJobs'));
+        return view('cronjobs.index', compact('scheduledJobs', 'unscheduledJobs'));
     }
 
     public function edit_schedule($job){
@@ -124,7 +145,7 @@ class CronJobController extends Controller
             $files = File::files($jobPath);
             foreach ($files as $file) {
                 $filename = pathinfo($file, PATHINFO_FILENAME);
-                if (Str::endsWith($file, '.php') && !Str::startsWith($filename, '.')) {
+                if (Str::endsWith($file, '.php') && !Str::startsWith($filename, '_')) {
                     $jobs[] = $filename;
                 }
             }

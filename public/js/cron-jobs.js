@@ -55,6 +55,7 @@ function OnchangeJob(){
                     option.textContent = 'Run: ' + runNumber + ' - ' + jobRun.started_at;
                     jobRunSelect.appendChild(option);
                 });
+                onApplyFilters();
             }
         } else {
             console.error('Request failed. Status: ' + xhr.status);

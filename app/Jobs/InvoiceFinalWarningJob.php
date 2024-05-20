@@ -68,6 +68,7 @@ class InvoiceFinalWarningJob implements ShouldQueue
     {
         //gather data of users: name, e-mail
         //gather data of lines of invoice
+        $userMail="";
         try
         {
             $invoice = new Invoice();
@@ -81,6 +82,7 @@ class InvoiceFinalWarningJob implements ShouldQueue
                 ->leftJoin('users', 'customer_contracts.user_id', '=', 'users.id')
                 ->where('invoices.id', $invoiceID)
                 ->first();
+            $userMail = $user_info->email;
         }
         catch(\Exception $e)
         {
@@ -88,6 +90,6 @@ class InvoiceFinalWarningJob implements ShouldQueue
             $this->logCritical($invoiceID, "Unable to retrieve invoice information: " . $e->getMessage());
         }
 
-        $this->sendMailInBackground("ToCustomer@mail.com", InvoiceFinalWarning::class, [$invoice_info, $total_amount, $user_info], $invoiceID);
+        $this->sendMailInBackground($userMail, InvoiceFinalWarning::class, [$invoice_info, $total_amount, $user_info], $invoiceID);
     }
 }
