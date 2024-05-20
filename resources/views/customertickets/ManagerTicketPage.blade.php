@@ -1,19 +1,19 @@
 <x-app-layout>
-<div class="flex flex-col items-center w-full text-white">
+<div class="flex flex-col items-center w-full text-gray-900 dark:text-white">
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-200 dark:text-white leading-tight">
+        <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
             {{ __('Tickets.TicketOverview') }}
-            <a href="{{ route('manager.showTickets') }}" class="ml-4 mt-2 text-sm text-gray-700 dark:text-white">Tickets Escalation Page</a>
+            <a href="{{ route('manager.showTickets') }}" class="ml-4 mt-2 text-sm text-gray-900 dark:text-white">Tickets Escalation Page</a>
         </h2>
     </x-slot>
         <div class="flex justify-center space-x-4 mb-10">
-            <div class="bg-gray-700 text-white p-6 rounded-lg shadow-lg w-128 mt-10">
+            <div class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-128 mt-10">
                 <h2 class="text-2xl font-bold mb-2 text-center">Average Ticket Closing Time:</h2>
                 <p class="text-lg text-center">
                     {{ $averageClosingTime }} hours
                 </p>
             </div>
-            <div class="bg-gray-700 text-white p-6 rounded-lg shadow-lg w-128 mt-10">
+            <div class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white p-6 rounded-lg shadow-lg w-128 mt-10">
                 <h2 class="text-2xl font-bold mb-2 text-center">Average Team Ticket Closing Time:</h2>
                 <p class="text-lg text-center">
                     {{ $teamAverageClosingTime }} hours
@@ -21,9 +21,9 @@
             </div>
         </div>
         <div class="flex justify-center space-x-4">
-            <button id="prevMonth" class="bg-gray-700 text-white p-2 rounded-lg shadow-lg">&larr; Previous Month</button>
-            <span id="currentMonthDisplay" class="bg-gray-700 text-white p-2 rounded-lg shadow-lg"></span>
-            <button id="nextMonth" class="bg-gray-700 text-white p-2 rounded-lg shadow-lg">Next Month &rarr;</button>
+            <button id="prevMonth" class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg shadow-lg">&larr; Previous Month</button>
+            <span id="currentMonthDisplay" class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg shadow-lg"></span>
+            <button id="nextMonth" class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg shadow-lg">Next Month &rarr;</button>
         </div>
     <canvas id="myChart" width="800" height="400"></canvas>
 
@@ -133,20 +133,20 @@
     });
     </script>
 
-<table class="mt-5 border-collapse bg-gray-700 text-white">
+<table class="mt-5 border-collapse bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white">
     <thead>
         <tr>
-            <th class="p-2 bg-gray-800 text-left">First Name</th>
-            <th class="p-2 bg-gray-800 text-left">Last Name</th>
-            <th class="p-2 bg-gray-800 text-left">Open tickets</th>
-            <th class="p-2 bg-gray-800 text-left">Closed tickets</th>
-            <th class="p-2 bg-gray-800 text-left">Unsolved tickets</th>
-            <th class="p-2 bg-gray-800 text-left">Average ticket solving speed</th>
+            <th class="p-2 bg-gray-300 dark:bg-gray-800 text-left">First Name</th>
+            <th class="p-2 bg-gray-300 dark:bg-gray-800 text-left">Last Name</th>
+            <th class="p-2 bg-gray-300 dark:bg-gray-800 text-left">Open tickets</th>
+            <th class="p-2 bg-gray-300 dark:bg-gray-800 text-left">Closed tickets</th>
+            <th class="p-2 bg-gray-300 dark:bg-gray-800 text-left">Unsolved tickets</th>
+            <th class="p-2 bg-gray-300 dark:bg-gray-800 text-left">Average ticket solving speed</th>
         </tr>
     </thead>
     <tbody>
         @foreach ($teamMembers as $teamMember)
-            <tr class="bg-gray-600">
+            <tr class="bg-gray-100 dark:bg-gray-600">
                 <td class="p-2">{{ $teamMember->first_name }}</td>
                 <td class="p-2">{{ $teamMember->last_name }}</td>
                 <td class="p-2">{{ $teamMember->tickets[0]['count'] ?? 0 }}</td>
