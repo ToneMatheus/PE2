@@ -93,7 +93,6 @@ class UserSeeder extends Seeder
                 'last_name' => 'Doe',
                 'password' => Hash::make('emily'),
                 'employee_profile_id' => 4,
-                'employee_profile_id' => 4,
                 'is_company' => 1,
                 'company_name' => 'ABC comp.',
                 'email' => 'emily@gmail.com',
