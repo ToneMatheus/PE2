@@ -27,7 +27,7 @@
                                 </td>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->resolution }}</td>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->created_at }}</td>
-                                <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->Urgency }}</td>
+                                <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->urgency }}</td>
                             </tr>
                         </tbody>
                     </table>

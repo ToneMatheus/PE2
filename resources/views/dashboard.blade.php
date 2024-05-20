@@ -41,6 +41,11 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View your submitted tickets</p>
                             </div>
                         </a>
+                        <a href="{{ route('managerticketoverview') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Overview</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View all tickets</p>
+                            </d
                     @endif
                     @if($roleId == config('roles.FINANCE_ANALYST'))
                         <a href="{{ route('show-ticket') }}" class="block">

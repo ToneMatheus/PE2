@@ -8,9 +8,6 @@
                             <tr>
                                 <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">ID</th>
                                 <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Name</th>
-                                <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Email</th>
-                                <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Issue</th>
-                                <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Description</th>
                                 <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Status</th>
                             </tr>
                         </thead>
@@ -19,9 +16,6 @@
                             <tr>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->id }}</td>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->name }}</td>
-                                <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->email }}</td>
-                                <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->issue }}</td>
-                                <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->description }}</td>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">@if($ticket->active == 1)
                                     <p>The ticket is still open!</p>
                                     @else
