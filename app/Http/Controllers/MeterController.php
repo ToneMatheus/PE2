@@ -1007,17 +1007,20 @@ class MeterController extends Controller
             if ($indexValue != '') {
                 $prev_index = DB::table('index_values')
                 ->join('consumptions', 'consumptions.current_index_id', '=', 'index_values.id')
+                ->join('estimations', 'estimations.meter_id', '=', 'index_values.meter_id')
                 ->where('index_values.meter_id', '=', $meterID)
-                ->select('index_values.id', 'index_values.reading_value', 'index_values.reading_date')
+                ->select('index_values.id', 'index_values.reading_value', 'index_values.reading_date', 'estimations.estimation_total')
                 ->orderBy('consumptions.id', 'desc')
                 ->get()
                 ->first();
 
                 if ($prev_index == null) {
                     $prev_index_value = 0;
+                    $estimation = $prev_index->estimation_total;
                 }
                 else {
                     $prev_index_value = $prev_index->reading_value;
+                    $estimation = $prev_index->estimation_total;
                 }
 
                 if (!is_numeric($indexValue)) {
@@ -1034,6 +1037,14 @@ class MeterController extends Controller
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                     </svg>
                                     <p class="ml-4 text-red-700">New index value can\'t be lower than previous index value.</p>
+                                </div>';
+                }
+                elseif ($indexValue > ($estimation + 0.5 * $estimation)) {
+                    echo '<div class="p-2 w-full bg-rose-200 dark:bg-rose-300 rounded-lg flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#be123c" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                    <p class="ml-4 text-red-700">New index value can\'t be higher than the estimation. Please check if you entered the right value.</p>
                                 </div>';
                 }
                 else {

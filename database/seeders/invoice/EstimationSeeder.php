@@ -21,7 +21,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 1
             ],
             [
@@ -36,7 +36,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 2
             ],
             [
@@ -51,7 +51,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 3
             ],
             [
@@ -66,7 +66,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 4
             ],
             [
@@ -81,7 +81,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 5
             ],
             [
@@ -96,7 +96,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 6
             ],
             [
@@ -111,7 +111,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 7
             ],
             [
@@ -126,7 +126,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 8
             ],
             [
@@ -141,7 +141,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 9
             ],
             [
@@ -156,7 +156,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 10
             ],
             [
@@ -171,7 +171,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 11
             ],
             [
@@ -186,7 +186,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 12
             ],
             [
@@ -201,7 +201,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 13
             ],
             [
@@ -216,7 +216,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 14
             ],
             [
@@ -231,7 +231,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 15
             ],
             [
@@ -246,7 +246,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 16
             ],
             [
@@ -261,7 +261,7 @@ class EstimationSeeder extends Seeder
             'nbr_computers' => 1,
             'nbr_entertainment' => 1,
             'nbr_dishwashers' => 1,
-            'estimation_total' => 3400,
+            'estimation_total' => 4000,
             'meter_id' => 17
             ]
         ]);
