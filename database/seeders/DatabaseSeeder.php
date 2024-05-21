@@ -20,13 +20,19 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserRoleSeeder::class,
             CronJobSeeder::class,
+            TicketSeeder::class,
             Employee\SalaryRangesSeeder::class,
 
+            Employee\EmployeeBenefitsSeeder::class,
+            Employee\SalaryRangesSeeder::class,
             Employee\EmployeeContractSeeder::class,
             Employee\PayslipSeeder::class,
             Employee\HolidayTypeSeeder::class,
             Employee\BalanceSeeder::class,
             Employee\HolidaySeeder::class,
+            Employee\TeamsSeeder::class,
+            Employee\TeamMembersSeeder::class,
+            WeeklyActivitySeeder::class,
 
             Customer\CustomerContractSeeder::class,
             Customer\CustomerAddressSeeder::class,
@@ -47,6 +53,9 @@ class DatabaseSeeder extends Seeder
 
             Invoice\InvoiceSeeder::class,
             Invoice\InvoiceLineSeeder::class,
+
+            Invoice\CreditNoteSeeder::class,
+            Invoice\PaymentSeeder::class,
         ]);
     }
 }

@@ -20,6 +20,8 @@ class Balance extends Model
         'sick_days'
     ];
 
+    public $timestamps = false;
+
     public function employee_profile(): BelongsTo
     {
         return $this->belongsTo(Employee_Profile::class);
