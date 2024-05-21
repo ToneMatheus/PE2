@@ -29,7 +29,9 @@ class SendTicketNotifications extends Command
      */
     public function handle()
     {
-        $tickets = Ticket::where('created_at', '<=', now()->subMinutes(10))->get();
+        $tickets = Ticket::where('created_at', '<=', now()->subMinutes(10))
+                        ->where('status', '!=', 1)
+                        ->get();
         $roleId = 2; // ID of the role to notify EMPLOYEE
 
         foreach ($tickets as $ticket) {

@@ -44,13 +44,15 @@ class Kernel extends ConsoleKernel
         }
 
         $schedule->call(function () {
-            $tickets = Ticket::where('created_at', '<=', now()->subMinutes(10))->get();
+            $tickets = Ticket::where('created_at', '<=', now()->subDays(2))
+                             ->where('status', '!=', 1)
+                             ->get();
             $roleId = 2; // ID of the role to notify EMPLOYEE
         
             foreach ($tickets as $ticket) {
                 $ticket->notify(new TicketOpenNotification($ticket, $roleId));
             }
-        })->daily();
+        })->twiceDaily(0, 12);
     }
 
     protected function meter_allocation(Schedule $schedule): void
