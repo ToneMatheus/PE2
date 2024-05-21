@@ -19,8 +19,8 @@ class TicketDashboardController extends Controller
         $tickets = Ticket::whereDoesntHave('employee_Tickets')->where('status', 0)->get();
 
         //haal alle tickets op die gesloten zijn
-        $tickets_closed = Ticket::with('ticket')->where('status',1)->get();
-
+        //$tickets_closed = Ticket::with('ticket')->where('status',1)->get();
+        $tickets_closed = Ticket::where('status', 1)->get();
         
         //haal alle tickets op die toegewezen zijn aan de ingelogde gebruiker
         // $own_tickets = Ticket::whereHas('employee_Tickets', function($query) use ($user) {
@@ -40,12 +40,55 @@ class TicketDashboardController extends Controller
     public function filter(Request $request){
         $user = Auth::check() ? Auth::user() : null;
 
-        $query = Ticket::query();
-        if ($request->has('helpline') && $request->helpline != '') {
-            $query->where('helpline_id', $request->helpline);
-        }
-        $tickets = $query->where('status', 0)->whereDoesntHave('employee_Tickets')->get();
+        // $query = Ticket::query();
+        // if ($request->has('helpline') && $request->helpline != '') {
+        //     $tickets = Ticket::whereDoesntHave('employee_Tickets')->where('status', 0)->where('line', $request->helpline)->get();
+        // }else{
+        //     $tickets = Ticket::whereDoesntHave('employee_Tickets')->where('status', 0)->get();
+        // }
 
+        $query = Ticket::query();
+
+        if ($request->has('helpline') && $request->helpline != '') {
+            $query->where('line', $request->helpline);
+        }
+
+        if ($request->has('urgency') && $request->urgency != '') {
+            $query->where('urgency', $request->urgency);
+        }
+
+        // if ($request->has('sort') && $request->sort != '') {
+        //     $query->orderBy('created_at', $request->sort);
+        // } else {
+        //     $query->orderBy('created_at', 'desc');
+        // }
+
+        if ($request->has('sort') && $request->sort != '') {
+            switch ($request->sort) {
+                case 'created_at_desc':
+                    $query->orderBy('created_at', 'desc');
+                    break;
+                case 'created_at_asc':
+                    $query->orderBy('created_at', 'asc');
+                    break;
+                case 'urgency_desc':
+                    $query->orderBy('urgency', 'desc');
+                    break;
+                case 'urgency_asc':
+                    $query->orderBy('urgency', 'asc');
+                    break;
+                default:
+                    $query->orderBy('created_at', 'desc');
+                    break;
+            }
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $tickets = $query->where('status', 0)->whereDoesntHave('employee_tickets')->get();
+
+
+        
         $own_tickets = Ticket::whereHas('employee_Tickets', function ($query) use ($user) {
             $query->where('employee_profile_id', $user->id);
         })->where('status', 0)->get();
