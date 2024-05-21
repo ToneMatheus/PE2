@@ -48,8 +48,15 @@ use App\Http\Controllers\DetailsController;
 
 use App\Http\Controllers\TicketManagerPageController;
 use App\Http\Controllers\TicketDashboardController;
+use App\Http\Controllers\ManagerTicketOverviewController;
+use App\Http\Controllers\EditController;
+use App\Http\Controllers\DetailsController;
+
+use App\Http\Controllers\TicketManagerPageController;
+use App\Http\Controllers\TicketDashboardController;
 use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
+use App\Http\Controllers\TicketOverviewController;
 use App\Http\Controllers\TicketOverviewController;
 use App\Http\Controllers\ManualInvoiceController;
 use App\Http\Controllers\NewEmployeeController;
@@ -123,6 +130,51 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::post('/tariff/edit/{pID}/{tID}', [TariffController::class, 'editTariff'])->name('tariff.edit');
 
     Route::get('/tariff/products/{type}', [TariffController::class, 'getProductByType']);
+
+    Route::get('/ticket/Flowchart2', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket2');
+
+    Route::get('/manager/TicketStatus', [TicketManagerPageController::class, 'index'])->name('manager.TicketStatus');
+    Route::get('/manager/showTickets', [TicketManagerPageController::class, 'showTickets'])->name('manager.showTickets');
+    Route::put('/manager/tickets/{id}', [TicketManagerPageController::class, 'update'])->name('manager.tickets.update');
+    Route::get('/manager/tickets/data', [TicketManagerPageController::class, 'getTicketsData'])->name('manager.tickets.data');
+
+
+    //meters branch
+    Route::controller(MeterController::class)->group(function () {
+        Route::get('/enter_index_employee', function() {
+            return view('Meters/enterIndexEmployee');
+        })->name("enter_index_employee");
+        Route::get('/enter_index_employee_search', 'searchIndex')->name("searchIndex");
+        Route::get('/fetchEAN/{meterID}', 'fetchEAN');
+        Route::post('/index_value_entered','submitIndex')->name("submitIndex");
+    
+        Route::get('/enter_index_paper', function() {
+            return view('Meters/enterIndexPaper');
+        })->name("enter_index_paper");
+        Route::get('/enter_index_paper_search', 'searchIndexPaper')->name("searchIndexPaper");
+        Route::get('/fetchEAN/{meterID}', 'fetchEAN');
+    });
+
+    //employee-specific dashboard
+    Route::get('/meter_dashboard', [MeterController::class, 'viewScheduledMeters']);
+
+    //all meters dashboard
+    Route::controller(MeterController::class)->group(function () {
+        Route::get('/all_meters_dashboard', 'all_meters_index')->name("viewAllMeters");
+        Route::get('/all_meters_dashboard_search', 'search')->name("search");
+        Route::post('/assignment_change', 'assignment');
+        Route::post('/bulk_assignment_change', 'bulk_assignment');
+    });
+
+    // customer submission
+    Route::controller(MeterController::class)->group(function () {
+        Route::get('/Consumption_Dashboard', 'showConsumptionDashboard');
+        Route::get('/Meter_History', 'GasElectricity')->name("Meter_History");;
+        Route::get('/Meter_History_Validate', 'ValidateIndex')->name("ValidateIndex");
+        Route::get('/fetchIndex/{meterID}', 'fetchIndex');
+        Route::post('/index_value_entered_customer','submitIndexCustomer')->name("submitIndexCustomer");
+    });
+
 
     Route::get('/ticket/Flowchart2', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket2');
 
@@ -277,6 +329,22 @@ Route::get('/notifications/{notification}', function (Illuminate\Notifications\D
     return redirect()->back();
 })->name('notification.read');
 
+Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
+Route::post('/ticket_dashboard/assign/{id}', [TicketDashboardController::class, 'assignTicket'])->name('assign_ticket');
+Route::post('/ticket_dashboard/unassign/{id}', [TicketDashboardController::class, 'unassignTicket'])->name('unassign_ticket');
+Route::get('/ticket_dashboard/filter', [TicketDashboardController::class, 'filter'])->name('filter_tickets');
+
+Route::post('/index_value_entered_customer',[MeterController::class, 'submitIndexCustomer'])->name("submitIndexCustomer");
+
+
+Route::controller(MeterController::class)->group(function () {
+    Route::get('/Consumption_Dashboard', 'showConsumptionDashboard');
+    Route::get('/Meter_History', 'GasElectricity')->name("Meter_History");;
+    Route::get('/Meter_History_Validate', 'ValidateIndex')->name("ValidateIndex");
+});
+
+Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
 Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
 Route::post('/ticket_dashboard/assign/{id}', [TicketDashboardController::class, 'assignTicket'])->name('assign_ticket');
 Route::post('/ticket_dashboard/unassign/{id}', [TicketDashboardController::class, 'unassignTicket'])->name('unassign_ticket');
@@ -528,3 +596,5 @@ Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'
 
 //Statistics route
 // Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
+//Statistics route
+Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');

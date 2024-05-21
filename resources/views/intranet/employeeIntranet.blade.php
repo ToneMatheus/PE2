@@ -2,6 +2,8 @@
     .card:hover{
         box-shadow: 0px 0px 5px rgb(188, 187, 187);
     }
+
+
 </style>
 
 <script>
@@ -48,7 +50,7 @@
         </div>
     </div>
     
-    <div>
+    <div style="color: white">
       <a href="#" class="block">
         <div class="tw=block flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4" style="margin-left: 40px">
             <span class="text-black-700 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2" style="font-size: 18px; font-weight: 900;">Daily tasks</span>
