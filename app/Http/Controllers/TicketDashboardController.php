@@ -15,7 +15,6 @@ class TicketDashboardController extends Controller
         $user = Auth::check() ? Auth::user() : null;
 
         //haal alle tickets op die nog niet toegewezen zijn aan iemand en nog open zijn
-        //$tickets = Ticket::with('ticket')->where('active',1)->get();
         $tickets = Ticket::whereDoesntHave('employee_Tickets')->where('status', 0)->get();
 
         //haal alle tickets op die gesloten zijn
