@@ -21,6 +21,14 @@ class MeterAddressSeeder extends Seeder
                 'meter_id' => $i-2
             ];
         }
+        for($i=3; $i <= 10; $i++){
+            $adds[] = [
+                'start_date' => '2024-01-01',
+                'end_date' => null,
+                'address_id' => $i,
+                'meter_id' => $i-2+8
+            ];
+        }
 
         DB::table('meter_addresses')->insert($adds);
     }

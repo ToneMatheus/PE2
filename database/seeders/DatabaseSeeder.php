@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             RoleSeeder::class,
             UserRoleSeeder::class,
-            CronJobSeeder::class,
             Employee\SalaryRangesSeeder::class,
 
             Employee\EmployeeContractSeeder::class,
@@ -47,6 +46,8 @@ class DatabaseSeeder extends Seeder
 
             Invoice\InvoiceSeeder::class,
             Invoice\InvoiceLineSeeder::class,
+            Invoice\CreditNoteSeeder::class,
+            Invoice\PaymentSeeder::class,
         ]);
     }
 }

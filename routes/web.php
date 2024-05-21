@@ -10,6 +10,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\invoice_query_controller;
 use App\Http\Controllers\unpaid_invoice_query_controller;
 use App\Http\Controllers\InvoiceRemindersController;
+use App\Http\Controllers\InvoiceMatchingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
@@ -34,10 +35,12 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\GasElectricityController;
+use App\Http\Controllers\PayoutsController;
 use App\Http\Controllers\RelationsController;
 use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
 use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\ManualInvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,7 +84,29 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::get('/cron-jobs/history', [CronJobController::class, 'showHistory'])->name('job.history');
     Route::get('/cron-jobs/get-job-runs', [CronJobController::class, 'getJobRuns'])->name('get.job.runs');
     Route::get('/cron-jobs/get-job-run-logs', [CronJobController::class, 'getJobRunLogs'])->name('get.job.run.logs');
-    
+
+    Route::get('/payouts', [PayoutsController::class, 'showPayouts'])->name('payouts');
+    Route::get('/payouts/{id}', [PayoutsController::class, 'processPayout'])->name('payouts.pay');
+
+    Route::get('/manualInvoice', [ManualInvoiceController::class, 'showManualInvoice'])->name('manualInvoice');
+    Route::post('/manualInvoice', [ManualInvoiceController::class, 'processManualInvoice'])->name('manualInvoice.process');
+
+    //payments management
+    Route::get('/pay/create', [PaymentController::class, 'create'])->name('payment.create');
+    Route::post('/pay', [PaymentController::class, 'add'])->name('payment.add');
+    Route::get('/invoice-matching', [InvoiceMatchingController::class, 'startMatching'])->name("invoice_matching");
+    Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');
+
+    // addinvoiceline
+    Route::get('/addInvoiceExtraForm', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('addInvoiceExtraForm');
+    Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
+
+    //customer
+    Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
+    Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
+    Route::put('/customer/{id}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+    Route::post('/customer/{id}/{oldCpID}/{cID}/{mID}', [CustomerGridViewController::class, 'updateContractProduct'])->name('customer.contractProduct');
+    Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
@@ -89,7 +114,6 @@ Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(function() {
-
 });
 
 Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group(function() {
@@ -108,6 +132,9 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function
     Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
     Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
     //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
+
+    Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
+    Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
@@ -125,7 +152,8 @@ Route::post('/tariff/add', [EmployeeController::class, 'processTariff'])->name('
 Route::post('/tariff/edit/{pID}/{tID}', [EmployeeController::class, 'editTariff'])->name('tariff.edit');
 Route::get('/tariff/products/{type}', [EmployeeController::class, 'getProductByType']);
 
-//invoice query routes
+
+//invoice query routes: DEPRECATED
 Route::get('/invoice_query', [invoice_query_controller::class, 'contracts'])->name("invoice_query");
 Route::get('/unpaid_invoice_query', [unpaid_invoice_query_controller::class, 'unpaidInvoices'])->name("unpaid_invoice_query");
 
@@ -135,8 +163,14 @@ Route::get('/reminders', [InvoiceRemindersController::class, 'index'])->name("in
 Route::get('/test-qr-monthly', [InvoiceRemindersController::class, 'monthly'])->name("qr-monthly");
 
 //invoice payment
+/*Route::get('/pay/create', [PaymentController::class, 'create'])->name('payment.create');
+Route::post('/pay', [PaymentController::class, 'add'])->name('payment.add');
 Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
 Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
+
+Route::get('/invoice-matching', [InvoiceMatchingController::class, 'startMatching'])->name("invoice_matching");
+Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');*/
+
 
 //QR code test
 Route::get('/code', function () {
@@ -249,11 +283,7 @@ Route::get('/roleOverview', function () {
 
 
 
-Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
-Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
-Route::put('/customer/{id}', [CustomerGridViewController::class, 'update'])->name('customer.update');
-Route::post('/customer/{id}/{oldCpID}/{cID}/{mID}', [CustomerGridViewController::class, 'updateContractProduct'])->name('customer.contractProduct');
-Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
+
 
 Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
 
@@ -312,14 +342,14 @@ Route::post('/EstimationGuestForm', [EstimationController::class, 'ShowGuestEner
 Route::get('/CreateInvoice', [EstimationController::class, 'showButton'])->name('EstimationPage');
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
 
-Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
 
 
 
-//test route
-Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList1');
-Route::post('/TestUserList', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('TestUserList');
-Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');
+
+// //test route
+// Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
+
+// Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');
 
 
 //Customer Portal
