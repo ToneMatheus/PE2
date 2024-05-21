@@ -20,7 +20,7 @@
 
 <div class="intranet" style="margin: 20px 30px 30px 0px; display: flex; justify-content: space-between;">
     <div class="left-side">
-        <div class="card" style="display: flex; width: 800px; border-radius: 5px; height: 180px">
+        <div class="card" style="display: flex; width: 800px; border-radius: 5px; height: 180px; padding-left: 25px">
             <img class="card-img" src="/images/tropical-vacation.jpg" alt="Card image" style="width: 35%; border-top-left-radius: 5px; border-bottom-left-radius: 5px;">
             <div class="card-body" style="background-color: rgb(242, 240, 240); padding: 35px; border-top-right-radius: 5px; border-bottom-right-radius: 5px;">
               <h4 class="card-title h4" style=" font-weight: 900; font-size: 18px">Planning to take time off?</h4>
@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <div class="card" style="display: flex; width: 800px; border-radius: 5px; margin-top: 20px; height: 180px">
+        <div class="card" style="display: flex; width: 800px; border-radius: 5px; margin-top: 20px; height: 180px; padding-left: 25px">
             <img class="card-img" src="/images/greenpowerimage.jpg" alt="Card image" style="width: 35%; border-top-left-radius: 5px; border-bottom-left-radius: 5px;">
             <div class="card-body" style="background-color: rgb(242, 240, 240); padding: 35px; border-top-right-radius: 5px; border-bottom-right-radius: 5px;">
               <h4 class="card-title h4" style=" font-weight: 900; font-size: 18px">Heading towards green energy</h4>
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <div class="card" style="display: flex; width: 800px; border-radius: 5px; margin-top: 20px; height: 180px">
+        <div class="card" style="display: flex; width: 800px; border-radius: 5px; margin-top: 20px; height: 180px; padding-left: 25px">
             <img class="card-img" id="img" src="/images/benefit.png" alt="Card image" style="width: 35%; border-top-left-radius: 5px; border-bottom-left-radius: 5px;">
             <div class="card-body" style="background-color: rgb(242, 240, 240); padding: 35px; border-top-right-radius: 5px; border-bottom-right-radius: 5px;">
               <h4 class="card-title h4" style=" font-weight: 900; font-size: 18px">Benefits and compensation</h4>

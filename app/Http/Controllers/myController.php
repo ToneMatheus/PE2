@@ -381,36 +381,67 @@
             $weekly_reports = [];
             $manager_team = DB::select("select team_id from team_members where user_id = $manager_id");
             $employee_manager_relation = DB::select("select * from team_members where team_id = " . $manager_team[0]->team_id . " and is_manager = 0");
-    
+            $weeks = [];
+
             foreach ($employee_manager_relation as $relation) {
+                $i = 0;
                 $team_member = DB::select("select * from users where id = $relation->user_id");
                 $reports = DB::select("select * from employee_weekly_reports where employee_profile_id = " . $team_member[0]->employee_profile_id);
 
+                if (!empty($reports)) {
+                    $date = Carbon::parse($reports[0]->submission_date);
+                    $startOfWeek = $date->startOfWeek()->format('Y-m-d');
+                    $endOfWeek = $date->endOfWeek()->format('Y-m-d');
+                    $fullWeek = "$startOfWeek - $endOfWeek";
+        
+                    $weeks_set[$fullWeek] = $fullWeek;
+        
+                    $weekly_reports = array_merge($weekly_reports, $reports);
+                }
+
                 $team_members = array_merge($team_members, $team_member);
-                $weekly_reports = array_merge($weekly_reports, $reports);
             }
 
-            return view('teamWeeklyReports', compact('team_members', 'weekly_reports'));
+            $weeks = array_values($weeks_set);
+
+            return view('teamWeeklyReports', compact('team_members', 'weekly_reports', 'startOfWeek', 'endOfWeek', 'weeks'));
         }
 
         public function storeWeeklyReports(Request $request)
         {
-            $request->validate([
-                'summary' => 'required|string',
-                'tasks_completed' => 'required|string',
-                'upcoming_tasks' => 'required|string',
-                'challenges' => 'required|string',
-            ]);
+            // $request->validate([
+            //     'summary' => 'required|string',
+            //     'tasks_completed' => 'required|string',
+            //     'upcoming_tasks' => 'required|string',
+            //     'challenges' => 'required|string',
+            // ]);
     
+            $emp_profile_id = Auth::id();
+            $emp_profile_id = DB::select("select employee_profile_id from users where id = $emp_profile_id");
+            $emp_profile_id = $emp_profile_id[0]->employee_profile_id;
+
             $summary = $request->input('summary');
             $tasks_completed = $request->input('tasks_completed');
             $upcoming_tasks = $request->input('upcoming_tasks');
             $issues = $request->input('challenges');
-            $submission = Carbon::now()->format('d-m-Y');
+            $submission = Carbon::now()->format('Y-m-d');
 
-            DB::insert('insert into employee_weekly_reports (summary, tasks_completed, upcoming_tasks, challenges, submission_date) values (?, ?, ?, ?, ?)', [$summary, $tasks_completed, $upcoming_tasks, $issues, $submission]);
+            DB::insert('insert into employee_weekly_reports (employee_profile_id, summary, tasks_completed, upcoming_tasks, challenges, submission_date) values (?, ?, ?, ?, ?, ?)', [$emp_profile_id, $summary, $tasks_completed, $upcoming_tasks, $issues, $submission]);
     
             return redirect('/weeklyActivity')->with('success', 'Report submitted successfully!');
+        }
+
+        public function individualReports(Request $request){
+            $emp_profile_id = $request->id;
+            $employee = DB::select("select * from users where employee_profile_id = $emp_profile_id");
+
+            if(!$emp_profile_id){
+
+            }
+
+            $reports = DB::select("select * from employee_weekly_reports where employee_profile_id = $emp_profile_id");
+
+            return view('individualReports', compact('reports', 'employee'));
         }
     }
 ?>
