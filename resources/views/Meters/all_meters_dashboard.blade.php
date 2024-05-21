@@ -4,7 +4,7 @@
             All meters
         </h2>
     </x-slot>
-    <div class="py-8 max-w-7xl mx-auto dark:text-white">
+    <div class="py-8 max-w-7xl mx-auto text-black dark:text-black">
         <div id="modal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
             <div class="bg-white rounded-lg shadow-lg w-2/5">
                 <div class="border-b p-4 flex justify-between items-center">
@@ -68,7 +68,7 @@
 
                 <div>
                 <x-input-label for="searchAssigned" :value="__('Assigned to:')" />
-                <select class="searchAssigned" id="searchAssigned">
+                <select class="searchAssigned text-black" id="searchAssigned">
                     <option selected value="">Select</option>
                     @foreach($employees as $employee)
                         <option value={{$employee->first_name}}>{{ $employee->first_name }}</option>
