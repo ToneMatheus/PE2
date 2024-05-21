@@ -42,12 +42,7 @@ use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\GasElectricityController;
 use App\Http\Controllers\PayoutsController;
-use App\Http\Controllers\ManagerTicketOverviewController;
-use App\Http\Controllers\EditController;
-use App\Http\Controllers\DetailsController;
 
-use App\Http\Controllers\TicketManagerPageController;
-use App\Http\Controllers\TicketDashboardController;
 use App\Http\Controllers\ManagerTicketOverviewController;
 use App\Http\Controllers\EditController;
 use App\Http\Controllers\DetailsController;
@@ -56,12 +51,13 @@ use App\Http\Controllers\TicketManagerPageController;
 use App\Http\Controllers\TicketDashboardController;
 use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
-use App\Http\Controllers\TicketOverviewController;
+
 use App\Http\Controllers\TicketOverviewController;
 use App\Http\Controllers\ManualInvoiceController;
 use App\Http\Controllers\NewEmployeeController;
 use App\Http\Controllers\holidayRequest;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\StatisticsController;
 
 
 /*
@@ -594,7 +590,5 @@ Route::get('/customer/consumption-history', [CustomerPortalController::class, 's
 Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
 
-//Statistics route
-// Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
 //Statistics route
 Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
