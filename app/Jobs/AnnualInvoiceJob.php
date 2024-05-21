@@ -10,138 +10,118 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-use App\Models\Invoice;
-use App\Models\Invoice_line;
-use App\Models\CreditNote;
+use App\Models\{
+    User, 
+    Invoice,
+    Contract_product,
+    Product,
+    Invoice_line,
+    CreditNote,
+    Estimation,
+    Index_Value,
+    Discount,
+    Meter
+};
+
 use App\Mail\AnnualInvoiceMail;
 use App\Http\Controllers\EstimationController;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use App\Traits\cronJobTrait;
+use App\Services\StructuredCommunicationService;
+use App\Services\InvoiceFineService;
 
 
 class AnnualInvoiceJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
+
+    protected $now;
+    protected $year;
+    protected $month;
+    protected $mID;
+
+    public function __construct($mID)
+    {
+        $this->now = config('app.now');
+        $this->month = $this->now->format('m');
+        $this->year = $this->now->format('Y');
+        $this->mID = $mID;
+    }
 
     public function handle()
     {
+        $this->jobStart();
 
-        //Aquire the current month
-        $now = Carbon::now();
-        $month = $now->format('m');
-        $year = $now->format('Y');
+        $now = $this->now;
+        $month = $this->month;
+        $year = $this->year;
 
-        $yearAgo = $now->subYear();
-        
-        // Query for users that started a contract this year (base yearly invoice of start contract)
-        /*$customers = DB::table('users')
-        ->join('Customer_contracts', 'users.id', '=', 'Customer_contracts.user_id')
-        ->whereYear('Customer_contracts.start_date', '=', $year)
-        ->select('users.*')
-        ->get();
+        $customer = User::join('Customer_contracts as cc', 'users.id', '=', 'cc.user_id')
+        ->join('Customer_addresses as ca', 'users.id', '=', 'ca.user_id')
+        ->join('Addresses as a', 'ca.Address_id', '=', 'a.id')
+        ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
+        ->join('Meters as m', 'ma.meter_id', '=', 'm.id')
+        ->where('m.type', '=', 'Electricity')
+        ->where('m.status', '=', 'Installed')
+        ->where('m.is_smart', '=', '0')
+        ->where('m.id', '=', $this->mID)
+        ->where('m.expecting_reading', '=', 1)
+        ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
+        ->first();
 
-        //New Customers that need to be invoiced now
-        foreach($customers as $newCustomer){
-            $newCustomersInfo = DB::table('users')
-                ->join('Customer_contracts', 'users.id', '=', 'Customer_contracts.user_id')
-                ->whereYear('Customer_contracts.start_date', '=', $yearAgo->year)
-                ->whereMonth('Customer_contracts.start_date', '=', $yearAgo->month)
-                ->whereDay('Customer_contracts.start_date', '=', $yearAgo->day)
-                ->where('Customer_contracts.id', '=', $newCustomer->id)
-                ->select('users.*')
-                ->get();
-        }
+        if(!is_null($customer)){
+            $startContract = Carbon::parse($customer->startContract);
 
-        // Query for users that started a contract before this year (base yearly invoice of the date of the previous yearly invoice)
-        $oldCustomers = DB::table('users')
-            ->join('Customer_contracts', 'users.id', '=', 'Customer_contracts.user_id')
-            ->whereYear('Customer_contracts.start_date', '!=', $year)
-            ->select('users.*')
-            ->get();
+            $invoiceDate = $startContract->addYear()->addWeeks(2);
+            $lastInvoiceDate = $invoiceDate->copy()->setYear($year-1);
+            $nextInvoiceDate = $invoiceDate->copy()->addYear();
 
-        $oldCustomerInfo = [];
+            $invoiceDate->setYear($year);
+            $invoiceDate->setMonth($month);
+            $invoiceDate->setTimezone('Europe/Berlin');
 
-        // Old Customers that need to be invoiced now
-        foreach($oldCustomers as $oldCustomer){
-            $oldCustomerInfo[] = Invoice::join('customer_contracts as cc', 'cc.id', '=', 'invoices.customer_contract_id')
-                ->join('users as u', 'u.id', '=', 'cc.user_id')
-                ->where('type', '=', 'Annual')
-                ->latest()
-                ->first();
-        }
-
-        */
-
-        // then we have to check whether we have their meter readings
-        $customersWithReadings = DB::table('users')
-        ->join('Customer_contracts', 'users.id', '=', 'customer_contracts.user_id')
-        ->join('Customer_addresses', 'users.id', '=', 'Customer_addresses.user_id')
-        ->join('Addresses', 'Customer_addresses.Address_id', '=', 'Addresses.id')
-        ->join('Meter_addresses', 'Addresses.id', '=', 'Meter_addresses.address_id')
-        ->join('Meters', 'Meter_addresses.meter_id', '=', 'Meters.id')
-        ->join('Index_values', 'Meters.id', '=', 'Index_values.meter_id')
-        ->whereYear('Index_values.reading_date', '=', $year)
-        ->select('users.id as uID', 'customer_contracts.id as ccID', 'meters.id as mID')
-        ->get();
-
-        foreach($customersWithReadings as $customer){
-            $consumption = DB::table('users')
-            ->join('Customer_addresses', 'users.id', '=', 'Customer_addresses.user_id')
+            $consumption = User::join('Customer_addresses', 'users.id', '=', 'Customer_addresses.user_id')
             ->join('Addresses', 'Customer_addresses.Address_id', '=', 'Addresses.id')
             ->join('Meter_addresses', 'Addresses.id', '=', 'Meter_addresses.Address_id')
             ->join('Meters', 'Meter_addresses.Meter_id', '=', 'Meters.id')
             ->join('Index_values', 'Meters.id', '=', 'Index_values.meter_id')
             ->join('Consumptions', 'Index_values.id', '=', 'Consumptions.Current_index_id')
-            ->whereYear('Index_values.Reading_date', '=', $year)
+            ->where('reading_date', '>=', $lastInvoiceDate)
+            ->where('reading_date', '<=', $now)
             ->where('meters.id', '=', $customer->mID)
             ->select('Consumptions.*')
             ->first();
 
-            $meterReadings = DB::table('index_values')
-            ->where(function ($query) use ($year) {
-                $query->whereYear('reading_date', $year)
-                    ->orWhereYear('reading_date', $year - 1);
-            })
-            ->where('meter_id', '=', $customer->mID)
-            ->select('reading_value')
-            ->get();
+            $meterReadings = Index_Value::where('meter_id', $customer->mID)
+            ->where('reading_date', '>=', $lastInvoiceDate)
+            ->where('reading_date', '<', $nextInvoiceDate)
+            ->first();
 
-            $estimationResult = DB::table('users as u')
-            ->join('customer_addresses as ca', 'ca.user_id', '=', 'u.id')
-            ->join('addresses as a', 'ca.address_id', '=', 'a.id')
-            ->join('meter_addresses as ma', 'a.id', '=', 'ma.address_id')
-            ->join('meters as m', 'ma.meter_id', '=', 'm.id')
-            ->join('estimations as e', 'e.meter_id', '=', 'm.id')
-            ->where('m.id', '=', $customer->mID)
-            ->select('e.estimation_total')
+            $estimationResult = Estimation::where('meter_id', '=', $customer->mID)
             ->first();
 
             $estimation = $estimationResult->estimation_total;
 
-            $contractProduct = DB::table('contract_products as cp')
-            ->select('cp.id as cpID', 'cp.start_date as cpStartDate', 'p.product_name as productName',
-            'p.id as pID')
-            ->join('products as p', 'p.id', '=', 'cp.product_id')
+            $contractProduct = Contract_product::join('products as p', 'p.id', '=', 'contract_products.product_id')
             ->where('customer_contract_id', '=', $customer->ccID)
             ->where('meter_id', '=', $customer->mID)
-            ->whereNull('cp.end_date')
+            ->whereNull('contract_products.end_date')
+            ->select('contract_products.id as cpID', 'contract_products.start_date as cpStartDate', 'p.product_name as productName',
+            'p.id as pID')
             ->first();
 
-            $discounts = DB::table('discounts as d')
-            ->where('d.contract_product_id', '=', $contractProduct->cpID)
-            ->whereYear('d.start_date', '=', $year)
-            ->whereDate('d.end_date', '>=', $now->format('Y/m/d'))
+            $discounts = Discount::where('discounts.contract_product_id', '=', $contractProduct->cpID)
+            ->whereDate('discounts.end_date', '>=', $now->format('Y/m/d'))
             ->get();
 
-            $productTariff = DB::table('products as p')
-            ->join('product_tariffs as pt', 'pt.product_id', '=', 'p.id')
+            $productTariff = Product::join('product_tariffs as pt', 'pt.product_id', '=', 'products.id')
             ->join('tariffs as t', 't.id', '=', 'pt.id')
-            ->where('p.id', '=', $contractProduct->pID)
+            ->where('products.id', '=', $contractProduct->pID)
             ->whereNull('pt.end_date')
             ->first();
-
 
             $extraAmount = 0;
 
@@ -159,7 +139,7 @@ class AnnualInvoiceJob implements ShouldQueue
                         }
                     }
     
-                    $monthlyExtraAmount = ($consumption->consumption_value / 12) * $productTariff->rate;
+                    $monthlyExtraAmount = ($consumption->consumption_value) * $productTariff->rate;
     
                     if ($discountRate > 0) {
                         $monthlyExtraAmount -= ($monthlyExtraAmount * $discountRate);
@@ -171,27 +151,48 @@ class AnnualInvoiceJob implements ShouldQueue
                 $extraAmount = ($consumption->consumption_value) ? $consumption->consumption_value * $productTariff->rate : 0;
             }
 
-            $monthlyInvoices = AnnualInvoiceJob::getMonthlyInvoices($customer->ccID);
+            $invoiceRunJob = new InvoiceRunJob();
+            $monthlyInvoices = $invoiceRunJob->getMonthlyInvoices($customer->ccID, $customer->mID);
 
             if($extraAmount > 0){                   //Invoice
                 $invoiceData = [
-                    'invoice_date' => $now->format('Y/m/d'),
-                    'due_date' => $now->copy()->addWeeks(2)->format('Y/m/d'),
+                    'invoice_date' => $now->format('Y-m-d'),
+                    'due_date' => $now->addWeeks(2)->format('Y-m-d'),
                     'total_amount' => $extraAmount,
                     'status' => 'sent',
                     'customer_contract_id' => $customer->ccID,
+                    'meter_id' => $customer->mID,
                     'type' => 'Annual'
                 ];
-            } else{                                 //Credit note
-                CreditNote::create([
-                    'type' => 'credit note',
-                    'amount' => $extraAmount,
-                    'user_id' => $customer->uID
-                ]);
+
+            } else{                              //Credit note
+                $invoiceData = [
+                    'invoice_date' => $now->format('Y-m-d'),
+                    'due_date' => $now->addWeeks(2)->format('Y-m-d'),
+                    'total_amount' => $extraAmount,
+                    'status' => 'paid',
+                    'customer_contract_id' => $customer->ccID,
+                    'meter_id' => $customer->mID,
+                    'type' => 'Annual'
+                ];
             }
 
             $invoice = Invoice::create($invoiceData);
             $lastInserted = $invoice->id;
+
+            $scService = new StructuredCommunicationService;
+            $strCom = $scService->generate($lastInserted);
+            $scService->addStructuredCommunication($strCom, $lastInserted);
+
+            if ($extraAmount <= 0) {
+                CreditNote::create([
+                    'invoice_id' => $lastInserted,
+                    'type' => 'credit note',
+                    'amount' => $extraAmount,
+                    'user_id' => $customer->uID,
+                    'status' => 1
+                ]);
+            }
 
             Invoice_line::create([
                 'type' => 'Electricity',
@@ -200,64 +201,21 @@ class AnnualInvoiceJob implements ShouldQueue
                 'consumption_id' => $consumption->id,
                 'invoice_id' => $lastInserted
             ]);
+
+            $fineService = new InvoiceFineService;
+            $fineService->unpaidInvoiceFine($lastInserted);
             
             $newInvoiceLine = Invoice_line::where('invoice_id', '=', $lastInserted)->first();
            
-            AnnualInvoiceJob::sendMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
-            EstimationController::UpdateAllEstimation();  
+            $invoiceRunJob->sendAnnualMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
+            EstimationController::UpdateEstimation($customer->mID);  
+
+            Meter::where('id', '=', $customer->mID)
+            ->update([
+                'expecting_reading' => 0
+            ]);
+
+            $this->jobCompletion("Finished annual invoice");
         }
-    }
-
-    public function getMonthlyInvoices($cID) {
-        $currentYear = Carbon::now()->year;
-
-        // Query monthly invoices and their lines for the given customer and the current year
-        $monthlyInvoices = Invoice::join('customer_contracts as cc', 'invoices.customer_contract_id', '=', 'cc.id')
-            ->join('users as u', 'cc.user_id', '=', 'u.id')
-            ->join('invoice_lines as il', 'invoices.id', '=', 'il.invoice_id')
-            ->where('cc.id', $cID)
-            ->where('invoices.type', 'Monthly')
-            ->whereYear('invoices.invoice_date', $currentYear)
-            ->orderBy('invoices.invoice_date')
-            ->select('invoices.*', 'il.*')
-            ->get();
-
-        // Organize the data by grouping lines by invoice (month)
-        $monthlyInvoicesData = [];
-        foreach ($monthlyInvoices as $monthlyInvoice) {
-            $month = Carbon::createFromFormat('Y-m-d', $monthlyInvoice->invoice_date)->format('F');
-            $monthlyInvoicesData[$month][] = $monthlyInvoice;
-        }
-
-        return $monthlyInvoicesData;
-    }
-
-    public function sendMail(Invoice $invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices)
-    {
-        $user = DB::table('users as u')
-        ->join('customer_addresses as ca', 'ca.user_id', '=', 'u.id')
-        ->join('addresses as a', 'a.id', '=', 'ca.address_id')
-        ->where('a.is_billing_address', '=', 1)
-        ->where('u.id', '=', $customer->uID)
-        ->first();
-
-        // Generate PDF
-        $pdf = Pdf::loadView('Invoices.annual_invoice_pdf', [
-            'invoice' => $invoice,
-            'user' => $user,
-            'consumption' => $consumption,
-            'estimation' => $estimation,
-            'newInvoiceLine' => $newInvoiceLine,
-            'meterReadings' => $meterReadings,
-            'discounts' => $discounts,
-            'monthlyInvoices' => $monthlyInvoices
-        ], [], 'utf-8');
-        $pdfData = $pdf->output();
-
-        //Send email with PDF attachment
-        Mail::to('shaunypersy10@gmail.com')->send(new AnnualInvoiceMail(
-            $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices
-        ));
-
     }
 }

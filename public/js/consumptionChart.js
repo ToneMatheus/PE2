@@ -19,7 +19,8 @@ window.createChart = function() {
 
 window.fetchData = function(timeframe) {
     $.ajax({
-        url: '/customer/consumption-history/' + timeframe,
+        url: 'Meters\Meter_History' + timeframe,
+        url: '/Meters/Meter_History/' + timeframe,
         method: 'GET',
         success: function(response) {
             var consumptionData = response.consumptionData;
