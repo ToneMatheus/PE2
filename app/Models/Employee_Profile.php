@@ -10,9 +10,9 @@ class Employee_Profile extends Model
 {
     use HasFactory;
 
-    public const VALIDATION_RULE_JOB = ['required'];
+    //public const VALIDATION_RULE_JOB = ['required'];
     public const VALIDATION_RULE_HIRE_DATE = ['required'];
-    public const VALIDATION_RULE_DEPARTMENT = ['required'];
+    //public const VALIDATION_RULE_DEPARTMENT = ['required'];
 
     public const VALIDATION_RULES = [
         'job',
@@ -23,9 +23,12 @@ class Employee_Profile extends Model
         'id',
         'job',
         'hire_date',
-        'notes'
+        'notes',
+        'line_number',
+        'score'
     ];
 
+    public $timestamps = false;
     protected $table = 'employee_profiles';
     protected $primaryKey = 'id';
     
@@ -69,5 +72,15 @@ class Employee_Profile extends Model
     public function employee_tickets(): HasMany
     {
         return $this->hasMany(Employee_Ticket::class);
+    }
+
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
+    public function employee_weekly_reports(): HasMany
+    {
+        return $this->hasMany(EmployeeWeeklyReports::class);
     }
 }

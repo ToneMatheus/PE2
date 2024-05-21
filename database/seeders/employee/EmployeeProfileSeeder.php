@@ -12,7 +12,7 @@ class EmployeeProfileSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('employee_profiles')->insert([
+        Employee_profile::insert([
             [
                 'id' => 1,
                 'hire_date' => '2024-01-01',
@@ -28,6 +28,54 @@ class EmployeeProfileSeeder extends Seeder
             [
                 'id' => 1000,
                 'hire_date' => '1970-01-01',
+            ],
+            [   
+                'id' => 4,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 5,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 6,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 7,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 8,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 9,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 10,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 11,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 12,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 13,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 14,
+                'hire_date' => '2024-01-01',
+            ],
+            [   
+                'id' => 15,
+                'hire_date' => '2024-01-01',
             ],
         ]);
     }

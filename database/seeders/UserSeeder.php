@@ -28,6 +28,15 @@ class UserSeeder extends Seeder
             return $birthDate->toDateString();
         }
 
+        function generateIBAN() {
+            $iban = "BE";
+            $num = rand(1000000, 9999999);
+            $iban .= strval($num);
+            $num = rand(1000000, 9999999);
+            $iban .= strval($num);
+            return $iban;
+        }
+
         DB::table('users')->insert([
             [   //Employee
                 'id' => 1,
@@ -42,7 +51,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   //Employee
                 'id' => 2,
@@ -57,7 +67,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   //Employee who's Customer
                 'id' => 3,
@@ -72,7 +83,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   //Commercial Customer
                 'id' => 4,
@@ -80,14 +92,15 @@ class UserSeeder extends Seeder
                 'first_name' => 'Emily',
                 'last_name' => 'Doe',
                 'password' => Hash::make('emily'),
-                'employee_profile_id' => null,
+                'employee_profile_id' => 4,
                 'is_company' => 1,
                 'company_name' => 'ABC comp.',
                 'email' => 'emily@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   //Residential Customer
                 'id' => 5,
@@ -95,14 +108,15 @@ class UserSeeder extends Seeder
                 'first_name' => 'Ann',
                 'last_name' => 'Doe',
                 'password' => Hash::make('ann'),
-                'employee_profile_id' => null,
+                'employee_profile_id' => 5,
                 'is_company' => 0,
                 'company_name' => null,
                 'email' => 'ann@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 6,
@@ -110,14 +124,15 @@ class UserSeeder extends Seeder
                 'first_name' => 'Marie',
                 'last_name' => 'Doe',
                 'password' => Hash::make('marie'),
-                'employee_profile_id' => null,
+                'employee_profile_id' => 6,
                 'is_company' => 0,
                 'company_name' => null,
                 'email' => 'marie@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 7,
@@ -125,14 +140,15 @@ class UserSeeder extends Seeder
                 'first_name' => 'Mark',
                 'last_name' => 'Doe',
                 'password' => Hash::make('mark'),
-                'employee_profile_id' => null,
+                'employee_profile_id' => 7,
                 'is_company' => 0,
                 'company_name' => null,
                 'email' => 'mark@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 8,
@@ -140,14 +156,15 @@ class UserSeeder extends Seeder
                 'first_name' => 'Rob',
                 'last_name' => 'Doe',
                 'password' => Hash::make('rob'),
-                'employee_profile_id' => null,
+                'employee_profile_id' => 8,
                 'is_company' => 0,
                 'company_name' => null,
                 'email' => 'rob@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [   
                 'id' => 9,
@@ -155,14 +172,191 @@ class UserSeeder extends Seeder
                 'first_name' => 'Jan',
                 'last_name' => 'Doe',
                 'password' => Hash::make('jan'),
-                'employee_profile_id' => null,
+                'employee_profile_id' => 9,
                 'is_company' => 0,
                 'company_name' => null,
                 'email' => 'jan@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
+            ],
+            [   
+                'id' => 10,
+                'username' => 'joseph',
+                'first_name' => 'Joseph',
+                'last_name' => 'Doe',
+                'password' => Hash::make('joseph'),
+                'employee_profile_id' => 10,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'joseph@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
+            ],
+            [   
+                'id' => 11,
+                'username' => 'jimmy',
+                'first_name' => 'Jimmy',
+                'last_name' => 'Doe',
+                'password' => Hash::make('jimmy'),
+                'employee_profile_id' => 11,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'jimmy@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
+            ],
+            [   
+                'id' => 12,
+                'username' => 'james',
+                'first_name' => 'James',
+                'last_name' => 'Doe',
+                'password' => Hash::make('james'),
+                'employee_profile_id' => 12,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'james@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
+            ],
+            [   
+                'id' => 13,
+                'username' => 'jane',
+                'first_name' => 'Jane',
+                'last_name' => 'Doe',
+                'password' => Hash::make('jane'),
+                'employee_profile_id' => 13,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'jane@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
+            ],
+            [   
+                'id' => 14,
+                'username' => 'pearl',
+                'first_name' => 'Pearl',
+                'last_name' => 'Doe',
+                'password' => Hash::make('pearl'),
+                'employee_profile_id' => 14,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'pearl@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
+            ],
+            [   
+                'id' => 15,
+                'username' => 'rose',
+                'first_name' => 'Rose',
+                'last_name' => 'Doe',
+                'password' => Hash::make('rose'),
+                'employee_profile_id' => 15,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'rose@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
+            ],
+            [   
+                'id' => 16,
+                'username' => 'carry',
+                'first_name' => 'Carry',
+                'last_name' => 'Doe',
+                'password' => Hash::make('carry'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'carry@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
+            ],
+            [   
+                'id' => 17,
+                'username' => 'homer',
+                'first_name' => 'Homer',
+                'last_name' => 'Doe',
+                'password' => Hash::make('homer'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'homer@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
+            ],
+            [   
+                'id' => 18,
+                'username' => 'linda',
+                'first_name' => 'Linda',
+                'last_name' => 'Doe',
+                'password' => Hash::make('linda'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'linda@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
+            ],
+            [   
+                'id' => 19,
+                'username' => 'lesly',
+                'first_name' => 'Lesly',
+                'last_name' => 'Doe',
+                'password' => Hash::make('lesly'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'lesly@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
+            ],
+            [   
+                'id' => 20,
+                'username' => 'louise',
+                'first_name' => 'Louise',
+                'last_name' => 'Doe',
+                'password' => Hash::make('louise'),
+                'employee_profile_id' => null,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'louise@gmail',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Belgian',
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
             [
                 'id' => 1000,
@@ -177,7 +371,8 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Dutch',
-                'changed_default' => 1
+                'changed_default' => 1,
+                'IBAN' => generateIBAN()
             ],
         ]);
     }
