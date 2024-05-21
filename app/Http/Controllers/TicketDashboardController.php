@@ -129,7 +129,7 @@ class TicketDashboardController extends Controller
 
     public function assignTicket(Request $request, $ticketid){
         $user = Auth::check() ? Auth::user() : null;
-        //$user = 0;
+        
         
         if($user){
             $employeeTicket = new Employee_Ticket();
