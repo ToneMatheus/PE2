@@ -1,8 +1,5 @@
-@extends('layouts.main_layout')
-
-@section('content')
-    <div class="flex justify-center align-center flex-col p-4">
-        <a href="{{ URL::previous() }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 self-start rounded">Back</a>    
+<x-app-layout>
+<div class="flex justify-center align-center flex-col p-4">
         <h2 class="font-bold text-lg mt-2">Create Credit Note</h2>
         <form method="POST" action="{{ route('credit-notes.store') }}">
             @csrf
@@ -52,24 +49,22 @@
             </div>
         </form>
     </div>
-    @push('scripts')
-        <script>
-            let lineCount = 1;
+    <script>
+        let lineCount = 1;
 
-            function addCreditNoteLine() {
-                const lineHtml = `
-                    <div class="credit-note-line mt-4">
-                        <label for="product_${lineCount}">Product</label>
-                        <input type="text" class="form-control" id="product_${lineCount}" name="products[]">
-                        <label for="quantity_${lineCount}">Quantity</label>
-                        <input type="text" class="form-control" id="quantity_${lineCount}" name="quantities[]">
-                        <label for="price_${lineCount}">Price per Unit</label>
-                        <input type="text" class="form-control" id="price_${lineCount}" name="prices[]">
-                    </div>
-                `;
-                document.getElementById('credit_note_lines').insertAdjacentHTML('beforeend', lineHtml);
-                lineCount++;
-            }
-        </script>
-    @endpush
-@endsection
+        function addCreditNoteLine() {
+            const lineHtml = `
+                <div class="credit-note-line mt-4">
+                    <label for="product_${lineCount}">Product</label>
+                    <input type="text" class="form-control" id="product_${lineCount}" name="products[]">
+                    <label for="quantity_${lineCount}">Quantity</label>
+                    <input type="text" class="form-control" id="quantity_${lineCount}" name="quantities[]">
+                    <label for="price_${lineCount}">Price per Unit</label>
+                    <input type="text" class="form-control" id="price_${lineCount}" name="prices[]">
+                </div>
+            `;
+            document.getElementById('credit_note_lines').insertAdjacentHTML('beforeend', lineHtml);
+            lineCount++;
+        }
+    </script>
+    </x-app-layout>
