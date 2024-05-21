@@ -1,5 +1,4 @@
 function initAutocomplete() {
-    //var input = document.getElementById('address-input');
     var input = document.getElementById('street');
     
     var options = {

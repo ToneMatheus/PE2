@@ -60,5 +60,12 @@ nav {
     margin: auto 0px;
 }
 
+.priority {
+    background-color: rgb(228, 49, 36);
+}
+
+.priority .highlighted {
+    color: white;
+}
 
 

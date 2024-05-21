@@ -1,0 +1,37 @@
+.content{
+    padding: 20px;
+}
+
+.top-page{
+    position: relative;
+    text-align: center;
+    color: white;
+    margin: auto;
+    width: 100%;
+}
+
+.top-page img{
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.top-page h1{
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.c{
+    background-color: #E2E4F6;
+    color: black;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    box-shadow: 2px 2px 2px;
+}
+
+span{
+    font-size: 30px;
+    font-weight: bold;
+}

@@ -55,6 +55,8 @@ class TicketController extends Controller
         $ticket->user_id = $user ? $user->id : null;
 
         $ticket->status = 0;
+        $ticket->line = 0;
+
         $ticket->save();
 
         return redirect()->route('show-ticket')->with(['ticket' => $ticket]);
