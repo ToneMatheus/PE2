@@ -1158,7 +1158,7 @@ class MeterController extends Controller
                 $meter->save();
             }
 
-            Mail::to(config('app.email'))->send(new IndexValueEnteredByCustomer($this->domain, $user_id, $EAN, $new_index_value, $date, $consumption_value));
+            Mail::to(config('app.email'))->send(new IndexValueEnteredByCustomer(config('app.host_domain'), $user_id, $EAN, $new_index_value, $date, $consumption_value));
         }
         return redirect()->back();
     }
