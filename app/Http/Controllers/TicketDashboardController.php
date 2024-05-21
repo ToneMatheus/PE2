@@ -57,11 +57,7 @@ class TicketDashboardController extends Controller
             $query->where('urgency', $request->urgency);
         }
 
-        // if ($request->has('sort') && $request->sort != '') {
-        //     $query->orderBy('created_at', $request->sort);
-        // } else {
-        //     $query->orderBy('created_at', 'desc');
-        // }
+        
 
         if ($request->has('sort') && $request->sort != '') {
             switch ($request->sort) {
@@ -89,13 +85,48 @@ class TicketDashboardController extends Controller
 
 
         
+        // $own_tickets = Ticket::whereHas('employee_Tickets', function ($query) use ($user) {
+        //     $query->where('employee_profile_id', $user->id);
+        // })->where('status', 0)->get();
+
         $own_tickets = Ticket::whereHas('employee_Tickets', function ($query) use ($user) {
             $query->where('employee_profile_id', $user->id);
-        })->where('status', 0)->get();
+        })->where('status', 0);
+
+        if ($request->has('filter') && $request->filter === 'own_tickets') {
+            if ($request->has('urgency_own') && $request->urgency_own !== null) {
+                $own_tickets->where('urgency_own', $request->urgency_own);
+            }
+
+            if ($request->has('sort_own')) {
+                switch ($request->sort_own) {
+                    case 'created_at_asc':
+                        //$own_tickets = $own_tickets->orderBy('created_at', 'asc');
+                        $own_tickets->orderBy('created_at', 'asc');
+                        break;
+                    case 'created_at_desc':
+                        $own_tickets->orderBy('created_at', 'desc');
+                        break;
+                    case 'urgency_asc':
+                        $own_tickets->orderBy('urgency', 'asc');
+                        break;
+                    case 'urgency_desc':
+                        $own_tickets->orderBy('urgency', 'desc');
+                        break;
+                }
+            }else{
+                $own_tickets->orderBy('created_at', 'desc');
+            }
+        }
+
+        $own_tickets = $own_tickets->get();
+
 
         $tickets_closed = Ticket::where('status', 1)->get();
 
-        return view('Support_Pages.ticketDashboard', compact('tickets', 'own_tickets', 'tickets_closed'));
+        //return view('Support_Pages.ticketDashboard', compact('tickets', 'own_tickets', 'tickets_closed'));
+        return view('Support_Pages.ticketDashboard', compact('tickets', 'own_tickets', 'tickets_closed'))
+        ->with('current_filters', $request->all());
     }
 
     public function assignTicket(Request $request, $ticketid){
