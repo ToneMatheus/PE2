@@ -35,9 +35,9 @@
                     <div class="max-w-xl py-2">
                         <x-input-label for="JobRun" :value="__('Run:')" />
                         @if ($jobRuns->count() > 0)
-                        <x-select id="JobRun" name="JobRun">
+                        <x-select id="JobRun" name="JobRun" onchange="onApplyFilters()">
                             @foreach ($jobRuns->reverse() as $index => $jobRun)
-                            <option value="{{ $jobRun->id }}">Run: {{ $index + 1 }} - {{ $jobRun->started_at }}</option>
+                            <option value="{{ $jobRun->id }}">Run: {{ $index + 1 }} - {{ \Carbon\Carbon::parse($jobRun->started_at)->format('d-m-Y H:i') }}</option>
                             @endforeach
                         </x-select>
                         @else
@@ -49,18 +49,15 @@
 
                     <div class="max-w-xl py-2">
                         <x-input-label for="LogLevel" :value="__('Log Level:')" />
-                        <x-select id="LogLevel" name="LogLevel">
+                        <x-select id="LogLevel" name="LogLevel" onchange="onApplyFilters()">
                             <option value="All">All</option>
+                            <option value="Debug">Debug</option>
                             <option value="Info">Information</option>
                             <option value="Warning">Warning</option>
                             <option value="Critical">Critical</option>
                             <option value="Error">Error</option>
                         </x-select>
                     </div>
-
-                    <x-primary-button class="ml-1 py-2" onclick="onApplyFilters()">
-                        {{ __('Apply') }}
-                    </x-primary-button>
                 </div>
             </div>
             <div class="w-full sm:w-3/4 px-2">

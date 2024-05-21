@@ -14,7 +14,8 @@
 </div>
 <div class="mt-4">
     <div id="ProfileInfoText" style="display: none;">
-        <p>Help change profile.</p>
+        <p class="mt-1 text-m dark:text-gray-100">
+            Help change profile.</p>
     </div>
 </div>
 

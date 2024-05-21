@@ -35,6 +35,7 @@
                 <th><a href="#" class="sort" data-column="price">Price</a></th>
                 <th><a href="#" class="sort" data-column="status">Status</a></th>
                 <th>Edit</th>
+                <th>Add Invoice Line</th>
             </thead>
             <tbody>
                 @foreach ($customers as $customer)
@@ -54,6 +55,7 @@
                         <td>{{ $customer->price }}</td>
                         <td>{{ $customer->status }}</td>
                         <td><a href="{{ route('customer.edit', ['id' => $customer->id]) }}">Edit</a></td>
+                        <td><a href="{{ route('addInvoiceExtraForm', ['id' => $customer->id]) }}">Add Invoice Line</a></td>
                     </tr>
                 @endforeach
             </tbody>

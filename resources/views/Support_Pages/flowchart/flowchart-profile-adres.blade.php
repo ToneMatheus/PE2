@@ -19,7 +19,8 @@
     </div>
 
     <div id="changeAdresText" style="display: none;">
-        <p>I cannot help you with this at the moment as this is a task I cannot do. I need to take the problem to someone else.</p>
+        <p class="mt-1 text-m dark:text-gray-100">
+            I cannot help you with this at the moment as this is a task I cannot do. I need to take the problem to someone else.</p>
     </div>
 </div>
 
