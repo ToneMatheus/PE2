@@ -114,7 +114,7 @@ class UserSeeder extends Seeder
                 'is_landlord' => 0,
                 'index_method' => 'website'
             ],
-            [   //Residential Customer
+            [   //Employee who is customer service line 1
                 'id' => 5,
                 'username' => 'ann',
                 'first_name' => 'Ann',
@@ -133,7 +133,9 @@ class UserSeeder extends Seeder
                 'is_landlord' => 0,
                 'index_method' => 'website'
             ],
-            [
+
+            [   //Employee who is customer service line 2
+
                 'id' => 6,
                 'username' => 'marie',
                 'first_name' => 'Marie',
@@ -152,7 +154,9 @@ class UserSeeder extends Seeder
                 'is_landlord' => 0,
                 'index_method' => 'website'
             ],
-            [
+
+            [   //Employee who is customer service line 3
+
                 'id' => 7,
                 'username' => 'mark',
                 'first_name' => 'Mark',

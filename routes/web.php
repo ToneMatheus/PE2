@@ -42,8 +42,15 @@ use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\GasElectricityController;
 use App\Http\Controllers\PayoutsController;
+use App\Http\Controllers\ManagerTicketOverviewController;
+use App\Http\Controllers\EditController;
+use App\Http\Controllers\DetailsController;
+
+use App\Http\Controllers\TicketManagerPageController;
+use App\Http\Controllers\TicketDashboardController;
 use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
+use App\Http\Controllers\TicketOverviewController;
 use App\Http\Controllers\ManualInvoiceController;
 use App\Http\Controllers\NewEmployeeController;
 use App\Http\Controllers\holidayRequest;
@@ -117,6 +124,14 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
 
     Route::get('/tariff/products/{type}', [TariffController::class, 'getProductByType']);
 
+    Route::get('/ticket/Flowchart2', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket2');
+
+    Route::get('/manager/TicketStatus', [TicketManagerPageController::class, 'index'])->name('manager.TicketStatus');
+    Route::get('/manager/showTickets', [TicketManagerPageController::class, 'showTickets'])->name('manager.showTickets');
+    Route::put('/manager/tickets/{id}', [TicketManagerPageController::class, 'update'])->name('manager.tickets.update');
+    Route::get('/manager/tickets/data', [TicketManagerPageController::class, 'getTicketsData'])->name('manager.tickets.data');
+
+
     //meters branch
     Route::controller(MeterController::class)->group(function () {
         Route::get('/enter_index_employee', function() {
@@ -152,6 +167,7 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
         Route::get('/fetchIndex/{meterID}', 'fetchIndex');
         Route::post('/index_value_entered_customer','submitIndexCustomer')->name("submitIndexCustomer");
     });
+
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
@@ -161,6 +177,7 @@ Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(f
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(function() {
+    Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
     Route::get('/ticket/Flowchart', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket');
 });
 
@@ -168,9 +185,10 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function
     Route::get('/customer/invoiceStatus', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoiceStatus');
     Route::post('/customer/change-locale', [CustomerPortalController::class, 'changeLocale'])->name('customer.change-locale');
     Route::post('/customer/chatbot', [CustomerPortalController::class, 'chatbot'])->name('customer.chatbot');
-    Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
-    Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
+    
     //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
+    Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
+    Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');    
 
     Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
     Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
@@ -252,10 +270,14 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER') . ',' . config('ro
 //
 //
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
-//
 
+Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
+Route::post('/ticket_dashboard/assign/{id}', [TicketDashboardController::class, 'assignTicket'])->name('assign_ticket');
+Route::post('/ticket_dashboard/unassign/{id}', [TicketDashboardController::class, 'unassignTicket'])->name('unassign_ticket');
+Route::get('/ticket_dashboard/filter', [TicketDashboardController::class, 'filter'])->name('filter_tickets');
 
 Route::post('/index_value_entered_customer',[MeterController::class, 'submitIndexCustomer'])->name("submitIndexCustomer");
+
 
 Route::controller(MeterController::class)->group(function () {
     Route::get('/Consumption_Dashboard', 'showConsumptionDashboard');
@@ -392,6 +414,22 @@ Route::post('/employee/invoices', [InvoiceController::class, 'rerunValidation'])
 //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
 Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
 Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
+
+Route::get('/ticket_overview', [TicketOverviewController::class, 'index'])->name('ticket_overview');
+
+Route::get('/managerticketoverview', [ManagerTicketOverviewController::class, 'index'])->name('managerticketoverview');
+
+Route::get('/Edit', [EditController::class, 'index'])->name('Edit');
+
+// web.php (routes file)
+Route::get('/tickets/{id}/edit', [EditController::class, 'index'])->name('edit');
+Route::put('/tickets/{id}', [EditController::class, 'update'])->name('edit.update');
+
+Route::get('/details/{id}', [DetailsController::class, 'index'])->name('details');
+
+// routes/web.php
+
+Route::get('/closeticket/{id}', [ManagerTicketOverviewController::class, 'closeTicket'])->name('closeticket');
 
 
 Route::get('/test', function () {
