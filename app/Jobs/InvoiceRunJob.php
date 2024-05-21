@@ -183,6 +183,11 @@ class InvoiceRunJob implements ShouldQueue
             'p.id as pID')
             ->first();
 
+            if ($contractProduct == null){
+                $this->logError(null, "ContractProduct is null");
+                return;
+            }
+
             $discounts = Discount::where('discounts.contract_product_id', '=', $contractProduct->cpID)
             ->whereDate('discounts.end_date', '>=', $now->format('Y/m/d'))
             ->get();
