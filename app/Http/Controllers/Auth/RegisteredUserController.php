@@ -118,7 +118,7 @@ class RegisteredUserController extends Controller
         $userRole = User_Role::create($userRoleDate);
 
         // Notify the user
-        $user->notify(new NewUserNotification());
+        // $user->notify(new NewUserNotification());
 
         $id = Crypt::encrypt($user->id);
         $emailEncrypt = Crypt::encrypt($user->email);
