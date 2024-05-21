@@ -10,16 +10,18 @@ use Illuminate\Support\Facades\DB;
 
 class CheckUserRole
 {
-    public function handle(Request $request, Closure $next, $role): Response
+
+    public function handle(Request $request, Closure $next, ...$roles)
     {
         $user = Auth::user();
 
         if (Auth::check()) {
-            $userRole = DB::table('user_roles')
+            $userRoles = DB::table('user_roles')
                 ->where('user_id', $user->id)
-                ->first();
+                ->pluck('role_id')
+                ->toArray();
 
-            if ($userRole && $userRole->role_id == $role) {
+            if (array_intersect($roles, $userRoles)) {
                 return $next($request);
             }
         }

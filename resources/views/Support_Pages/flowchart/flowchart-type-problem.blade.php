@@ -22,7 +22,8 @@
 </div>
 <div class="mt-4">
     <div id="OtherText" style="display: none;">
-        <p>I can't help further, explain it better.</p>
+        <p class="mt-1 text-m dark:text-gray-100">
+            I can't help further, explain it better.</p>
     </div>
 
 </div>

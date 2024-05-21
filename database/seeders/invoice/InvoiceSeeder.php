@@ -14,7 +14,7 @@ class InvoiceSeeder extends Seeder
     {
         $prices = [113.75, 455.4, 108.75, 99.8];
 
-        for($i = 1; $i < 5; $i++){ //Annual
+        for($i = 1; $i < 18; $i++){ //Annual
             $ccID = ($i == 4) ? 3 : $i;
             DB::table('invoices')->insert([
                 'invoice_date' => '2024-01-15',
@@ -27,7 +27,7 @@ class InvoiceSeeder extends Seeder
             ]);
         }
 
-        for($i = 1; $i < 5; $i++){
+        for($i = 1; $i <= 4; $i++){
             for($month = 2; $month <= 12; $month++){
                 $invoiceDate = Carbon::createFromDate(2024, $month, 15);
                 $dueDate = $invoiceDate->copy()->endOfMonth();
@@ -46,6 +46,111 @@ class InvoiceSeeder extends Seeder
             }
         }
 
+        for($i = 5; $i <= 8; $i++){
+            for($month = 2; $month <= 12; $month++){
+                $invoiceDate = Carbon::createFromDate(2024, $month, 15);
+                $dueDate = $invoiceDate->copy()->endOfMonth();
+
+                DB::table('invoices')->insert([
+                    'invoice_date' => $invoiceDate->toDateString(),
+                    'due_date' => $dueDate->toDateString(),
+                    'total_amount' => $prices[0],
+                    'status' => 'paid',
+                    'customer_contract_id' => $i-1,
+                    'meter_id' => $i,
+                    'type' => 'Monthly'
+                ]);
+            }
+        }
+
+        for($i = 17; $i <= 17; $i++){
+            for($month = 2; $month <= 12; $month++){
+                $invoiceDate = Carbon::createFromDate(2024, $month, 15);
+                $dueDate = $invoiceDate->copy()->endOfMonth();
+
+                DB::table('invoices')->insert([
+                    'invoice_date' => $invoiceDate->toDateString(),
+                    'due_date' => $dueDate->toDateString(),
+                    'total_amount' => $prices[0],
+                    'status' => 'paid',
+                    'customer_contract_id' => 8,
+                    'meter_id' => $i,
+                    'type' => 'Monthly'
+                ]);
+            }
+        }
+
+        for($month = 2; $month <= 5; $month++){
+            $invoiceDate = Carbon::createFromDate(2024, $month, 15);
+            $dueDate = $invoiceDate->copy()->endOfMonth();
+
+            $ccID = 10;
+
+            DB::table('invoices')->insert([
+                'invoice_date' => $invoiceDate->toDateString(),
+                'due_date' => $dueDate->toDateString(),
+                'total_amount' => $prices[0],
+                'status' => 'paid',
+                'customer_contract_id' => $ccID,
+                'meter_id' => $ccID,
+                'type' => 'Monthly'
+            ]);
+        }
+
+        for($i = 11; $i <= 12; $i++){
+            for($month = 2; $month <= 12; $month++){
+                $invoiceDate = Carbon::createFromDate(2024, $month, 15);
+                $dueDate = $invoiceDate->copy()->endOfMonth();
+                $ccID = ($i == 4) ? 3 : $i;
+
+                DB::table('invoices')->insert([
+                    'invoice_date' => $invoiceDate->toDateString(),
+                    'due_date' => $dueDate->toDateString(),
+                    'total_amount' => $prices[1],
+                    'status' => 'paid',
+                    'customer_contract_id' => $ccID,
+                    'meter_id' => $i,
+                    'type' => 'Monthly'
+                ]);
+            }
+        }
+
+        for($i = 13; $i <= 14; $i++){
+            for($month = 2; $month <= 12; $month++){
+                $invoiceDate = Carbon::createFromDate(2024, $month, 15);
+                $dueDate = $invoiceDate->copy()->endOfMonth();
+                $ccID = ($i == 4) ? 3 : $i;
+
+                DB::table('invoices')->insert([
+                    'invoice_date' => $invoiceDate->toDateString(),
+                    'due_date' => $dueDate->toDateString(),
+                    'total_amount' => $prices[2],
+                    'status' => 'paid',
+                    'customer_contract_id' => $ccID,
+                    'meter_id' => $i,
+                    'type' => 'Monthly'
+                ]);
+            }
+        }
+
+        for($i = 15; $i <= 17; $i++){
+            for($month = 2; $month <= 12; $month++){
+                $invoiceDate = Carbon::createFromDate(2024, $month, 15);
+                $dueDate = $invoiceDate->copy()->endOfMonth();
+                $ccID = ($i == 4) ? 3 : $i;
+
+                DB::table('invoices')->insert([
+                    'invoice_date' => $invoiceDate->toDateString(),
+                    'due_date' => $dueDate->toDateString(),
+                    'total_amount' => $prices[3],
+                    'status' => 'paid',
+                    'customer_contract_id' => $ccID,
+                    'meter_id' => $i,
+                    'type' => 'Monthly'
+                ]);
+            }
+        }
+        
         DB::table('invoices')->insert([
             'invoice_date' => '2025-01-08',
             'due_date' => '2025-01-22',

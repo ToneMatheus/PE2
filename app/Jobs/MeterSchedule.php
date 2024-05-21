@@ -20,6 +20,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+
 
 class MeterSchedule implements ShouldQueue
 {
@@ -43,15 +45,16 @@ class MeterSchedule implements ShouldQueue
     public function handle()
     {
         $now = Carbon::now()->startOfDay();
-
         $newMeters = DB::table('meters')->select('id', 'installation_date')->get();
 
         foreach ($newMeters as $newMeter)
         {
             $install = Carbon::parse($newMeter->installation_date)->startOfDay();
-            $diff = $install->diffInYears($now);
+            $diff = $install->floatDiffInYears($now);
+            Log::info('diff: ',['diff' => $diff]);
 
-            if ($diff > 0 && $diff % 3 == 0) {
+            if ($diff > 1 && $diff % 3 == 0) {
+                Log::info('diff: ',['calc diff' => $diff % 3]);
                 DB::table('meter_reader_schedules')->insert(
                 ['employee_profile_id' => 1000,
                 'meter_id' => $newMeter->id,
