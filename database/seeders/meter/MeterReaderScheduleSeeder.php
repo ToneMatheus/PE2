@@ -14,12 +14,21 @@ class MeterReaderScheduleSeeder extends Seeder
         $adds = [];
         $today = Carbon::now()->toDateString();
 
-        for($i=3; $i <= 5; $i++){
+        $adds[] = [
+            'employee_profile_id' => 10,
+            'reading_date' => $today,
+            'meter_id' => 3,
+            'status' => 'unread',
+            'priority' => 1
+        ];
+
+        for($i=4; $i <= 5; $i++){
             $adds[] = [
                 'employee_profile_id' => 10,
                 'reading_date' => $today,
                 'meter_id' => $i,
-                'status' => 'unread'
+                'status' => 'unread',
+                'priority' => 0
             ];
         }
 
@@ -28,7 +37,8 @@ class MeterReaderScheduleSeeder extends Seeder
                 'employee_profile_id' => 11,
                 'reading_date' => $today,
                 'meter_id' => $i,
-                'status' => 'unread'
+                'status' => 'unread',
+                'priority' => 0
             ];
         }
 

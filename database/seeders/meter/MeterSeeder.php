@@ -74,12 +74,24 @@ class MeterSeeder extends Seeder
             'expecting_reading' => $expecting_reading
         ]);
 
-        for($i = 11; $i <= 17; $i++){
+        for($i = 11; $i <= 13; $i++){
             DB::table('meters')->insert([
                 'id' => $i,
                 'EAN' => sprintf("%018d", rand(0, 999999999999999999)),
                 'type' => 'Electricity',
-                'installation_date' => $exampleInstallation,
+                'installation_date' => $twoYearsDate,
+                'status' => 'Installed',
+                'is_smart' => 0,
+                'expecting_reading' => $expecting_reading
+            ]);
+        }
+
+        for($i = 14; $i <= 17; $i++){
+            DB::table('meters')->insert([
+                'id' => $i,
+                'EAN' => sprintf("%018d", rand(0, 999999999999999999)),
+                'type' => 'Electricity',
+                'installation_date' => $threeYearsDate,
                 'status' => 'Installed',
                 'is_smart' => 0,
                 'expecting_reading' => $expecting_reading

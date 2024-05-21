@@ -75,7 +75,7 @@ class MoveOutJob implements ShouldQueue
                         DB::table('meter_reader_schedules')->insert(
                             ['employee_profile_id' => 1000,
                             'meter_id' => $out_meter->id,
-                            'reading_date' => $today,
+                            'reading_date' => $end_date,
                             'status' => 'unread',
                             'priority' => 1
                         ]);
@@ -92,13 +92,13 @@ class MoveOutJob implements ShouldQueue
                                     ->join('meters','meter_addresses.meter_id','=','meters.id')
                                     ->where('customer_contracts.start_date', '>', $end_date)
                                     ->where('meters.id', '=', $out_meter->id)
-                                    ->select('meters.id as meter_id')
+                                    ->select('meters.id as meter_id', 'customer_contracts.start_date')
                                     ->get()->first();
                         
                         DB::table('meter_reader_schedules')->insert(
                             ['employee_profile_id' => 1000,
                             'meter_id' => $in_meter->meter_id,
-                            'reading_date' => $todayOne,
+                            'reading_date' => $in_meter->start_date,
                             'status' => 'unread',
                             'priority' => 1
                         ]);

@@ -164,7 +164,6 @@ class MeterController extends Controller
     }
 
     public function search(Request $request) {
-        $today = Carbon::now()->toDateString();
         if($request->ajax())
         {
             $output = '';
@@ -182,7 +181,7 @@ class MeterController extends Controller
                             ->join('meters','meter_addresses.meter_id','=','meters.id')
                             ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                             ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
-                            ->where('meter_reader_schedules.reading_date','=', $today)
+                            ->where('meter_reader_schedules.reading_date','=', config('app.metersDate'))
                             ->where('meter_reader_schedules.status','=','unread')
                             ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'e.first_name as assigned_to')
                             ->orderBy('users.id');
@@ -214,7 +213,7 @@ class MeterController extends Controller
                         ->join('meters','meter_addresses.meter_id','=','meters.id')
                         ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                         ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
-                        ->where('meter_reader_schedules.reading_date','=', $today)
+                        ->where('meter_reader_schedules.reading_date','=', config('app.metersDate'))
                         ->where('meter_reader_schedules.status','=','unread')
                         ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.ID as meter_id', 'meter_reader_schedules.id', 'e.first_name as assigned_to')
                         ->orderBy('users.id');
@@ -310,7 +309,6 @@ class MeterController extends Controller
     public function searchIndex(Request $request)  {
         if($request->ajax())
         {
-            $today = Carbon::now()->toDateString();
             $output = '';
             $queryName = $request->get('queryName');
             $queryEAN = $request->get('queryEAN');
@@ -326,7 +324,7 @@ class MeterController extends Controller
                             ->join('meters','meter_addresses.meter_id','=','meters.id')
                             ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                             ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
-                            ->where('meter_reader_schedules.reading_date','=', $today)
+                            ->where('meter_reader_schedules.reading_date','=', config('app.metersDate'))
                             ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
                             ->where('users.index_method', '=', 'website')
                             ->where('users.is_active','=', 1)
@@ -361,7 +359,7 @@ class MeterController extends Controller
                         ->join('meters','meter_addresses.meter_id','=','meters.id')
                         ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                         ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
-                        ->where('meter_reader_schedules.reading_date','=', $today)
+                        ->where('meter_reader_schedules.reading_date','=', config('app.metersDate'))
                         ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
                         ->where('users.index_method', '=', 'website')
                         ->where('users.is_active','=', 1)
@@ -400,7 +398,7 @@ class MeterController extends Controller
                                     <span class="my-2" style="font-size:50px;color:';
                                     if ($row->status == "unread") {
                                         if($row->priority == 1) {
-                                            $output .= 'white;font-weight:bold;">'.ucfirst($row->status).'</span>';
+                                            $output .= 'red;font-weight:bold;">'.ucfirst($row->status) .'(Priority)</span>';
                                         }
                                         else {
                                             $output .= 'red;font-weight:bold;">'.ucfirst($row->status).'</span>';
@@ -472,7 +470,7 @@ class MeterController extends Controller
         ->join('meters','meter_addresses.meter_id','=','meters.id')
         ->where('users.is_active', '=', 1)
         ->where('meters.id', '=', $meter_id)
-        ->select('customer_contracts.end_date', 'customer_contracts.start_date', 'addresses.*', 'users.first_name', 'users.last_name')
+        ->select('customer_contracts.end_date', 'customer_contracts.start_date', 'addresses.*', 'users.first_name', 'users.last_name', 'users.id as user_id')
         ->get()
         ->first();
 
@@ -493,14 +491,14 @@ class MeterController extends Controller
         // }
 
         $current_index_id = DB::table('index_values')->insertGetId(
-            ['reading_date' => $date, 'meter_id' => $meter_id, 'reading_value' => $index_value]
+            ['reading_date' => config('app.metersDate'), 'meter_id' => $meter_id, 'reading_value' => $index_value]
         );
 
         $consumption_value = $index_value - $prev_index_value;
 
         $consumptionID = DB::table('consumptions')->insertGetId(
             ['start_date' => $start_date,
-            'end_date' => $date,
+            'end_date' => config('app.metersDate'),
             'consumption_value' => $consumption_value,
             'prev_index_id' => $prev_index_id,
             'current_index_id' => $current_index_id]
@@ -516,7 +514,7 @@ class MeterController extends Controller
             ->limit(1)
             ->update(['status' => 'read']);
 
-        if ($contract_date->end_date == $testDate) {
+        if ($contract_date->end_date == config('app.metersDate')) {
             DB::table('customer_contracts')
             ->where('user_id', '=', $contract_date->user_id)
             ->update(['status' => 'Inactive']);
@@ -537,9 +535,9 @@ class MeterController extends Controller
 
             $this->finalSettlementJob($meter_id, $consumptionID, $consumption_value);
         }
-        if ($contract_date->start_date == $testDateIn) {
+        if ($contract_date->start_date == config('app.metersDate')) {
             Log::info("Contract:", ["contract"=>$contract_date]);
-            Mail::to(config('app.email'))->send(new InvoiceLandlordMail($this->domain, $contract_date, $index_value, $date, $consumption_value));
+            Mail::to(config('app.email'))->send(new InvoiceLandlordMail($this->domain, $contract_date, $index_value, config('app.metersDate'), $consumption_value));
         }
 
         
@@ -559,12 +557,14 @@ class MeterController extends Controller
         $now = Carbon::now()->toDateString();
         $month = Carbon::now()->month;
         $year = Carbon::now()->year;
-        $due = Carbon::now()->addWeeks(2)->toDateString();
+        $due = Carbon::parse(config('app.metersDate'))->addWeeks(2)->toDateString();
 
         $consumptionData = DB::table('consumptions')->where('id', '=', $consumptionID)->get()->first();
         try
         {
             $meter = Meter::findOrFail($meter_id);
+            Log::info(['meterid'=>$meter_id]);
+            Log::info(['meter'=>$meter]);
         }
         catch (\Exception $e)
         {
@@ -578,7 +578,7 @@ class MeterController extends Controller
                 ->leftJoin('customer_contracts as cc', 'cp.customer_contract_id', '=', 'cc.id')
                 ->where('meters.id', $meter_id)
                 ->first();
-
+            Log::info(['result'=>$result]);
             $ccID = $result->id;
             $userID = $result->user_id;
         }
@@ -671,7 +671,7 @@ class MeterController extends Controller
 
         if($extraAmount > 0){                   //Invoice
             $invoiceData = [
-                'invoice_date' => $now,
+                'invoice_date' => config('app.metersDate'),
                 'due_date' => $due,
                 'total_amount' => $extraAmount,
                 'status' => 'sent',
@@ -682,7 +682,7 @@ class MeterController extends Controller
 
         } else{                              //Credit note
             $invoiceData = [
-                'invoice_date' => $now,
+                'invoice_date' => config('app.metersDate'),
                 'due_date' => $due,
                 'total_amount' => $extraAmount,
                 'status' => 'paid',
@@ -832,7 +832,7 @@ class MeterController extends Controller
                             ->join('meters','meter_addresses.meter_id','=','meters.id')
                             ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                             ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
-                            ->where('meter_reader_schedules.reading_date','=', $today)
+                            ->where('meter_reader_schedules.reading_date','=', config('app.metersDate'))
                             ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
                             ->where('users.index_method', '=', 'paper')
                             ->where('users.is_active','=', 1)
@@ -867,7 +867,7 @@ class MeterController extends Controller
                         ->join('meters','meter_addresses.meter_id','=','meters.id')
                         ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
                         ->join('users as e', 'e.employee_profile_id','=','meter_reader_schedules.employee_profile_id')
-                        ->where('meter_reader_schedules.reading_date','=', $today)
+                        ->where('meter_reader_schedules.reading_date','=', config('app.metersDate'))
                         ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
                         ->where('users.index_method', '=', 'paper')
                         ->where('users.is_active','=', 1)
@@ -1111,7 +1111,7 @@ class MeterController extends Controller
                 $prev_index_value = 0;
 
                 $current_index_id = DB::table('index_values')->insertGetId(
-                    ['reading_date' => $date, 'meter_id' => $meter_id, 'reading_value' => $new_index_value]
+                    ['reading_date' => config('app.metersDate'), 'meter_id' => $meter_id, 'reading_value' => $new_index_value]
                 );
 
                 $consumption_value = $new_index_value - $prev_index_value;
@@ -1124,7 +1124,7 @@ class MeterController extends Controller
 
                 DB::table('consumptions')->insert(
                     ['start_date' => $installation_date->installation_date,
-                    'end_date' => $date,
+                    'end_date' => config('app.metersDate'),
                     'consumption_value' => $consumption_value,
                     'prev_index_id' => null,
                     'current_index_id' => $current_index_id]
@@ -1140,14 +1140,14 @@ class MeterController extends Controller
                 $start_date = $prev_index->reading_date;
 
                 $current_index_id = DB::table('index_values')->insertGetId(
-                    ['reading_date' => $date, 'meter_id' => $meter_id, 'reading_value' => $new_index_value]
+                    ['reading_date' => config('app.metersDate'), 'meter_id' => $meter_id, 'reading_value' => $new_index_value]
                 );
 
                 $consumption_value = $new_index_value - $prev_index_value;
 
                 DB::table('consumptions')->insert(
                     ['start_date' => $start_date,
-                    'end_date' => $date,
+                    'end_date' => config('app.metersDate'),
                     'consumption_value' => $consumption_value,
                     'prev_index_id' => $prev_index_id,
                     'current_index_id' => $current_index_id]

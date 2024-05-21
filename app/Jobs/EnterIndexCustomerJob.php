@@ -55,9 +55,10 @@ class EnterIndexCustomerJob implements ShouldQueue
         foreach ($meters as $meter)
         {
             $install = Carbon::parse($meter->installation_date)->startOfDay();
-            $diff = $install->diffInYears($now);
+            $diff = $install->floatDiffInYears($now);
+            Log::info('diff: ',['diff' => $diff]);
 
-            if ($diff > 0 && $diff % 3 <= 2) {
+            if ($diff >= 1 && ($diff % 3 == 2 || $diff % 3 == 1)) {
                 $user = DB::table('users')
                         ->join('customer_addresses','users.id','=','customer_addresses.user_id')
                         ->join('addresses','customer_addresses.id','=','addresses.id')

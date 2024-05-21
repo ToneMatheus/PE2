@@ -86,7 +86,31 @@ class CustomerContractSeeder extends Seeder
             ]
         ]);
 
-        for($i=11; $i <= 16; $i++){
+        DB::table('customer_contracts')->insert([
+            [
+                'id' => 11,
+                'user_id' => 13,
+                'start_date' => '2022-01-01',
+                'end_date' => null,
+                'type' => 'Standard',
+                'price' => 1000,
+                'status' => 'Active'
+            ]
+        ]);
+
+        DB::table('customer_contracts')->insert([
+            [
+                'id' => 12,
+                'user_id' => 14,
+                'start_date' => '2022-01-01',
+                'end_date' => $twoWeekCooldown,
+                'type' => 'Standard',
+                'price' => 1000,
+                'status' => 'Active'
+            ]
+        ]);
+
+        for($i=13; $i <= 16; $i++){
             DB::table('customer_contracts')->insert([
                 'id' => $i,
                 'user_id' => $i + 2,
@@ -114,7 +138,7 @@ class CustomerContractSeeder extends Seeder
             [
                 'id' => 18,
                 'user_id' => 20,
-                'start_date' => $newContractBegin,
+                'start_date' => $newContractBeginGap,
                 'end_date' => null,
                 'type' => 'Standard',
                 'price' => 1000,
