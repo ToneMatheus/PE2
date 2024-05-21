@@ -260,8 +260,8 @@ Route::get('/teamWeeklyReports', [myController::class, 'weeklyReport'])->name('t
 // Route::get('/report', function () {
 //     return view('report', ['weekStartDate' => now()->startOfWeek()->toDateString(), 'weekEndDate' => now()->endOfWeek()->toDateString()]);
 // });
-Route::post('/submit-report', [myController::class, 'storeWeeklyReports']);
-
+Route::post('/submit-report', [myController::class, 'storeWeeklyReports'])->name('submit-report');
+Route::get('/individualReports//{id}', [myController::class, 'individualReports'])->name('individualReports');
 // Route::get('/sickLeaveReason', [myController::class, 'sickLeave'])->name('sickLeaveReason');
 // Route::get('/profileHR', [myController::class, 'profileHR'])->name('profileHR');
 // Route::get('/profileInvoice', [myController::class, 'profileInvoice'])->name('profileInvoice');
