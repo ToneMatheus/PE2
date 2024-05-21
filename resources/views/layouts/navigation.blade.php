@@ -104,32 +104,7 @@ use Illuminate\Notifications\DatabaseNotification;
                             </button>
                         </x-slot>
 
-                        {{-- @php
-                            $role_id = DB::table('user_roles')->where('user_id', Auth::id())->first()->role_id;
-                            Log::info('Role ID: ' . $role_id);
-                            // $notifications = auth()->user()->unreadNotifications->where('data.role_id', $role_id);
-                            // Log::info('Notifications: ' . $notifications->count());
-
-                            // $role_id = DB::table('user_roles')->where('user_id', Auth::id())->first()->role_id;
-                            $notifications = auth()->user()->unreadNotificationsForRole($role_id);
-                            Log::info('Notifications: ' . $notifications->count());
-                        @endphp
-                        <x-slot name="content">
-                            @if(auth()->user()->unreadNotifications->where('data.role_id', $role_id)->isEmpty())
-                                <div class="px-4 py-2 text-sm text-gray-700 dark:text-white">
-                                    No new notifications
-                                </div>
-                            @else
-                                @foreach(auth()->user()->unreadNotifications->where('data.role_id', $role_id) as $notification)
-                                    <x-dropdown-link :href="route('notification.read', $notification->id)" class="dark:text-white">
-                                        {{ $notification->data['message'] }}
-                                    </x-dropdown-link>
-                                @endforeach
-                            @endif
-                        </x-slot> --}}
-
                         @php
-                        
                             $role_id = DB::table('user_roles')->where('user_id', Auth::id())->first()->role_id;
                             $notifications = DatabaseNotification::where('role_id', $role_id)
                                 ->where('read_at', null)
