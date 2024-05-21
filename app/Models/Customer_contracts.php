@@ -28,7 +28,7 @@ class Customer_contracts extends Model
 
     public function invoices(): HasMany
     {
-        return $this->hasMany(Invoice::class);
+        return $this->hasMany(Invoice::class, 'customer_contract_id');
     }
 
     public function user(): BelongsTo

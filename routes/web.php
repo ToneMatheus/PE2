@@ -519,3 +519,6 @@ Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController:
 Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
 Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
+
+//Statistics route
+Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
