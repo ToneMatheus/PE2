@@ -9,26 +9,26 @@
 <body class="bg-gray-100">
     <div class="container mx-auto p-8">
         <h1 class="text-2xl font-semibold mb-6" style="text-align: center">Weekly Report Form ( {{$weekStartDate}} - {{$weekEndDate}} )</h1>
-        <form action="/submit-report" method="POST">
+        <form action="{{ route('submit-report') }}" method="POST">
             @csrf
             <div class="mb-4">
                 <label for="summary" class="block text-gray-700 font-bold mb-2">Summary:</label>
-                <textarea id="summary" name="summary" placeholder="Enter summary of the week's activities, achievements, challenges, and goals achieved" rows="4" class="w-full px-3 py-2 border rounded-lg"></textarea>
+                <textarea id="summary" name="summary" placeholder="Enter summary of the week's activities, achievements, challenges, and goals achieved" rows="4" class="w-full px-3 py-2 border rounded-lg">{{ old('summary') }}</textarea>
             </div>
 
             <div class="mb-4">
                 <label for="tasks_completed" class="block text-gray-700 font-bold mb-2">Tasks Completed:</label>
-                <textarea id="tasks_completed" name="tasks_completed" placeholder="Enter tasks completed during the week" rows="4" class="w-full px-3 py-2 border rounded-lg"></textarea>
+                <textarea id="tasks_completed" name="tasks_completed" placeholder="Enter tasks completed during the week" rows="4" class="w-full px-3 py-2 border rounded-lg">{{ old('tasks_completed') }}</textarea>
             </div>
 
             <div class="mb-4">
                 <label for="upcoming_tasks" class="block text-gray-700 font-bold mb-2">Upcoming Tasks:</label>
-                <textarea id="upcoming_tasks" name="upcoming_tasks" placeholder="Enter upcoming tasks for the next week" rows="4" class="w-full px-3 py-2 border rounded-lg"></textarea>
+                <textarea id="upcoming_tasks" name="upcoming_tasks" placeholder="Enter upcoming tasks for the next week" rows="4" class="w-full px-3 py-2 border rounded-lg">{{ old('upcoming_tasks') }}</textarea>
             </div>
 
             <div class="mb-4">
                 <label for="issues" class="block text-gray-700 font-bold mb-2">Issues/Challenges:</label>
-                <textarea id="issues" name="issues" placeholder="Enter any issues or challenges encountered during the week" rows="4" class="w-full px-3 py-2 border rounded-lg"></textarea>
+                <textarea id="issues" name="issues" placeholder="Enter any issues or challenges encountered during the week" rows="4" class="w-full px-3 py-2 border rounded-lg">{{ old('issues') }}</textarea>
             </div>
 
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Submit</button>

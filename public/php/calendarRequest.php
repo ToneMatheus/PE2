@@ -14,6 +14,19 @@ $database = 'energy_supplier';
 $link = mysqli_connect($host, $user, $password, $database) or die("Error: no connection can be made to the host");
 mysqli_select_db($link, $database) or die("Error: the database could not be opened");
 
+if(isset($_SESSION['credit']))
+{
+    if(isset($_POST['creditGreen']))
+        $_SESSION['credit'] = $_POST['creditGreen'];
+
+}
+
+if(isset($_SESSION['credit2']))
+{
+    if(isset($_POST['creditPurple']))
+        $_SESSION['credit2'] = $_POST['creditPurple'];
+}
+
 
 if (!isset($_SESSION['user'])) 
 {
@@ -78,7 +91,12 @@ else if(isset($_POST['purple']) && isset($_POST['dayNum']))
     $_SESSION['user']['purple'] = $color;
     $color < 1 ?  $_SESSION['user']['purple'] += 1 : $color = 1;
     echo "\n";
-    echo $_SESSION['user']['purple'];
+
+    $idNum = explode(" ", $_POST['dayNum']);
+    $_SESSION['numCal'] = array_merge($_SESSION['numCal'], $idNum);
+
+    echo "Days stored in session:\n";
+    print_r($_SESSION['numCal']);
 } 
 else if(isset($_POST['pink']) && isset($_POST['dayNum']))
 {
@@ -103,7 +121,7 @@ else if(isset($_POST['button']))
     $user_id =  $_POST['userId1'];
     
     // TODO: send the month (and maybe year) to the request
-    if(isset($_SESSION['user']['green']) || isset($_SESSION['user']['pink']))
+    if(isset($_SESSION['user']['green']) || isset($_SESSION['user']['pink']) || isset($_SESSION['user']['purple']))
     {
         $array =  $_SESSION['numCal'];
         
@@ -136,6 +154,11 @@ else if(isset($_POST['button']))
             {
                 $type = "Sick";
                 $holidayType = 3;
+            }
+            else if (isset($_SESSION['user']['purple']))
+            {
+                $type = "Parental leave";
+                $holidayType = 2;
             }
             
 
@@ -242,6 +265,11 @@ else if(isset($_POST['button']))
                                     $type = "Sick";
                                     $holidayType = 3;
                                 }
+                                else if (isset($_SESSION['user']['purple']))
+                                {
+                                    $type = "Parental leave";
+                                    $holidayType = 2;
+                                }
 
                                 $date_now = new DateTime();
                                 $date2    = new DateTime("$monthTest/$minValue/2024");
@@ -320,6 +348,11 @@ else if(isset($_POST['button']))
                                 {
                                     $type = "Sick";
                                     $holidayType = 3;
+                                }
+                                else if (isset($_SESSION['user']['purple']))
+                                {
+                                    $type = "Parental leave";
+                                    $holidayType = 2;
                                 }
 
                                 $date_now = new DateTime();
@@ -454,7 +487,7 @@ else if(isset($_POST['button']))
     */
     
 } 
-else if(isset($_POST['cancel']) || isset($_GET['testCancel']))
+else if(isset($_POST['cancel']) || isset($_POST['testCancel']))
 {
     // Unset session variable
     unset($_SESSION['user']);

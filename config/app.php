@@ -16,7 +16,16 @@ return [
     |
     */
 
-    'host_domain' => 'http://10.76.250.100:8000',
+    //'host_domain' => 'http://127.0.0.1:8000',
+    //'host_domain' => 'http://10.76.250.100:8000',
+    'host_domain' => 'http://localhost:8000',
+
+    'email' => 'shresthaanshu555@gmail.com',
+
+    'metersDate' => Carbon\Carbon::today()->toDateString(), // today 
+    //'metersDate' => Carbon\Carbon::today()->addWeeks(2)->toDateString(), // move out
+    //'metersDate' => Carbon\Carbon::today()->addWeeks(2)->addDay()->toDateString(), // move in (immediate next day)
+    //'metersDate' => Carbon\Carbon::today()->addWeeks(3)->toDateString(), // move in (gap)
 
     'now' => Carbon\Carbon::create(2025, 2, 15),
     //1 8
@@ -109,6 +118,8 @@ return [
     */
 
     'locale' => 'en',
+
+    'available_locales' => ['en', 'es', 'fr', 'de'],
 
     /*
     |--------------------------------------------------------------------------
