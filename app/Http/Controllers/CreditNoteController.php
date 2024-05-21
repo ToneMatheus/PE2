@@ -92,7 +92,7 @@ class CreditNoteController extends Controller
 
         //Mail credit note info
         $creditNoteLines = CreditNoteLine::where('credit_note_id', '=', $creditNote->id)->get();
-        Mail::to('finnvc99@gmail.com')->send(new CreditNoteMail($creditNoteLines, $user));
+        Mail::to('rolandmoons3@gmail.com')->send(new CreditNoteMail($creditNoteLines, $user));
 
         return redirect()->back()->with('success', 'Refund successful');
         }
@@ -129,7 +129,7 @@ class CreditNoteController extends Controller
 
         $creditNoteLines = CreditNoteLine::where('credit_note_id', '=', $creditNote->id)->get();
         $user = User::find($validatedData['user_id']);
-        Mail::to('finnvc99@gmail.com')->send(new CreditNoteMail($creditNoteLines, $user));
+        Mail::to('rolandmoons3@gmail.com')->send(new CreditNoteMail($creditNoteLines, $user));
 
         return redirect()->route('credit-notes.index')->with('success', 'Credit note created successfully.');
     }
