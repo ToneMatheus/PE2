@@ -114,7 +114,7 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
     
     //All routes for credit notes on invoice refunds
-    Route::get('/customer/invoice/search', [CreditNoteController::class, 'show']);
+    Route::get('/customer/invoice/search', [CreditNoteController::class, 'show'])->name('credit-notes.search');
     Route::post('/customer/invoice/search', [CreditNoteController::class, 'search'])->name('credit-notes.search');
     Route::post('/refund', [CreditNoteController::class, 'refund']);
 
