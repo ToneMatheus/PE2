@@ -183,8 +183,18 @@ class InvoiceRunJob implements ShouldQueue
             'p.id as pID')
             ->first();
 
+            //as the new seeders cause issues here this is a temporary fix so the job atleast doesn't crash.
             if ($contractProduct == null){
-                $this->logError(null, "ContractProduct is null");
+                $VariableDump =[
+                    "customer" => $customer,
+                    "lastInvoiceDate" => $lastInvoiceDate,
+                    "nextInvoiceDate" => $nextInvoiceDate,
+                    "consumption" => $consumption,
+                    "estimationResult" => $estimationResult,
+                    "estimation" => $estimation,
+                    "contractProduct" => $contractProduct,
+                ];
+                $this->logError(null, "ContractProduct is null", "Variable dump in json format:" . json_encode($VariableDump));
                 return;
             }
 
