@@ -119,19 +119,13 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
-
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(function() {
 });
 
-Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group(function() {
-
-});
-
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(function() {
     Route::get('/ticket/Flowchart', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket');
-
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function() {
@@ -146,15 +140,6 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function
     Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 });
 
-Route::middleware(['checkUserRole:' . config('roles.FIELD_TECHNICIAN')])->group(function() {
-
-
-});
-
-Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function() {
-    
-});
-
 Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function() {
     // Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
     // Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
@@ -167,7 +152,20 @@ Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function
     Route::get('/tariff/products/{type}', [TariffController::class, 'getProductByType']);
 });
 
+//
+//
+// EXMAPLE
+//
+//
+Route::middleware(['checkUserRole:' . config('roles.MANAGER') . ',' . config('roles.CUSTOMER')])->group(function() {
+    
+});
+
+//
+//
 // EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
+//
+//
 
 //
 Route::get('/employeeOverview', [EmployeeController::class, 'showEmployees'])->name('employees');
