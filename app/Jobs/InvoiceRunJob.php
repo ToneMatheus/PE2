@@ -275,6 +275,8 @@ class InvoiceRunJob implements ShouldQueue
             $fineService->unpaidInvoiceFine($lastInserted);
             
             $newInvoiceLine = Invoice_line::where('invoice_id', '=', $lastInserted)->first();
+
+            $invoice = Invoice::find($invoice->id);
            
             $this->sendAnnualMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
             EstimationController::UpdateEstimation($customer->mID);  
@@ -551,6 +553,8 @@ class InvoiceRunJob implements ShouldQueue
 
         $fineService = new InvoiceFineService;
         $fineService->unpaidInvoiceFine($lastInserted);
+
+        $invoice = Invoice::find($invoice->id);
 
         $newInvoiceLines = Invoice_line::where('invoice_id', '=', $lastInserted)->get();
         $this->sendMonthlyMail($invoice, $customer->uID, $newInvoiceLines);
