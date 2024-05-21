@@ -33,6 +33,8 @@ use Illuminate\Support\Facades\Redirect;
 
 use App\Mail\ConfirmationMailRegistration;
 
+// use App\Notifications\NewUserNotification;
+
 // CH kijk als je paswoord niet overeenkomt met het comfirm dan wordt de mail wel opgeslagen.
 
 class RegisteredUserController extends Controller
@@ -114,6 +116,13 @@ class RegisteredUserController extends Controller
         ];
 
         $userRole = User_Role::create($userRoleDate);
+
+        // Notify the user
+        // $user->notify(new NewUserNotification());
+
+        $id = Crypt::encrypt($user->id);
+        $emailEncrypt = Crypt::encrypt($user->email);
+        $origin = 'register';
 
         $addressDate = [
             'street' => $request->street,

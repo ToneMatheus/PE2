@@ -18,7 +18,6 @@
                             $teamName = null;
                         }
                     @endphp 
-
                     {{-- @if($roleId != config('roles.CUSTOMER') && !$changedDefault)
                         <script>window.location = "{{ route('password.request') }}"</script>
                     @endif --}}
@@ -342,5 +341,10 @@
             </div>
         </div>
     </div>
+
+        {{-- @php
+            $notifications = auth()->user()->unreadNotifications;
+            dd($notifications);
+        @endphp --}}
 
 </x-app-layout>
