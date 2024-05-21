@@ -14,7 +14,8 @@
 </div>
 <div class="mt-4">
     <div id="powerFailerStreetText" style="display: none;">
-        <p>We will pass this on to the grid operator.</p>
+        <p class="mt-1 text-m dark:text-gray-100">
+            We will pass this on to the grid operator.</p>
     </div>
 
 </div>

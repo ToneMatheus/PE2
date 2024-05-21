@@ -18,7 +18,8 @@
     </div>
 
     <div id="YesCupBoardText{{ $meter }}" style="display: none;">
-        <p>I can't help you with this at the moment. I need to take the problem to someone else.</p>
+        <p class="mt-1 text-m dark:text-gray-100">
+            I can't help you with this at the moment. I need to take the problem to someone else.</p>
     </div>
 </div>
 

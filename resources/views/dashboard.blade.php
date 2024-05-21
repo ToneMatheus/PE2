@@ -17,23 +17,41 @@
                             // Handle the case where the array key doesn't exist
                             $teamName = null;
                         }
-                    @endphp  
-
+                    @endphp 
                     {{-- @if($roleId != config('roles.CUSTOMER') && !$changedDefault)
                         <script>window.location = "{{ route('password.request') }}"</script>
                     @endif --}}
 
                     @if($roleId == config('roles.MANAGER'))
+                        <a href="{{ route('manager.TicketStatus') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Dashboard</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View the Ticket dashboard</p>
+                            </div>
+                        </a>
                         <a href="{{ route('create-ticket') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Create Ticket</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">Create a new ticket</p>
                             </div>
                         </a>
+
                         <a href="{{ route('index-cron-job') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Job Scheduler</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">Manage schedule of cron jobs</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('managerticketoverview') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Overview</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View all tickets</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('Support_Pages.flowchart.Flowchart-ascalade-ticket2') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Flowchart</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Flowchart for ticket escalation</p>
                             </div>
                         </a>
 
@@ -120,6 +138,13 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">Weekly reports of your employees</p>
                             </div>
                         </a>
+
+                        <a href="{{ route('Meter_History') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Meter History</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View meter history and enter index value as customer</p>
+                            </div>
+                        </a> 
                         {{-- @include('intranet.employeeIntranet'); --}}
 
                         @if($teamName == 'HR')
@@ -151,6 +176,15 @@
                         @include('notifications.managerNotifications');
                             
                     @endif
+                    
+                    @if($roleId == config('roles.CUSTOMER_SERVICE'))
+                    <a href="{{ route('serviceticketoverview') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Overview</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View all tickets</p>
+                            </div>
+                        </a>
+                    @endif
                     @if($roleId == config('roles.BOSS'))
                         <a href="{{ route('submitted-ticket') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
@@ -158,6 +192,12 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View your submitted tickets</p>
                             </div>
                         </a>
+                        <a href="{{ route('managerticketoverview') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Overview</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View all tickets</p>
+                            </d
+
                     @endif
                     @if($roleId == config('roles.FINANCE_ANALYST'))
                         <a href="{{ route('show-ticket') }}" class="block">
@@ -189,15 +229,42 @@
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Your profile</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View your profile information</p>
                             </div>
-                        </a> 
+                        </a>
 
+                        <a href="{{ route('viewAllMeters') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">All meters dashboard</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View all meters to be read</p>
+                            </div>
+                        </a>
+
+                        <a href="{{ route('enter_index_employee') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Enter index values</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Enter index values</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('enter_index_paper') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Enter index values - paper</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Enter index values for customers who send in through paper</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('Meter_History') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Meter History</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View meter history and enter index value as customer</p>
+                            </div>
+                        </a> 
+                        </div>
+                        
 
                         @include('intranet.employeeIntranet');
 
                         @if($teamName == 'HR')
                             @include('chatbot.chatbotEmployeeHR');
                         
-                        @elseif($teamName == 'Customer service')rolesteams
+                        @elseif($teamName == 'Customer service')
                             <a href="{{ route('customerGridView') }}" class="block">
                                 <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                     <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Customer Overview</span>
@@ -222,6 +289,16 @@
 
                         @include('notifications.notifications');
                     @endif
+
+                    @if($roleId == config('roles.CUSTOMER_SERVICE'))
+                        <a href="{{ route('ticket_dashboard') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket dashboard</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View everything about the tickets</p>
+                            </div>
+                        </a>
+                    @endif
+
                     @if($roleId == config('roles.CUSTOMER'))
                         <a href="{{ route('customer.invoiceStatus') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
@@ -235,6 +312,21 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View your contract overview</p>
                             </div>
                         </a>
+
+                        <a href="{{ route('ticket_overview') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Overview</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View your tickets</p>
+                            </div>
+                        </a>
+                        
+                        <a href="{{ route('Meter_History') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Meter History</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View meter history and enter index value as customer</p>
+                            </div>
+                        </a> 
+
                         @include('chatbot.chatbot');
                     @endif
                     @if($roleId == config('roles.CUSTOMER_SERVICE'))
