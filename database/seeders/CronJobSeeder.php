@@ -31,6 +31,22 @@ class CronJobSeeder extends Seeder
                 'log_level' => 1,
             ],
             [
+                'name' => 'EnterIndexCustomerJob',
+                'interval' => 'daily',
+                'scheduled_day' => 15,
+                'scheduled_month' => null,
+                'scheduled_time' => '10:00:00',
+                'log_level' => 1,
+            ],
+            [
+                'name' => 'MoveOutJob',
+                'interval' => 'daily',
+                'scheduled_day' => null,
+                'scheduled_month' => null,
+                'scheduled_time' => '10:00:00',
+                'log_level' => 1,
+            ],
+            [
                 'name' => 'AnnualInvoiceJob',
                 'interval' => 'yearly',
                 'scheduled_day' => 15,
