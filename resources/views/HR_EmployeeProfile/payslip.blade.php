@@ -1,3 +1,4 @@
+<x-app-layout>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,9 +12,10 @@
 
 </head>
 
-<body class="body">
-    <div class="container">
+<body class="body" style="height: 100%">
+    <div class="container" style="margin-top: 30px">
         @include('payslipView')
         <a style="margin-left: 900px;" href="{{route('downloadPayslip')}}"><button>Download pdf</button></a>
     </div>
 </body>
+</x-app-layout>

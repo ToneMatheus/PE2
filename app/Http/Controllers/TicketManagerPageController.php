@@ -114,7 +114,7 @@ class TicketManagerPageController extends Controller
             ->orderBy('created_at', 'asc')
             ->get();
 
-        $urgencyMapping = [1 => 'Low', 2 => 'Medium', 3 => 'High'];
+        $urgencyMapping = [0 => 'Low', 1 => 'Medium', 2 => 'High'];
         foreach ($tickets as $ticket) {
             if (array_key_exists($ticket->urgency, $urgencyMapping)) {
                 $ticket->urgency = $urgencyMapping[$ticket->urgency];
@@ -134,7 +134,7 @@ class TicketManagerPageController extends Controller
         if ($ticket) {
             $ticket->line = $request->input('line');
 
-            $urgencyMapping = ['Low' => 1, 'Medium' => 2, 'High' => 3];
+            $urgencyMapping = ['Low' => 0, 'Medium' => 1, 'High' => 2];
             $urgencyInput = $request->input('urgency');
 
             if (array_key_exists($urgencyInput, $urgencyMapping)) {

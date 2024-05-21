@@ -33,8 +33,10 @@ class TicketSeeder extends Seeder
                 $ticketData['close_date'] = now()->addDays(rand(1, 10));
                 $ticketData['is_solved'] = rand(0, 1);
                 $ticketData['resolution'] = 'Resolution ' . $i; // set resolution only when status is 'closed'
+                $ticketData['resolution'] = 'Resolution ' . $i; // set resolution only when status is 'closed'
             } else {
                 $ticketData['is_solved'] = 0;
+                $ticketData['resolution'] = ''; // set resolution to empty when status is not 'closed'
                 $ticketData['resolution'] = ''; // set resolution to empty when status is not 'closed'
             }
 
