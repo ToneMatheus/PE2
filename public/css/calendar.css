@@ -3,8 +3,8 @@
   padding: 2px;
   margin: 4px;
   margin-top: 0;
-  color: black;
-  border: 1px solid black;
+  color: white;
+  border: 1px solid white;
 }
 #cal_btns
 {
@@ -86,6 +86,7 @@ th, td
   border-radius: 10px;
   color: white;
   padding-top: 12px;
+  border: solid black 1px;
 }
 
 .square2 
@@ -96,6 +97,7 @@ th, td
   border-radius: 10px;
   color: white;
   padding-top: 12px;
+  border: solid black 1px;
 }
 
 .square3 
@@ -104,6 +106,7 @@ th, td
   width: 50px;
   background-color: pink;
   border-radius: 10px;
+  border: solid black 1px;
 }
 
 .table-container {
@@ -193,7 +196,7 @@ table{
 
 h1, p
 {
-  color: black;
+  color: white;
 }
 
 #div-right input
@@ -220,6 +223,17 @@ h1, p
 
 #myFile1:hover {
   background-color: black; /* Darker green on hover */
+}
+
+#myFile
+{
+  background-color: white;
+  border-radius: 5px;
+}
+
+#reason1
+{
+  color: white;
 }
 
 #people
