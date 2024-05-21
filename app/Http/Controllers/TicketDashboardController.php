@@ -19,7 +19,6 @@ class TicketDashboardController extends Controller
         $tickets = Ticket::whereDoesntHave('employee_Tickets')->where('status', 0)->get();
 
         //haal alle tickets op die gesloten zijn
-        //$tickets_closed = Ticket::with('ticket')->where('status',1)->get();
         $tickets_closed = Ticket::where('status', 1)->get();
         
         //haal alle tickets op die toegewezen zijn aan de ingelogde gebruiker
