@@ -98,8 +98,9 @@ use Illuminate\Notifications\DatabaseNotification;
                     
                     {{-- Notifications --}}
                     @php
+                        $user_id = Auth::id();
                         $role_id = DB::table('user_roles')->where('user_id', Auth::id())->first()->role_id;
-                        $notifications = DatabaseNotification::where('role_id', $role_id)
+                        $ticketNotifications = DatabaseNotification::where('role_id', $role_id)
                             ->where('read_at', null)
                             ->where('data->role_id', $role_id)
                             ->get()
@@ -107,6 +108,13 @@ use Illuminate\Notifications\DatabaseNotification;
                                 preg_match('/#(\d+)/', $notification->data['message'], $matches);
                                 return $matches[1] ?? 0;
                             });
+                        
+                        $userNotifications = DatabaseNotification::where('notifiable_type', 'App\Models\User')
+                                ->where('notifiable_id', $user_id)
+                                ->where('read_at', null)
+                                ->get();
+                        
+                    $notifications = $ticketNotifications->concat($userNotifications);
                     @endphp
 
                     <x-dropdown align="right" width="48">
