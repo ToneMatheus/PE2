@@ -225,7 +225,7 @@ class UserSeeder extends Seeder
                 'changed_default' => 1,
                 'IBAN' => generateIBAN(),
                 'is_active' => 1,
-                'is_landlord' => 0,
+                'is_landlord' => 1,
                 'index_method' => 'website'
             ],
             [

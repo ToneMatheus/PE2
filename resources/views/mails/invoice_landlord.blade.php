@@ -7,7 +7,7 @@
     <title>Two weeks missing warning</title>
 </head>
 <body>
-    <p>Hello,</p>
+    <p>Hello, {{$landlord->first_name}} {{$landlord->last_name}}</p>
 
     <p>You are receiving this invoice because you are registered as the landlord for the address  {{ $user->street }} {{ $user->number }}/{{ $user->box }}, {{ $user->postal_code }} {{ $user->city }}.
     <p>Since there was a gap between the end-of-contract date for your previous tenant, and the start-of-contract date for your
