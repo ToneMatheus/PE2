@@ -80,7 +80,7 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::get('/cron-jobs/history', [CronJobController::class, 'showHistory'])->name('job.history');
     Route::get('/cron-jobs/get-job-runs', [CronJobController::class, 'getJobRuns'])->name('get.job.runs');
     Route::get('/cron-jobs/get-job-run-logs', [CronJobController::class, 'getJobRunLogs'])->name('get.job.run.logs');
-    Route::get('/ticket/Flowchart', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket');
+    Route::get('/ticket/Flowchart2', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket2');
 
     
 });
