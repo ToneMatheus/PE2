@@ -42,18 +42,33 @@
     $password = '';
     $database = 'energy_supplier';
 
+    $credit2 = 0;
+
     $link = mysqli_connect($host, $user, $password, $database) or die("Error: no connection can be made to the host");
     mysqli_select_db($link, $database) or die("Error: the database could not be opened");
 
     // check balance of the user.
     // $queryGetEmpId = "SELECT `employee_profile_id` FROM `users` WHERE `` "
-    $query = "SELECT * FROM `balances` WHERE `employee_profile_id` = $user_id";
+    $query = "SELECT * FROM `balances` WHERE `employee_profile_id` = $user_id AND `holiday_type_id` = 1";
     $result = $link->query($query) or die("Error: an error has occurred while executing the query.");
    
     while ($row = mysqli_fetch_array($result))
     {
-        $credit = $row['yearly_holiday_credit'];
+        if(!isset($_SESSION['credit']))
+            $_SESSION['credit'] = $row['yearly_holiday_credit'];
         
+        $credit = $_SESSION['credit'];
+    }
+
+    $queryy = "SELECT * FROM `balances` WHERE `employee_profile_id` = $user_id AND `holiday_type_id` = 2";
+    $resultt = $link->query($queryy) or die("Error: an error has occurred while executing the query.");
+   
+    while ($row = mysqli_fetch_array($resultt))
+    {
+        if(!isset($_SESSION['credit2']))
+            $_SESSION['credit2'] = $row['yearly_holiday_credit'];
+        
+        $credit2 = $_SESSION['credit2'];
     }
 
     $queryU = "SELECT * FROM `users`";
@@ -418,13 +433,13 @@
             <tr>
                 <td id='selection'>
                     <p>Vacation</p>
-                    <button id='btn' onclick='addDate(`green`)'><div class='square'></div>
+                    <button id='btn' onclick='addDate(`green`)'><div id='update-me' class='square'>$credit</div></button>
                 </td>
             </tr>
             <tr>
                 <td id='selection'>
                     <p>Parental Leave</p>
-                    <button id='btn' onclick='addDate2()'><div class='square2'></div>
+                    <button id='btn' onclick='addDate(`purple`)'><div id='update-me2' class='square2'>$credit2</div>
                 </td>
             </tr>
             <tr>
@@ -443,7 +458,8 @@
         <div >
             <p id="errorMsg">The date that you are asking is in the past.</p>
             <p id="scsMsg">The request has been send.</p>
-            <p id="errorCredit">Sorry you don't have enough credit. You only have <?php echo $credit; ?> more days.</p>
+            <!-- <p id="errorCredit">Sorry you don't have enough credit.You only have <?php /*echo $credit; */?> more days.</p> -->
+            <p id="errorCredit">Sorry you don't have enough credit.</p>
         </div>
         <br>
         <div class="sidebar">
@@ -591,6 +607,10 @@
                            
                         clr1 = clr_var;
                     }
+                    else if(clr_var == 'green')
+                    {
+                        selected.classList.add("added2");
+                    }
                     
                     //$color = 'green';
                     clr_str = clr_var + '=';
@@ -631,6 +651,11 @@
                 div2.style.visibility='hidden'
                 selected.classList.add("added3");
             }
+            else if(clr_var == 'purple')
+            {
+                div2.style.visibility='hidden'
+                selected.classList.add("added2");
+            }
             
         }
 
@@ -643,6 +668,7 @@
             div4.style.visibility='hidden';
             var len_selectedElements = selectedElements.length;
             
+            
 
             for (var i = 0; i < selectedElements.length; i++) 
             {
@@ -651,6 +677,9 @@
                 {
                     if(clr_var == 'green')
                     {
+                        var newId = <?php echo $credit; ?>;
+                        var elem = document.getElementById('update-me');
+
                         if(selected.classList.contains('prev-month') || selected.classList.contains('req-day') || selected.classList.contains('req-Acpt-day'))
                         {
 
@@ -667,6 +696,8 @@
                             {
                                 sendingDate(i, selected, len_selectedElements, clr_var);
                             }
+                            newId -= selectedElements.length;
+                            //console.log(userCredit);
                         }
                     }
                     else if(clr_var == 'pink')
@@ -689,7 +720,71 @@
                                 sendingDate(i, selected, len_selectedElements, clr_var);
                             }
                         }
-                    }  
+                    }
+                    else if(clr_var == 'purple')
+                    {
+                        var newId = <?php echo $credit2; ?>;
+                        var elem = document.getElementById('update-me2');
+
+                        if(selected.classList.contains('prev-month') || selected.classList.contains('req-day') || selected.classList.contains('req-Acpt-day'))
+                        {
+
+                        }
+                        else if (selected.classList.contains('added2'))
+                        {
+                            selected.classList.remove("added2");
+                        }
+                        else
+                        {
+                            //TODO: check enough sickdays 
+                            checkingDays(i, selected, len_selectedElements, clr_var);
+
+                            if(i == selectedElements.length -1)
+                            {
+                                sendingDate(i, selected, len_selectedElements, clr_var);
+                            }
+                        }
+                        newId -= selectedElements.length;
+                        if(newId < 0)
+                            div4.style.visibility='visible';
+                    }
+                    
+                    if(clr_var == 'green' || clr_var == 'purple' && newId > 0)
+                    {
+
+                    
+                        elem.innerHTML = newId;
+                        var xhr = new XMLHttpRequest();
+                        if (xhr == null) 
+                        {
+                            alert("Browser does not support HTTP Request");
+                        } 
+                        else 
+                        {
+                            var url = "{{ asset('php/calendarRequest.php') }}";
+                            if(clr_var == 'green')
+                            {
+                                var params = "creditGreen=" + encodeURIComponent(newId);
+                            }
+                            else if(clr_var == 'purple')
+                            {
+                                var params = "creditPurple=" + encodeURIComponent(newId);
+                            }
+                            
+                            //params += "color=" + $color;
+                            xhr.open("POST", url, true);
+                            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState == 4 && xhr.status == 200) 
+                                {
+                                    // Handle the response from the server if needed
+                                    console.log(xhr.responseText);
+                                }
+                            };
+                            xhr.send(params);
+                        }
+                    }
+                    
                     selected.classList.remove("selected");
                     
                 }
@@ -910,6 +1005,7 @@
         function btnClicked()
         {
             var cre = "<?php echo $credit; ?>";
+            var cre2 = "<?php echo $credit2; ?>";
             var emilyHR = <?php if($user_id == 4){echo 1;}else{echo 0;}?>;
             var userId1 = <?php echo $user_id; ?>;
             const textarea = document.getElementById('reason');
@@ -929,6 +1025,11 @@
                 div4.style.visibility='visible';
                 console.log('bro, what are you doing??');
             }
+            // else if(numGr > cre2)
+            // {
+            //     div4.style.visibility='visible';
+            //     console.log('bro, what are you doing??');
+            // }
             else
             {
                 var div3 = document.getElementById('scsMsg');
@@ -984,14 +1085,14 @@
                 };
                 xhr.send(params);
             }
-
-            window.location.href = "{{route('request')}}";
+            
+            window.location.href = "{{ route('request') }}";
         }
 
         window.addEventListener("load", function() {
-        if (window.sessionStorage.getItem("reloaded")) {
-            // page was reloaded, do something
-        }
+        // if (window.sessionStorage.getItem("reloaded")) {
+        //     // page was reloaded, do something
+        // }
         window.sessionStorage.setItem("reloaded", true);
         });
 
