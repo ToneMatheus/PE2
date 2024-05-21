@@ -373,7 +373,7 @@ class SmartInvoiceRunJob implements ShouldQueue
         Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
         //Send email with PDF attachment
-        $this->sendMailInBackgroundWithPDF("ToCustomer@mail.com", SmartInvoiceMail::class, $mailParams, 'Invoices.smart_invoice_pdf', $pdfData, $invoice->id);
+        $this->sendMailInBackgroundWithPDF($user->email, SmartInvoiceMail::class, $mailParams, 'Invoices.smart_invoice_pdf', $pdfData, $invoice->id);
 
     }
 }

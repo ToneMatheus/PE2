@@ -20,6 +20,8 @@ class Customer_Address extends Model
         'address_id'
     ];
 
+    // public $timestamps = false;
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

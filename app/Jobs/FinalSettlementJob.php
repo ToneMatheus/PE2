@@ -46,8 +46,9 @@ class FinalSettlementJob implements ShouldQueue
     protected $ccID;
     protected $userID;
 
-    public function __construct($meterID)
+    public function __construct($meterID, $logLevel = null)
     {
+        $this->LoggingLevel = $logLevel;
         $this->now = config('app.now');
         $this->month = $this->now->format('m');
         $this->year = $this->now->format('Y');

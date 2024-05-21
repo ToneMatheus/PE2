@@ -19,9 +19,9 @@ class TemplateJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($LogLevel = null)
     {
-
+        $this->LoggingLevel = $LogLevel;
     }
 
     /**
@@ -34,20 +34,20 @@ class TemplateJob implements ShouldQueue
         try {
             // Log that the job execution has started
             $this->jobStart();
-
-            $messages = [
-                "this is an info message",
-                "this is a warning",
-                "this is a critical error",
-                "oh no i did big oopsie"
-            ];
             
-            for ($i = 0; $i < 1000; $i++) {
-                $message = $messages[array_rand($messages)];
-                $this->logInfo(null, $message);
-            }
+            for ($i = 0; $i < 20; $i++) {
+                $longMessage = "This is a really long detailed message. ";
+                $longMessage .= "It contains additional information about the current state ";
+                $longMessage .= "of the application or the error encountered. ";
 
-            $this->jobCompletion("Succesfully completed this job");
+                $this->logInfo(null, "Info message", $longMessage);
+                $this->logDebug(null, "Debug message", $longMessage);
+                $this->logCritical(null, "Critical error message", $longMessage);
+                $this->logWarning(null, "Warning message", $longMessage);
+                $this->logError(null, "Error message", $longMessage);
+            }
+        
+            $this->jobCompletion("Successfully completed this job");
         } catch (\Throwable $e) {
             // Catch any throwable errors, including errors and exceptions
             $this->jobException($e->getMessage());

@@ -9,13 +9,13 @@
     <title>Managers page</title>
 
     @php
-        $managers = DB::select("select * from users left join user_roles on user_roles.user_id = users.id left join roles on roles.id = user_roles.role_id where roles.role_name = \"Manager\"");
+        $managers = DB::select("select * from team_members left join teams on team_members.team_id = teams.id left join users on team_members.user_id = users.id where team_members.is_manager = 1");
     
         echo("<h1>Managers</h1>");
 
         foreach($managers as $manager){
             echo("<div>");
-                echo("<a href=\"" . route('managerPage', ['manager_id' => $manager->user_id]) . "\">$manager->first_name</a>");
+                echo("<a href=\"" . route('managerPage', ['manager_id' => $manager->user_id]) . "\" style=\"font-size: 25px\">$manager->first_name $manager->last_name manages $manager->team_name</a>");
             echo("</div>");
         }
     @endphp

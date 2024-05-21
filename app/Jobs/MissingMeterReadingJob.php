@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\JobCompleted;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,19 +13,20 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\MissingMeterReading;
 use App\Models\User;
 use App\Models\Meter;
-use Illuminate\Support\Facades\Log;
-use App\Traits\jobLoggerTrait;
 use App\Traits\cronJobTrait;
+use Illuminate\Support\Facades\Log;
 
 class MissingMeterReadingJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels,  cronJobTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
 
     protected $customeruID;
     protected $customermID;
 
-    public function __construct($customeruID, $customermID)
+    public function __construct($jobRunId, $customeruID, $customermID, $logLevel = null)
     {
+        $this->JobRunId = $jobRunId;
+        $this->LoggingLevel = $logLevel;
         $this->customeruID = $customeruID;
         $this->customermID = $customermID;
     }
@@ -45,7 +47,7 @@ class MissingMeterReadingJob implements ShouldQueue
             Meter::where('id', $this->customermID)->update(['expecting_reading' => 1]);
 
             if ($user) {
-                $this->sendMailInBackground("ToCustomer@mail.com", MissingMeterReading::class, [$user]);
+                $this->sendMailInBackground($user->email, MissingMeterReading::class, [$user]);
                 $this->jobCompletion("Mail sent for user with ID: {$user->id}");
             } else {
                 Log::error('User not found for MeterReadingReminderJob');
@@ -54,5 +56,6 @@ class MissingMeterReadingJob implements ShouldQueue
         } catch (\Exception $e) {
             Log::error("Error occurred while processing MeterReadingReminderJob: {$e->getMessage()}");
         }
+        event(new JobCompleted($this->JobRunId, $this->__getShortClassName()));
     }
 }

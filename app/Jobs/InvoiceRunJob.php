@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\JobDispatched;
 use App\Http\Controllers\EstimationController;
 use App\Models\{
     User, 
@@ -42,8 +43,9 @@ class InvoiceRunJob implements ShouldQueue
     protected $year;
     protected $month;
 
-    public function __construct()
+    public function __construct($logLevel = null)
     {
+        $this->LoggingLevel = $logLevel;
         $this->now = config('app.now');
         $this->month = $this->now->format('m');
         $this->year = $this->now->format('Y');
@@ -137,7 +139,7 @@ class InvoiceRunJob implements ShouldQueue
                     $this->generateYearlyInvoice($customer, $lastInvoiceDate, $now->copy());
                     Meter::where('id', '=', $customer->mID)
                     ->update(['expecting_reading' => 0]);
-                }
+                }//Check if needs an invoice now
                 elseif($invoiceDate->copy() == $now){
                     $this->generateYearlyInvoice($customer, $lastInvoiceDate, $invoiceDate->copy()->addYear());
                 }
@@ -342,7 +344,7 @@ class InvoiceRunJob implements ShouldQueue
         Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
         //Send email with PDF attachment
-        $this->sendMailInBackgroundWithPDF("ToCustomer@mail.com", AnnualInvoiceMail::class, $mailParams, 'Invoices.annual_invoice_pdf', $pdfData, $invoice->id);
+        $this->sendMailInBackgroundWithPDF($user->email, AnnualInvoiceMail::class, $mailParams, 'Invoices.annual_invoice_pdf', $pdfData, $invoice->id);
 
     }
 
@@ -582,7 +584,7 @@ class InvoiceRunJob implements ShouldQueue
         Log::info("QR code generated with link: " . $this->domain . "/pay/" . $invoice->id . "/" . $hash);
 
         //Send email with PDF attachment
-        $this->sendMailInBackgroundWithPDF("ToCustomer@mail.com", MonthlyInvoiceMail::class, $mailParams, 'Invoices.monthly_invoice_pdf', $pdfData, $invoice->id);
+        $this->sendMailInBackgroundWithPDF($user->email, MonthlyInvoiceMail::class, $mailParams, 'Invoices.monthly_invoice_pdf', $pdfData, $invoice->id);
 
     }
 }

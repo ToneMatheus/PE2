@@ -26,8 +26,9 @@ class ValidationJob implements ShouldQueue
     protected $year;
     protected $month;
 
-    public function __construct()
+    public function __construct($logLevel = null)
     {
+        $this->LoggingLevel = $logLevel;
         $this->now = config('app.now');
         $this->month = $this->now->format('m');
         $this->year = $this->now->format('Y');
