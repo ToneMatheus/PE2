@@ -44,10 +44,11 @@ class Kernel extends ConsoleKernel
         }
 
         $schedule->call(function () {
-            $tickets = Ticket::where('created_at', '<=', now()->subHours(24))->get();
+            $tickets = Ticket::where('created_at', '<=', now()->subMinutes(10))->get();
+            $roleId = 2; // ID of the role to notify EMPLOYEE
         
             foreach ($tickets as $ticket) {
-                $ticket->notify(new TicketOpenNotification($ticket));
+                $ticket->notify(new TicketOpenNotification($ticket, $roleId));
             }
         })->daily();
     }

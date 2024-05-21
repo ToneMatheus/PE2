@@ -33,7 +33,7 @@ use Illuminate\Support\Facades\Redirect;
 
 use App\Mail\ConfirmationMailRegistration;
 
-use App\Notifications\NewUserNotification;
+// use App\Notifications\NewUserNotification;
 
 // CH kijk als je paswoord niet overeenkomt met het comfirm dan wordt de mail wel opgeslagen.
 

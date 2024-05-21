@@ -6,22 +6,27 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\User;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 
 class TicketOpenNotification extends Notification
 {
     use Queueable;
 
+
     protected $ticket;
+    protected $roleId;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($ticket)
+    public function __construct($ticket, $roleId)
     {
         //
         $this->ticket = $ticket;
+        $this->roleId = $roleId;
     }
 
     /**
@@ -32,7 +37,7 @@ class TicketOpenNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['database'];
     }
 
     /**
@@ -58,8 +63,10 @@ class TicketOpenNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'message' => 'The ticket #' . $this->ticket->id . ' has been open for a set amount of time.',
+            'message' => 'The ticket #' . $this->ticket->id . ' has been open for a while. Please take a look at it.' . "<br>Issue: " . $this->ticket->issue,
             'ticket_id' => $this->ticket->id,
+            'role_id' => $this->roleId,
+            'notifiable_id' => $this->roleId,
         ];
     }
 }
