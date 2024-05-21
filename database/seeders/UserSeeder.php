@@ -52,7 +52,10 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
             [   //Employee
                 'id' => 2,
@@ -68,7 +71,10 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
             [   //Employee who's Customer
                 'id' => 3,
@@ -84,7 +90,10 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
             [   //Commercial Customer
                 'id' => 4,
@@ -100,7 +109,10 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
             [   //Residential Customer
                 'id' => 5,
@@ -116,9 +128,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
-            [   
+            [
                 'id' => 6,
                 'username' => 'marie',
                 'first_name' => 'Marie',
@@ -132,9 +147,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
-            [   
+            [
                 'id' => 7,
                 'username' => 'mark',
                 'first_name' => 'Mark',
@@ -148,9 +166,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
-            [   
+            [
                 'id' => 8,
                 'username' => 'rob',
                 'first_name' => 'Rob',
@@ -164,9 +185,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
-            [   
+            [
                 'id' => 9,
                 'username' => 'jan',
                 'first_name' => 'Jan',
@@ -180,9 +204,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
-            [   
+            [
                 'id' => 10,
                 'username' => 'joseph',
                 'first_name' => 'Joseph',
@@ -196,9 +223,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
-            [   
+            [
                 'id' => 11,
                 'username' => 'jimmy',
                 'first_name' => 'Jimmy',
@@ -212,9 +242,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
-            [   
+            [
                 'id' => 12,
                 'username' => 'james',
                 'first_name' => 'James',
@@ -228,14 +261,17 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
-            [   
+            [
                 'id' => 13,
-                'username' => 'jane',
-                'first_name' => 'Jane',
+                'username' => 'jeraldine',
+                'first_name' => 'Jeraldine',
                 'last_name' => 'Doe',
-                'password' => Hash::make('jane'),
+                'password' => Hash::make('jeraldine'),
                 'employee_profile_id' => 13,
                 'is_company' => 0,
                 'company_name' => null,
@@ -244,9 +280,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
-            [   
+            [
                 'id' => 14,
                 'username' => 'pearl',
                 'first_name' => 'Pearl',
@@ -260,9 +299,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
-            [   
+            [
                 'id' => 15,
                 'username' => 'rose',
                 'first_name' => 'Rose',
@@ -276,9 +318,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'paper'
             ],
-            [   
+            [
                 'id' => 16,
                 'username' => 'carry',
                 'first_name' => 'Carry',
@@ -292,9 +337,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'paper'
             ],
-            [   
+            [
                 'id' => 17,
                 'username' => 'homer',
                 'first_name' => 'Homer',
@@ -308,9 +356,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
-            [   
+            [
                 'id' => 18,
                 'username' => 'linda',
                 'first_name' => 'Linda',
@@ -324,9 +375,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
-            [   
+            [
                 'id' => 19,
                 'username' => 'lesly',
                 'first_name' => 'Lesly',
@@ -340,9 +394,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 0,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
-            [   
+            [
                 'id' => 20,
                 'username' => 'louise',
                 'first_name' => 'Louise',
@@ -356,8 +413,12 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 0,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
+            
             [
                 'id' => 1000,
                 'username' => 'undefined',
@@ -372,7 +433,10 @@ class UserSeeder extends Seeder
                 'birth_date' => generateDate(),
                 'nationality' => 'Dutch',
                 'changed_default' => 1,
-                'IBAN' => generateIBAN()
+                'IBAN' => generateIBAN(),
+                'is_active' => 1,
+                'is_landlord' => 0,
+                'index_method' => 'website'
             ],
         ]);
     }
