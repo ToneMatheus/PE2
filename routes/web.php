@@ -107,6 +107,19 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::put('/customer/{id}', [CustomerGridViewController::class, 'update'])->name('customer.update');
     Route::post('/customer/{id}/{oldCpID}/{cID}/{mID}', [CustomerGridViewController::class, 'updateContractProduct'])->name('customer.contractProduct');
     Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
+
+    //All routes for custom credit notes
+    Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
+    Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
+    Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
+    
+    //All routes for credit notes on invoice refunds
+    Route::get('/customer/invoice/search', [CreditNoteController::class, 'show'])->name('credit-notes.search');
+    Route::post('/customer/invoice/search', [CreditNoteController::class, 'search'])->name('credit-notes.search');
+    Route::post('/refund', [CreditNoteController::class, 'refund']);
+
+    //Route for statistics
+    Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
@@ -315,15 +328,6 @@ Route::get('/holidays', [HolidayController::class, 'index']);
 Route::controller(InvoiceController::class)->group(function () {
 Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');});
 Route::get('/invoices/{id}/download', [InvoiceController::class, 'download'])->name('invoice.download');
-//All routes for credit notes
-Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
-Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
-Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
-
-Route::get('/customer/invoice/search', [CreditNoteController::class, 'show']);
-Route::post('/customer/invoice/search', [CreditNoteController::class, 'search'])->name('credit-notes.search');
-
-Route::post('/refund', [CreditNoteController::class, 'refund']);
 
 //Customer Portal
 Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
@@ -357,6 +361,3 @@ Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController:
 Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
 Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
-
-//Statistics route
-Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
