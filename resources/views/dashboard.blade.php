@@ -53,6 +53,24 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View invoice matchings of external payments</p>
                             </div>
                         </a>
+                        <a href="{{ route('credit-notes') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Custom Credit Notes</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Make a custom credit note line per line. </p>
+                            </div>
+                        </a>
+                        <a href="{{ route('search') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Refund Credit Notes</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Make a credit note by refunding an invoice line.</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('statistics') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Statistics</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">An overview of useful company information.</p>
+                            </div>
+                        </a>
                     @endif
                     @if($roleId == config('roles.BOSS'))
                         <a href="{{ route('submitted-ticket') }}" class="block">
