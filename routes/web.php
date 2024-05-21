@@ -44,6 +44,7 @@ use App\Http\Controllers\GasElectricityController;
 use App\Http\Controllers\PayoutsController;
 use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
+use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\ManualInvoiceController;
 use App\Http\Controllers\NewEmployeeController;
 use App\Http\Controllers\holidayRequest;
@@ -116,6 +117,17 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::post('/tariff/edit/{pID}/{tID}', [TariffController::class, 'editTariff'])->name('tariff.edit');
 
     Route::get('/tariff/products/{type}', [TariffController::class, 'getProductByType']);
+
+    // addinvoiceline
+    Route::get('/addInvoiceExtraForm', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('addInvoiceExtraForm');
+    Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
+
+    //customer
+    Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
+    Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
+    Route::put('/customer/{id}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+    Route::post('/customer/{id}/{oldCpID}/{cID}/{mID}', [CustomerGridViewController::class, 'updateContractProduct'])->name('customer.contractProduct');
+    Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
@@ -341,11 +353,7 @@ Route::get('/roleOverview', function () {
 
 
 
-Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
-Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
-Route::put('/customer/{id}', [CustomerGridViewController::class, 'update'])->name('customer.update');
-Route::post('/customer/{id}/{oldCpID}/{cID}/{mID}', [CustomerGridViewController::class, 'updateContractProduct'])->name('customer.contractProduct');
-Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
+
 
 Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
 
@@ -404,14 +412,14 @@ Route::post('/EstimationGuestForm', [EstimationController::class, 'ShowGuestEner
 Route::get('/CreateInvoice', [EstimationController::class, 'showButton'])->name('EstimationPage');
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
 
-Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
 
 
 
-//test route
-/*Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
-Route::get('/addInvoiceExtraForm', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('addInvoiceExtraForm');
-Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');*/
+
+// //test route
+// Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
+
+// Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');
 
 
 //Customer Portal
@@ -419,3 +427,6 @@ Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController:
 Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
 Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
+
+//Statistics route
+Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
