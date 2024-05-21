@@ -95,6 +95,17 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::post('/pay', [PaymentController::class, 'add'])->name('payment.add');
     Route::get('/invoice-matching', [InvoiceMatchingController::class, 'startMatching'])->name("invoice_matching");
     Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');
+
+    // addinvoiceline
+    Route::get('/addInvoiceExtraForm', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('addInvoiceExtraForm');
+    Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
+
+    //customer
+    Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
+    Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
+    Route::put('/customer/{id}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+    Route::post('/customer/{id}/{oldCpID}/{cID}/{mID}', [CustomerGridViewController::class, 'updateContractProduct'])->name('customer.contractProduct');
+    Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
@@ -271,11 +282,7 @@ Route::get('/roleOverview', function () {
 
 
 
-Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
-Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
-Route::put('/customer/{id}', [CustomerGridViewController::class, 'update'])->name('customer.update');
-Route::post('/customer/{id}/{oldCpID}/{cID}/{mID}', [CustomerGridViewController::class, 'updateContractProduct'])->name('customer.contractProduct');
-Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
+
 
 Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
 
@@ -334,14 +341,14 @@ Route::post('/EstimationGuestForm', [EstimationController::class, 'ShowGuestEner
 Route::get('/CreateInvoice', [EstimationController::class, 'showButton'])->name('EstimationPage');
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
 
-Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
 
 
 
-//test route
-/*Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
-Route::get('/addInvoiceExtraForm', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('addInvoiceExtraForm');
-Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');*/
+
+// //test route
+// Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
+
+// Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');
 
 
 //Customer Portal
