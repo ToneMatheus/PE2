@@ -9,8 +9,14 @@
 
                         //selecting each user's team
                         $team = DB::select("select team_id from team_members where user_id = " . Auth::id());
-                        $teamName = DB::select("select team_name from teams where id = " . $team[0]->team_id);
-                        $teamName = $teamName[0]->team_name;
+
+                        if (isset($team[0])) {
+                            $teamName = DB::select("select team_name from teams where id = " . $team[0]->team_id);
+                            $teamName = $teamName[0]->team_name;
+                        } else {
+                            // Handle the case where the array key doesn't exist
+                            $teamName = null;
+                        }
                     @endphp 
 
                     {{-- @if($roleId != config('roles.CUSTOMER') && !$changedDefault)
