@@ -11,8 +11,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\DB;
-use App\Models\User;
-use App\Notifications\TicketOpenNotification;
 
 class TicketController extends Controller
 {

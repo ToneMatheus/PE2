@@ -1,7 +1,5 @@
 @php
 use Illuminate\Support\Facades\DB;
-use App\Models\Notification;
-use Illuminate\Notifications\DatabaseNotification;
 @endphp
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
     <!-- Primary Navigation Menu -->
@@ -38,8 +36,6 @@ use Illuminate\Notifications\DatabaseNotification;
                         <a href="{{ route('faq') }}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150 ml-3">
                             {{ __('FAQ') }}
                         </a>
-
-                        {{-- Profile --}}
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
                                 <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
@@ -95,55 +91,6 @@ use Illuminate\Notifications\DatabaseNotification;
                             </form>
                         </x-slot>
                     </x-dropdown>
-                    
-                    {{-- Notifications --}}
-                    @php
-                        $user_id = Auth::id();
-                        $role_id = DB::table('user_roles')->where('user_id', Auth::id())->first()->role_id;
-                        $ticketNotifications = DatabaseNotification::where('role_id', $role_id)
-                            ->where('read_at', null)
-                            ->where('data->role_id', $role_id)
-                            ->get()
-                            ->sortBy(function ($notification) {
-                                preg_match('/#(\d+)/', $notification->data['message'], $matches);
-                                return $matches[1] ?? 0;
-                            });
-                        
-                        $userNotifications = DatabaseNotification::where('notifiable_type', 'App\Models\User')
-                                ->where('notifiable_id', $user_id)
-                                ->where('read_at', null)
-                                ->get();
-                        
-                    $notifications = $ticketNotifications->concat($userNotifications);
-                    @endphp
-
-                    <x-dropdown align="right" width="48">
-                        <x-slot name="trigger">
-                            <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                                <div>&#128276;</div>
-                                @if(!$notifications->isEmpty())
-                                <span class="absolute top-0 right-0 h-3 w-3 bg-red-500 rounded-full"></span>
-                                @endif
-                            </button>
-                        </x-slot>
-
-                        <x-slot name="content">
-                            <div class="max-h-96 overflow-auto">
-                                @if($notifications->isEmpty())
-                                    <div class="px-4 py-2 text-sm text-gray-700 dark:text-white">
-                                        No new notifications
-                                    </div>
-                                @else
-                                    @foreach($notifications as $notification)
-                                        <x-dropdown-link :href="route('notification.read', $notification->id)" class="dark:text-white">
-                                            {!! $notification->data['message'] !!}
-                                        </x-dropdown-link>
-                                        <hr class="my-2">
-                                    @endforeach
-                                @endif
-                            </div>
-                        </x-slot>
-                    </x-dropdown>   
                 </div>
             @else
             <div class="hidden sm:flex sm:items-center sm:ml-6">
