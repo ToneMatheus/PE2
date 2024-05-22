@@ -93,8 +93,8 @@ class MeterController extends Controller
                     ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
                     ->join('meters','meter_addresses.meter_id','=','meters.id')
                     ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
-                    ->where('meter_reader_schedules.reading_date','=', $today)
-                    ->where('meter_reader_schedules.employee_profile_id','=',1)
+                    ->where('meter_reader_schedules.reading_date','=', config('app.metersDate'))
+                    ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
                     ->where('meter_reader_schedules.status','=','unread')
                     ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN')
                     ->get();

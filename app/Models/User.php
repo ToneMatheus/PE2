@@ -115,4 +115,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Employee_Profile::class);
     }
+
+    public function unreadNotificationsForRole($role_id)
+{
+    return $this->unreadNotifications->where('data.role_id', $role_id);
+}
 }

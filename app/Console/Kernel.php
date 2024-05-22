@@ -7,6 +7,8 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Jobs\MeterAllocation;
 use App\Jobs\MeterSchedule;
 use App\Models\CronJob;
+use App\Models\Ticket;
+use App\Notifications\TicketOpenNotification;
 
 class Kernel extends ConsoleKernel
 {
@@ -40,6 +42,17 @@ class Kernel extends ConsoleKernel
                 }
             }
         }
+
+        $schedule->call(function () {
+            $tickets = Ticket::where('created_at', '<=', now()->subDays(2))
+                             ->where('status', '!=', 1)
+                             ->get();
+            $roleId = 2; // ID of the role to notify EMPLOYEE
+        
+            foreach ($tickets as $ticket) {
+                $ticket->notify(new TicketOpenNotification($ticket, $roleId));
+            }
+        })->twiceDaily(0, 12);
     }
 
     protected function meter_allocation(Schedule $schedule): void
@@ -61,4 +74,6 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
+
+    
 }
