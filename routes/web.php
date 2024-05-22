@@ -15,6 +15,7 @@ use App\Http\Controllers\CustomerGridViewController;
 use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\UserEditController;
 
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
@@ -226,6 +227,13 @@ Route::get('/tickets/{id}/edit', [EditController::class, 'index'])->name('edit')
 Route::put('/tickets/{id}', [EditController::class, 'update'])->name('edit.update');
 
 Route::get('/details/{id}', [DetailsController::class, 'index'])->name('details');
+
+// Route for showing the edit form
+Route::get('/UserEdit/{id}/edit', [UserEditController::class, 'index'])->name('UserEdit');
+
+// Route for updating the ticket
+Route::put('/UserEdit/{id}', [UserEditController::class, 'update'])->name('UserEdit.update');
+
 
 // routes/web.php
 
