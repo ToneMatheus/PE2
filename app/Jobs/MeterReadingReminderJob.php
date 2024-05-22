@@ -14,6 +14,7 @@ use App\Mail\MeterReadingReminder;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use App\Traits\cronJobTrait;
+use Illuminate\Support\Facades\Crypt;
 
 class MeterReadingReminderJob implements ShouldQueue
 {
@@ -22,9 +23,8 @@ class MeterReadingReminderJob implements ShouldQueue
     protected $customeruID;
     protected $customermID;
 
-    public function __construct($jobRunId, $customeruID, $customermID, $logLevel = null)
+    public function __construct($customeruID, $customermID, $logLevel = null)
     {   
-        $this->JobRunId = $jobRunId;
         $this->LoggingLevel = $logLevel;
         $this->customeruID = $customeruID;
         $this->customermID = $customermID;
@@ -43,8 +43,17 @@ class MeterReadingReminderJob implements ShouldQueue
                 ->where('m.id', '=',  $this->customermID)
                 ->first();
 
+            $a = 5897;
+            $b = 95471;
+            $c = 42353;
+            $tempUserID = (($user->id * $a) / $b) + $c;
+            Log::info("tempuserID = ", ['tempuserID' => $tempUserID]);
+
+            $encryptedTempUserId = Crypt::encrypt($tempUserID);
+            Log::info("tempuserID = ", ['enc' => $encryptedTempUserId]);
+
             if ($user) {
-                $this->sendMailInBackground($user->email, MeterReadingReminder::class, [$user]);
+                $this->sendMailInBackground($user->email, MeterReadingReminder::class, [config('app.host_domain'), $user, $encryptedTempUserId]);
                 $this->jobCompletion("Mail sent for user with ID: {$user->id}");
             } else {
                 Log::error('User not found for MeterReadingReminderJob');

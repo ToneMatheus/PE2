@@ -14,11 +14,15 @@ class MeterReadingReminder extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected $domain;
     protected $user;
+    protected $encryptedTempUserId;
 
-    public function __construct($user)
+    public function __construct($domain, $user, $encryptedTempUserId)
     {
+        $this->domain = $domain;
         $this->user = $user;
+        $this->encryptedTempUserId = $encryptedTempUserId;
     }
 
     public function envelope()
@@ -33,7 +37,10 @@ class MeterReadingReminder extends Mailable
     {
         return $this->view('Invoices.meter_reading_reminder')
                     ->with([
-                        'user' => $this->user,]);
+                        'domain' => $this->domain,
+                        'user' => $this->user,
+                        'encryptedTempUserId' => $this->encryptedTempUserId,
+                    ]);
     }
 
     public function attachments()
