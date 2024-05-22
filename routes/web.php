@@ -16,6 +16,7 @@ use App\Http\Controllers\advancemailcontroller;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\UserEditController;
+use App\Http\Controllers\ServiceEditController;
 
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\MeterController;
@@ -38,6 +39,7 @@ use App\Http\Controllers\ManagerTicketOverviewController;
 use App\Http\Controllers\EditController;
 use App\Http\Controllers\DetailsController;
 
+use App\Http\Controllers\ServiceTicketOverviewController;
 
 
 
@@ -226,6 +228,11 @@ Route::get('/Edit', [EditController::class, 'index'])->name('Edit');
 Route::get('/tickets/{id}/edit', [EditController::class, 'index'])->name('edit');
 Route::put('/tickets/{id}', [EditController::class, 'update'])->name('edit.update');
 
+Route::get('/ServiceEdit/{id}', [ServiceEditController::class, 'index'])->name('ServiceEdit');
+
+// Define a route for PUT requests
+Route::put('/ServiceEdit/{id}', [ServiceEditController::class, 'update'])->name('ServiceEdit.update');
+
 Route::get('/details/{id}', [DetailsController::class, 'index'])->name('details');
 
 // Route for showing the edit form
@@ -234,6 +241,11 @@ Route::get('/UserEdit/{id}/edit', [UserEditController::class, 'index'])->name('U
 // Route for updating the ticket
 Route::put('/UserEdit/{id}', [UserEditController::class, 'update'])->name('UserEdit.update');
 
+// Define a route for GET requests
+Route::get('/ServiceTicketOverview', [ServiceTicketOverviewController::class, 'index'])->name('ServiceTicketOverview');
+
+// Keep the existing route for PUT requests
+Route::put('/ServiceTicketOverview', [ServiceTicketOverviewController::class, 'update'])->name('ServiceTicketOverview.update');
 
 // routes/web.php
 
