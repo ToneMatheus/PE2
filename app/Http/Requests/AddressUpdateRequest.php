@@ -16,20 +16,65 @@ class AddressUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        // $userId = Auth::id();
+        $userId = Auth::id();
 
-        return [
-            'street' => Address::VALIDATION_RULE_STREET,
-            'number' => [Address::VALIDATION_RULE_NBR],
-            'box' => [Address::VALIDATION_RULE_BOX],
-            'province' => [Address::VALIDATION_RULE_PROVINCE],
-            'city' => Address::VALIDATION_RULE_CITY,
-            'country' => Address::VALIDATION_RULE_COUNTRY,
-            'postal_code' => Address::VALIDATION_RULE_POSTAL_CODE,
-            'type' => Address::VALIDATION_RULE_TYPE,
-            // 'is_landlord' => '',
-        ];
+        $customerAddresses = Customer_Address::where('user_id', $userId)->get();
 
+        $addresses = [];
+
+        foreach($customerAddresses as $cusadr){
+            $addresses[] = Address::where('id', $cusadr->address_id)->first();
+        }
+
+        foreach($addresses as $key => $address){
+            if ($key == 0){
+                dd($key);
+            }
+        }
+
+        //! werkt nog niet
+        // foreach ($this->request->get('addresses') as $key => $address) {
+        //     if ($key == 0){
+        //         dd($key);
+        //         return [
+        //             'street'.$key => Address::VALIDATION_RULE_STREET,
+        //             'number' => Address::VALIDATION_RULE_NBR,
+        //             'box' => Address::VALIDATION_RULE_BOX,
+        //             'postal_code' => Address::VALIDATION_RULE_POSTAL_CODE,
+        //             'city' => Address::VALIDATION_RULE_CITY,
+        //             'province' => Address::VALIDATION_RULE_PROVINCE,
+        //             'country' => Address::VALIDATION_RULE_COUNTRY,
+        //             'type' => Address::VALIDATION_RULE_TYPE,
+        //             // 'is_billing_address' => ['required'],
+        //             //CH Je mag maar 1 billing addres hebben.
+        //             // 'is_billing_address' => [
+        //             //     Rule::unique('customer_addresses')->where(function ($query) use ($userId) {
+        //             //         return $query->where('user_id', $userId);
+        //             //     }),
+        //             // ],
+        //         ];
+
+
+        //     }
+        // }
+
+        // return [
+        //     'street' => Address::VALIDATION_RULE_STREET,
+        //     'number' => Address::VALIDATION_RULE_NBR,
+        //     'box' => Address::VALIDATION_RULE_BOX,
+        //     'postal_code' => Address::VALIDATION_RULE_POSTAL_CODE,
+        //     'city' => Address::VALIDATION_RULE_CITY,
+        //     'province' => Address::VALIDATION_RULE_PROVINCE,
+        //     'country' => Address::VALIDATION_RULE_COUNTRY,
+        //     'type' => Address::VALIDATION_RULE_TYPE,
+        //     // 'is_billing_address' => ['required'],
+        //     //CH Je mag maar 1 billing addres hebben.
+        //     // 'is_billing_address' => [
+        //     //     Rule::unique('customer_addresses')->where(function ($query) use ($userId) {
+        //     //         return $query->where('user_id', $userId);
+        //     //     }),
+        //     // ],
+        // ];
     }
 
     /**
@@ -40,7 +85,23 @@ class AddressUpdateRequest extends FormRequest
     public function messages()
     {
         return array_merge(
-            Address::VALIDATION_MESSAGES);
+            Address::VALIDATION_MESSAGES,
+        );
+    }
+
+    public function Address()
+    {
+        return $this->only([
+            'street',
+            'number',
+            'type',
+            'box',
+            'postal_code',
+            'city',
+            'province',
+            'country',
+            'is_billing_address'
+        ]);
     }
 
 }

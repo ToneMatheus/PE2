@@ -7,21 +7,21 @@
 </head>
 <body>
     <h1>Dear {{ $user_info->first_name }} {{ $user_info->last_name }},</h1>
-
+    
     <p>
-        If you are receiving this mail, it means that you have an open invoice from our company that was due 1 week ago. We are kindly
+        If you are receiving this mail, it means that you have an open invoice from our company that was due 1 week ago. We are kindly 
         asking you to check if this is correct. If you indeed haven't paid this invoice yet, we ask you to urgently sort this out.
     </p>
 
     <p>
-        If you cannot pay this invoice in <b>maximum 7 days from now</b>, we will be obliged to add a fee of {{ $fee }} euros
+        If you cannot pay this invoice in <b>maximum 7 days from now</b>, we will be obliged to add a fee of {{ $fee }} euros 
         to your next invoice, as agreed to in your contract.
     </p>
 
     <p>
         These are the details of your invoice:
     </p>
-
+    
     <table border="1">
         <tr>
             <th>
@@ -46,7 +46,7 @@
         <tr>
             <td colspan="2">Total</td>
             <td>{{ $total_amount }}</td>
-        </tr>
+        </tr>       
 
 
     </table>
@@ -54,14 +54,11 @@
     <p>
         Please log in to our website or scan the QR code in attachment to fill in payment.
     </p>
-    <div>
-        <p> Please log in to our website or click on the link below to access your profile </p>
-        <a href="http://127.0.0.1:8000/Meter_History{{$userID}}">My Profile</a>
-    </div>
+
     <p>
         If your payment has already been settled when you recieve this e-mail, you can ignore this reminder.
     </p>
-
+    
     <p>
         Regards,<br>
         {{ $companyname }}

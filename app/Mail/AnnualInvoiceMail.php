@@ -11,13 +11,12 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Log;
 
 class AnnualInvoiceMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $domain;
+    protected $domain = "http://127.0.0.1:8000"; //change later
     protected $invoice;
     protected $user;
     protected $consumption;
@@ -28,18 +27,17 @@ class AnnualInvoiceMail extends Mailable
     protected $discounts;
     protected $monthlyInvoices;
 
-    public function __construct($pdfData, Invoice $invoice, $user, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices)
+    public function __construct(Invoice $invoice, $user, $pdfData, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices)
     {
         $this->invoice = $invoice;
         $this->user = $user;
         $this->consumption = $consumption;
         $this->estimation = $estimation;
         $this->newInvoiceLine = $newInvoiceLine;
+        $this->pdfData = $pdfData;
         $this->meterReadings = $meterReadings;
         $this->discounts = $discounts;
         $this->monthlyInvoices = $monthlyInvoices;
-        $this->pdfData = $pdfData;
-        $this->domain = config('app.host_domain');
     }
 
     public function envelope()
@@ -52,6 +50,8 @@ class AnnualInvoiceMail extends Mailable
 
     public function build()
     {
+        $pdfData = $this->generatePdf();
+
         return $this->view('Invoices.invoice_mail')
                     ->with([
                         'user' => $this->user,
@@ -63,8 +63,28 @@ class AnnualInvoiceMail extends Mailable
                         'discounts' => $this->discounts,
                         'monthlyInvoices' => $this->monthlyInvoices
                     ])
-                    ->attachData($this->pdfData, 'invoice.pdf', [
+                    ->attachData($pdfData, 'invoice.pdf', [
                         'mime' => 'application/pdf',
                     ]);
+    }
+
+    private function generatePdf()
+    {
+        $hash = md5($this->invoice->id . $this->invoice->customer_contract_id . $this->invoice->meter_id);
+        $pdf = Pdf::loadView('Invoices.annual_invoice_pdf', [
+            'invoice' => $this->invoice,
+            'user' => $this->user,
+            'consumption' => $this->consumption,
+            'estimation' => $this->estimation,
+            'newInvoiceLine' => $this->newInvoiceLine,
+            'meterReadings' => $this->meterReadings,
+            'discounts' => $this->discounts,
+            'monthlyInvoices' => $this->monthlyInvoices,
+            'domain' => $this->domain,
+            'hash' => $hash
+        ], [], 'utf-8');
+        
+             
+        return $pdf->output();
     }
 }

@@ -46,12 +46,15 @@ class confirmationMailRegistration extends Mailable
      */
     public function content()
     {
-        $this->origin = Crypt::decrypt($this->origin);
         if ($this->origin == "register"){
             $url = route('email-confirmation-registration', ['token' => $this->id, 'email' => $this->email]);
+            // dd("in if");
+            // dd($url);
         }else{
             $url = route('activate.account', ['encryptedUserID' => $this->id, 'email' => $this->email]);
         }
+        
+        // dd($url);
 
         return new Content(
             view: 'mails.accoutnMailConfirmation',

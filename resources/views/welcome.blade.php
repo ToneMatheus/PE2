@@ -8,13 +8,6 @@
                     <div class="flex justify-center mt-4">
                         <img src="{{ asset('images/echoice_diff_utility_provider.png') }}" alt="Company Image">
                     </div>
-                    <div class="flex justify-center mt-4">
-                        <a href="{{ route('EstimationGuestForm') }}">
-                            <x-primary-button>
-                                {{ __('Calculate your estimated consumption') }}
-                            </x-primary-button>
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>

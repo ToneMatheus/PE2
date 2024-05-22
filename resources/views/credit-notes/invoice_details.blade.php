@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('layouts.main_layout')
+
+@section('content')
 
 <div class="p-4 h-screen">
     <h1 class="font-bold text-lg">Invoice Details: INV{{ $invoiceId }}</h1>
@@ -21,4 +23,5 @@
         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Refund</button>
     </form>
 </div>
-</x-app-layout>
+
+@endsection

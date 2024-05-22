@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('layouts.main_layout')
+
+@section('content')
     @if (session()->has('success'))
         <div class="flex justify-center align-center">
             {{ session('success') }}
@@ -38,5 +40,4 @@
             </tbody>
         </table>
     </div>
-
-</x-app-layout>
+@endsection

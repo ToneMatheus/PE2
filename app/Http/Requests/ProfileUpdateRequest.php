@@ -36,8 +36,7 @@ class ProfileUpdateRequest extends FormRequest
             'birth_date' => array_merge(User::VALIDATION_RULE_BIRTHDATE, ['date']),
             'company_name' => $companyNameRules,
             'title' => User::VALIDATION_RULE_TITLE,
-            'index_method' => '',
-            'nationality' => '',
+
         ];
     }
 

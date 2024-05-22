@@ -16,20 +16,19 @@ class MonthlyInvoiceMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $domain;
+    protected $domain = "http://127.0.0.1:8000"; //change later
     protected $invoice;
     protected $user;
     protected $estimation;
     protected $newInvoiceLines;
     protected $pdfData;
 
-    public function __construct($pdfData, Invoice $invoice, $user, $newInvoiceLines)
+    public function __construct(Invoice $invoice, $user, $pdfData, $newInvoiceLines)
     {
         $this->invoice = $invoice;
         $this->user = $user;
         $this->newInvoiceLines = $newInvoiceLines;
         $this->pdfData = $pdfData;
-        $this->domain = config('app.host_domain');
     }
 
     public function envelope()
@@ -42,14 +41,31 @@ class MonthlyInvoiceMail extends Mailable
 
     public function build()
     {
+        $pdfData = $this->generatePdf();
+
         return $this->view('Invoices.invoice_mail')
                     ->with([
                         'user' => $this->user,
                         'invoice' => $this->invoice,
                         'newInvoiceLines' => $this->newInvoiceLines,
                     ])
-                    ->attachData($this->pdfData, 'invoice.pdf', [
+                    ->attachData($pdfData, 'invoice.pdf', [
                         'mime' => 'application/pdf',
                     ]);
+    }
+
+    private function generatePdf()
+    {
+        $hash = md5($this->invoice->id . $this->invoice->customer_contract_id . $this->invoice->meter_id);
+        $pdf = Pdf::loadView('Invoices.monthly_invoice_pdf', [
+            'invoice' => $this->invoice,
+            'user' => $this->user,
+            'newInvoiceLines' => $this->newInvoiceLines,
+            'domain' => $this->domain,
+            'hash' => $hash
+        ], [], 'utf-8');
+        
+             
+        return $pdf->output();
     }
 }

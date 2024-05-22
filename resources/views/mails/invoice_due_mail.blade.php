@@ -7,18 +7,18 @@
 </head>
 <body>
     <h1>Dear {{ $user_info->first_name }} {{ $user_info->last_name }},</h1>
-
+    
     <p>
-        We wanted to let you know that you have yet to pay on open invoice from our company.
-        The due date for the invoice in question was today. We understand that it is not always possible to manage invoices in time.
-        Therefore, as agreed to in our contract, we offer you <b>14 days to pay</b> the open invoice. If the invoice hasn't been paid for
+        We wanted to let you know that you have yet to pay on open invoice from our company. 
+        The due date for the invoice in question was today. We understand that it is not always possible to manage invoices in time. 
+        Therefore, as agreed to in our contract, we offer you <b>14 days to pay</b> the open invoice. If the invoice hasn't been paid for 
         yet after that, there will be a fee of {{ $fee }} euros added to your next invoice.
     </p>
 
     <p>
         These are the details of your invoice:
     </p>
-
+    
     <table border="1">
         <tr>
             <th>
@@ -43,7 +43,7 @@
         <tr>
             <td colspan="2">Total</td>
             <td>{{ $total_amount }}</td>
-        </tr>
+        </tr>       
 
 
     </table>
@@ -51,14 +51,11 @@
     <p>
         Please log in to our website or scan the QR code in attachment to fill in payment.
     </p>
-    <div>
-        <p> Please log in to our website or click on the link below to access your profile </p>
-        <a href="http://127.0.0.1:8000/Meter_History{{$userID}}">My Profile</a>
-    </div>
+
     <p>
         If your payment has already been settled when you recieve this e-mail, you can ignore this reminder.
     </p>
-
+    
     <p>
         Regards,<br>
         {{ $companyname }}
