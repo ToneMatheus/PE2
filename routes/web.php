@@ -263,9 +263,6 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function
     Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
     Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');    
 
-    Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
-    Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
-
     // customer submission
     Route::controller(MeterController::class)->group(function () {
         Route::get('/Consumption_Dashboard', 'showConsumptionDashboard');
@@ -409,8 +406,12 @@ Route::post('/pay', [PaymentController::class, 'add'])->name('payment.add');
 Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
 Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 
+
 Route::get('/invoice-matching', [InvoiceMatchingController::class, 'startMatching'])->name("invoice_matching");
 Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');*/
+
+Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
+Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 
 
 //QR code test
