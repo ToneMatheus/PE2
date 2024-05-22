@@ -1,28 +1,7 @@
-.btn1
-{
-  padding: 2px;
-  margin: 4px;
-  margin-top: 0;
-  color: black;
-  border: 1px solid black;
-}
-#cal_btns
-{
-  display: flex;
-}
-
-#calendar
-{
-  background-color: whitesmoke;
-  
-  width: auto;
-}
-
 table, th, td 
 {
   border: 1px solid black;
   border-collapse: collapse;
-  
 }
 
 th, td 
@@ -43,11 +22,6 @@ th, td
 .side-content button 
 {
   margin-top: 20px;
-}
-
-.weekend
-{
-  background-color: darkgrey;
 }
 
 .added 
@@ -84,8 +58,6 @@ th, td
   width: 50px;
   background-color: green;
   border-radius: 10px;
-  color: white;
-  padding-top: 12px;
 }
 
 .square2 
@@ -94,8 +66,6 @@ th, td
   width: 50px;
   background-color: purple;
   border-radius: 10px;
-  color: white;
-  padding-top: 12px;
 }
 
 .square3 
@@ -108,10 +78,10 @@ th, td
 
 .table-container {
   white-space: nowrap; 
-  
+  background-color: rgb(230, 230, 230);
   border-radius: 15px;
   padding: 20px;
-  border: 2px solid gray;
+  border: 2px solid black;
 }
 .table-container table {
   display: inline-block; 
@@ -123,21 +93,10 @@ th, td
   background-color:gray;
   color: black;
 }
-.req-day
-{
-  background-color:bisque;
-  color: black;
-}
-.req-Acpt-day
-{
-  background-color:green;
-  color: white;
-}
 
 #selection
 {
   padding-top: 0px;
-  border: none;
 }
 
 p{
@@ -167,62 +126,11 @@ table{
 #btn
 {
   border: none;
-  
+  background-color: rgb(230, 230, 230);
 }
 
 #scsMsg
 {
   visibility: hidden;
   color:darkgreen;
-}
-
-#errorCredit
-{
-  color:lightsalmon;
-  visibility: hidden;
-}
-#label
-{
-  visibility: hidden;
-}
-
-#selectionTable
-{
-  border: none;
-}
-
-h1, p
-{
-  color: black;
-}
-
-#div-right input
-{
-  margin-top: 20px;
-  color: black;
-  display: block;
-  padding: 30px;
-}
-
-#myFile, #myFile1, #people, #reason, #reason1
-{
-  visibility: hidden;
-}
-
-#myFile1{
-  background-color: gray; /* Green */
-  color: #ffffff; /* White */
-  padding: 10px 20px; /* Add some padding */
-  border: none; /* Remove border */
-  border-radius: 5px; /* Add some curvature */
-  cursor: pointer; /* Change cursor shape on hover */
-}
-
-#myFile1:hover {
-  background-color: black; /* Darker green on hover */
-}
-
-#people
-{
-  
 }

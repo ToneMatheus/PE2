@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Dashboard</title>
-    <link href="/css/employeeDashboard.css" rel="stylesheet" type="text/css"/>
+    <title>Dashboard</title>
+    <link href="/css/dashboard.css" rel="stylesheet" type="text/css"/>
+
+    <!-- The callback parameter is required, so we use console.debug as a noop -->
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByBdD-HWq4mvd5hh2A_4HsIV3kBpp2HiI&callback=console.debug&libraries=maps,marker&v=beta">
+    </script>
 </head>
 <body>
     <nav>
@@ -34,11 +38,10 @@
                         </tr>
                     @endforeach
                 </table>
-                <a class="redirect" href="/enter_index_employee">
-                    <div>Go to index entry page</div></a>
             </div>
             <div class="mapContainer">
-                <iframe class="map" src={{ $url }} allowfullscreen=""></iframe>
+                <iframe class="map" src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyByBdD-HWq4mvd5hh2A_4HsIV3kBpp2HiI
+                &amp;origin=Koning+Albertplein+2+Mechelen&amp;destination=Jan+Pieter+de+Nayerlaan+5&amp;waypoints=Nekkerspoelstraat+285+Mechelen&amp;avoid=tolls|highways" allowfullscreen=""></iframe>
             </div>
         </div>
     </div>

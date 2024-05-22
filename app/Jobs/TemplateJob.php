@@ -8,20 +8,20 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Traits\cronJobTrait;
+use App\Traits\jobLoggerTrait;
 
 class TemplateJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, jobLoggerTrait;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($LogLevel = null)
+    public function __construct()
     {
-        $this->LoggingLevel = $LogLevel;
+
     }
 
     /**
@@ -34,20 +34,20 @@ class TemplateJob implements ShouldQueue
         try {
             // Log that the job execution has started
             $this->jobStart();
-            
-            for ($i = 0; $i < 20; $i++) {
-                $longMessage = "This is a really long detailed message. ";
-                $longMessage .= "It contains additional information about the current state ";
-                $longMessage .= "of the application or the error encountered. ";
 
-                $this->logInfo(null, "Info message", $longMessage);
-                $this->logDebug(null, "Debug message", $longMessage);
-                $this->logCritical(null, "Critical error message", $longMessage);
-                $this->logWarning(null, "Warning message", $longMessage);
-                $this->logError(null, "Error message", $longMessage);
+            $messages = [
+                "this is an info message",
+                "this is a warning",
+                "this is a critical error",
+                "oh no i did big oopsie"
+            ];
+            
+            for ($i = 0; $i < 1000; $i++) {
+                $message = $messages[array_rand($messages)];
+                $this->logInfo(null, $message);
             }
-        
-            $this->jobCompletion("Successfully completed this job");
+
+            $this->jobCompletion("Succesfully completed this job");
         } catch (\Throwable $e) {
             // Catch any throwable errors, including errors and exceptions
             $this->jobException($e->getMessage());

@@ -33,7 +33,6 @@ use Illuminate\Support\Facades\Redirect;
 
 use App\Mail\ConfirmationMailRegistration;
 
-// CH kijk als je paswoord niet overeenkomt met het comfirm dan wordt de mail wel opgeslagen.
 
 class RegisteredUserController extends Controller
 {
@@ -63,6 +62,7 @@ class RegisteredUserController extends Controller
      */
     public function store(RegistrationRequest $request): RedirectResponse
     {
+        // dd($request);
 
         $userdata = [
             'username' => $request->username,
@@ -76,20 +76,10 @@ class RegisteredUserController extends Controller
             'is_active' => 1,
         ];
 
-
         if ($request->has('is_company')) {
             $userdata['is_company'] = 1;
             $userdata['company_name'] = $request->company_name;
         };
-
-        if($request->has('is_landlord')){
-            $userdata['is_landlord'] = 1;
-        }
-
-        if($request->nationality != ''){
-            $userdata['nationality'] = $request->nationality;
-        }
-
 
         $email = $request->input('email');
 
@@ -99,11 +89,6 @@ class RegisteredUserController extends Controller
         }
 
         $user = User::create($userdata);
-
-        $user->created_at = now()->timezone('Europe/Brussels');
-        $user->updated_at = now()->timezone('Europe/Brussels');
-        $user->save();
-
         event(new Registered($user));
 
         $role = Role::where('role_name', 'Customer')->first();
@@ -114,6 +99,10 @@ class RegisteredUserController extends Controller
         ];
 
         $userRole = User_Role::create($userRoleDate);
+
+        $id = Crypt::encrypt($user->id);
+        $emailEncrypt = Crypt::encrypt($user->email);
+        $origin = 'register';
 
         $addressDate = [
             'street' => $request->street,
@@ -129,27 +118,16 @@ class RegisteredUserController extends Controller
         $address = Address::create($addressDate);
 
         $customerAddressData = [
-            'start_date' => now()->timezone('Europe/Brussels'),
+            'start_date' => now(),
             'user_id' => $user->id,
             'address_id' => $address->id,
         ];
 
         Customer_Address::create($customerAddressData);
 
-        $id = Crypt::encrypt($user->id);
-        $emailEncrypt = Crypt::encrypt($user->email);
-        $origin = Crypt::encrypt("register");
-
         Mail::to($user->email)->send(new ConfirmationMailRegistration($id, $emailEncrypt, $origin));
 
-        // return Redirect::back()->with('top_message', 'Please verify your email address.');
-        // return Redirect::route('profile.emailChanged')->with('from', 'Thanks for signing up! Before getting started');
-
-        Auth::login($user);
-
-        session()->put('from_tekst', 'Thanks for signing up! Before getting started');
-        session()->put('from', Crypt::encrypt("register"));
-        return Redirect::route('profile.emailChanged');
+        return Redirect::back()->with('top_message', 'Please verify your email address.');
 
     }
 
@@ -158,12 +136,9 @@ class RegisteredUserController extends Controller
 
         $user = User::find($id);
 
-        $user->email_verified_at = now()->timezone('Europe/Brussels');
+        $user->email_verified_at = now();
 
         $user->save();
-
-        session()->forget('from');
-        session()->forget('from_tekst');
 
         Auth::login($user);
 

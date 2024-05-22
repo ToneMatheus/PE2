@@ -15,17 +15,7 @@
           </div>
           <div>
             <label for="issue" class="block text-sm font-medium text-gray-700 dark:text-white">Issue</label>
-            <select id="issue" name="issue" required class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 text-gray-900 dark:text-black focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm">
-              <option value="" disabled selected>Select an issue</option>
-              <option value="login_issue">Login Issue</option>
-              <option value="account_verification">Account Verification</option>
-              <option value="payment_issue">Payment Issue</option>
-              <option value="technical_issue">Technical Issue</option>
-              <option value="product_inquiry">Product Inquiry</option>
-              <option value="shipping_problem">Shipping Problem</option>
-              <option value="refund_request">Refund Request</option>
-              <option value="end_contract">End Contract</option>
-          </select>
+            <input id="issue" name="issue" type="text" required class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 text-gray-900 dark:text-black focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Issue" value="{{ old('Issue', request()->get('message')) }}">
           </div>
           <div>
             <label for="description" class="block text-sm font-medium text-gray-700 dark:text-white">Description</label>

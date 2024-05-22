@@ -4,8 +4,6 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Jobs\MeterAllocation;
-use App\Jobs\MeterSchedule;
 use App\Models\CronJob;
 
 class Kernel extends ConsoleKernel
@@ -29,33 +27,22 @@ class Kernel extends ConsoleKernel
                 
                 switch ($cronjob->interval) {
                     case 'daily':
-                        $schedule->job(new $jobClass($cronjob->log_level))->dailyAt($hour . ':' . $minute);
+                        $schedule->job(new $jobClass())->dailyAt($hour . ':' . $minute);
                         break;
                     case 'monthly':
-                        $schedule->job(new $jobClass($cronjob->log_level))->monthlyOn($cronjob->scheduled_day, $hour . ':' . $minute);
+                        $schedule->job(new $jobClass())->monthlyOn($cronjob->scheduled_day, $hour . ':' . $minute);
                         break;
                     case 'yearly':
-                        $schedule->job(new $jobClass($cronjob->log_level))->yearlyOn($cronjob->scheduled_month, $cronjob->scheduled_day, $hour . ':' . $minute);
+                        $schedule->job(new $jobClass())->yearlyOn($cronjob->scheduled_month, $cronjob->scheduled_day, $hour . ':' . $minute);
                         break;
                 }
             }
         }
     }
 
-    protected function meter_allocation(Schedule $schedule): void
-    {
-        $schedule->job(new MeterAllocation())->everyMinute();
-    }
-
-    protected function meter_schedule(Schedule $schedule): void
-    {
-        $schedule->job(new MeterSchedule())->everyMinute();
-    }
-
     /**
      * Register the commands for the application.
-     */        
-
+     */
     protected function commands(): void
     {
         $this->load(__DIR__.'/Commands');

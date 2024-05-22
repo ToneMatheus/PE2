@@ -2,405 +2,134 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\NewEmployeeRegistered;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{
-    Employee_Profile,
-    User,
-    Employee_contract,
-    Address,
-    Team,
-    TeamMember,
-    Role,
-    User_Role,
-    Customer_Address,
-    Balance,
-    Product
-};
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
-
+use Carbon\Carbon;
 
 class EmployeeController extends Controller
 {
-    public function showEmployees() {
-        $employees = User::whereNotNull('employee_profile_id')
-        ->join('team_members as tm', 'tm.user_id', '=', 'users.id')
-        ->join('teams as t', 't.id', '=', 'tm.team_id')
-        ->where('tm.is_active', '=', 1)
-        ->where('users.is_active', '=', 1)
-        ->paginate(5); 
+    public function showTariff(){
+        $productTariffs = DB::table('tariffs as t')
+        ->join('product_tariffs as pt', 't.ID', '=', 'pt.tariff_id')
+        ->join('products as p', 'p.ID', '=', 'pt.product_id')
+        ->whereNull('pt.end_date')
+        ->get();
         
-        $teams = Team::all();
-        $roles = Role::all();
-
-        return view('employeeOverview', ['employees' => $employees, 'teams' => $teams, 'roles' => $roles]);
+        return view('tariff', ['productTariffs' => $productTariffs]);
     }
 
-    public function processEmployee(Request $request) {
+    public function processTariff(Request $request){
         $validator = Validator::make($request->all(), [
-            'firstName' => 'required',
             'name' => 'required',
-            'title' => 'required',
-            'nationality' => 'required',
-            'personalEmail' => 'required|email',
-            'phoneNbr' => 'required',
-            'birthDate' => 'required|date',
-            'street' => 'required',
-            'number' => 'required|numeric',
-            'box' => 'required',
-            'city' => 'required',
-            'province' => 'required',
-            'postalCode' => 'required|numeric',
-            'contractType' => 'required',
-            'startDate' => 'required|date',
-            'endDate' => [
+            'type' => 'required',
+            'rangeMin' => 'required|numeric|min:0',
+            'rangeMax' => [
+                'nullable',
+                'numeric',
                 function ($attribute, $value, $fail) use ($request) {
-                    $startDate = $request->input('startDate');
-                    if (!is_null($value) && $value <= $startDate) {
-                        $fail('The end date must be later than the start date.');
+                    $rangeMin = $request->input('rangeMin');
+                    if (!is_null($value) && $rangeMin >= $value) {
+                        $fail('The maximum value must be greater than the minimum value.');
                     }
                 }
             ],
-            'salary' => 'required|numeric|min:1700',
-            'team' => 'required',
-            'role' => 'required',
-        ], [
-            'firstName.required' => 'The first name is required.',
-            'name.required' => 'The last name is required.',
-            'title.required' => 'The title is required.',
-            'nationality.required' => 'The nationality is required.',
-            'personalEmail.required' => 'The personal email is required.',
-            'personalEmail.email' => 'The personal email must be a valid email address.',
-            'phoneNbr.required' => 'The phone number is required.',
-            'birthDate.required' => 'The birth date is required.',
-            'birthDate.date' => 'The birth date must be a valid date.',
-            'street.required' => 'The street is required.',
-            'number.required' => 'The number is required.',
-            'number.numeric' => 'The number must be numeric.',
-            'box.required' => 'The box is required.',
-            'city.required' => 'The city is required.',
-            'province.required' => 'The province is required.',
-            'postalCode.required' => 'The postal code is required.',
-            'postalCode.numeric' => 'The postal code must be numeric.',
-            'contractType.required' => 'The contract type is required.',
-            'startDate.required' => 'The start date is required.',
-            'startDate.date' => 'The start date must be a valid date.',
-            'salary.required' => 'The salary is required.',
-            'salary.numeric' => 'The salary must be numeric.',
-            'salary.min' => 'The salary must be at least 1700.',
-            'team.required' => 'The team is required.',
-            'role.required' => 'The role is required.',
+            'rate' => 'required|numeric|min:0.1'
         ]);
 
         if($validator->fails()){
-            return redirect()->route('employees')->withErrors($validator)->withInput();
+            return redirect()->route('tariff')->withErrors($validator)->withInput();
         }
 
-        //new Employee_profile
-        $employee = Employee_profile::create([
-            'hire_date' => $request->input('startDate'),
-        ]);
+        if($request->has('submitTariff')){
+            $rangeMax = $request->input('rangeMax');
 
-        //username & email generated
-        $username = $request->input('firstName')[0] . $request->input('name')[0] . $employee->id;
-        $email = $request->input('firstName')[0] . $request->input('name')[0] . $employee->id . '@example.com';
+            if(empty($rangeMax)){
+                $rangeMax = null;
+            }
 
-        //new Employee_contract
-        // TODO: fix this rows
-        Employee_contract::create([
-            'employee_profile_id' => $employee->id,
-            'start_date' => $request->input('startDate'),
-            'end_date' => $request->input('endDate'),
-            'type' => $request->input('type'),
-            'status' => 'active',
-            /*'salary_per_month' => $request->input('salary'), this does not work tables have changed*/
-            // new rows
-            'role_id' => 1,
-            'salary_range_id' => 1,
-            'benefits_id' => 1
-        ]);
+            $tariffID = DB::table('tariffs')->insertGetId([
+                'type' => $request->input('type'),
+                'range_min' => $request->input('rangeMin'),
+                'range_max' => $rangeMax,
+                'rate' => $request->input('rate'),
+            ]);
 
-        //new User
-        $userData = [
-            'username' => $username,
-            'password' => Hash::make('default'),    //mail to change  
-            'email' => $email,
-            'personal_email' => $request->input('personalEmail'), //bound that change
-            'first_name' => $request->input('firstName'),
-            'last_name' => $request->input('name'),
-            'employee_profile_id' => $employee->id,
-            'phone_nbr' => $request->input('phoneNbr'),
-            'birth_date' => $request->input('birthDate'),
-            'title' => $request->input('title'),
-            'nationality' => $request->input('nationality'),
-        ];
+            $productID = DB::table('products')->insertGetId([
+                'product_name' => $request->input('name'),
+                'start_date' => Carbon::now()->toDateString(),
+                'type' => $request->input('type'),
+            ]);
 
-        $user = User::create($userData);
-
-        $role = Role::where('role_name', '=', $request->input('role'))
-        ->first();
-
-        // create csv
-        $name = $request->input('name');
-        $firstName = $request->input('firstName');
-        //$email = $request->input('email');
-
-        $data = [
-            // ['Name', 'First Name', 'Email'],
-            [$name, $firstName, $email]
-        ];
-
-        $csv = implode(',', array_map(function($row) {
-            return implode(',', $row);
-        }, $data));
-
-        Storage::disk('local')->append('employee.csv', $csv);
-
-        //new User_role
-        User_Role::create([
-            'user_id' => $user->id,
-            'role_id' => $role->id
-        ]);
-
-        $team = Team::where('team_name', '=', $request->input('team'))
-        ->first();
-
-        //new Team_member
-        //without manager
-        TeamMember::create([
-            'user_id' => $user->id,
-            'team_id' => $team->id
-        ]);
-
-        //new Address
-        $addressData = [
-            'street' => $request->input('street'),
-            'number' => $request->input('number'),
-            'box' => $request->input('box'),
-            'postal_code' => $request->input('postalCode'),
-            'city' => $request->input('city'),
-            'province' => $request->input('province'),
-            'country' => 'Belgium',
-        ];
-
-        $address = Address::create($addressData);
-
-        Customer_Address::create([
-            'user_id' => $user->id,
-            'address_id' => $address->id,
-            'start_date' => $request->input('startDate')
-        ]);
-
-        Balance::create([
-            'employee_profile_id' => $employee->id,
-            'holiday_type_id' => 1,
-            'yearly_holiday_credit' => 20,
-            'used_holiday_credit' => 0,
-            'start_date' => $request->input('startDate')
-        ]);
-
-        event(new NewEmployeeRegistered($employee, $user));
-
-        return redirect()->route('employees');
-    }
-
-    public function editEmployee($eID) {
-        $employee = User::join('employee_profiles as ef', 'ef.id', '=', 'users.employee_profile_id')
-        ->join('employee_contracts as ec', 'ec.employee_profile_id', '=', 'users.employee_profile_id')
-        ->join('team_members as tm', 'tm.user_id', '=', 'users.id')
-        ->join('teams as t', 't.id', '=', 'tm.team_id')
-        ->join('user_roles as ur', 'ur.user_id', '=', 'users.id')
-        ->join('roles as r', 'r.id', '=', 'ur.role_id')
-        ->join('customer_addresses as ca', 'ca.user_id', '=', 'users.id')
-        ->join('addresses as a', 'a.id', '=', 'ca.address_id')
-        ->where('users.employee_profile_id', '=', $eID)
-        ->where('ur.is_active', '=', 1)
-        ->where('tm.is_active', '=', 1)
-        ->where('a.is_billing_address', '=', 1)
-        ->where(function($query) {
-            $query->where('ec.end_date', '>', now())
-                  ->orWhereNull('ec.end_date');
-        })
-        ->first();
-
-        $teams = Team::all();
-        $roles = Role::all();
-
-        return view('editEmployee', ['employee' => $employee, 'teams' => $teams, 'roles' => $roles]);
-    }
-
-    public function editPersonalEmployee(Request $request, $eID) {
-        $validator = Validator::make($request->all(), [
-            'firstName' => 'required',
-            'name' => 'required',
-            'title' => 'required',
-            'nationality' => 'required',
-            'personalEmail' => 'required|email',
-            'phoneNbr' => 'required',
-            'birthDate' => 'required|date',
-        ],[
-            'firstName.required' => 'The first name is required.',
-            'name.required' => 'The last name is required.',
-            'title.required' => 'The title is required.',
-            'nationality.required' => 'The nationality is required.',
-            'personalEmail.required' => 'The personal email is required.',
-            'personalEmail.email' => 'The personal email must be a valid email address.',
-            'phoneNbr.required' => 'The phone number is required.',
-            'birthDate.required' => 'The birth date is required.',
-            'birthDate.date' => 'The birth date must be a valid date.',
-        ]);
-
-        if($validator->fails()){
-            return redirect()->route('employees.edit', ['eID' => $eID])->withErrors($validator)->withInput();
+            DB::table('product_tariffs')->insert([
+                'start_date' => Carbon::now()->toDateString(),
+                'product_id' => $productID,
+                'tariff_id' => $tariffID
+            ]);
         }
 
-        $user = User::where('employee_profile_id', '=', $eID)
-        ->first();
-
-        $user->first_name = $request->input('firstName');
-        $user->last_name = $request->input('name');
-        $user->title = $request->input('title');
-        $user->phone_nbr = $request->input('phoneNbr');
-        $user->birth_date = $request->input('birthDate');
-        $user->nationality = $request->input('nationality');
-        $user->personal_email = $request->input('personalEmail');
-        $user->save();
-
-        return redirect()->route('employees.edit', ['eID' => $eID]);
+        return redirect()->route('tariff');
     }
 
-    public function editAddressEmployee(Request $request, $eID, $aID, $uID){
-        $validator = Validator::make($request->all(), [
-            'street' => 'required',
-            'number' => 'required|numeric',
-            'box' => 'required',
-            'city' => 'required',
-            'province' => 'required',
-            'postalCode' => 'required|numeric',
-        ], [
-            'street.required' => 'The street is required.',
-            'number.required' => 'The number is required.',
-            'number.numeric' => 'The number must be numeric.',
-            'box.required' => 'The box is required.',
-            'city.required' => 'The city is required.',
-            'province.required' => 'The province is required.',
-            'postalCode.required' => 'The postal code is required.',
-            'postalCode.numeric' => 'The postal code must be numeric.',
-        ]);
+    public function inactivateTariff($pID, $tID){
+        $date = Carbon::now()->toDateString();
 
-        if($validator->fails()){
-            return redirect()->route('employees.edit', ['eID' => $eID])->withErrors($validator)->withInput();
-        }
-
-        $address = Address::find($aID);
-
-        $address->street = $request->input('street');
-        $address->number = $request->input('number');
-        $address->box = $request->input('box');
-        $address->city = $request->input('city');
-        $address->province = $request->input('province');
-        $address->postal_code = $request->input('postalCode');
-
-        $address->save();
-
-        return redirect()->route('employees.edit', ['eID' => $eID]);
+        DB::update('UPDATE products SET end_date = ? WHERE id = ? ', [$date, $pID]);
+        DB::update('UPDATE product_tariffs SET end_date = ? WHERE product_id = ? AND tariff_id = ?', [$date, $pID, $tID]);
+        return redirect()->route('tariff');
     }
 
-    public function editContractEmployee(Request $request, $eID, $uID){
+    public function editTariff(Request $request, $pID, $tID){
         $validator = Validator::make($request->all(), [
-            'contractType' => 'required',
-            'startDate' => 'required|date',
-            'endDate' => [
+            'rangeMin' => 'required|numeric|min:0',
+            'rangeMax' => [
+                'nullable',
+                'numeric',
                 function ($attribute, $value, $fail) use ($request) {
-                    $startDate = $request->input('startDate');
-                    if (!is_null($value) && $value <= $startDate) {
-
-                        $fail('The end date must be later than the start date.');
+                    $rangeMin = $request->input('rangeMin');
+                    if (!is_null($value) && $rangeMin >= $value) {
+                        $fail('The maximum value must be greater than the minimum value.');
                     }
                 }
             ],
-            'salary' => 'required|numeric|min:1700',
-            'team' => 'required',
-            'role' => 'required',
-        ], [
-            'contractType.required' => 'The contract type is required.',
-            'startDate.required' => 'The start date is required.',
-            'startDate.date' => 'The start date must be a valid date.',
-            'salary.required' => 'The salary is required.',
-            'salary.numeric' => 'The salary must be numeric.',
-            'salary.min' => 'The salary must be at least 1700.',
-            'team.required' => 'The team is required.',
-            'role.required' => 'The role is required.',
+            'rate' => 'required|numeric|min:0.1'
         ]);
 
         if($validator->fails()){
-            return redirect()->route('employees.edit', ['eID' => $eID])->withErrors($validator)->withInput();
+            return redirect()->route('tariff')->withErrors($validator)->withInput();
         }
 
-        $employeeContract = Employee_contract::where('employee_profile_id', '=', $eID)
-        ->where(function($query) {
-            $query->where('end_date', '>', now())
-                  ->orWhereNull('end_date');
-        })
+        $tariff = DB::table('tariffs')
+        ->where('id', $tID)
         ->first();
 
-        if($employeeContract->type !== $request->input('type')){
-            $employeeContract->start_date = Carbon::now()->format('y/m/d');
-        }
-        
-        $employeeContract->end_date = $request->input('endDate');
-        $employeeContract->type = $request->input('type');
-        $employeeContract->salary_per_month = $request->input('salary');
-        $employeeContract->save();
+        $rangeMin = $request->input('rangeMin');
+        $rangeMax = $request->input('rangeMax');
+        $rate = $request->input('rate');
 
-        $oldTeam = Team::join('team_members as tm', 'tm.team_id', '=', 'teams.id')
-        ->select('teams.id as tID', 'tm.id as tmID')
-        ->where('tm.is_active', '=', 1)
-        ->where('tm.user_id', '=', $uID)
-        ->first();
+        if ($rangeMin !== $tariff->range_min || $rangeMax !== $tariff->range_max || $rate !== $tariff->rate ){
+            $newtID = DB::table('tariffs')->insertGetId([
+                'type' => $tariff->type,
+                'range_min' => $rangeMin,
+                'range_max' => $rangeMax,
+                'rate' => $rate
+            ]);
 
-        if($oldTeam->team_name !== $request->input('team')){
-            $oldTeamMember = TeamMember::where('id', '=', $oldTeam->tmID)
-            ->first();
-
-            $oldTeamMember->is_active = 0;
-            $oldTeamMember->save();
-
-            $newTeam = Team::where('team_name', '=', $request->input('team'))
-            ->first();
-
-            TeamMember::create([
-                'user_id' => $uID,
-                'team_id' => $newTeam->id
+            $date = Carbon::now()->toDateString();
+            DB::update('UPDATE product_tariffs SET end_date = ? WHERE product_id = ? AND tariff_id = ?', [$date, $pID, $tID]);
+            DB::table('product_tariffs')->insert([
+                'start_date' => $date,
+                'product_id' => $pID,
+                'tariff_id' => $newtID
             ]);
         }
-
-        $oldRole = User_Role::where('user_id', '=', $uID)
-        ->where('is_active', '=', 1)
-        ->first();
-
-        if($oldRole->role_name !== $request->input('role')){
-            $oldRole->is_active = 0;
-            $oldRole->save();
-
-            $newRole = Role::where('role_name', '=', $request->input('role'))
-            ->first();
-
-            User_Role::create([
-                'user_id' => $uID,
-                'role_id' => $newRole->id
-            ]);
-        }
-
-        return redirect()->route('employees.edit', ['eID' => $eID]);
+        return redirect()->route('tariff');
     }
 
     public function getProductByType($type){
-        $products = Product::where('type', '=', $type)
+        $products = DB::table('products')
+        ->where('type', '=', $type)
         ->whereNull('end_date')
         ->orderBy('product_name', 'desc')
         ->first();

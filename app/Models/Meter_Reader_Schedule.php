@@ -9,13 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Meter_Reader_Schedule extends Model
 {
     protected $table = 'meter_reader_schedules';
-    public $timestamps = false;
     protected $fillable = [
         'employee_profile_id',
         'reading_date',
         'meter_id',
-        'status',
-        'priority'
+        'status'
     ];
 
     use HasFactory;

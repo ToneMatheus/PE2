@@ -18,19 +18,4 @@ class Role extends Model
     {
         return $this->hasMany(User_Role::class);
     }
-
-    public function employee_benefits(): HasMany
-    {
-        return $this->hasMany(EmployeeBenefit::class);
-    }
-
-    public function salary_ranges(): HasMany
-    {
-        return $this->hasMany(SalaryRange::class);
-    }
-
-    public function employee_contracts(): HasMany
-    {
-        return $this->hasMany(Employee_contract::class);
-    }
 }

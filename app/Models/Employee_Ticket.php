@@ -13,12 +13,10 @@ class Employee_Ticket extends Model
 
     protected $fillable = [
         'employee_profile_id',
-        'ticket_id',
-        'assigned_date'
+        'ticket_id'
     ];
 
     use HasFactory;
-    public $timestamps = false;
 
     public function employee_profile(): BelongsTo
     {

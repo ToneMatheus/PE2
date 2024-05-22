@@ -1,6 +1,6 @@
 function initAutocomplete() {
-    var input = document.getElementById('street');
-    
+
+    var input = document.getElementById('address-input');
     var options = {
         types: ['address'],
         componentRestrictions: { country: 'be' } // Beperk de suggesties tot België
@@ -15,7 +15,6 @@ function initAutocomplete() {
         var city = '';
         var postalcode = '';
         var streetNumber = '';
-        var country = '';
 
 
         // Zoek het adrescomponent met type 'route' (straatnaam)
@@ -48,21 +47,12 @@ function initAutocomplete() {
             if (component.types.includes('street_number')) {
                 streetNumber = component.long_name;
             }
-            //country
-            if (component.types.includes('country')) {
-                country = component.long_name;
-            }
         });
 
-
-
-        document.getElementById("street").value=streetName;
-        document.getElementById("province").value=province;
-        document.getElementById("postal_code").value=postalcode;
-        document.getElementById("number").value=streetNumber;
-        document.getElementById("city").value=city;
-        document.getElementById("country").value=country;
-
-        
+        document.getElementById("address-input").value=streetName;
+        document.getElementById("Province").value=province;
+        document.getElementById("PostalCode").value=postalcode;
+        document.getElementById("Number").value=streetNumber;
+        document.getElementById("City").value=city;
     });
 }
