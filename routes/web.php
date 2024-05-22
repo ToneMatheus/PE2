@@ -55,6 +55,8 @@ use App\Http\Controllers\ManualInvoiceController;
 use App\Http\Controllers\NewEmployeeController;
 use App\Http\Controllers\holidayRequest;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\ServiceEditController;
+use App\Http\Controllers\ServiceTicketOverviewController;
 
 
 /*
@@ -424,8 +426,17 @@ Route::get('/Edit', [EditController::class, 'index'])->name('Edit');
 // web.php (routes file)
 Route::get('/tickets/{id}/edit', [EditController::class, 'index'])->name('edit');
 Route::put('/tickets/{id}', [EditController::class, 'update'])->name('edit.update');
-
+Route::get('/ServiceEdit/{id}', [ServiceEditController::class, 'index'])->name('ServiceEdit');
+// Define a route for PUT requests
+Route::put('/ServiceEdit/{id}', [ServiceEditController::class, 'update'])->name('ServiceEdit.update');
 Route::get('/details/{id}', [DetailsController::class, 'index'])->name('details');
+
+
+// Define a route for GET requests
+Route::get('/ServiceTicketOverview', [ServiceTicketOverviewController::class, 'index'])->name('ServiceTicketOverview');
+
+// Keep the existing route for PUT requests
+Route::put('/ServiceTicketOverview', [ServiceTicketOverviewController::class, 'update'])->name('ServiceTicketOverview.update');
 
 // routes/web.php
 
