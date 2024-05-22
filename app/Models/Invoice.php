@@ -41,5 +41,10 @@ class Invoice extends Model
         return $this->belongsTo(Meter::class);
     }
 
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     use HasFactory;
 }

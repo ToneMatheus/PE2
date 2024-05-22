@@ -1,3 +1,4 @@
+<x-app-layout>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,10 +13,11 @@
 </head>
 
 <body class="body">
-    <div class="container">
+    <div class="container" style="margin-top: 30px; padding-bottom: 100px">
         <div class="content">
             @include('contractView')
         </div>
         <a style="margin-left: 900px;" href="{{route('downloadContract')}}"><button>Download pdf</button></a>
     </div>
 </body>
+</x-app-layout>

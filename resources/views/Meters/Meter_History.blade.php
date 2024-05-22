@@ -1,145 +1,185 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Meter History</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-        .pagination {
-            margin-top: 20px;
-        }
-        .pagination button {
-            padding: 5px 10px;
-            margin-right: 5px;
-            cursor: pointer;
-        }
-        .error-message {
-            color: red;
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Meter History</h1>
+<x-app-layout title="Meter history">
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            Hello, {{$details[0]->first_name}}
+        </h2>
+    </x-slot>
+    <div class="py-8 max-w-7xl mx-auto dark:text-white grid grid-cols-2 gap-4">
+        <div class="sm:px-6 lg:px-8 space-y-6">
+            <h1 class="font-semibold text-3xl text-gray-800 dark:text-gray-200 leading-tight">Meter History</h1>
+            <form method="POST" action="{{ route('submitIndexCustomer') }}">
+                @csrf
+                @method('POST')
+                <div  class="flex justify-between">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Your meters</h2>
+                <x-primary-button type="submit" class="w-auto dark:bg-red-700 dark:text-white" id="submit" :disabled="true">
+                    {{ __('Submit values') }}
+                </x-primary-button>
+                </div>
+                @foreach ($details as $detail)
+                    <div class="p-4 my-3 sm:p-8 bg-white dark:bg-gray-800 shadow rounded-lg text-gray-500 dark:text-gray-400 meter">
+                        <p>EAN code: <span class="text-gray-800 dark:text-white font-semibold">{{$detail->EAN}}</span></p>
+                        <p>Type: <span class="text-gray-800 dark:text-white font-semibold">{{$detail->type}}</span></p>
+                        <p>Address: <span class="text-gray-800 dark:text-white font-semibold">{{$detail->street}} {{$detail->number}}, {{$detail->postal_code}} {{$detail->city}}</span></p>
+                        <p>Meter ID: {{$detail->meter_id}}</p>
+                        <div class="flex justify-between my-4">
+                        <p>Last read on: <span class="text-gray-800 dark:text-white font-semibold">{{$detail->reading_date ? $detail->reading_date : 'Not read yet'}}</span></p>
+                        <p>Latest reading value: <span class="text-gray-800 dark:text-white font-semibold" id="latest-{{$detail->meter_id}}">{{$detail->latest_reading_value ? $detail->latest_reading_value : 'Not read yet'}}</span></p>
+                        </div>
+                        <input type="hidden" name="index_values[{{$loop->index}}][user_id]" value="{{$detail->user_id}}"/>
+                        <input type="hidden" name="index_values[{{$loop->index}}][EAN]" value="{{$detail->EAN}}"/>
+                        <input type="hidden" name="index_values[{{$loop->index}}][meter_id]" value="{{$detail->meter_id}}"/>
+                        @if ($detail->expecting_reading == 1)
+                            <x-text-input class="block mt-1 w-full indexValue" type="text" name="index_values[{{$loop->index}}][new_index_value]" id="{{$detail->meter_id}}" required placeholder="Enter index value" autocomplete="off"/>
+                            <div id="validation-{{$detail->meter_id}}" class="mt-5"></div>
+                            <p class="float-right">Consumption: <span id="consumption-{{$detail->meter_id}}"></span></p>
+                        @else
+                            <div class="p-2 w-full bg-rose-200 dark:bg-rose-300 rounded-lg flex unneeded">
+                                <p class="ml-4 text-red-700">Not today!</p>
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
+            </form>
+        </div>
 
-    <div>
-        <label for="meter_reading">Meter Reading:</label>
-        <input type="text" name="meter_reading" id="meter_reading" pattern="\d{1,6}(\.\d)?" maxlength="8" title="Please enter up to 6 digits optionally followed by a decimal point and then another digit" required>
+        <div>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            @foreach($index_values as $index_value)
+                <div class="mb-3 bg-white dark:bg-gray-800 shadow rounded-lg p-7">
+                    <canvas id="consumptionChart{{ $index_value[0]->meter_id }}"></canvas>
+                </div>
+            @endforeach
+        </div>
     </div>
-    <div>
-        <label for="reading_date">Reading Date:</label>
-        <input type="date" name="reading_date" id="reading_date" max="<?php echo date('Y-m-d'); ?>" required>
-    </div>
-    <button onclick="addMeterReading()">Add Reading</button>
-    <div id="error-message" class="error-message" style="display: none;"></div>
 
-    <table id="meterTable">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Meter Reading</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="meterTableBody">
-            <!-- Meter readings will be dynamically added here -->
-        </tbody>
-    </table>
-
-    <div class="pagination" id="pagination"></div>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        var currentPage = 1;
-        var entriesPerPage = 10;
-
-        function addMeterReading() {
-            var meterReadingInput = parseFloat(document.getElementById('meter_reading').value);
-            var dateInput = document.getElementById('reading_date').value;
-
-            // Validate meter reading pattern
-            var meterPattern = /^\d{1,6}(\.\d)?$/;
-            if (!meterPattern.test(meterReadingInput)) {
-                alert("Please enter meter reading in the correct format (e.g., 123456.7)");
-                return;
+        $(document).ready(function(){
+            function indexValidate(meterID, indexValue){
+                var field = "#validation-" + meterID;
+                var consumption = "#consumption-" + meterID;
+                var latest = $("#latest-" + meterID).html();
+                var validation = document.querySelector(field);
+                $.ajax({
+                    url:"{{ route('ValidateIndex') }}",
+                    method:'GET',
+                    data:{meterID:meterID, indexValue:indexValue},
+                    success:function(data)
+                    {
+                        $(validation).html(data);
+                        consumptionCalculator(indexValue, consumption, latest);
+                        enableButton();
+                    }
+                })
             }
 
-            var table = document.getElementById('meterTable');
-            var tbody = document.getElementById('meterTableBody');
+            function consumptionCalculator(indexValue, consumption, latest) {
+                if (latest == 'Not read yet') {
+                    latestValue = 0;
+                }
+                else {
+                    latestValue = parseInt(latest);
+                }
 
-            // Check if the current date already has an entry
-            var rows = tbody.getElementsByTagName('tr');
-            for (var i = 0; i < rows.length; i++) {
-                var rowDate = rows[i].getElementsByTagName('td')[0].innerText;
-                if (rowDate === dateInput) {
-                    alert("An entry for this date already exists. You can edit or delete the existing entry.");
-                    return;
+                consumptionValue = indexValue - latestValue;
+
+                if (indexValue - latestValue > 0) {
+                    $(consumption).html(consumptionValue);
+                }
+                else{
+                    $(consumption).html('');
                 }
             }
 
-            // Convert date to dd-mm-yyyy format
-            var dateParts = dateInput.split("-");
-            var formattedDate = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
+            function enableButton() {
+                if(document.getElementsByClassName("correct").length == document.getElementsByClassName("meter").length - document.getElementsByClassName("unneeded").length) {
+                    $('#submit').prop('disabled', false);
+                }
+                else {
+                    $('#submit').prop('disabled', true);
+                }
+            }
 
-            var row = tbody.insertRow();
-            var cell1 = row.insertCell(0);
-            var cell2 = row.insertCell(1);
-            var cell3 = row.insertCell(2);
+            $(document).on('keyup', '.indexValue', function(){
+                indexValidate(this.id, this.value);
+            })
 
-            cell1.innerHTML = formattedDate;
-            cell2.innerHTML = meterReadingInput;
-            cell3.innerHTML = '<button onclick="editEntry(this)">Edit</button> <button onclick="deleteEntry(this)">Delete</button>';
+            var index_values = @json($index_values);
 
-            // Show notification
-            var notification = document.createElement('div');
-            notification.textContent = 'Entry added successfully!';
-            notification.style.backgroundColor = 'lightgreen';
-            notification.style.padding = '10px';
-            notification.style.marginTop = '10px';
-            document.body.appendChild(notification);
+            function createChart(index_value) {
+                var ctx = document.getElementById('consumptionChart' + index_value[0].meter_id).getContext('2d');
+                var labels = [];
+                var individual_index_values = [];
+                var consumption_values = [];
+                var title = "Index value and consumption for meter " + index_value[0].EAN;
 
-            // Hide notification after 3 seconds
-            setTimeout(function() {
-                document.body.removeChild(notification);
-            }, 3000);
+                labels = index_value.map(item => item.reading_date);
+                individual_index_values = index_value.map(item => item.reading_value);
 
-            // Hide error message if any
-            document.getElementById('error-message').style.display = 'none';
+                for (let i = 0; i < individual_index_values.length; i++) {
+                    if (i === 0) {
+                        consumption_values.push(0);
+                    } else {
+                        consumption_values.push(individual_index_values[i] - individual_index_values[i - 1]);
+                    }
+                }
 
-            // After adding a new entry, update pagination
-            updatePagination();
-        }
+                return new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Index Values',
+                            type: 'line',
+                            data: individual_index_values,
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1,
+                            fill: false
+                        }, {
+                            label: 'Consumption Values',
+                            type: 'bar',
+                            data: consumption_values,
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            title: {
+                                display: true,
+                                text: title,
+                                font: {
+                                    size: 14
+                                },
+                                padding: {
+                                    top: 10,
+                                    bottom: 30
+                                },
+                                color: '#111'
+                            }
+                        }
+                        
+                    }
+                });
+            }
 
-        function editEntry(button) {
-            var row = button.parentNode.parentNode;
-            var date = row.getElementsByTagName('td')[0].innerText;
-            var reading = row.getElementsByTagName('td')[1].innerText;
-
-            // Populate the form fields for editing
-            document.getElementById('reading_date').value = date;
-            document.getElementById('meter_reading').value = reading;
-
-            // Remove the current row
-            row.parentNode.removeChild(row);
-        }
-
-        function deleteEntry(button) {
-            var row = button.parentNode.parentNode;
-            row.parentNode.removeChild(row);
-
-            // After deleting an entry, update pagination
-            updatePagination();
-        }
-
-        function updatePagination() {
-            // Your pagination update code...
-        }
+            index_values.forEach(index_value => {
+                createChart(index_value);
+            });
+        })
     </script>
-</body>
-</html>
+    </x-app-layout>
+
+
