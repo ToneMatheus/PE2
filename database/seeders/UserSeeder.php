@@ -42,6 +42,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   //Employee
                 'id' => 2,
@@ -56,6 +57,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   //Employee who's Customer
                 'id' => 3,
@@ -70,6 +72,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   //Commercial Customer
                 'id' => 4,
@@ -84,48 +87,52 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
-            [   //Residential Customer
+            [   //Employee who is customer service line 1
                 'id' => 5,
                 'username' => 'ann',
                 'first_name' => 'Ann',
                 'last_name' => 'Doe',
                 'password' => Hash::make('ann'),
-                'employee_profile_id' => null,
+                'employee_profile_id' => 4,
                 'is_company' => 0,
                 'company_name' => null,
                 'email' => 'ann@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
-            [   
+            [   //Employee who is customer service line 2
                 'id' => 6,
                 'username' => 'marie',
                 'first_name' => 'Marie',
                 'last_name' => 'Doe',
                 'password' => Hash::make('marie'),
-                'employee_profile_id' => null,
+                'employee_profile_id' => 5,
                 'is_company' => 0,
                 'company_name' => null,
                 'email' => 'marie@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
-            [   
+            [   //Employee who is customer service line 3
                 'id' => 7,
                 'username' => 'mark',
                 'first_name' => 'Mark',
                 'last_name' => 'Doe',
                 'password' => Hash::make('mark'),
-                'employee_profile_id' => null,
+                'employee_profile_id' => 6,
                 'is_company' => 0,
                 'company_name' => null,
                 'email' => 'mark@gmail.com',
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   
                 'id' => 8,
@@ -140,6 +147,7 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
             [   
                 'id' => 9,
@@ -154,8 +162,23 @@ class UserSeeder extends Seeder
                 'phone_nbr' => generatePhone(),
                 'birth_date' => generateDate(),
                 'nationality' => 'Belgian',
+                'changed_default' => 1
             ],
-            
+            [
+                'id' => 1000,
+                'username' => 'undefined',
+                'first_name' => 'Not Defined',
+                'last_name' => '',
+                'password' => Hash::make('undefined'),
+                'employee_profile_id' => 1000,
+                'is_company' => 0,
+                'company_name' => null,
+                'email' => 'undefined@gmail.com',
+                'phone_nbr' => generatePhone(),
+                'birth_date' => generateDate(),
+                'nationality' => 'Dutch',
+                'changed_default' => 1
+            ],
         ]);
     }
 }
