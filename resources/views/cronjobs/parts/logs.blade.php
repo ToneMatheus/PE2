@@ -36,13 +36,19 @@
                     {{ $jobLog->invoice_id }}
                 @else
                     N/A
-                @endif    
-            </td>
-            <td class="px-6 py-4">
-                {{ $jobLog->log_level }}
-            </td>
-            <td class="px-6 py-4">
-                {{ $jobLog->message }}
+                @endif
+                </p>
+                <p>
+                    <strong>Logged by:</strong> 
+                    {{ $jobLog->job_name }}
+                </p>
+                @if ($jobLog->detailed_message != null)
+                    <p class="break-all">
+                        <strong >Detailed Message:</strong> 
+                        {{ $jobLog->detailed_message }}
+                    </p>
+                @endif
+                
             </td>
         </tr>
         @endforeach

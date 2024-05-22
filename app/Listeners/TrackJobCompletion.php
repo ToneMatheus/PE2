@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Listeners;
+
+use App\Mail\JobDoneNotification;
+use App\Models\CronJobRun;
+use App\Notifications\JobRunCompletedNotification;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+
+class TrackJobCompletion
+{
+    /**
+     * Create the event listener.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Handle the event.
+     *
+     * @param  object  $event
+     * @return void
+     */
+    public function handle($event)
+    {   
+        $jobRunId = $event->jobRunId;
+        $jobName = $event->jobName;
+
+        Cache::decrement("job_".$jobRunId."_count");
+
+        if (config('app.debug')){
+            Log::debug("event: $jobName completed id:$jobRunId count:". Cache::get("job_".$jobRunId."_count"));
+        }
+
+        if (Cache::get("job_".$jobRunId."_count") <= 0) {
+            cache::forget("job_".$jobRunId."_count");
+           
+            $this->jobCompletion($jobRunId, $event->jobCompletionMessage);
+        }
+    }
+
+    private function jobCompletion($jobRunId, $message){
+        // Log that the job execution has completed
+        $job = CronJobRun::find($jobRunId);
+        $job->ended_at = now();
+
+        if (empty($job->error_message)) {
+            $job->status = 'Completed';
+            $job->error_message = $message;
+        } 
+        else {
+            $job->status = 'Failed';
+        }
+        $job->save();
+        
+        $userTobeNotified = Cache::get($job->name);
+        $userTobeNotified->notify(new JobRunCompletedNotification($job->name));
+        Mail::to(env("MAIL_DEBUG"))->send(new JobDoneNotification($job->name));
+        Log::info("I am done with all the subjobs sending out notification.");
+    }
+}

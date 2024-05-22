@@ -70,15 +70,25 @@ class MeterController extends Controller
         return view('Meters/Consumption_Reading');
     }
 
-    public function viewScheduledMeters(Request $request) {
-        $results = DB::select('SELECT users.first_name, users.last_name, addresses.street, addresses.number, addresses.postal_code, addresses.city, meters.EAN FROM users
-        JOIN customer_addresses on users.id = customer_addresses.user_id
-        JOIN addresses on customer_addresses.address_id = addresses.id
-        JOIN meter_addresses on addresses.id = meter_addresses.address_id
-        JOIN meters on meter_addresses.meter_id = meters.id
-        JOIN meter_reader_schedules on meters.id = meter_reader_schedules.meter_id
-        WHERE meter_reader_schedules.reading_date = \'2024-03-21\' AND meter_reader_schedules.employee_profile_id = 1
-        AND meter_reader_schedules.status = \'unread\';');
+    public function viewScheduledMeters(Request $request) { // viewing meters for specific employee
+        $today = Carbon::now()->toDateString();
+        $company_address = urlencode('Jan Pieter de Nayerlaan 7 Sint Katelijne Waver');
+        $key = env('GOOGLE_API_KEY');
+        $addresses = [];
+        $waypoints = '';
+        $optimized_waypoints = '';
+
+        $results = DB::table('users')
+                    ->join('customer_addresses','users.id','=','customer_addresses.user_id')
+                    ->join('addresses','customer_addresses.address_id','=','addresses.id')
+                    ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
+                    ->join('meters','meter_addresses.meter_id','=','meters.id')
+                    ->join('meter_reader_schedules','meters.id','=','meter_reader_schedules.meter_id')
+                    ->where('meter_reader_schedules.reading_date','=', config('app.metersDate'))
+                    ->where('meter_reader_schedules.employee_profile_id','=', $request->user()->id)
+                    ->where('meter_reader_schedules.status','=','unread')
+                    ->select('users.first_name', 'users.last_name', 'addresses.street', 'addresses.number', 'addresses.postal_code', 'addresses.city', 'meters.EAN', 'meters.id', 'meters.type', 'meter_reader_schedules.priority')
+                    ->get();
 
         $employeeName = DB::select('SELECT users.first_name FROM users WHERE users.employee_profile_id = 1;');
 
