@@ -16,11 +16,8 @@ class Balance extends Model
         'yearly_holiday_credit',
         'user_holiday_credit',
         'start_date',
-        'end_date',
-        'sick_days'
+        'end_date'
     ];
-
-    public $timestamps = false;
 
     public function employee_profile(): BelongsTo
     {

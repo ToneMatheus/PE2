@@ -9,57 +9,30 @@ use Illuminate\Support\Str;
 use App\Models\CronJob;
 use App\Models\CronJobRun;
 use App\Models\CronJobRunLog;
-use Illuminate\Support\Facades\Log;
-use ReflectionClass;
 
 class CronJobController extends Controller
 {
     public function index(){   
+        $scheduledJobs = CronJob::all();
+
         // Fetch job files in the app/Jobs directory
+        $unscheduledJobs = [];
         $jobPath = app_path('Jobs');
         if (File::exists($jobPath) && File::isDirectory($jobPath)) {
             $files = File::files($jobPath);
             foreach ($files as $file) {
                 $filename = pathinfo($file, PATHINFO_FILENAME);
-                $className = 'App\\Jobs\\' . $filename;
-                if (Str::endsWith($file, '.php') && !Str::startsWith($filename, '_')) {
+                if (Str::endsWith($file, '.php') && !Str::startsWith($filename, '.')) {
                     // Check if the job is already in the database
-                    if (CronJob::where('name', $filename)->doesntExist()) {
-                        // Use reflection to check if the class has a constructor with required parameters
-                        if (class_exists($className)) {
-                            $reflection = new ReflectionClass($className);
-                            $constructor = $reflection->getConstructor();
-                            $hasRequiredParams = false;
-                            if ($constructor) {
-                                foreach ($constructor->getParameters() as $param) {
-                                    if (!$param->isOptional()) {
-                                        $hasRequiredParams = true;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            // Skip jobs with required constructor parameters
-                            if ($hasRequiredParams) {
-                                continue;
-                            }
-
-                            $newJob = new CronJob();
-                            $newJob->name = $filename;
-                            $newJob->is_enabled = false;
-                            $newJob->log_level = 2;
-                            $newJob->scheduled_time = "00:00:00";
-                            $newJob->save();
-                        }
+                    $existingJob = CronJob::where('name', $filename)->exists();
+                    if (!$existingJob) {
+                        $unscheduledJobs[] = $filename;
                     }
                 }
             }
         }
 
-        $scheduledJobs = CronJob::whereNotNull('interval')->get();
-        $unscheduledJobs = CronJob::whereNull('interval')->get();
-
-        return view('cronjobs.index', compact('scheduledJobs', 'unscheduledJobs'));
+        return view('cronjobs/index', compact('scheduledJobs', 'unscheduledJobs'));
     }
 
     public function edit_schedule($job){
@@ -127,11 +100,10 @@ class CronJobController extends Controller
         return redirect()->back()->with('success', 'Schedule updated successfully');
     }
     
-    public function run(Request $request, $job){
-        $logLevel = $request->input('logInput');
+    public function run($job){
         $jobClass = 'App\Jobs\\' . $job;
-        $jobClass::dispatch($logLevel);
-        return redirect()->back()->with('regularJobStatus', 'job has been run.');
+        $jobClass::dispatch();
+        return redirect()->back()->with('regularJobStatus', 'Regular job has been run.');
     }
     
     public function showHistory()
@@ -145,7 +117,7 @@ class CronJobController extends Controller
             $files = File::files($jobPath);
             foreach ($files as $file) {
                 $filename = pathinfo($file, PATHINFO_FILENAME);
-                if (Str::endsWith($file, '.php') && !Str::startsWith($filename, '_')) {
+                if (Str::endsWith($file, '.php') && !Str::startsWith($filename, '.')) {
                     $jobs[] = $filename;
                 }
             }
@@ -218,22 +190,4 @@ class CronJobController extends Controller
 
         return view('cronjobs/parts/logs', compact('jobRun', 'jobLogs', 'logCounts'));
     }
-
-    public function updateLogLevel(Request $request, $jobName)
-    {
-        $request->validate([
-            'log_level' => 'required|numeric|min:0|max:4',
-        ]);
-
-        $job = CronJob::where('name', $jobName)->first();
-        if (!$job) {
-            return response()->json(['error' => 'Job not found'], 404);
-        }
-
-        $job->log_level = $request->input('log_level');
-        $job->save();
-
-        return response()->json(['message' => 'Log level updated successfully', 'job' => $job]);
-    }
-
 }

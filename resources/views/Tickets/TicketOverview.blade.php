@@ -1,4 +1,5 @@
-<x-app-layout :title="'ticket overview'">    
+<!-- resources/views/tickets/overview.blade.php -->
+<x-app-layout :title="'Ticket Overview'">    
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
@@ -9,20 +10,24 @@
                                 <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">ID</th>
                                 <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Name</th>
                                 <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Status</th>
+                                <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($tickets as $ticket)
-                            <tr>
-                                <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->id }}</td>
-                                <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->name }}</td>
-                                <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">@if($ticket->active == 1)
-                                    <p>The ticket is still open!</p>
+                            <tr class="bg-gray-100 dark:bg-gray-600">
+                                <td class="px-4 py-2 text-gray-800 dark:text-gray-200 text-sm text-center">{{ $ticket->id }}</td>
+                                <td class="px-4 py-2 text-gray-800 dark:text-gray-200 text-sm text-center">{{ $ticket->name }}</td>
+                                <td class="px-4 py-2 text-gray-800 dark:text-gray-200 text-sm text-center">
+                                    @if($ticket->active == 1)
+                                        <span>The ticket is still open!</span>
                                     @else
-                                    <p>The ticket is closed!</p>
+                                        <span>The ticket is closed!</span>
                                     @endif
                                 </td>
-                                <td><a href="{{ route('details', ['id' => $ticket->id]) }}">Details</a></td>
+                                <td class="px-4 py-2 text-gray-800 dark:text-gray-200 text-sm text-center">
+                                    <a href="{{ route('details', ['id' => $ticket->id]) }}" class="text-blue-500 hover:text-blue-700">Details</a>
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>

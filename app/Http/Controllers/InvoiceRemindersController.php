@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{
-    User,
+    User, 
     Invoice,
     Contract_product,
     Product,
@@ -102,7 +102,7 @@ class InvoiceRemindersController extends Controller
         ->where('a.is_billing_address', '=', 1)
         ->where('users.id', '=', 1)
         ->first();
-
+        
         // Generate PDF
         $pdf = Pdf::loadView('Invoices.monthly_invoice_pdf', [
             'invoice' => $invoice,
@@ -113,7 +113,7 @@ class InvoiceRemindersController extends Controller
         $pdfData = $pdf->output();
 
         //Send email with PDF attachment
-        Mail::to('masteranime18@gmail.com')->send(new MonthlyInvoiceMail(
+        Mail::to('shaunypersy10@gmail.com')->send(new MonthlyInvoiceMail(
             $invoice, $user, $pdfData, $newInvoiceLines
         ));
     }

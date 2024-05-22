@@ -37,13 +37,7 @@ class Ticket extends Model
         'description',
         'active',
         'user_id',
-        'status',
-        'close_date',
-        'is_solved',
-        'employee_id',
-        'line',
-        'urgency',
-        'resolution'
+        'status', 'resolution'
     ];
 
     public static function validate(array $input): bool
@@ -53,14 +47,9 @@ class Ticket extends Model
         return \Illuminate\Support\Facades\Validator::make($input, $rules)->passes();
     }
 
-    public function employee_profile(): BelongsTo
+    public function ticket(): BelongsTo
     {
-        return $this->belongsTo(Employee_Profile::class);
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Ticket::class);
     }
 
     public function employee_tickets(): HasMany

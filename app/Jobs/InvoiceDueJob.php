@@ -12,22 +12,22 @@ use Illuminate\Queue\SerializesModels;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-use App\Traits\cronJobTrait;
+use App\Traits\jobLoggerTrait;
 use Carbon\Carbon;
 
 use App\Models\Invoice;
 
 class InvoiceDueJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, jobLoggerTrait;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($logLevel = null)
+    public function __construct()
     {
-        $this->LoggingLevel = $logLevel;
+        //
     }
 
     /**
@@ -75,7 +75,6 @@ class InvoiceDueJob implements ShouldQueue
     {
         //gather data of users: name, e-mail
         //gather data of lines of invoice
-        $userMail="";
         try
         {
             $invoice = new Invoice();
@@ -89,7 +88,6 @@ class InvoiceDueJob implements ShouldQueue
                 ->leftJoin('users', 'customer_contracts.user_id', '=', 'users.id')
                 ->where('invoices.id', $invoiceID)
                 ->first();
-            $userMail = $user_info->email;
         }
         catch(\Exception $e)
         {
@@ -97,6 +95,13 @@ class InvoiceDueJob implements ShouldQueue
             $this->logCritical($invoiceID, "Unable to retrieve invoice information: " . $e);
         }
 
-        $this->sendMailInBackground($userMail, InvoiceDue::class, [$invoice_info, $total_amount, $user_info], $invoiceID);
+        if (Mail::to('niki.de.visscher@gmail.com')->send(new InvoiceDue($invoice_info, $total_amount, $user_info)) == null)
+        {
+            Log::error("Unable to send invoice due mail for invoice with ID ". $invoiceID);
+            $this->logWarning($invoiceID , "Unable to send invoice due mail");
+        }
+        else{
+            $this->logInfo($invoiceID , "Succesfully sent mail.");
+        }
     }
 }

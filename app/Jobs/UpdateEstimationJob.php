@@ -19,7 +19,6 @@ use App\Models\Meter;
 use App\Models\Index_Value;
 
 use App\Mail\MonthlyInvoiceMail;
-use App\Traits\cronJobTrait;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -31,40 +30,28 @@ use App\Services\InvoiceFineService;
 
 class UpdateEstimationJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, cronJobTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-
-    protected $domain = "http://127.0.0.1:8000"; //change later
-    protected $now;
-    protected $year;
-    protected $month;
-
-    public function __construct($logLevel = null)
+    public function __construct()
     {
-        $this->LoggingLevel = $logLevel;
-        $this->now = config('app.now');
-        $this->month = $this->now->format('m');
-        $this->year = $this->now->format('Y');
+      
     }
 
     public function handle()
     {
-        $this->jobStart();
-
-        $now = $this->now->copy();
-        $month = $this->month;
-        $year = $this->year;
+        $now = Carbon::now();
+        $month = $now->format('m');
+        $year = $now->format('Y');
         // Get all meters
-        $meters = Meter::select('meters.id as meter_id')->where("is_smart", "=", 0)
+        $meters = Meter::select('meters.id as meter_id')
                     ->get()
                     ->pluck('meter_id')
                     ->toArray();
-        // dd($meters);
         foreach($meters as $meterID){
             // Check if estimation table has this meter.
             if(sizeof(Estimation::get()->where('meter_id', '=', $meterID)->toArray()) == 0){
                 // Validation error not enough data to make estimation.
-                $this->logError(null,'Exception caught: ' . "Estimation Validation Error Code 1: No estimation data found for meter with id: $meterID.");
+                Log::error('Exception caught: ' . "Estimation Validation Error Code 1: No estimation data found for meter with id: $meterID.");
             }else{
                 // Update this meters values.
                 $meterReadings = DB::table('index_values')
@@ -87,7 +74,6 @@ class UpdateEstimationJob implements ShouldQueue
                 }
             }
         }
-        $this->jobCompletion("Completed invoice run job");
     }
     public function calculateMeterEnergyEstimate(int $meterID): int
     {

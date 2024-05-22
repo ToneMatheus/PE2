@@ -51,12 +51,9 @@ class CreditNoteController extends Controller
         $LineItemIdCollection = $request->input('line_items');
         $lineItems = collect();
 
-        if($LineItemIdCollection != null){
-            foreach($LineItemIdCollection as $id){
-                $lineItems->push(Invoice_line::find($id));
-            }
-        
-
+        foreach($LineItemIdCollection as $id){
+            $lineItems->push(Invoice_line::find($id));
+        }
         $user = DB::table('invoices')
         ->join('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
         ->join('users', 'customer_contracts.user_id', '=', 'users.id')
@@ -95,8 +92,6 @@ class CreditNoteController extends Controller
         Mail::to('finnvc99@gmail.com')->send(new CreditNoteMail($creditNoteLines, $user));
 
         return redirect()->back()->with('success', 'Refund successful');
-        }
-        return redirect()->back();
     }
     public function store(Request $request)
     {

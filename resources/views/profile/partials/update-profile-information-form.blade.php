@@ -1,6 +1,4 @@
 <!-- LOOK Manage page hier zetten -->
-<!-- TODO index_method bij zetten-->
-<!-- TODO nationality bij zetten-->
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -101,20 +99,7 @@
             <x-input-error class="mt-2" :messages="$errors->get('username')" />
         </div>
 
-        <div class="mt-4">
-            <x-input-label for="nationality" :value="__('Nationality')" />
-            <x-text-input id="nationality" class="block mt-1 w-full" type="text" name="nationality" :value="old('nationality', $user->nationality)" autofocus autocomplete="nationality" />
-            <x-input-error :messages="$errors->get('nationality')" class="mt-2" />
-        </div>
-
-        <div>
-            <x-input-label for="index_method" :value="__('Meter reading')" />
-            <select name="index_method" id="index_method">
-                <option value="website" {{ old('index_method', $user->index_method) == 'website' ? 'selected' : '' }}>Website</option>
-                <option value="paper" {{ old('index_method', $user->index_method) == 'paper' ? 'selected' : '' }}>Paper</option>
-            </select>
-            <x-input-error class="mt-2" :messages="$errors->get('first_name')" />
-        </div>
+        <!-- TODO nationality bij zetten -->
 
         @if($user->is_company == 1)
             <div>

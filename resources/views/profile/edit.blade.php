@@ -10,9 +10,9 @@
             var value = document.getElementById(i.toString()).value;
             addresses[key] = value;
 
-            // console.log(key, value)
+            console.log(key, value)
         }
-        // console.log('array: ', addresses)
+        console.log('array: ', addresses)
     });
 </script>
 
@@ -37,23 +37,16 @@
                 </div>
             </div>
 
+            <!-- LOOK om hier een foreach loop te zetten -->
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     @include('profile.partials.update-address-form')
                 </div>
             </div>
 
-            <!-- CH delete adres naar kijken -->
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     @include('profile.partials.billing-address-form', ['addresses' => $addresses])
-                </div>
-            </div>
-
-            <!-- CH add adres toe voegen. -->
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.add-address-form')
                 </div>
             </div>
 
