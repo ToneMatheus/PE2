@@ -78,7 +78,7 @@ class InvoiceFinalWarningJob implements ShouldQueue
 
             $total_amount = Invoice::where('id', $invoiceID)->value('total_amount');
 
-            $user_info = Invoice::select('users.email', 'users.first_name', 'users.last_name')
+            $user_info = Invoice::select('users.id', 'users.email', 'users.first_name', 'users.last_name')
                 ->leftJoin('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
                 ->leftJoin('users', 'customer_contracts.user_id', '=', 'users.id')
                 ->where('invoices.id', $invoiceID)
