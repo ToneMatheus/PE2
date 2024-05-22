@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\JobDispatched;
 use App\Models\Estimation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -48,8 +49,11 @@ class ValidationJob implements ShouldQueue
                 throw new \Exception("Database Error Code 0: No connection could be made");
             } else {
 
-                WeekAdvanceReminderJob::dispatch();
-                InvoiceFinalWarningJob::dispatch();
+                event(new JobDispatched($this->JobRunId, $this->__getShortClassName()));
+                WeekAdvanceReminderJob::dispatch($this->JobRunId);
+                
+                event(new JobDispatched($this->JobRunId, $this->__getShortClassName()));
+                InvoiceFinalWarningJob::dispatch($this->JobRunId);
 
                 $meters = Meter::whereTypeAndStatus("Electricity", "Installed")->where("is_smart", "=", 0)
                 ->get();
@@ -145,7 +149,8 @@ class ValidationJob implements ShouldQueue
                                 
                                 //Reminder index values 1 week prior invoice run
                                 if($invoiceDate->copy()->subWeek() == $now){
-                                    MeterReadingReminderJob::dispatch($customers->uID, $customers->mID);
+                                    event(new JobDispatched($this->JobRunId, $this->__getShortClassName()));
+                                    MeterReadingReminderJob::dispatch($this->JobRunId, $customers->uID, $customers->mID);
                                 }
 
                                 $consumptions = Index_Value::where('meter_id', '=', $meter_id)
@@ -157,7 +162,8 @@ class ValidationJob implements ShouldQueue
                                     // no consumption found
                                     $this->logError(null, 'Exception caught: ' . "Validation Error Code 3: No consumption data found for meter with id: $meter_id.");
                                     if($invoiceDate->copy() == $now){
-                                        MissingMeterReadingJob::dispatch($customers->uID, $customers->mID);
+                                        event(new JobDispatched($this->JobRunId, $this->__getShortClassName()));
+                                        MissingMeterReadingJob::dispatch($this->JobRunId, $customers->uID, $customers->mID);
                                     }
 
                                     Meter::where('id', $meter_id)->update(['has_validation_error' => 1]);
