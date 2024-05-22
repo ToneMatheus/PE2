@@ -59,6 +59,8 @@ use App\Http\Controllers\holidayRequest;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\StatisticsController;
 
+use App\Http\Controllers\ConfigController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -129,7 +131,7 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
 
     // addinvoiceline
     Route::get('/addInvoiceExtraForm', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('addInvoiceExtraForm');
-    Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
+    Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('processInvoiceExtraForm');
 
     //customer
     Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
@@ -145,7 +147,7 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     
     //All routes for credit notes on invoice refunds
     Route::get('/customer/invoice/search', [CreditNoteController::class, 'show'])->name('credit-notes.search');
-    Route::post('/customer/invoice/search', [CreditNoteController::class, 'search'])->name('credit-notes.search');
+    Route::post('/customer/invoice/search', [CreditNoteController::class, 'search'])->name('credit-notes.process');
     Route::post('/refund', [CreditNoteController::class, 'refund']);
 
     //Route for statistics
@@ -599,3 +601,6 @@ Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController:
 Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
 Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
+
+
+Route::post('/update-now', [ConfigController::class, 'updateNow'])->name('updateNow');
