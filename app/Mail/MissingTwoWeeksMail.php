@@ -20,7 +20,8 @@ class MissingTwoWeeksMail extends Mailable
      */
     //$name so I can check the mailaddress
     public function __construct(
-        public $userID
+        public $user,
+        public $fee
     )
     {}
 
