@@ -25,9 +25,12 @@
         
         // session_destroy();
             // Unset session variable
-        unset($_SESSION['user']);
-        unset($_SESSION['currentM']);
-        unset($_SESSION['currentY']);
+        if(isset($_SESSION['user']))
+            unset($_SESSION['user']);
+        if(isset($_SESSION['currentM']))
+            unset($_SESSION['currentM']);
+        if(isset($_SESSION['currentY']))
+            unset($_SESSION['currentY']);
 
         // Destroy the session
         session_destroy();
@@ -382,9 +385,12 @@
             if(isset($_GET['cncel']))
             {
                 // echo "pressed";
-                
-                unset($_SESSION['currentM']);
-                unset($_SESSION['currentY']);
+            
+                if(isset($_SESSION['currentM']))
+                    unset($_SESSION['currentM']);
+                if(isset($_SESSION['currentY']))
+                    unset($_SESSION['currentY']);
+               
                 session_destroy();
             }
             // Start the table and iterate through each day of the month
@@ -759,7 +765,7 @@
                             div4.style.visibility='visible';
                     }
                     
-                    if((clr_var == 'green' || clr_var == 'purple') && newId > 0 )
+                    if((clr_var == 'green' || clr_var == 'purple') && newId > 0 && div2.style.visibility == 'hidden')
                     {
 
                     
