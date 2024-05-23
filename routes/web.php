@@ -586,7 +586,7 @@ Route::post('/EstimationGuestForm', [EstimationController::class, 'ShowGuestEner
 Route::get('/CreateInvoice', [EstimationController::class, 'showButton'])->name('EstimationPage');
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
 
-Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
+
 
 
 
