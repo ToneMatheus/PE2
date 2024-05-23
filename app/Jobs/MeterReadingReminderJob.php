@@ -46,7 +46,7 @@ class MeterReadingReminderJob implements ShouldQueue
             $a = 5897;
             $b = 95471;
             $c = 42353;
-            $tempUserID = (($user->id * $a) / $b) + $c;
+            $tempUserID = (($this->customeruID * $a) / $b) + $c;
             Log::info("tempuserID = ", ['tempuserID' => $tempUserID]);
 
             $encryptedTempUserId = Crypt::encrypt($tempUserID);

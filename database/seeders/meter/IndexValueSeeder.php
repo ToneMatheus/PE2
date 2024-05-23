@@ -180,29 +180,6 @@ class IndexValueSeeder extends Seeder
                 'meter_id' => 9
             ],
         ]);
-        for ($i = 1; $i <= 8; $i++) {
-            $init_meter_value = rand(2500, 3000);
-            $second_meter_value = $init_meter_value + rand(100, 300);
-            $third_meter_value = $second_meter_value + rand(100, 300);
-            
-            DB::table('index_values')->insert([
-                [
-                    'reading_date' => '2023-01-01',
-                    'reading_value' => $init_meter_value,
-                    'meter_id' => $i
-                ],
-                [
-                    'reading_date' => '2024-01-01',
-                    'reading_value' => $second_meter_value,
-                    'meter_id' => $i
-                ],
-                [
-                    'reading_date' => '2025-01-01',
-                    'reading_value' => $third_meter_value,
-                    'meter_id' => $i
-                ]
-            ]);
-        }
 
         // smart meter readings
         for ($i = 1; $i <= 12; $i++) {

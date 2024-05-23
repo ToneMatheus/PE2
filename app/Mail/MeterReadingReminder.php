@@ -29,7 +29,7 @@ class MeterReadingReminder extends Mailable
     {
         return new Envelope(
             from: new Address('energysupplier@gmail.com', 'Energy Supplier'),
-            subject: 'Meter index values reminder (due in 1 week)',
+            subject: config('app.now')->format("m-d") . ' Meter index values reminder (due in 1 week)',
         );
     }
 

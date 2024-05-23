@@ -43,7 +43,7 @@ class weekAdvanceReminder extends Mailable
     {
         return new Envelope(
             from: new Address('energysupplier@gmail.com', 'Energy Supplier'),
-            subject: 'Open Invoice: Advance Reminder',
+            subject: config('app.now')->format("M-d") . 'Open Invoice: Advance Reminder',
         );
     }
 
