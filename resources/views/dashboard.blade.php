@@ -30,13 +30,6 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View the Ticket dashboard</p>
                             </div>
                         </a>
-                        <a href="{{ route('create-ticket') }}" class="block">
-                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
-                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Create Ticket</span>
-                                <p class="text-gray-600 dark:text-gray-400 text-sm">Create a new ticket</p>
-                            </div>
-                        </a>
-
                         <a href="{{ route('index-cron-job') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Job Scheduler</span>
@@ -149,7 +142,7 @@
                         {{-- @include('intranet.employeeIntranet'); --}}
 
                         @if($teamName == 'HR')
-                            @include('chatbot.chatbotEmployeeHR');
+                            @include('chatbot.chatbotEmployeeHR')
                         
                             @elseif($teamName == 'Customer service')
                                 <a href="{{ route('customerGridView') }}" class="block">
@@ -158,10 +151,10 @@
                                         <p class="text-gray-600 dark:text-gray-400 text-sm">View all customers</p>
                                     </div>
                                 </a> 
-                                @include('chatbot.chatbotEmployeeCustomerService');
+                                @include('chatbot.chatbotEmployeeCustomerService')
                             
                             @elseif($teamName == 'Meters')
-                                @include('chatbot.chatbotEmployeeMeters');
+                                @include('chatbot.chatbotEmployeeMeters')
                             
                             @elseif($teamName == 'Invoice')
                                 <a href="{{ route('tariff') }}" class="block">
@@ -170,11 +163,11 @@
                                         <p class="text-gray-600 dark:text-gray-400 text-sm">Change the tariffs of products</p>
                                     </div>
                                 </a>
-                                @include('chatbot.chatbotEmployeeInvoice');
+                                @include('chatbot.chatbotEmployeeInvoice')
                         
                         @endif
 
-                        @include('notifications.managerNotifications');
+                        @include('notifications.managerNotifications')
                             
                     @endif
                     
@@ -266,6 +259,7 @@
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Meter History</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View meter history and enter index value as customer</p>
                             </div>
+
                         </a> 
                         <a href="{{ route('ServiceTicketOverview') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
@@ -279,7 +273,7 @@
                         @include('intranet.employeeIntranet');
 
                         @if($teamName == 'HR')
-                            @include('chatbot.chatbotEmployeeHR');
+                            @include('chatbot.chatbotEmployeeHR')
                         
                         @elseif($teamName == 'Customer service')
                             <a href="{{ route('customerGridView') }}" class="block">
@@ -288,10 +282,10 @@
                                     <p class="text-gray-600 dark:text-gray-400 text-sm">View all customers</p>
                                 </div>
                             </a> 
-                            @include('chatbot.chatbotEmployeeCustomerService');
+                            @include('chatbot.chatbotEmployeeCustomerService')
                         
                         @elseif($teamName == 'Meters')
-                            @include('chatbot.chatbotEmployeeMeters');
+                            @include('chatbot.chatbotEmployeeMeters')
                         
                         @elseif($teamName == 'Invoice')
                             <a href="{{ route('tariff') }}" class="block">
@@ -300,11 +294,12 @@
                                     <p class="text-gray-600 dark:text-gray-400 text-sm">Change the tariffs of products</p>
                                 </div>
                             </a>
-                            @include('chatbot.chatbotEmployeeInvoice');
+                            @include('chatbot.chatbotEmployeeInvoice')
                 
                         @endif
 
-                        @include('notifications.notifications');
+                        @include('intranet.employeeIntranet')
+                        @include('notifications.notifications')
                     @endif
 
                     @if($roleId == config('roles.CUSTOMER_SERVICE'))
