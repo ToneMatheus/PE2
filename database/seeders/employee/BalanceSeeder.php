@@ -22,5 +22,14 @@ class BalanceSeeder extends Seeder
                 ],
             ]);
         }
+        DB::table('balances')->insert([
+            [
+                'employee_profile_id' => 2,
+                'holiday_type_id' => 2,
+                'yearly_holiday_credit' => 10,
+                'used_holiday_credit' => 0,
+                'start_date' => '2024-01-01'
+            ],
+        ]);
     }
 }
