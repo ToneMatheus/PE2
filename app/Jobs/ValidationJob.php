@@ -152,7 +152,7 @@ class ValidationJob implements ShouldQueue
                                 $contractDuration = $startContract->diffInYears($now);
 
                                 $invoiceDate = $startContract->addYear()->addWeek();
-                                $lastInvoiceDate = ($contractDuration < 1) ? $startContract->start_date : $invoiceDate->copy()->setYear($year-1);
+                                $lastInvoiceDate = ($contractDuration < 1) ? $startContract : $invoiceDate->copy()->setYear($year-1);
                 
                                 $invoiceDate->setYear($year);
                                 $invoiceDate->setMonth($month);
