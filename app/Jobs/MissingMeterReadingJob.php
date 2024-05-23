@@ -45,7 +45,7 @@ class MissingMeterReadingJob implements ShouldQueue
                 ->where('m.id', '=',  $this->customermID)
                 ->first();
 
-            Meter::where('id', $this->customeruID)->update(['expecting_reading' => 1]);
+            Meter::where('id', $this->customermID)->update(['expecting_reading' => 1]);
 
             $a = 5897;
             $b = 95471;
