@@ -139,7 +139,15 @@ class TicketDashboardController extends Controller
             
             $employeeTicket->ticket_id = $ticketid;
             $employeeTicket->save();
-           
+
+
+
+
+            $ticket = Ticket::find($ticketid);
+            if ($ticket) {
+                $ticket->employee_id = $user->id;
+                $ticket->save();
+            }
         }
         //$ticket = Ticket::find($id);
 

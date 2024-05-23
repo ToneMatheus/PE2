@@ -12,6 +12,7 @@
                                 <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Solution</th>
                                 <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Created</th>
                                 <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Urgency</th>
+                                <th class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -28,6 +29,16 @@
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->resolution }}</td>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->created_at }}</td>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->urgency }}</td>
+                                <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">
+                                    @if($ticket->employee_id == Auth::id())
+                                        <form action="{{ route('unassign_ticket', ['id' => $ticket->id]) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center cursor-pointer">solve</button>
+                                        </form>
+                                    @else
+                                        <p class="text-gray-400">No actions available</p>
+                                    @endif
+                                </td>
                             </tr>
                         </tbody>
                     </table>

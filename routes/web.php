@@ -248,7 +248,6 @@ Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(f
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(function() {
-    Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
     Route::get('/ticket/Flowchart', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket');
 });
 
@@ -329,13 +328,21 @@ Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function
     Route::get('/tariff/products/{type}', [TariffController::class, 'getProductByType']);
 });
 
+Route::middleware(['checkUserRole:' . config('roles.MANAGER') . ',' . config('roles.EMPLOYEE')])->group(function() {
+    Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
+    Route::post('/ticket_dashboard/assign/{id}', [TicketDashboardController::class, 'assignTicket'])->name('assign_ticket');
+    Route::post('/ticket_dashboard/unassign/{id}', [TicketDashboardController::class, 'unassignTicket'])->name('unassign_ticket');
+    Route::get('/ticket_dashboard/filter', [TicketDashboardController::class, 'filter'])->name('filter_tickets');
+
+});
+
 //
 //
 // EXMAPLE
 //
 //
 Route::middleware(['checkUserRole:' . config('roles.MANAGER') . ',' . config('roles.CUSTOMER')])->group(function() {
-    
+
 });
 
 //
@@ -348,10 +355,7 @@ Route::get('/notifications/{notification}', function (Illuminate\Notifications\D
     return redirect()->back();
 })->name('notification.read');
 
-Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
-Route::post('/ticket_dashboard/assign/{id}', [TicketDashboardController::class, 'assignTicket'])->name('assign_ticket');
-Route::post('/ticket_dashboard/unassign/{id}', [TicketDashboardController::class, 'unassignTicket'])->name('unassign_ticket');
-Route::get('/ticket_dashboard/filter', [TicketDashboardController::class, 'filter'])->name('filter_tickets');
+
 
 Route::post('/index_value_entered_customer',[MeterController::class, 'submitIndexCustomer'])->name("submitIndexCustomer");
 
@@ -364,10 +368,6 @@ Route::controller(MeterController::class)->group(function () {
 
 Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
 Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
-Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
-Route::post('/ticket_dashboard/assign/{id}', [TicketDashboardController::class, 'assignTicket'])->name('assign_ticket');
-Route::post('/ticket_dashboard/unassign/{id}', [TicketDashboardController::class, 'unassignTicket'])->name('unassign_ticket');
-Route::get('/ticket_dashboard/filter', [TicketDashboardController::class, 'filter'])->name('filter_tickets');
 
 Route::post('/index_value_entered_customer',[MeterController::class, 'submitIndexCustomer'])->name("submitIndexCustomer");
 
