@@ -217,7 +217,7 @@ class InvoiceLineSeeder extends Seeder
             ]);
         }
 
-        for($i = 165; $i <= 197; $i++){
+        for($i = 165; $i <= 187; $i++){
             DB::table('invoice_lines')->insert([
                 'type' => 'Electricity',
                 'unit_price' => 0.25,
@@ -242,54 +242,6 @@ class InvoiceLineSeeder extends Seeder
                 'invoice_id' => $i,
             ]);
         }
-
-        DB::table('invoice_lines')->insert([
-            'type' => 'Electricity',
-            'unit_price' => 0.25,
-            'amount' => 79.8,
-            'consumption_id' => null,
-            'invoice_id' => 198,
-        ]);
-
-        DB::table('invoice_lines')->insert([
-            'type' => 'Basic Service Fee',
-            'unit_price' => 10,
-            'amount' => 10,
-            'consumption_id' => null,
-            'invoice_id' => 198,
-        ]);
-
-        DB::table('invoice_lines')->insert([
-            'type' => 'Distribution Fee',
-            'unit_price' => 10,
-            'amount' => 10,
-            'consumption_id' => null,
-            'invoice_id' => 198,
-        ]);
-
-        DB::table('invoice_lines')->insert([
-            'type' => 'Electricity',
-            'unit_price' => 0.25,
-            'amount' => 79.8,
-            'consumption_id' => null,
-            'invoice_id' => 199,
-        ]);
-
-        DB::table('invoice_lines')->insert([
-            'type' => 'Basic Service Fee',
-            'unit_price' => 10,
-            'amount' => 10,
-            'consumption_id' => null,
-            'invoice_id' => 199,
-        ]);
-
-        DB::table('invoice_lines')->insert([
-            'type' => 'Distribution Fee',
-            'unit_price' => 10,
-            'amount' => 10,
-            'consumption_id' => null,
-            'invoice_id' => 199,
-        ]);
+        }
     }
-}
 }

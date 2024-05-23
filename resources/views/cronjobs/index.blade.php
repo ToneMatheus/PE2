@@ -7,6 +7,18 @@
 
 <div class="py-8 dark:text-white">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <form method="post" action="{{ route('updateNow') }}">
+            @csrf
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" class="dark:text-black" min="2025-01-08" value="{{ config('app.now')->format('Y-m-d') }}"/>
+
+            <x-primary-anchor-button><input type="submit" value="Set Date"/></x-primary-anchor-button>
+        </form>
+    </div>
+</div>
+
+<div class="py-8 dark:text-white">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
         <div id="scheduled_toast" class="hidden bg-green-200 text-green-800 py-2 px-4 rounded mb-4">
         <!-- Toast message content will be added here dynamically -->
         </div>

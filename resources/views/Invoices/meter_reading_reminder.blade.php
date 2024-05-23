@@ -11,7 +11,7 @@
     
     <p>This is a reminder that the index values of your meter: {{ $user->street }} {{ $user->number }},  {{ $user->city}} {{ $user->postal_code}}</p>
     <p>is due in 1 week. Please enter your index values.</p>
-    <p>Link: <a href="#"></a></p>
+    <p><a href="{{$domain}}/Meter_History?token={{$encryptedTempUserId}}">Enter your index value here</a></p>
 
     <p>If you already have done this, you can ignore this mail.</p>
 </body>

@@ -8,7 +8,7 @@
 <x-app-layout>
     <div class="p-4 sm:p-8">
     <div class="max-w-xl">
-        <h1 class="text-blue-400 text-3xl">Invoice Details</h1>
+        <h1 class="text-blue-400 text-3xl">Invoice Details for {{ $user->first_name }} {{ $user->last_name }}</h1>
         <p>Invoice ID: {{ $invoice->id }}</p>
         <table class="min-w-full table-auto border-collapse border border-gray-200">
             <tr class="border-collapse border border-gray-200 bg-gray-300">
