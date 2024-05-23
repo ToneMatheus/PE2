@@ -405,7 +405,7 @@ class MeterController extends Controller
                                         }
                                         
                                         $output .= '
-                                            <p><button type="button" class="modalOpener bg-gray-800 dark:bg-gray-800 text-white text-xl p-2 shadow rounded-lg" value='.$row->meter_id.'>Add index value</button></p>
+                                            <p><button type="button" class="modalOpener bg-gray-800 underline dark:bg-gray-800 text-white text-xl p-2 shadow rounded-lg" value='.$row->meter_id.'>Add index value</button></p>
                                         ';
                                     }
                                     else {
@@ -944,7 +944,7 @@ class MeterController extends Controller
                                         }
                                         
                                         $output .= '
-                                            <p><button type="button" class="modalOpener bg-gray-800 dark:bg-gray-800 text-white text-xl p-2 shadow rounded-lg" value='.$row->meter_id.'>Add index value</button></p>
+                                            <p><button type="button" class="modalOpener underline bg-gray-800 dark:bg-gray-800 text-white text-xl p-2 shadow rounded-lg" value='.$row->meter_id.'>Add index value</button></p>
                                         ';
                                     }
                                     else {
