@@ -536,8 +536,39 @@ class MeterController extends Controller
             $this->finalSettlementJob($meter_id, $consumptionID, $consumption_value);
         }
         if ($contract_date->start_date == config('app.metersDate')) {
-            Log::info("Contract:", ["contract"=>$contract_date]);
-            Mail::to(config('app.email'))->send(new InvoiceLandlordMail($this->domain, $contract_date, $index_value, config('app.metersDate'), $consumption_value));
+            $prev_tenant = DB::table('users')
+                        ->join('customer_addresses','users.id','=','customer_addresses.user_id')
+                        ->join('customer_contracts','users.id','=','customer_contracts.user_id')
+                        ->join('addresses','customer_addresses.address_id','=','addresses.id')
+                        ->join('meter_addresses','addresses.id','=','meter_addresses.address_id')
+                        ->join('meters','meter_addresses.meter_id','=','meters.id')
+                        ->where('customer_contracts.end_date', '<', $contract_date->start_date)
+                        ->where('users.is_active', '=', 0)
+                        ->where('meters.id', '=', $meter_id)
+                        ->select('users.first_name', 'users.last_name', 'customer_contracts.end_date')
+                        ->get()
+                        ->first();
+
+            $new_tenant_move_in = Carbon::parse($contract_date->start_date);
+            $prev_tenant_move_out = Carbon::parse($prev_tenant->end_date);
+            Log::info("Prev tenant:", ["prev_tenant"=>$prev_tenant]);
+            $gap = $prev_tenant_move_out->floatDiffInDays($new_tenant_move_in);
+            Log::info("Gap:", ["gap"=>$gap]);
+            
+            if($gap > 1) {
+                $landlord = DB::table('users')
+                            ->join('customer_addresses','users.id','=','customer_addresses.user_id')
+                            ->join('addresses','customer_addresses.address_id','=','addresses.id')
+                            ->where('users.is_landlord', '=', 1)
+                            ->where('addresses.street', '=', $contract_date->street)
+                            ->where('addresses.number', '=', $contract_date->number)
+                            ->where('addresses.city', '=', $contract_date->city)
+                            ->select('users.first_name', 'users.last_name')
+                            ->get()
+                            ->first();
+                Log::info("Landlord:", ["landlord"=>$landlord]);
+                Mail::to(config('app.email'))->send(new InvoiceLandlordMail($this->domain, $landlord, $contract_date, $index_value, config('app.metersDate'), $consumption_value));
+            }
         }
 
         
