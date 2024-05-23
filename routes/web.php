@@ -59,7 +59,7 @@ use App\Http\Controllers\ServiceEditController;
 use App\Http\Controllers\ServiceTicketOverviewController;
 
 use App\Http\Controllers\ConfigController;
-
+use App\Http\Controllers\StatisticsController;
 
 /*
 |--------------------------------------------------------------------------
