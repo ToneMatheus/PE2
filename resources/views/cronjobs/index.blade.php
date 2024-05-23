@@ -19,6 +19,15 @@
 
 <div class="py-8 dark:text-white">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <form method="post" action="{{ route('updateSeeder') }}">
+            @csrf
+            <x-primary-anchor-button><input type="submit" value="Emily Index"/></x-primary-anchor-button>
+        </form>
+    </div>
+</div>
+
+<div class="py-8 dark:text-white">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
         <div id="scheduled_toast" class="hidden bg-green-200 text-green-800 py-2 px-4 rounded mb-4">
         <!-- Toast message content will be added here dynamically -->
         </div>

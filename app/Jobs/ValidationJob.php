@@ -151,7 +151,7 @@ class ValidationJob implements ShouldQueue
 
                                 $contractDuration = $startContract->diffInYears($now);
 
-                                $invoiceDate = $startContract->addYear()->addWeek();
+                                $invoiceDate = $startContract->addYear()->addWeeks(2);
                                 $lastInvoiceDate = ($contractDuration < 1) ? $startContract : $invoiceDate->copy()->setYear($year-1);
                 
                                 $invoiceDate->setYear($year);
@@ -166,7 +166,7 @@ class ValidationJob implements ShouldQueue
 
                                 $consumptions = Index_Value::where('meter_id', '=', $meter_id)
                                 ->where('reading_date', '>=', $lastInvoiceDate)
-                                ->where('reading_date', '<', $invoiceDate->copy())
+                                ->where('reading_date', '<', $invoiceDate->copy()->addWeek())
                                 ->get()->toArray();
 
                                 if (sizeof($consumptions) == 0) {
