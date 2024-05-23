@@ -138,11 +138,7 @@ class InvoiceRunJob implements ShouldQueue
                     $this->generateYearlyInvoice($customer, $lastInvoiceDate, $now->copy());
                     Meter::where('id', '=', $customer->mID)
                     ->update(['expecting_reading' => 0]);
-                }//Reminder index values 1 week prior invoice run
-                elseif($invoiceDate->copy()->subWeek() == $now){
-                    event(new JobDispatched($this->JobRunId, "MeterReadingReminderJob"));
-                    MeterReadingReminderJob::dispatch($this->JobRunId, $customer->uID, $customer->mID);
-                } //Check if needs an invoice now
+                }
                 elseif($invoiceDate->copy() == $now){
                     $this->generateYearlyInvoice($customer, $lastInvoiceDate, $invoiceDate->copy()->addYear());
                 }
@@ -185,6 +181,11 @@ class InvoiceRunJob implements ShouldQueue
             ->select('contract_products.id as cpID', 'contract_products.start_date as cpStartDate', 'p.product_name as productName',
             'p.id as pID')
             ->first();
+
+            if ($contractProduct == null){
+                $this->logError(null, "ContractProduct is null");
+                return;
+            }
 
             $discounts = Discount::where('discounts.contract_product_id', '=', $contractProduct->cpID)
             ->whereDate('discounts.end_date', '>=', $now->format('Y/m/d'))
@@ -281,9 +282,6 @@ class InvoiceRunJob implements ShouldQueue
            
             $this->sendAnnualMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
             EstimationController::UpdateEstimation($customer->mID);  
-        } else {
-            event(new JobDispatched($this->JobRunId, "MissingMeterReadingJob"));
-            dispatch(new MissingMeterReadingJob($this->JobRunId, $customer->uID, $customer->mID));
         }
     }
 

@@ -15,10 +15,11 @@ class MeterSeeder extends Seeder
         $oneYearDate = Carbon::now()->subYears(1)->toDateString();
         $twoYearsDate = Carbon::now()->subYears(2)->toDateString();
         $threeYearsDate = Carbon::now()->subYears(3)->toDateString();
+        $lazyDate = Carbon::now()->subYears(3)->subWeeks(1)->toDateString();
+        $veryLazyDate = Carbon::now()->subYears(3)->subWeeks(2)->toDateString();
 
-        $exampleInstallation = '2021-01-01';
 
-        $expecting_reading = 1;
+        $expecting_reading = 0;
 
         for($i = 1; $i <= 6; $i++){
             DB::table('meters')->insert([
@@ -30,16 +31,6 @@ class MeterSeeder extends Seeder
                 'is_smart' => 0,
                 'expecting_reading' => $expecting_reading
             ]);
-        }
-        for($i = 9; $i <= 16; $i++){
-            $meters[] = [
-                'id' => $i,
-                'EAN' => sprintf("%018d", rand(0, 999999999999999999)),
-                'type' => 'Electricity',
-                'installation_date' => '2024-01-01',
-                'status' => 'Installed',
-                'is_smart' => 1
-            ];
         }
 
         for($i = 7; $i <= 8; $i++){
@@ -86,16 +77,43 @@ class MeterSeeder extends Seeder
             ]);
         }
 
-        for($i = 14; $i <= 17; $i++){
-            DB::table('meters')->insert([
-                'id' => $i,
+        DB::table('meters')->insert([
+            [
+                'id' => 14,
                 'EAN' => sprintf("%018d", rand(0, 999999999999999999)),
                 'type' => 'Electricity',
                 'installation_date' => $threeYearsDate,
                 'status' => 'Installed',
                 'is_smart' => 0,
                 'expecting_reading' => $expecting_reading
-            ]);
-        }
+            ],
+            [
+                'id' => 15,
+                'EAN' => sprintf("%018d", rand(0, 999999999999999999)),
+                'type' => 'Electricity',
+                'installation_date' => $lazyDate,
+                'status' => 'Installed',
+                'is_smart' => 0,
+                'expecting_reading' => 1
+            ],
+            [
+                'id' => 16,
+                'EAN' => sprintf("%018d", rand(0, 999999999999999999)),
+                'type' => 'Electricity',
+                'installation_date' => $veryLazyDate,
+                'status' => 'Installed',
+                'is_smart' => 0,
+                'expecting_reading' => 1
+            ],
+            [
+                'id' => 17,
+                'EAN' => sprintf("%018d", rand(0, 999999999999999999)),
+                'type' => 'Electricity',
+                'installation_date' => $threeYearsDate,
+                'status' => 'Installed',
+                'is_smart' => 0,
+                'expecting_reading' => $expecting_reading
+            ]
+        ]);
     }
 }

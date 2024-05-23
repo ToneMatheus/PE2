@@ -10,6 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
 use App\Services\QRCodeService;
+use Illuminate\Support\Facades\Crypt;
 
 class InvoiceFinalWarning extends Mailable
 {
@@ -40,7 +41,7 @@ class InvoiceFinalWarning extends Mailable
     {
         return new Envelope(
             from: new Address('energysupplier@gmail.com', 'Energy Supplier'),
-            subject: 'Final Warning: Open Invoice',
+            subject: config('app.now')->format("m-d") . ' Final Warning: Open Invoice',
         );
     }
 

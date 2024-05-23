@@ -40,7 +40,7 @@
 
     <body>
         <div class="container">
-            <p class="h1" style="text-align: center">Your documents</p>
+            <p class="h1" style="text-align: center; color: white">Your documents</p>
 
             <div class="card">
                 <a href="{{ route('contract')}}">

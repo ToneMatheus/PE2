@@ -11,7 +11,7 @@ class Consumption extends Model
 {
     use HasFactory;
 
-    protected $table='Consumption';
+    protected $table='Consumptions';
     protected $fillable = [
         'start_date',
         'end_date',

@@ -16,7 +16,7 @@
                             <tr>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->id }}</td>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->name }}</td>
-                                <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">@if($ticket->active == 1)
+                                <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">@if($ticket->status == 0)
                                     <p>The ticket is still open!</p>
                                     @else
                                     <p>The ticket is closed!</p>

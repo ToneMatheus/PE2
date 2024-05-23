@@ -24,24 +24,29 @@
                     @endif --}}
 
                     @if($roleId == config('roles.MANAGER'))
-
+                        {{-- for the helpdesk to see the ticket dashboard --}}
+                        <a href="{{ route('ticket_dashboard') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket overview dashboard</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View everything about the tickets</p>
+                            </div>
+                        </a>
                         <a href="{{ route('manager.TicketStatus') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Dashboard</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View the Ticket dashboard</p>
                             </div>
                         </a>
-                        <a href="{{ route('create-ticket') }}" class="block">
-                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
-                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Create Ticket</span>
-                                <p class="text-gray-600 dark:text-gray-400 text-sm">Create a new ticket</p>
-                            </div>
-                        </a>
-
                         <a href="{{ route('index-cron-job') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Job Scheduler</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">Manage schedule of cron jobs</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('customerGridView') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Customer List</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Manage all our customers</p>
                             </div>
                         </a>
                         <a href="{{ route('managerticketoverview') }}" class="block">
@@ -150,7 +155,7 @@
                         {{-- @include('intranet.employeeIntranet'); --}}
 
                         @if($teamName == 'HR')
-                            @include('chatbot.chatbotEmployeeHR');
+                            @include('chatbot.chatbotEmployeeHR')
                         
                             @elseif($teamName == 'Customer service')
                                 <a href="{{ route('customerGridView') }}" class="block">
@@ -159,10 +164,10 @@
                                         <p class="text-gray-600 dark:text-gray-400 text-sm">View all customers</p>
                                     </div>
                                 </a> 
-                                @include('chatbot.chatbotEmployeeCustomerService');
+                                @include('chatbot.chatbotEmployeeCustomerService')
                             
                             @elseif($teamName == 'Meters')
-                                @include('chatbot.chatbotEmployeeMeters');
+                                @include('chatbot.chatbotEmployeeMeters')
                             
                             @elseif($teamName == 'Invoice')
                                 <a href="{{ route('tariff') }}" class="block">
@@ -171,16 +176,16 @@
                                         <p class="text-gray-600 dark:text-gray-400 text-sm">Change the tariffs of products</p>
                                     </div>
                                 </a>
-                                @include('chatbot.chatbotEmployeeInvoice');
+                                @include('chatbot.chatbotEmployeeInvoice')
                         
                         @endif
 
-                        @include('notifications.managerNotifications');
+                        @include('notifications.managerNotifications')
                             
                     @endif
                     
                     @if($roleId == config('roles.CUSTOMER_SERVICE'))
-                    <a href="{{ route('serviceticketoverview') }}" class="block">
+                    <a href="{{ route('ServiceTicketOverview') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Overview</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View all tickets</p>
@@ -198,7 +203,8 @@
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Overview</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View all tickets</p>
-                            </d
+                            </div>
+                        </a>
 
                     @endif
                     @if($roleId == config('roles.FINANCE_ANALYST'))
@@ -210,6 +216,16 @@
                         </a>
                     @endif 
                     @if($roleId == config('roles.EMPLOYEE'))
+                        {{-- for the helpdesk to see the ticket dashboard --}}
+                        <a href="{{ route('ticket_dashboard') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket dashboard</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View everything about the tickets</p>
+                            </div>
+                        </a>
+
+
+
                         {{-- for the employees to manage their holiday requests --}}
                         <a href="{{ route('request') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
@@ -257,25 +273,31 @@
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Meter History</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View meter history and enter index value as customer</p>
                             </div>
+
                         </a> 
+                        <a href="{{ route('ServiceTicketOverview') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Overview</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View all tickets</p>
+                            </div>
+                        </a>                        
 
-
-                        @include('intranet.employeeIntranet');
+                        {{-- @include('intranet.employeeIntranet'); --}}
 
                         @if($teamName == 'HR')
-                            @include('chatbot.chatbotEmployeeHR');
+                            @include('chatbot.chatbotEmployeeHR')
                         
-                        @elseif($teamName == 'Customer service')rolesteams
+                        @elseif($teamName == 'Customer service')
                             <a href="{{ route('customerGridView') }}" class="block">
                                 <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                     <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Customer Overview</span>
                                     <p class="text-gray-600 dark:text-gray-400 text-sm">View all customers</p>
                                 </div>
                             </a> 
-                            @include('chatbot.chatbotEmployeeCustomerService');
+                            @include('chatbot.chatbotEmployeeCustomerService')
                         
                         @elseif($teamName == 'Meters')
-                            @include('chatbot.chatbotEmployeeMeters');
+                            @include('chatbot.chatbotEmployeeMeters')
                         
                         @elseif($teamName == 'Invoice')
                             <a href="{{ route('tariff') }}" class="block">
@@ -284,20 +306,25 @@
                                     <p class="text-gray-600 dark:text-gray-400 text-sm">Change the tariffs of products</p>
                                 </div>
                             </a>
-                            @include('chatbot.chatbotEmployeeInvoice');
+                            
+                            
+                            @include('chatbot.chatbotEmployeeInvoice')
                 
                         @endif
+                </div>
+                <div>
 
-                        @include('notifications.notifications');
+                        @include('intranet.employeeIntranet')
+                        @include('notifications.notifications')
                     @endif
 
                     @if($roleId == config('roles.CUSTOMER_SERVICE'))
-                        <a href="{{ route('ticket_dashboard') }}" class="block">
+                        <!-- <a href="{{ route('ticket_dashboard') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket dashboard</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View everything about the tickets</p>
                             </div>
-                        </a>
+                        </a> -->
                     @endif
 
                     @if($roleId == config('roles.CUSTOMER'))
