@@ -14,18 +14,22 @@ class MissingMeterReading extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected $domain;
     protected $user;
+    protected $encryptedTempUserId;
 
-    public function __construct($user)
+    public function __construct($domain, $user, $encryptedTempUserId)
     {
+        $this->domain = $domain;
         $this->user = $user;
+        $this->encryptedTempUserId = $encryptedTempUserId;
     }
 
     public function envelope()
     {
         return new Envelope(
             from: new Address('energysupplier@gmail.com', 'Energy Supplier'),
-            subject: 'Missing meter index values',
+            subject: config('app.now')->format("m-d") . ' Missing meter index values',
         );
     }
 
@@ -33,7 +37,9 @@ class MissingMeterReading extends Mailable
     {
         return $this->view('Invoices.missing_meter_reading')
                     ->with([
-                        'user' => $this->user,]);
+                        'domain' => $this->domain,
+                        'user' => $this->user,
+                        'encryptedTempUserId' => $this->encryptedTempUserId]);
     }
 
     public function attachments()

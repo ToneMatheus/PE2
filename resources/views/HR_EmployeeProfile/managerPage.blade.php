@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="/css/manager.css" rel="stylesheet" type="text/css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> --}}
     <title>Manager page</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -15,11 +15,11 @@
 <x-app-layout>
 <body style="background-color: #D6D5C9">
     
-    <h1 style="text-align: center; margin-top: 20px" class="h1">Team management</h1><br/>
+    <h1 style="text-align: center; margin-top: 20px; color: white; font-size: 40px" class="h1">Team management</h1><br/>
 
     <div class="requests" style="margin: auto">
         <div>
-        <h4 style="margin-left: 20px" class="h4">My team</h4>
+        <h4 style="margin-left: 20px; color: white; font-size: 20px" class="h4">My team</h4>
         </div>
 
         <div style="margin-bottom: 60px;" class="c">
@@ -43,7 +43,7 @@
                                 @endphp
     
                                 @foreach ($employees as $employee)
-                                    <tr>
+                                    <tr style="background-color: white">
                                         <td>{{ $employee->employee_profile_id }}</td>
                                         <td>{{ $employee->first_name }}</td>
                                         <td>{{ $employee->last_name }}</td>
@@ -54,7 +54,7 @@
                                 @endforeach
                             @endforeach
                         @else
-                            <h2>You do not have any employees under your management</h2>
+                            <h2 style="color: white">You do not have any employees under your management</h2>
                         @endif
                     </table>
                 </div>
@@ -124,7 +124,7 @@
                                 </td>
                             </tr>
                             @else
-                            <tr>
+                            <tr style="background-color: white">
                                 <td>{{ $i }}</td>
                                 <td>{{ $request->request_date }}</td>
                                 <td>{{ $fullname[0]->first_name }} {{ $fullname[0]->last_name }}</td>
@@ -147,14 +147,14 @@
                 </div>
             @else
                 <div class="col-8">
-                    <i>No pending requests at the moment</i>
+                    <i style="color: white">No pending requests at the moment</i>
                 </div>
             @endif
         </div>
 
         <div style="margin: auto">
             @if(!empty($all_data))
-            <h2 style="text-align: center; margin-bottom: 20px" class="h4">Request history</h2>
+            <h2 style="text-align: center; margin-bottom: 20px; color: white; font-size: 30px" class="h4">Request history</h2>
 
             <table>
                 <th>#</th>
@@ -181,7 +181,7 @@
                             $diffInDays = $endDate->diffInDays($startDate) + 1;
                         @endphp
         
-                        <tr>
+                        <tr style="background-color: white">
                             <td>{{ $i }}</td>
                             <td>{{ $data->request_date }}</td>
                             <td>{{ $fullname[0]->first_name }} {{ $fullname[0]->last_name }}</td>

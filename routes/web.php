@@ -59,6 +59,8 @@ use App\Http\Controllers\holidayRequest;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\StatisticsController;
 
+use App\Http\Controllers\ConfigController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -129,7 +131,7 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
 
     // addinvoiceline
     Route::get('/addInvoiceExtraForm', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('addInvoiceExtraForm');
-    Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
+    Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('processInvoiceExtraForm');
 
     //customer
     Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
@@ -145,7 +147,7 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     
     //All routes for credit notes on invoice refunds
     Route::get('/customer/invoice/search', [CreditNoteController::class, 'show'])->name('credit-notes.search');
-    Route::post('/customer/invoice/search', [CreditNoteController::class, 'search'])->name('credit-notes.search');
+    Route::post('/customer/invoice/search', [CreditNoteController::class, 'search'])->name('credit-notes.process');
     Route::post('/refund', [CreditNoteController::class, 'refund']);
 
     //Route for statistics
@@ -262,9 +264,6 @@ Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function
     //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
     Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
     Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');    
-
-    Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
-    Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 
     // customer submission
     Route::controller(MeterController::class)->group(function () {
@@ -409,8 +408,12 @@ Route::post('/pay', [PaymentController::class, 'add'])->name('payment.add');
 Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
 Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 
+
 Route::get('/invoice-matching', [InvoiceMatchingController::class, 'startMatching'])->name("invoice_matching");
 Route::get('/invoice-matching/filter', [InvoiceMatchingController::class, 'filter'])->name('filter-invoice-matching');*/
+
+Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
+Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
 
 
 //QR code test
@@ -599,3 +602,9 @@ Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController:
 Route::get('/customer/consumption-history', [CustomerPortalController::class, 'showConsumptionPage'])->name('customer.consumption-history');
 Route::get('/customer/consumption-history/{timeframe}', [CustomerPortalController::class, 'showConsumptionHistory']);
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
+
+
+Route::post('/update-now', [ConfigController::class, 'updateNow'])->name('updateNow');
+
+/*THIS ROUTE IS PURELY FOR DEMONSTRATION PURPOSES. IN AN ACTUAL APPLICATION ENVIRONMENT, THIS SHOULD BE DELETED.*/
+Route::get('/host/{ip}', [ConfigController::class, 'updateHost'])->name('updateHost');
