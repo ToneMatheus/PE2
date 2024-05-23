@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Invoice_line;
 use App\Models\Invoice;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class InvoiceFineService
 {

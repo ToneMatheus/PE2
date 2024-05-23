@@ -35,8 +35,6 @@ class MissingMeterReadingJob implements ShouldQueue
     public function handle()
     {
         try {
-            $this->jobStart();
-
             $user = User::join('customer_addresses as ca', 'ca.user_id', '=', 'users.id')
                 ->join('addresses as a', 'a.id', '=', 'ca.address_id')
                 ->join('Meter_addresses as ma', 'a.id', '=', 'ma.address_id')
@@ -61,7 +59,6 @@ class MissingMeterReadingJob implements ShouldQueue
                 $this->jobCompletion("Mail sent for user with ID: {$user->id}");
             } else {
                 Log::error('User not found for MeterReadingReminderJob');
-                $this->jobException('User not found for MeterReadingReminderJob');
             }
         } catch (\Exception $e) {
             Log::error("Error occurred while processing MeterReadingReminderJob: {$e->getMessage()}");

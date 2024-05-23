@@ -15,11 +15,9 @@ class TicketDashboardController extends Controller
         $user = Auth::check() ? Auth::user() : null;
 
         //haal alle tickets op die nog niet toegewezen zijn aan iemand en nog open zijn
-        //$tickets = Ticket::with('ticket')->where('active',1)->get();
         $tickets = Ticket::whereDoesntHave('employee_Tickets')->where('status', 0)->get();
 
         //haal alle tickets op die gesloten zijn
-        //$tickets_closed = Ticket::with('ticket')->where('status',1)->get();
         $tickets_closed = Ticket::where('status', 1)->get();
         
         //haal alle tickets op die toegewezen zijn aan de ingelogde gebruiker
@@ -95,7 +93,7 @@ class TicketDashboardController extends Controller
 
         if ($request->has('filter') && $request->filter === 'own_tickets') {
             if ($request->has('urgency_own') && $request->urgency_own !== null) {
-                $own_tickets->where('urgency', $request->urgency_own);
+                $own_tickets->where('urgency_own', $request->urgency_own);
             }
 
             if ($request->has('sort_own')) {
@@ -131,7 +129,7 @@ class TicketDashboardController extends Controller
 
     public function assignTicket(Request $request, $ticketid){
         $user = Auth::check() ? Auth::user() : null;
-        //$user = 0;
+        
         
         if($user){
             $employeeTicket = new Employee_Ticket();

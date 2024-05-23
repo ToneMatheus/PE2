@@ -24,8 +24,8 @@ return [
 
     'email' => 'shresthaanshu555@gmail.com',
 
-    'metersDate' => Carbon\Carbon::today()->toDateString(), // today 
-    //'metersDate' => Carbon\Carbon::today()->addWeeks(2)->toDateString(), // move out
+    //'metersDate' => Carbon\Carbon::today()->toDateString(), // today 
+    'metersDate' => Carbon\Carbon::today()->addWeeks(2)->toDateString(), // move out
     //'metersDate' => Carbon\Carbon::today()->addWeeks(2)->addDay()->toDateString(), // move in (immediate next day)
     //'metersDate' => Carbon\Carbon::today()->addWeeks(3)->toDateString(), // move in (gap)
 

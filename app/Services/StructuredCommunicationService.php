@@ -37,7 +37,7 @@ class StructuredCommunicationService
 
         //concatenate numbers and return code
         $fCode = $this->format($fBaseNum . $fCheckDigit);
-        //Log::info("Generated structured communication: " . $fCode);
+        Log::info("Generated structured communication: " . $fCode);
         return $fCode;
     }
 
