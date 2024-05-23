@@ -57,8 +57,8 @@
                     {{ $jobLog->job_name }}
                 </p>
                 @if ($jobLog->detailed_message != null)
-                    <p>
-                        <strong>Detailed Message:</strong> 
+                    <p class="break-all">
+                        <strong >Detailed Message:</strong> 
                         {{ $jobLog->detailed_message }}
                     </p>
                 @endif

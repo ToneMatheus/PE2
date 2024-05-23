@@ -24,7 +24,7 @@
                         <td class="px-6 py-4">{{$creditNote->uID}}</td>
                         <td class="px-6 py-4">{{$creditNote->full_name}}</td>
                         <td class="px-6 py-4">{{$creditNote->invoiceID}}</td>
-                        <td class="px-6 py-4">{{$creditNote->amount}}</td>
+                        <td class="px-6 py-4">{{abs(round($creditNote->amount, 2))}}</td>
                         <td class="px-6 py-4"><button class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><a href="{{ route('payouts.pay', ['id' => $creditNote->id]) }}">Pay</a></button></td>
                     </tr>
                 @endforeach

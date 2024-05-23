@@ -2,32 +2,22 @@
 
 namespace App\Jobs;
 
+use App\Events\JobDispatched;
 use App\Models\Estimation;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 use App\Models\Invoice;
-use App\Models\Invoice_line;
 use App\Models\User;
-use App\Models\CreditNote;
 use App\Models\Meter;
 use App\Models\Index_Value;
 use App\Traits\cronJobTrait;
 
-use App\Mail\MonthlyInvoiceMail;
-
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
-
-use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-
-use App\Services\InvoiceFineService;
 
 class ValidationJob implements ShouldQueue
 {
@@ -59,8 +49,11 @@ class ValidationJob implements ShouldQueue
                 throw new \Exception("Database Error Code 0: No connection could be made");
             } else {
 
-                dispatch(new WeekAdvanceReminderJob);
-                dispatch(new InvoiceFinalWarningJob);
+                event(new JobDispatched($this->JobRunId, $this->__getShortClassName()));
+                WeekAdvanceReminderJob::dispatch($this->JobRunId);
+                
+                event(new JobDispatched($this->JobRunId, $this->__getShortClassName()));
+                InvoiceFinalWarningJob::dispatch($this->JobRunId);
 
                 $meters = Meter::whereTypeAndStatus("Electricity", "Installed")->where("is_smart", "=", 0)
                 ->get();
@@ -147,7 +140,7 @@ class ValidationJob implements ShouldQueue
 
                                 $contractDuration = $startContract->diffInYears($now);
 
-                                $invoiceDate = $startContract->addYear()->addWeek();
+                                $invoiceDate = $startContract->addYear()->addWeeks(2);
                                 $lastInvoiceDate = ($contractDuration < 1) ? $startContract->start_date : $invoiceDate->copy()->setYear($year-1);
                 
                                 $invoiceDate->setYear($year);
@@ -155,18 +148,24 @@ class ValidationJob implements ShouldQueue
                                 $invoiceDate->setTimezone('Europe/Berlin');
                                 
                                 //Reminder index values 1 week prior invoice run
-                                if($invoiceDate->copy() == $now){
-                                    MeterReadingReminderJob::dispatch($customers->uID, $customers->mID);
+                                if($invoiceDate->copy()->subWeek() == $now){
+                                    event(new JobDispatched($this->JobRunId, $this->__getShortClassName()));
+                                    MeterReadingReminderJob::dispatch($this->JobRunId, $customers->uID, $customers->mID);
                                 }
 
                                 $consumptions = Index_Value::where('meter_id', '=', $meter_id)
                                 ->where('reading_date', '>=', $lastInvoiceDate)
-                                ->where('reading_date', '<', $invoiceDate->copy())
+                                ->where('reading_date', '<', $invoiceDate->copy()->addWeek())
                                 ->get()->toArray();
 
                                 if (sizeof($consumptions) == 0) {
                                     // no consumption found
                                     $this->logError(null, 'Exception caught: ' . "Validation Error Code 3: No consumption data found for meter with id: $meter_id.");
+                                    if($invoiceDate->copy() == $now){
+                                        event(new JobDispatched($this->JobRunId, $this->__getShortClassName()));
+                                        MissingMeterReadingJob::dispatch($this->JobRunId, $customers->uID, $customers->mID);
+                                    }
+
                                     Meter::where('id', $meter_id)->update(['has_validation_error' => 1]);
                                 }
                                 else {
@@ -195,6 +194,7 @@ class ValidationJob implements ShouldQueue
                         ->where("m.id", "=", $meter['id'])
                         ->whereNull("cc.end_date")
                         ->first();
+
                         if(is_null($customers)){
                             // Check what error it is in the customer array.
                             $customers2 = User::join('Customer_addresses as ca', 'users.id', '=', 'ca.user_id')
@@ -204,6 +204,7 @@ class ValidationJob implements ShouldQueue
                             ->select('users.id as uID', 'm.id as mID' )
                             ->where("m.id", "=", $meter['id'])
                             ->first();
+
                             if(is_null($customers2)) {
                                 $meter_id = $meter['id'];
                                 $this->logError(null, "Customer array is null for meter with id: $meter_id. Meter does not have a customer.");
@@ -220,6 +221,7 @@ class ValidationJob implements ShouldQueue
                             ->whereyear('reading_date', '=', $year)
                             ->wheremonth('reading_date', '=', $month)
                             ->get()->toArray();
+
                             if (sizeof($consumptions) == 0) {
                                 // no consumption found
                                 $this->logError(null, 'Exception caught: ' . "Validation Error Code 3: No consumption data found for meter with id: $meter_id.");

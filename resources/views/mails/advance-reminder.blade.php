@@ -51,10 +51,7 @@
     <p>
         Please log in to our website or scan the QR code in attachment to fill in payment.
     </p>
-    <div>
-        <p> Please log in to our website or click on the link below to access your profile </p>
-        <a href="http://127.0.0.1:8000/Meter_History{{$id}}">My Profile</a>
-    </div>
+
     <p>
         If your payment has already been settled when you recieve this e-mail, you can ignore this reminder.
     </p>

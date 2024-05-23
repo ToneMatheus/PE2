@@ -22,7 +22,7 @@ class JobDoneNotification extends Mailable
 
     public function build()
     {
-        return $this->subject('Job Done Notification')
+        return $this->subject(config('app.now')->format("m-d") . ' Job Done Notification')
                     ->markdown('mails.job_done_notification');
     }
 }

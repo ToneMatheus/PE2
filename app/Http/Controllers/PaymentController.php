@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Invoice;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
@@ -18,7 +19,12 @@ class PaymentController extends Controller
             $invoice = Invoice::findOrFail($id);
             if ($hash == md5($invoice->id . $invoice->customer_contract_id . $invoice->meter_id))
             {
-                return view('Invoices.payment', compact('invoice'));
+                $user = Invoice::select('users.first_name', 'users.last_name')
+                ->leftJoin('customer_contracts', 'invoices.customer_contract_id', '=', 'customer_contracts.id')
+                ->leftJoin('users', 'customer_contracts.user_id', '=', 'users.id')
+                ->where('invoices.id', $id)
+                ->first();
+                return view('Invoices.payment', compact('invoice', 'user'));
             }
             else
             {

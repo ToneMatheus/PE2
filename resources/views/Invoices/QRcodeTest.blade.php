@@ -9,7 +9,7 @@
     <!--Page for testing purposes only-->
     <?php 
     $domain = config('app.host_domain');
-    $invoiceID = "49";                   //edit to invoice you want
+    $invoiceID = "209";                   //edit to invoice you want
     $QRService = app()->make('App\Services\QRCodeService');
     $hash = $QRService->getHash($invoiceID);
     echo DNS2D::getBarcodeHTML($domain . "/pay/" . $invoiceID . "/" . $hash, 'QRCODE',5,5);
