@@ -57,7 +57,7 @@ use App\Http\Controllers\holidayRequest;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\ServiceEditController;
 use App\Http\Controllers\ServiceTicketOverviewController;
-
+use App\Http\Controllers\StatisticsController;
 
 /*
 |--------------------------------------------------------------------------

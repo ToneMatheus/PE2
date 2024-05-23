@@ -15,7 +15,8 @@ class TicketDashboardController extends Controller
         $user = Auth::check() ? Auth::user() : null;
 
         //haal alle tickets op die nog niet toegewezen zijn aan iemand en nog open zijn
-        $tickets = Ticket::whereDoesntHave('employee_Tickets')->where('status', 0)->get();
+        //$tickets = Ticket::whereDoesntHave('employee_Tickets')->where('status', 0)->get();
+        $tickets = Ticket::where('employee_id',null)->where('status', 0)->get();
 
         //haal alle tickets op die gesloten zijn
         $tickets_closed = Ticket::where('status', 1)->get();
@@ -163,6 +164,13 @@ class TicketDashboardController extends Controller
             
             if($employeeTicket){
                 $employeeTicket->delete(); //todo checken of dat zomaar mag gedelete worden
+            }
+
+
+            $ticket = Ticket::find($ticketid);
+            if ($ticket) {
+                $ticket->employee_id = null;
+                $ticket->save();
             }
         }
         return redirect()->route('ticket_dashboard')->with(['employee_tickets' => $employeeTicket]);

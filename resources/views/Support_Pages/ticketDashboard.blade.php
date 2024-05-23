@@ -171,9 +171,7 @@
                         <div>date: {{ $ticket->created_at->format('Y-m-d')}}</div>
                     </div>
                     <div>issue: {{ $ticket->issue}}</div>
-                    <div class="flex mt-2">
-                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-auto">More info</button>
-                    </div>
+                    <a href="{{ route('details', ['id' => $ticket->id]) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center mr-auto cursor-pointer">More info</a>
                 </div>
             @endforeach
         </div>

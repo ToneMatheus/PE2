@@ -30,11 +30,11 @@
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->created_at }}</td>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->urgency }}</td>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">
-                                    @if($ticket->employee_id == Auth::id())
-                                        <form action="{{ route('unassign_ticket', ['id' => $ticket->id]) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center cursor-pointer">solve</button>
-                                        </form>
+                                    @if($ticket->employee_id == Auth::id() && $ticket->status == 0)
+                                        <a href="{{ route('closeticket', ['id' => $ticket->id]) }}" class="text-blue-500 hover:text-blue-700">Close Ticket</a>
+                                        <span class="mx-2">|</span>
+                                        <a href="{{ route('ServiceEdit', ['id' => $ticket->id]) }}" class="text-blue-500 hover:text-blue-700">Solve</a>
+                                        
                                     @else
                                         <p class="text-gray-400">No actions available</p>
                                     @endif
