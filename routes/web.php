@@ -630,6 +630,7 @@ Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'
 
 
 Route::post('/update-now', [ConfigController::class, 'updateNow'])->name('updateNow');
+Route::post('/update-seeder', [ConfigController::class, 'updateSeeder'])->name('updateSeeder');
 
 /*THIS ROUTE IS PURELY FOR DEMONSTRATION PURPOSES. IN AN ACTUAL APPLICATION ENVIRONMENT, THIS SHOULD BE DELETED.*/
 Route::get('/host/{ip}', [ConfigController::class, 'updateHost'])->name('updateHost');
