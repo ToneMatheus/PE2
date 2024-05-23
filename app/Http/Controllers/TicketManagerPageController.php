@@ -11,6 +11,13 @@ use Illuminate\Http\Request;
 
 class TicketManagerPageController extends Controller
 {
+
+    const URGENCY_MAPPING = [
+        0 => 'Low',
+        1 => 'Medium',
+        2 => 'High',
+    ];
+
     public function index(Request $request)
     {
 
@@ -114,15 +121,14 @@ class TicketManagerPageController extends Controller
             ->orderBy('created_at', 'asc')
             ->get();
 
-        $urgencyMapping = [1 => 'Low', 2 => 'Medium', 3 => 'High'];
         foreach ($tickets as $ticket) {
-            if (array_key_exists($ticket->urgency, $urgencyMapping)) {
-                $ticket->urgency = $urgencyMapping[$ticket->urgency];
+            if (array_key_exists($ticket->urgency, self::URGENCY_MAPPING)) {
+                $ticket->urgency = self::URGENCY_MAPPING[$ticket->urgency];
             }
         }
 
         $lines = range(1, 3);
-        $urgencies = ['Low', 'Medium', 'High'];
+        $urgencies = array_values(self::URGENCY_MAPPING);
 
         return view('customertickets\ManagerTicketEscalationPage', ['tickets' => $tickets, 'lines' => $lines, 'urgencies' => $urgencies]);
     }
@@ -134,7 +140,7 @@ class TicketManagerPageController extends Controller
         if ($ticket) {
             $ticket->line = $request->input('line');
 
-            $urgencyMapping = ['Low' => 1, 'Medium' => 2, 'High' => 3];
+            $urgencyMapping = array_flip(self::URGENCY_MAPPING);
             $urgencyInput = $request->input('urgency');
 
             if (array_key_exists($urgencyInput, $urgencyMapping)) {

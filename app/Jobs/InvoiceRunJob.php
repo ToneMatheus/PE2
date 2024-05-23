@@ -72,7 +72,6 @@ class InvoiceRunJob implements ShouldQueue
         ->where('m.has_validation_error', '=', '0')
         ->select('users.id as uID', 'cc.id as ccID', 'm.id as mID', 'cc.start_date as startContract')
         ->get();
-        
         $customersWithValidationError = User::join('Customer_contracts as cc', 'users.id', '=', 'cc.user_id') // Meters tied to customers that have no contract don't show up. They are marked with a validation error and not displayed through this.
         ->join('Customer_addresses as ca', 'users.id', '=', 'ca.user_id')
         ->join('Addresses as a', 'ca.Address_id', '=', 'a.id')
@@ -139,7 +138,11 @@ class InvoiceRunJob implements ShouldQueue
                     $this->generateYearlyInvoice($customer, $lastInvoiceDate, $now->copy());
                     Meter::where('id', '=', $customer->mID)
                     ->update(['expecting_reading' => 0]);
-                }//Check if needs an invoice now
+                }//Reminder index values 1 week prior invoice run
+                elseif($invoiceDate->copy()->subWeek() == $now){
+                    event(new JobDispatched($this->JobRunId, "MeterReadingReminderJob"));
+                    MeterReadingReminderJob::dispatch($this->JobRunId, $customer->uID, $customer->mID);
+                } //Check if needs an invoice now
                 elseif($invoiceDate->copy() == $now){
                     $this->generateYearlyInvoice($customer, $lastInvoiceDate, $invoiceDate->copy()->addYear());
                 }
@@ -182,21 +185,6 @@ class InvoiceRunJob implements ShouldQueue
             ->select('contract_products.id as cpID', 'contract_products.start_date as cpStartDate', 'p.product_name as productName',
             'p.id as pID')
             ->first();
-
-            //as the new seeders cause issues here this is a temporary fix so the job atleast doesn't crash.
-            if ($contractProduct == null){
-                $VariableDump =[
-                    "customer" => $customer,
-                    "lastInvoiceDate" => $lastInvoiceDate,
-                    "nextInvoiceDate" => $nextInvoiceDate,
-                    "consumption" => $consumption,
-                    "estimationResult" => $estimationResult,
-                    "estimation" => $estimation,
-                    "contractProduct" => $contractProduct,
-                ];
-                $this->logError(null, "ContractProduct is null", "Variable dump in json format:" . json_encode($VariableDump));
-                return;
-            }
 
             $discounts = Discount::where('discounts.contract_product_id', '=', $contractProduct->cpID)
             ->whereDate('discounts.end_date', '>=', $now->format('Y/m/d'))
@@ -290,11 +278,12 @@ class InvoiceRunJob implements ShouldQueue
             $fineService->unpaidInvoiceFine($lastInserted);
             
             $newInvoiceLine = Invoice_line::where('invoice_id', '=', $lastInserted)->first();
-
-            $invoice = Invoice::find($invoice->id);
            
             $this->sendAnnualMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
             EstimationController::UpdateEstimation($customer->mID);  
+        } else {
+            event(new JobDispatched($this->JobRunId, "MissingMeterReadingJob"));
+            dispatch(new MissingMeterReadingJob($this->JobRunId, $customer->uID, $customer->mID));
         }
     }
 
@@ -568,8 +557,6 @@ class InvoiceRunJob implements ShouldQueue
 
         $fineService = new InvoiceFineService;
         $fineService->unpaidInvoiceFine($lastInserted);
-
-        $invoice = Invoice::find($invoice->id);
 
         $newInvoiceLines = Invoice_line::where('invoice_id', '=', $lastInserted)->get();
         $this->sendMonthlyMail($invoice, $customer->uID, $newInvoiceLines);

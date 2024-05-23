@@ -9,7 +9,6 @@ use Illuminate\Support\Str;
 use App\Models\CronJob;
 use App\Models\CronJobRun;
 use App\Models\CronJobRunLog;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use ReflectionClass;
 
@@ -129,10 +128,8 @@ class CronJobController extends Controller
     }
     
     public function run(Request $request, $job){
-        $userTobeNotified = $request->user();
         $logLevel = $request->input('logInput');
         $jobClass = 'App\Jobs\\' . $job;
-        Cache::put($job, $userTobeNotified);
         $jobClass::dispatch($logLevel);
         return redirect()->back()->with('regularJobStatus', 'job has been run.');
     }
