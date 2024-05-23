@@ -9,25 +9,56 @@
 
                         //selecting each user's team
                         $team = DB::select("select team_id from team_members where user_id = " . Auth::id());
-                        $teamName = DB::select("select team_name from teams where id = " . $team[0]->team_id);
-                        $teamName = $teamName[0]->team_name;
-                    @endphp 
 
+                        if (isset($team[0])) {
+                            $teamName = DB::select("select team_name from teams where id = " . $team[0]->team_id);
+                            $teamName = $teamName[0]->team_name;
+                        } else {
+                            // Handle the case where the array key doesn't exist
+                            $teamName = null;
+                        }
+                    @endphp 
                     {{-- @if($roleId != config('roles.CUSTOMER') && !$changedDefault)
                         <script>window.location = "{{ route('password.request') }}"</script>
                     @endif --}}
 
                     @if($roleId == config('roles.MANAGER'))
+                        <a href="{{ route('manager.TicketStatus') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Dashboard</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View the Ticket dashboard</p>
+                            </div>
+                        </a>
                         <a href="{{ route('create-ticket') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Create Ticket</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">Create a new ticket</p>
                             </div>
                         </a>
+
                         <a href="{{ route('index-cron-job') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Job Scheduler</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">Manage schedule of cron jobs</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('managerticketoverview') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Overview</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View all tickets</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('Support_Pages.flowchart.Flowchart-ascalade-ticket2') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Flowchart</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Flowchart for ticket escalation</p>
+                            </div>
+                        </a>
+
+                        <a href="{{ route('customerGridView') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Customer list</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Manage customers</p>
                             </div>
                         </a>
 
@@ -55,6 +86,24 @@
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Invoice Matchings</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View invoice matchings of external payments</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('credit-notes.index') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Custom Credit Notes</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Make a custom credit note line per line. </p>
+                            </div>
+                        </a>
+                        <a href="{{ route('credit-notes.search') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Refund Credit Notes</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Make a credit note by refunding an invoice line.</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('statistics') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Statistics</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">An overview of useful company information.</p>
                             </div>
                         </a>
                         {{-- for the managers to manage their users --}}
@@ -153,6 +202,14 @@
                             
                     @endif
                     
+                    @if($roleId == config('roles.CUSTOMER_SERVICE'))
+                    <a href="{{ route('serviceticketoverview') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Overview</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View all tickets</p>
+                            </div>
+                        </a>
+                    @endif
                     @if($roleId == config('roles.BOSS'))
                         <a href="{{ route('submitted-ticket') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
@@ -160,6 +217,12 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View your submitted tickets</p>
                             </div>
                         </a>
+                        <a href="{{ route('managerticketoverview') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Overview</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View all tickets</p>
+                            </d
+
                     @endif
                     @if($roleId == config('roles.FINANCE_ANALYST'))
                         <a href="{{ route('show-ticket') }}" class="block">
@@ -170,6 +233,12 @@
                         </a>
                     @endif 
                     @if($roleId == config('roles.EMPLOYEE'))
+                        <a href="{{ route('ticket_dashboard') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket dashboard</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View everything about the tickets</p>
+                            </div>
+                        </a>
                         {{-- for the employees to manage their holiday requests --}}
                         <a href="{{ route('request') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
@@ -218,14 +287,15 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View meter history and enter index value as customer</p>
                             </div>
                         </a> 
-
+                        </div>
+                        
 
                         @include('intranet.employeeIntranet');
 
                         @if($teamName == 'HR')
                             @include('chatbot.chatbotEmployeeHR');
                         
-                        @elseif($teamName == 'Customer service')rolesteams
+                        @elseif($teamName == 'Customer service')
                             <a href="{{ route('customerGridView') }}" class="block">
                                 <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                     <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Customer Overview</span>
@@ -250,7 +320,16 @@
 
                         @include('notifications.notifications');
                     @endif
-                    
+
+                    @if($roleId == config('roles.CUSTOMER_SERVICE'))
+                        <a href="{{ route('ticket_dashboard') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket dashboard</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View everything about the tickets</p>
+                            </div>
+                        </a>
+                    @endif
+
                     @if($roleId == config('roles.CUSTOMER'))
                         <a href="{{ route('customer.invoiceStatus') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
@@ -264,12 +343,21 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View your contract overview</p>
                             </div>
                         </a>
+
+                        <a href="{{ route('ticket_overview') }}" class="block">
+                            <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
+                                <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Ticket Overview</span>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">View your tickets</p>
+                            </div>
+                        </a>
+                        
                         <a href="{{ route('Meter_History') }}" class="block">
                             <div class="flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-lg shadow p-4">
                                 <span class="text-blue-500 hover:text-blue-700 dark:text-white dark:hover:text-gray-400 mb-2">Meter History</span>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">View meter history and enter index value as customer</p>
                             </div>
                         </a> 
+
                         @include('chatbot.chatbot');
                     @endif
                     @if($roleId == config('roles.CUSTOMER_SERVICE'))
@@ -284,5 +372,10 @@
             </div>
         </div>
     </div>
+
+        {{-- @php
+            $notifications = auth()->user()->unreadNotifications;
+            dd($notifications);
+        @endphp --}}
 
 </x-app-layout>

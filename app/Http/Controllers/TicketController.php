@@ -11,6 +11,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Notifications\TicketOpenNotification;
 
 class TicketController extends Controller
 {
@@ -53,6 +55,10 @@ class TicketController extends Controller
         $ticket->active = 0;
         $ticket->role = $roleName;
         $ticket->user_id = $user ? $user->id : null;
+
+        $ticket->status = 0;
+        $ticket->line = 0;
+
         $ticket->save();
 
         return redirect()->route('show-ticket')->with(['ticket' => $ticket]);

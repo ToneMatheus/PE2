@@ -14,7 +14,8 @@
 </div>
 <div class="mt-4">
     <div id="BlownFuseText" style="display: none;">
-        <p>Turn the fuse back on. If the fuse blows immediately, you must unplug all devices in the circuit and plug them back in one by one.
+        <p class="mt-1 text-m dark:text-gray-100">
+            Turn the fuse back on. If the fuse blows immediately, you must unplug all devices in the circuit and plug them back in one by one.
             Because the problem is probably that there is a short circuit on the circuit. If you prefer that a technician come immediately, 
             I will schedule one for you. Otherwise you can take everything off first. And if the problem still persists, you must schedule a technician 
             or call back so that we can schedule a technician.</p>

@@ -15,12 +15,11 @@ class CreditNote extends Model
         'type',
         'status',
         'description',
-        'user_id',
+        'invoice_id',
         'amount',
         'user_id',
         'is_credit',
-        'is_active',
-        'invoice_id'
+        'is_active'
     ];
 
     public function user()

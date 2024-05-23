@@ -1,4 +1,4 @@
-<div class="general-details">
+<div class="general-details" style="padding-bottom: 100px;">
     <div style="border-right: 2px solid black;">
         <div style="border-bottom: 2px solid black; padding-right: 300px; padding-bottom: 20px">
             <b>Energy Company</b><br/>

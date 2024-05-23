@@ -42,12 +42,22 @@ use App\Http\Controllers\SimpleUserOverViewController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\GasElectricityController;
 use App\Http\Controllers\PayoutsController;
+
+use App\Http\Controllers\ManagerTicketOverviewController;
+use App\Http\Controllers\EditController;
+use App\Http\Controllers\DetailsController;
+
+use App\Http\Controllers\TicketManagerPageController;
+use App\Http\Controllers\TicketDashboardController;
 use App\Models\ElectricityConnection;
 use App\Http\Controllers\IndexValueController;
+
+use App\Http\Controllers\TicketOverviewController;
 use App\Http\Controllers\ManualInvoiceController;
 use App\Http\Controllers\NewEmployeeController;
 use App\Http\Controllers\holidayRequest;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\StatisticsController;
 
 
 /*
@@ -117,6 +127,37 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
 
     Route::get('/tariff/products/{type}', [TariffController::class, 'getProductByType']);
 
+    // addinvoiceline
+    Route::get('/addInvoiceExtraForm', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('addInvoiceExtraForm');
+    Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
+
+    //customer
+    Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
+    Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
+    Route::put('/customer/{id}', [CustomerGridViewController::class, 'update'])->name('customer.update');
+    Route::post('/customer/{id}/{oldCpID}/{cID}/{mID}', [CustomerGridViewController::class, 'updateContractProduct'])->name('customer.contractProduct');
+    Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
+
+    //All routes for custom credit notes
+    Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
+    Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
+    Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
+    
+    //All routes for credit notes on invoice refunds
+    Route::get('/customer/invoice/search', [CreditNoteController::class, 'show'])->name('credit-notes.search');
+    Route::post('/customer/invoice/search', [CreditNoteController::class, 'search'])->name('credit-notes.search');
+    Route::post('/refund', [CreditNoteController::class, 'refund']);
+
+    //Route for statistics
+    Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
+    Route::get('/ticket/Flowchart2', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket2');
+
+    Route::get('/manager/TicketStatus', [TicketManagerPageController::class, 'index'])->name('manager.TicketStatus');
+    Route::get('/manager/showTickets', [TicketManagerPageController::class, 'showTickets'])->name('manager.showTickets');
+    Route::put('/manager/tickets/{id}', [TicketManagerPageController::class, 'update'])->name('manager.tickets.update');
+    Route::get('/manager/tickets/data', [TicketManagerPageController::class, 'getTicketsData'])->name('manager.tickets.data');
+
+
     //meters branch
     Route::controller(MeterController::class)->group(function () {
         Route::get('/enter_index_employee', function() {
@@ -152,31 +193,73 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
         Route::get('/fetchIndex/{meterID}', 'fetchIndex');
         Route::post('/index_value_entered_customer','submitIndexCustomer')->name("submitIndexCustomer");
     });
+
+
+    Route::get('/ticket/Flowchart2', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket2');
+
+    Route::get('/manager/TicketStatus', [TicketManagerPageController::class, 'index'])->name('manager.TicketStatus');
+    Route::get('/manager/showTickets', [TicketManagerPageController::class, 'showTickets'])->name('manager.showTickets');
+    Route::put('/manager/tickets/{id}', [TicketManagerPageController::class, 'update'])->name('manager.tickets.update');
+    Route::get('/manager/tickets/data', [TicketManagerPageController::class, 'getTicketsData'])->name('manager.tickets.data');
+
+
+    //meters branch
+    Route::controller(MeterController::class)->group(function () {
+        Route::get('/enter_index_employee', function() {
+            return view('Meters/enterIndexEmployee');
+        })->name("enter_index_employee");
+        Route::get('/enter_index_employee_search', 'searchIndex')->name("searchIndex");
+        Route::get('/fetchEAN/{meterID}', 'fetchEAN');
+        Route::post('/index_value_entered','submitIndex')->name("submitIndex");
+    
+        Route::get('/enter_index_paper', function() {
+            return view('Meters/enterIndexPaper');
+        })->name("enter_index_paper");
+        Route::get('/enter_index_paper_search', 'searchIndexPaper')->name("searchIndexPaper");
+        Route::get('/fetchEAN/{meterID}', 'fetchEAN');
+    });
+
+    //employee-specific dashboard
+    Route::get('/meter_dashboard', [MeterController::class, 'viewScheduledMeters']);
+
+    //all meters dashboard
+    Route::controller(MeterController::class)->group(function () {
+        Route::get('/all_meters_dashboard', 'all_meters_index')->name("viewAllMeters");
+        Route::get('/all_meters_dashboard_search', 'search')->name("search");
+        Route::post('/assignment_change', 'assignment');
+        Route::post('/bulk_assignment_change', 'bulk_assignment');
+    });
+
+    // customer submission
+    Route::controller(MeterController::class)->group(function () {
+        Route::get('/Consumption_Dashboard', 'showConsumptionDashboard');
+        Route::get('/Meter_History', 'GasElectricity')->name("Meter_History");;
+        Route::get('/Meter_History_Validate', 'ValidateIndex')->name("ValidateIndex");
+        Route::get('/fetchIndex/{meterID}', 'fetchIndex');
+        Route::post('/index_value_entered_customer','submitIndexCustomer')->name("submitIndexCustomer");
+    });
+
 });
 
 Route::middleware(['checkUserRole:' . config('roles.BOSS')])->group(function() {
-
 });
 
 Route::middleware(['checkUserRole:' . config('roles.FINANCE_ANALYST')])->group(function() {
 });
 
-Route::middleware(['checkUserRole:' . config('roles.EXECUTIVE_MANAGER')])->group(function() {
-
-});
-
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER_SERVICE')])->group(function() {
+    Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
     Route::get('/ticket/Flowchart', [FlowchartAscaladeTicketController::class, 'index'])->name('Support_Pages.flowchart.Flowchart-ascalade-ticket');
-
 });
 
 Route::middleware(['checkUserRole:' . config('roles.CUSTOMER')])->group(function() {
     Route::get('/customer/invoiceStatus', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoiceStatus');
     Route::post('/customer/change-locale', [CustomerPortalController::class, 'changeLocale'])->name('customer.change-locale');
     Route::post('/customer/chatbot', [CustomerPortalController::class, 'chatbot'])->name('customer.chatbot');
-    Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
-    Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
+    
     //Route::get('/contract_overview', [myController::class, 'contractOverview'])->name('contractOverview');
+    Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
+    Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');    
 
     Route::get('/pay/{id}/{hash}', [PaymentController::class, 'show'])->name("payment.show");
     Route::post('/pay/invoice/{id}', [PaymentController::class, 'pay'])->name('payment.pay');
@@ -246,10 +329,48 @@ Route::middleware(['checkUserRole:' . config('roles.EMPLOYEE')])->group(function
     Route::get('/tariff/products/{type}', [TariffController::class, 'getProductByType']);
 });
 
-// EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
 //
+//
+// EXMAPLE
+//
+//
+Route::middleware(['checkUserRole:' . config('roles.MANAGER') . ',' . config('roles.CUSTOMER')])->group(function() {
+    
+});
+
+//
+//
+// EVERYTHING THAT IS ALLOWED TO BE ACCESSED BY EVERYONE (INCLUDING GUESTS) SHOULD BE PLACED UNDER HERE
+
+// Notifications
+Route::get('/notifications/{notification}', function (Illuminate\Notifications\DatabaseNotification $notification) {
+    $notification->markAsRead();
+    return redirect()->back();
+})->name('notification.read');
+
+Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
+Route::post('/ticket_dashboard/assign/{id}', [TicketDashboardController::class, 'assignTicket'])->name('assign_ticket');
+Route::post('/ticket_dashboard/unassign/{id}', [TicketDashboardController::class, 'unassignTicket'])->name('unassign_ticket');
+Route::get('/ticket_dashboard/filter', [TicketDashboardController::class, 'filter'])->name('filter_tickets');
 
 Route::post('/index_value_entered_customer',[MeterController::class, 'submitIndexCustomer'])->name("submitIndexCustomer");
+
+
+Route::controller(MeterController::class)->group(function () {
+    Route::get('/Consumption_Dashboard', 'showConsumptionDashboard');
+    Route::get('/Meter_History', 'GasElectricity')->name("Meter_History");;
+    Route::get('/Meter_History_Validate', 'ValidateIndex')->name("ValidateIndex");
+});
+
+Route::get('/cron-jobs', [CronJobController::class, 'index'])->name('index-cron-job');
+Route::post('/cron-jobs/run/{job}', [CronJobController::class, 'run'])->name('run-cron-job');
+Route::get('/ticket_dashboard', [TicketDashboardController::class, 'index'])->name('ticket_dashboard');
+Route::post('/ticket_dashboard/assign/{id}', [TicketDashboardController::class, 'assignTicket'])->name('assign_ticket');
+Route::post('/ticket_dashboard/unassign/{id}', [TicketDashboardController::class, 'unassignTicket'])->name('unassign_ticket');
+Route::get('/ticket_dashboard/filter', [TicketDashboardController::class, 'filter'])->name('filter_tickets');
+
+Route::post('/index_value_entered_customer',[MeterController::class, 'submitIndexCustomer'])->name("submitIndexCustomer");
+
 
 Route::controller(MeterController::class)->group(function () {
     Route::get('/Consumption_Dashboard', 'showConsumptionDashboard');
@@ -341,8 +462,8 @@ Route::get('/teamWeeklyReports', [myController::class, 'weeklyReport'])->name('t
 // Route::get('/report', function () {
 //     return view('report', ['weekStartDate' => now()->startOfWeek()->toDateString(), 'weekEndDate' => now()->endOfWeek()->toDateString()]);
 // });
-Route::post('/submit-report', [myController::class, 'storeWeeklyReports']);
-
+Route::post('/submit-report', [myController::class, 'storeWeeklyReports'])->name('submit-report');
+Route::get('/individualReports//{id}', [myController::class, 'individualReports'])->name('individualReports');
 // Route::get('/sickLeaveReason', [myController::class, 'sickLeave'])->name('sickLeaveReason');
 // Route::get('/profileHR', [myController::class, 'profileHR'])->name('profileHR');
 // Route::get('/profileInvoice', [myController::class, 'profileInvoice'])->name('profileInvoice');
@@ -387,6 +508,22 @@ Route::post('/employee/invoices', [InvoiceController::class, 'rerunValidation'])
 Route::get('/contract_overview', [ContractController::class, 'index'])->name('contract_overview');
 Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
 
+Route::get('/ticket_overview', [TicketOverviewController::class, 'index'])->name('ticket_overview');
+
+Route::get('/managerticketoverview', [ManagerTicketOverviewController::class, 'index'])->name('managerticketoverview');
+
+Route::get('/Edit', [EditController::class, 'index'])->name('Edit');
+
+// web.php (routes file)
+Route::get('/tickets/{id}/edit', [EditController::class, 'index'])->name('edit');
+Route::put('/tickets/{id}', [EditController::class, 'update'])->name('edit.update');
+
+Route::get('/details/{id}', [DetailsController::class, 'index'])->name('details');
+
+// routes/web.php
+
+Route::get('/closeticket/{id}', [ManagerTicketOverviewController::class, 'closeTicket'])->name('closeticket');
+
 
 Route::get('/test', function () {
     return view('test');
@@ -397,11 +534,7 @@ Route::get('/roleOverview', function () {
 
 
 
-Route::get('/customerGridView', [CustomerGridViewController::class, 'index'])->name('customerGridView');
-Route::get('/customer/{id}/edit', [CustomerGridViewController::class, 'edit'])->name('customer.edit');
-Route::put('/customer/{id}', [CustomerGridViewController::class, 'update'])->name('customer.update');
-Route::post('/customer/{id}/{oldCpID}/{cID}/{mID}', [CustomerGridViewController::class, 'updateContractProduct'])->name('customer.contractProduct');
-Route::post('/customer/discount/{cpID}/{id}', [CustomerGridViewController::class, 'addDiscount'])->name('customer.discount');
+
 
 Route::get('/products/{type}', [CustomerGridViewController::class, 'getProductsByType']);
 
@@ -433,15 +566,6 @@ Route::get('/holidays', [HolidayController::class, 'index']);
 Route::controller(InvoiceController::class)->group(function () {
 Route::get('/invoices/{id}/mail', 'sendMail')->name('invoice.mail');});
 Route::get('/invoices/{id}/download', [InvoiceController::class, 'download'])->name('invoice.download');
-//All routes for credit notes
-Route::get('/credit-notes', [CreditNoteController::class, 'index'])->name('credit-notes.index');
-Route::get('/credit-notes/create', [CreditNoteController::class, 'create'])->name('credit-notes.create');
-Route::post('/credit-notes', [CreditNoteController::class, 'store'])->name('credit-notes.store');
-
-Route::get('/customer/invoice/search', [CreditNoteController::class, 'show']);
-Route::post('/customer/invoice/search', [CreditNoteController::class, 'search'])->name('credit-notes.search');
-
-Route::post('/refund', [CreditNoteController::class, 'refund']);
 
 //Customer Portal
 Route::get('/customer/invoices/{customerContractId}', [CustomerPortalController::class, 'invoiceView'])->name('customer.invoices');
@@ -460,14 +584,14 @@ Route::post('/EstimationGuestForm', [EstimationController::class, 'ShowGuestEner
 Route::get('/CreateInvoice', [EstimationController::class, 'showButton'])->name('EstimationPage');
 Route::post('/CreateInvoice', [EstimationController::class, 'generateOneInvoice'])->name('CalculateEstimation');
 
-Route::post('/addInvoiceExtraForm', [InvoiceController::class, 'AddInvoiceExtra'])->name('addInvoiceExtraForm');
 
 
 
-//test route
-/*Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
-Route::get('/addInvoiceExtraForm', [InvoiceController::class, 'showAddInvoiceExtraForm'])->name('addInvoiceExtraForm');
-Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');*/
+
+// //test route
+// Route::get('/TestUserList', [InvoiceController::class, 'showTestUserList'])->name('TestUserList');
+
+// Route::get('/TestEmployeeList', [InvoiceController::class, 'showTestEmployeeList'])->name('TestEmployeeList');
 
 
 //Customer Portal
