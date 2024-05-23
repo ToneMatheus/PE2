@@ -18,7 +18,7 @@
         @endphp
 
         <body>
-            <div style="padding: 20px">
+            <div style="padding: 20px; color: white">
                 <h1 style="text-align: center">Employee benefits page</h1><br/>
             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Each of your employees at the start of their contracts, have a base salary of about 4000$. This already mentioned salary does also have an effect on the benefits earned by the employee in the company. However, the company constantly <a href="#">evaluates</a> employees and depending on their performance in a defined duration, they can be qualified to get a raise and also enjoy more benefits than the average employee. <a href="#myEmployees">Review my employees</a></p> 
             
@@ -62,7 +62,7 @@
                         <th scope="col">Salary</th>
                         <th scope="col">Benefits</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Action</th>
+                        <th scope="col" colspan="2">Action</th>
                       </tr>
                     </thead>
                     <tbody>
