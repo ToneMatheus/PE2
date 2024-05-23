@@ -23,7 +23,7 @@ class HolidaySeeder extends Seeder
                 'manager_approval' => 1,
                 'boss_approval' => 1,
                 'is_active' => 0,
-            ],
+            ],/*
             [
                 'employee_profile_id' => 2,
                 'request_date' => '2023-11-11',
@@ -35,7 +35,7 @@ class HolidaySeeder extends Seeder
                 'manager_approval' => 1,
                 'boss_approval' => 1,
                 'is_active' => 0,
-            ],
+            ],*/
         ]);
     }
 }

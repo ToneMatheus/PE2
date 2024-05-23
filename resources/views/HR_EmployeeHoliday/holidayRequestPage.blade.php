@@ -667,6 +667,7 @@
             const selectedElements = document.querySelectorAll(".selected");
             div4.style.visibility='hidden';
             var len_selectedElements = selectedElements.length;
+            var div2 = document.getElementById('errorMsg');
             
             
 
@@ -749,7 +750,7 @@
                             div4.style.visibility='visible';
                     }
                     
-                    if(clr_var == 'green' || clr_var == 'purple' && newId > 0)
+                    if((clr_var == 'green' || clr_var == 'purple') && newId > 0 )
                     {
 
                     
