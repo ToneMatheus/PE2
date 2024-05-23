@@ -20,7 +20,7 @@
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->issue }}</td>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->description }}</td>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">
-                                    @if($ticket->active == 1)
+                                    @if($ticket->status == 0)
                                         <p>The ticket is still open!</p>
                                     @else
                                         <p>The ticket is closed!</p>
@@ -34,11 +34,23 @@
                                         <a href="{{ route('closeticket', ['id' => $ticket->id]) }}" class="text-blue-500 hover:text-blue-700">Close Ticket</a>
                                         <span class="mx-2">|</span>
                                         <a href="{{ route('ServiceEdit', ['id' => $ticket->id]) }}" class="text-blue-500 hover:text-blue-700">Solve</a>
-                                        
                                     @else
                                         <p class="text-gray-400">No actions available</p>
+
                                     @endif
                                 </td>
+                                @if($ticket->status == 1)
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">
+                                    <a href="{{ route('ticket_dashboard') }}" class="w-full text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</a>
+                                   
+
+                                    </td>
+                                @else
+                                <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">
+                                <a href="{{ route('ticket_dashboard') }}" class="w-full text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</a>
+                                </td>
+                                @endif
+                                
                             </tr>
                         </tbody>
                     </table>

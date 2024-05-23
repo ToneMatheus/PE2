@@ -94,7 +94,7 @@ class TicketDashboardController extends Controller
 
         if ($request->has('filter') && $request->filter === 'own_tickets') {
             if ($request->has('urgency_own') && $request->urgency_own !== null) {
-                $own_tickets->where('urgency_own', $request->urgency_own);
+                $own_tickets->where('urgency', $request->urgency_own);
             }
 
             if ($request->has('sort_own')) {

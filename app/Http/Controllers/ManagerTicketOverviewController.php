@@ -35,7 +35,7 @@ class ManagerTicketOverviewController extends Controller
     
         // Update the ticket to mark it as solved
         $ticket->update([
-            'active' => 0
+            'status' => 1
         ]);
     
         // Refresh the ticket instance to get the updated values
