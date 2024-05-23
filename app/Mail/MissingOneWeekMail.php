@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class MissingPaperReadingMail extends Mailable
+class MissingOneWeekMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -20,7 +20,10 @@ class MissingPaperReadingMail extends Mailable
      */
     //$name so I can check the mailaddress
     public function __construct(
-        public $userID
+        public $domain,
+        public $user,
+        public $encryptedTempUserId,
+        public $fine
     )
     {}
 
@@ -45,7 +48,7 @@ class MissingPaperReadingMail extends Mailable
     public function content()
     {
         return new Content(
-            view: 'mails.missing_paper_reading'
+            view: 'mails.missing_one_week_notice'
         );
     }
 
