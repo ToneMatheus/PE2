@@ -11,5 +11,5 @@ class serviceticketoverview extends Model
 {
     protected $table = 'tickets';
 
-    protected $fillable = ['resolution', 'active'];
+    protected $fillable = ['resolution', 'status'];
 }

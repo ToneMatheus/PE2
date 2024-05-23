@@ -59,6 +59,9 @@ class InvoiceMatchingJob implements ShouldQueue
 
     private function matchOnStructuredCommunication($payment)
     {
+        if (is_null($payment->structured_communication))
+            return false;
+
         $invoiceRecord = Invoice::where('structured_communication', '=', $payment->structured_communication)->first();
 
         if (is_null($invoiceRecord))
@@ -77,6 +80,9 @@ class InvoiceMatchingJob implements ShouldQueue
 
     private function matchOnIBAN($payment)
     {
+        if (is_null($payment->IBAN))
+            return false;
+
         $userRecord = User::where('IBAN', '=', $payment->IBAN)->first();
 
         if (empty($userRecord)) //no users found with this IBAN
@@ -107,7 +113,7 @@ class InvoiceMatchingJob implements ShouldQueue
     private function matchOnAddress($payment)
     {
         if (empty($payment->address))
-        return false;
+            return false;
 
         $parts = explode(" ", $payment->address);
         $parts[1] = (int)$parts[1];

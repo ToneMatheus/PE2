@@ -11,5 +11,5 @@ class Details extends Model
 {
     protected $table = 'tickets';
 
-    protected $fillable = ['name', 'email', 'issue', 'description', 'active', 'resolution', 'created_at', 'urgency'];
+    protected $fillable = ['name', 'email', 'issue', 'description', 'status', 'resolution', 'created_at', 'urgency'];
 }

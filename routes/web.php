@@ -203,6 +203,8 @@ Route::middleware(['checkUserRole:' . config('roles.MANAGER')])->group(function(
     Route::put('/manager/tickets/{id}', [TicketManagerPageController::class, 'update'])->name('manager.tickets.update');
     Route::get('/manager/tickets/data', [TicketManagerPageController::class, 'getTicketsData'])->name('manager.tickets.data');
 
+    Route::get('/managerticketoverview', [ManagerTicketOverviewController::class, 'index'])->name('managerticketoverview');
+
 
     //meters branch
     Route::controller(MeterController::class)->group(function () {
@@ -515,8 +517,6 @@ Route::get('/contract_overview', [ContractController::class, 'index'])->name('co
 Route::get('/contract_overview/{id}/download', [ContractController::class, 'download'])->name('contract.download');
 
 Route::get('/ticket_overview', [TicketOverviewController::class, 'index'])->name('ticket_overview');
-
-Route::get('/managerticketoverview', [ManagerTicketOverviewController::class, 'index'])->name('managerticketoverview');
 
 Route::get('/Edit', [EditController::class, 'index'])->name('Edit');
 

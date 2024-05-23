@@ -30,7 +30,7 @@
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->issue }}</td>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">{{ $ticket->description }}</td>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm text-center">
-                                    @if($ticket->active == 1)
+                                    @if($ticket->status == 0)
                                         <p>The ticket is still open!</p>
                                         <td><a href="{{ route('closeticket', ['id' => $ticket->id]) }}">Close ticket</a></td>
                                         <td><a href="{{ route('edit', ['id' => $ticket->id]) }}">Edit</a></td>
