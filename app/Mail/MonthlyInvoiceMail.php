@@ -36,7 +36,7 @@ class MonthlyInvoiceMail extends Mailable
     {
         return new Envelope(
             from: new Address('energysupplier@gmail.com', 'Energy Supplier'),
-            subject: 'Invoice Mail',
+            subject: config('app.now')->format("m-d") . ' Monthly Invoice Mail',
         );
     }
 
