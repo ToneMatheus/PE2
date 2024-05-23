@@ -281,9 +281,6 @@ class InvoiceRunJob implements ShouldQueue
            
             $this->sendAnnualMail($invoice, $customer, $consumption, $estimation, $newInvoiceLine, $meterReadings, $discounts, $monthlyInvoices);
             EstimationController::UpdateEstimation($customer->mID);  
-        } else {
-            event(new JobDispatched($this->JobRunId, "MissingMeterReadingJob"));
-            dispatch(new MissingMeterReadingJob($this->JobRunId, $customer->uID, $customer->mID));
         }
     }
 

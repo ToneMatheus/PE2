@@ -29,7 +29,7 @@ return [
     //'metersDate' => Carbon\Carbon::today()->addWeeks(2)->addDay()->toDateString(), // move in (immediate next day)
     //'metersDate' => Carbon\Carbon::today()->addWeeks(3)->toDateString(), // move in (gap)
 
-    'now' => Carbon\Carbon::create(2025, 2, 15),
+    'now' => Carbon\Carbon::create(2025, 1, 8),
     //1 8
     //1 15
     //1 18
