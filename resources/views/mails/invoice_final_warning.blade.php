@@ -56,7 +56,6 @@
     </p>
     <div>
         <p> Please log in to our website or click on the link below to access your profile </p>
-        <a href="{{config('app.host_domain')}}/Meter_History?token={{$userID}}">My Profile</a>
     </div>
     <p>
         If your payment has already been settled when you recieve this e-mail, you can ignore this reminder.
