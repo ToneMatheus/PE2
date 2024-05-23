@@ -11,5 +11,5 @@ class Edit extends Model
 {
     protected $table = 'tickets';
 
-    protected $fillable = ['name', 'email', 'issue', 'description', 'is_solved'];
+    protected $fillable = ['name', 'email', 'issue', 'description', 'status'];
 }

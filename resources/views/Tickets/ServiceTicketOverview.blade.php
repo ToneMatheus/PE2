@@ -19,19 +19,19 @@
                                 <td class="px-4 py-2 text-gray-800 dark:text-gray-200 text-sm text-center">{{ $ticket->id }}</td>
                                 <td class="px-4 py-2 text-gray-800 dark:text-gray-200 text-sm text-center">{{ $ticket->name }}</td>
                                 <td class="px-4 py-2 text-gray-800 dark:text-gray-200 text-sm text-center">
-                                    @if($ticket->active == 1)
+                                    @if($ticket->status == 0)
                                         <span class="text-green-500">Open</span>
                                     @else
                                         <span class="text-red-500">Closed</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-2 text-gray-800 dark:text-gray-200 text-sm text-center">
-                                    @if($ticket->active == 1)
+                                    @if($ticket->status == 0)
                                         <a href="{{ route('closeticket', ['id' => $ticket->id]) }}" class="text-blue-500 hover:text-blue-700">Close Ticket</a>
                                     @endif
                                 </td>
                                 <td class="px-4 py-2 text-gray-800 dark:text-gray-200 text-sm text-center">
-                                    @if($ticket->active == 1)
+                                    @if($ticket->status == 0)
                                         <a href="{{ route('ServiceEdit', ['id' => $ticket->id]) }}" class="text-blue-500 hover:text-blue-700">Solve</a>
                                     @endif
                                 </td>
