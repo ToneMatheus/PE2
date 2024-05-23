@@ -33,4 +33,29 @@ class ConfigController extends Controller
     
         return redirect()->route('index-cron-job');
     }
+
+    public function updateHost($ip)
+    {
+        $configPath = config_path('app.php');
+        $config = File::get($configPath);
+
+        $newConfig = preg_replace(
+            "/'host_domain'/",
+            "//'host_domain'",
+            $config
+        );
+
+        File::put($configPath, $newConfig);
+        $config2 = File::get($configPath);
+        
+        $secondConfig = str_replace(
+            "//do not delete",
+            "//do not delete\n\t'host_domain' => 'http://{$ip}',",
+            $config2
+        );
+
+        File::put($configPath, $secondConfig);
+        
+        return redirect()->route('dashboard');
+    }
 }
