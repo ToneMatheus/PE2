@@ -41,7 +41,7 @@ class InvoiceFinalWarning extends Mailable
     {
         return new Envelope(
             from: new Address('energysupplier@gmail.com', 'Energy Supplier'),
-            subject: config('app.now')->format("M-d") . 'Final Warning: Open Invoice',
+            subject: config('app.now')->format("m-d") . ' Final Warning: Open Invoice',
         );
     }
 

@@ -158,8 +158,6 @@ class ValidationJob implements ShouldQueue
                                 ->where('reading_date', '<', $invoiceDate->copy()->addWeek())
                                 ->get()->toArray();
 
-                                dump($consumptions);
-
                                 if (sizeof($consumptions) == 0) {
                                     // no consumption found
                                     $this->logError(null, 'Exception caught: ' . "Validation Error Code 3: No consumption data found for meter with id: $meter_id.");

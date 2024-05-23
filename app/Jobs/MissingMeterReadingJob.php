@@ -24,8 +24,9 @@ class MissingMeterReadingJob implements ShouldQueue
     protected $customeruID;
     protected $customermID;
 
-    public function __construct($customeruID, $customermID, $logLevel = null)
+    public function __construct($jobRunId, $customeruID, $customermID, $logLevel = null)
     {
+        $this->JobRunId = $jobRunId;
         $this->LoggingLevel = $logLevel;
         $this->customeruID = $customeruID;
         $this->customermID = $customermID;
