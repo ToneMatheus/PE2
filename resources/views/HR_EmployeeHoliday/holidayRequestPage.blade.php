@@ -25,9 +25,12 @@
         
         // session_destroy();
             // Unset session variable
-        unset($_SESSION['user']);
-        unset($_SESSION['currentM']);
-        unset($_SESSION['currentY']);
+        if(isset($_SESSION['user']))
+            unset($_SESSION['user']);
+        if(isset($_SESSION['currentM']))
+            unset($_SESSION['currentM']);
+        if(isset($_SESSION['currentY']))
+            unset($_SESSION['currentY']);
 
         // Destroy the session
         session_destroy();
@@ -55,7 +58,12 @@
     while ($row = mysqli_fetch_array($result))
     {
         if(!isset($_SESSION['credit']))
-            $_SESSION['credit'] = $row['yearly_holiday_credit'];
+        {
+            $numOne = $row['yearly_holiday_credit'];
+            $numTwo = $row['used_holiday_credit'];
+            $_SESSION['credit'] = $numOne - $numTwo;
+        }
+            
         
         $credit = $_SESSION['credit'];
     }
@@ -66,7 +74,11 @@
     while ($row = mysqli_fetch_array($resultt))
     {
         if(!isset($_SESSION['credit2']))
-            $_SESSION['credit2'] = $row['yearly_holiday_credit'];
+        {
+            $numOne1 = $row['yearly_holiday_credit'];
+            $numTwo2 = $row['used_holiday_credit'];
+            $_SESSION['credit2'] = $numOne1 - $numTwo2;
+        }
         
         $credit2 = $_SESSION['credit2'];
     }
@@ -373,9 +385,12 @@
             if(isset($_GET['cncel']))
             {
                 // echo "pressed";
-                
-                unset($_SESSION['currentM']);
-                unset($_SESSION['currentY']);
+            
+                if(isset($_SESSION['currentM']))
+                    unset($_SESSION['currentM']);
+                if(isset($_SESSION['currentY']))
+                    unset($_SESSION['currentY']);
+               
                 session_destroy();
             }
             // Start the table and iterate through each day of the month
@@ -667,6 +682,7 @@
             const selectedElements = document.querySelectorAll(".selected");
             div4.style.visibility='hidden';
             var len_selectedElements = selectedElements.length;
+            var div2 = document.getElementById('errorMsg');
             
             
 
@@ -749,7 +765,7 @@
                             div4.style.visibility='visible';
                     }
                     
-                    if(clr_var == 'green' || clr_var == 'purple' && newId > 0)
+                    if((clr_var == 'green' || clr_var == 'purple') && newId > 0 && div2.style.visibility == 'hidden')
                     {
 
                     

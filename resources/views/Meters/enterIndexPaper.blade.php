@@ -17,18 +17,18 @@
         <div id="modal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
             <div class="bg-white rounded-lg shadow-lg w-2/5">
                 <div class="border-b p-4 flex justify-between items-center">
-                    <h3 class="text-lg">Enter index value</h3>
+                    <h3 class="text-lg text-black">Enter index value</h3>
                     <button id="closeModalBtn" class="text-gray-500">&times;</button>
                 </div>
                 <div class="p-4">
                     <form id="modalForm" method="POST" action="{{ route('submitIndex') }}">
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-3 text-black">
                             @csrf
                             @method('POST')
                             <input id="meter_id" name="meter_id" type="hidden">
                             <label for="index_value">Enter index value for meter <span id="modalEAN" class="modalEAN"></span>
                             <br>Previous index value: <b><span id="prev"></span></b></label>
-                            <x-text-input class="block mt-1 w-full name form-control" type="text" name="index_value" id="index_value" required placeholder="Enter index value" autocomplete="off"/>
+                            <x-text-input class="block mt-1 w-full name form-control text-black" type="text" name="index_value" id="index_value" required placeholder="Enter index value" autocomplete="off"/>
             
                         </div>
                         <div class="flex justify-end">
@@ -44,19 +44,31 @@
             </div>
         </div>
 
-        <form>
-            <p>Search by:</p>
-            <label for="searchBarName">First or last name:</label>
-            <input class="searchBarName" id="searchBarName">
-            <label for="searchBarEAN">EAN:</label>
-            <input class="searchBarEAN" id="searchBarEAN">
-            <label for="searchBarCity">City:</label>
-            <input class="searchBarCity" id="searchBarCity">
-            <label for="searchBarStreet">Street:</label>
-            <input class="searchBarStreet" id="searchBarStreet">
-            <label for="searchBarNumber">Number:</label>
-            <input class="searchBarNumber" id="searchBarNumber">
-        </form>
+        <div class="pb-4 mb-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+            <form>
+                <div class="grid grid-cols-4 items-center">
+                    <div>
+                    <x-input-label for="searchBarName" :value="__('First or last name:')" />
+                    <x-text-input class="searchBarName" id="searchBarName"/>
+                    </div>
+    
+                    <div>
+                    <x-input-label for="searchBarCity" :value="__('City:')" />
+                    <x-text-input class="searchBarCity" id="searchBarCity"/>
+                    </div>
+    
+                    <div>
+                    <x-input-label for="searchBarStreet" :value="__('Street:')" />
+                    <x-text-input class="searchBarStreet" id="searchBarStreet"/>
+                    </div>
+    
+                    <div>
+                    <x-input-label for="searchBarNumber" :value="__('Number:')" />
+                    <x-text-input class="searchBarNumber" id="searchBarNumber"/>
+                    </div>
+                </div>
+            </form>
+            </div>
 
         <div class="searchResults" id="searchResults">
         </div>

@@ -11,6 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Attachment;
 use App\Services\QRCodeService;
+use Illuminate\Support\Facades\Crypt;
 
 class weekAdvanceReminder extends Mailable
 {
@@ -43,7 +44,7 @@ class weekAdvanceReminder extends Mailable
     {
         return new Envelope(
             from: new Address('energysupplier@gmail.com', 'Energy Supplier'),
-            subject: 'Open Invoice: Advance Reminder',
+            subject: config('app.now')->format("m-d") . ' Open Invoice: Advance Reminder',
         );
     }
 

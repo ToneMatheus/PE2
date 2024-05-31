@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\JobDispatched;
 use App\Models\Estimation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -59,8 +60,11 @@ class ValidationJob implements ShouldQueue
                 throw new \Exception("Database Error Code 0: No connection could be made");
             } else {
 
-                dispatch(new WeekAdvanceReminderJob);
-                dispatch(new InvoiceFinalWarningJob);
+                event(new JobDispatched($this->JobRunId, $this->__getShortClassName()));
+                WeekAdvanceReminderJob::dispatch($this->JobRunId);
+                
+                event(new JobDispatched($this->JobRunId, $this->__getShortClassName()));
+                InvoiceFinalWarningJob::dispatch($this->JobRunId);
 
                 $meters = Meter::whereTypeAndStatus("Electricity", "Installed")->where("is_smart", "=", 0)
                 ->get();
@@ -147,26 +151,32 @@ class ValidationJob implements ShouldQueue
 
                                 $contractDuration = $startContract->diffInYears($now);
 
-                                $invoiceDate = $startContract->addYear()->addWeek();
-                                $lastInvoiceDate = ($contractDuration < 1) ? $startContract->start_date : $invoiceDate->copy()->setYear($year-1);
+                                $invoiceDate = $startContract->addYear()->addWeeks(2);
+                                $lastInvoiceDate = ($contractDuration < 1) ? $startContract : $invoiceDate->copy()->setYear($year-1);
                 
                                 $invoiceDate->setYear($year);
                                 $invoiceDate->setMonth($month);
                                 $invoiceDate->setTimezone('Europe/Berlin');
                                 
                                 //Reminder index values 1 week prior invoice run
-                                if($invoiceDate->copy() == $now){
-                                    MeterReadingReminderJob::dispatch($customers->uID, $customers->mID);
+                                if($invoiceDate->copy()->subWeek() == $now){
+                                    event(new JobDispatched($this->JobRunId, $this->__getShortClassName()));
+                                    MeterReadingReminderJob::dispatch($this->JobRunId, $customers->uID, $customers->mID);
                                 }
 
                                 $consumptions = Index_Value::where('meter_id', '=', $meter_id)
                                 ->where('reading_date', '>=', $lastInvoiceDate)
-                                ->where('reading_date', '<', $invoiceDate->copy())
+                                ->where('reading_date', '<', $invoiceDate->copy()->addWeek())
                                 ->get()->toArray();
 
                                 if (sizeof($consumptions) == 0) {
                                     // no consumption found
                                     $this->logError(null, 'Exception caught: ' . "Validation Error Code 3: No consumption data found for meter with id: $meter_id.");
+                                    if($invoiceDate->copy() == $now){
+                                        event(new JobDispatched($this->JobRunId, $this->__getShortClassName()));
+                                        MissingMeterReadingJob::dispatch($this->JobRunId, $customers->uID, $customers->mID);
+                                    }
+
                                     Meter::where('id', $meter_id)->update(['has_validation_error' => 1]);
                                 }
                                 else {

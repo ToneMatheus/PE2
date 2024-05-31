@@ -194,6 +194,8 @@ else if(isset($_POST['button']))
                 $manager_approval = mysqli_real_escape_string($link, 0);
                 $boss_approval = mysqli_real_escape_string($link, 0);
                 $is_active = mysqli_real_escape_string($link, 1);
+
+                $len_req_days = count($array);
     
                 // $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
                 // $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
@@ -201,10 +203,13 @@ else if(isset($_POST['button']))
     
                 $query2 = "INSERT INTO holidays (employee_profile_id, request_date, start_date, end_date, holiday_type_id, reason, fileLocation, manager_approval, boss_approval, is_active) VALUES ('$employee_profile_id', '$request_date', '$start_date', '$end_date', '$holiday_type_id', '$reason', '$fileLoc', '$manager_approval', '$boss_approval', '$is_active')";
                 $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query. id: $user_id");
+
+                $query22 = "UPDATE balances SET used_holiday_credit = $len_req_days WHERE employee_profile_id = $employee_profile_id AND holiday_type_id = $holiday_type_id";
+                $result22 =  $link->query($query22) or die("Error: an error has occurred while executing the query.");
     
-                if($result2)
+                if($result2 && $result22)
                 {
-                    echo "\n\n works \n";
+                    echo "\n\n works \n $len_req_days";
                     if (isset($_SESSION['user']['pink']))
                     {
                         //echo '<script>window.location.href = "{{route(`sickLeaveReason`)}}";</script>';
@@ -303,16 +308,20 @@ else if(isset($_POST['button']))
                                     $boss_approval = mysqli_real_escape_string($link, 0);
                                     $is_active = mysqli_real_escape_string($link, 1);
 
+                                    $len_req_days = count($array);
+
                                     // $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
                                     // $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
                                     // $check = mysqli_fetch_array($check_table_result) or die("Error: an error has occurred while executing the query.");
-
                                     $query2 = "INSERT INTO holidays (employee_profile_id, request_date, start_date, end_date, holiday_type_id, reason, fileLocation, manager_approval, boss_approval, is_active) VALUES ('$employee_profile_id', '$request_date', '$start_date', '$end_date', '$holiday_type_id', '$reason', '$fileLoc', '$manager_approval', '$boss_approval', '$is_active')";
                                     $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query. id: $user_id");
 
-                                    if($result2)
+                                    $query22 = "UPDATE balances SET used_holiday_credit = $len_req_days WHERE employee_profile_id = $employee_profile_id AND holiday_type_id = $holiday_type_id";
+                                    $result22 =  $link->query($query22) or die("Error: an error has occurred while executing the query.");
+                        
+                                    if($result2 && $result22)
                                     {
-                                        echo "\n\n works \n";
+                                        echo "\n\n works \n $len_req_days";
                                         /*if($type == "Sick")
                                             echo  `window.location.href = "{{route('sickLeaveReason')}}"`;*/
                                         if (isset($_SESSION['user']['pink']))
@@ -387,16 +396,20 @@ else if(isset($_POST['button']))
                                     $boss_approval = mysqli_real_escape_string($link, 0);
                                     $is_active = mysqli_real_escape_string($link, 1);
 
+                                    $len_req_days = count($array);
+
                                     // $check_table = "SELECT * FROM holidays WHERE employee_profile_id = $employee_profile_id";
                                     // $check_table_result = $link->query($check_table) or die("Error: an error has occurred while executing the query.");
                                     // $check = mysqli_fetch_array($check_table_result) or die("Error: an error has occurred while executing the query.");
-
                                     $query2 = "INSERT INTO holidays (employee_profile_id, request_date, start_date, end_date, holiday_type_id, reason, fileLocation, manager_approval, boss_approval, is_active) VALUES ('$employee_profile_id', '$request_date', '$start_date', '$end_date', '$holiday_type_id', '$reason', '$fileLoc', '$manager_approval', '$boss_approval', '$is_active')";
                                     $result2 = $link->query($query2) or die("Error: an error has occurred while executing the query. id: $user_id");
 
-                                    if($result2)
+                                    $query22 = "UPDATE balances SET used_holiday_credit = $len_req_days WHERE employee_profile_id = $employee_profile_id AND holiday_type_id = $holiday_type_id";
+                                    $result22 =  $link->query($query22) or die("Error: an error has occurred while executing the query.");
+                        
+                                    if($result2 && $result22)
                                     {
-                                        echo "\n\n works \n";
+                                        echo "\n\n works \n $len_req_days";
                                         /*if($type == "Sick")
                                             echo  `window.location.href = "{{route('sickLeaveReason')}}"`;*/
                                         if (isset($_SESSION['user']['pink']))
